@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -153,7 +154,13 @@ public final class GirderCapAccumulator {
             );
         }
 
-        return Collections.unmodifiableList(loops);
+        List<CapLoop> deduped = dedupeLoops(loops);
+        if (deduped.size() != loops.size()) {
+            CreateBitsnBobs.LOGGER.debug(
+                "[GirderCap] removed {} duplicate loops", loops.size() - deduped.size()
+            );
+        }
+        return Collections.unmodifiableList(deduped);
     }
 
     private void emitLoop(
@@ -224,9 +231,6 @@ public final class GirderCapAccumulator {
                 return List.of();
             }
             current.setUsed(true);
-            if (current.twin() != null) {
-                current.twin().setUsed(true);
-            }
             loop.add(current.start().copy());
 
             CapEdge next = findNextEdge(current, outgoing, start);
@@ -256,18 +260,15 @@ public final class GirderCapAccumulator {
             return null;
         }
 
-        int twinIndex = current.twin() == null ? -1 : star.indexOf(current.twin());
-        if (twinIndex >= 0) {
-            int size = star.size();
-            for (int offset = 1; offset <= size; offset++) {
-                int index = (twinIndex - offset + size) % size;
-                CapEdge candidate = star.get(index);
-                if (!candidate.used() || candidate == start) {
-                    return candidate;
-                }
-            }
+        float baseAngle = current.twin() != null ? current.twin().normalizedAngle() : CapEdge.normalizeAngle(current.angle() + (float) Math.PI);
+
+        CapEdge best = selectNextEdge(star, baseAngle, start);
+        if (best != null) {
+            return best;
         }
 
+        // If every unused edge lies exactly on the base direction we may have a degenerate wedge.
+        // Fall back to any available edge to avoid abandoning the loop outright.
         for (CapEdge candidate : star) {
             if (!candidate.used() || candidate == start) {
                 return candidate;
@@ -277,6 +278,39 @@ public final class GirderCapAccumulator {
         return null;
     }
 
+    private static List<CapLoop> dedupeLoops(List<CapLoop> loops) {
+        Map<LoopSignature, CapLoop> unique = new LinkedHashMap<>();
+        for (CapLoop loop : loops) {
+            LoopSignature signature = LoopSignature.from(loop);
+            unique.putIfAbsent(signature, loop);
+        }
+        return new ArrayList<>(unique.values());
+    }
+
+    private static CapEdge selectNextEdge(List<CapEdge> star, float baseAngle, CapEdge start) {
+        CapEdge best = null;
+        float bestDelta = Float.POSITIVE_INFINITY;
+        for (CapEdge candidate : star) {
+            if (candidate.used() && candidate != start) {
+                continue;
+            }
+            float delta = angleDelta(baseAngle, candidate.normalizedAngle());
+            if (delta < bestDelta - GirderGeometry.EPSILON) {
+                bestDelta = delta;
+                best = candidate;
+            }
+        }
+        return best;
+    }
+
+    private static float angleDelta(float from, float to) {
+        float delta = to - from;
+        while (delta <= 0f) {
+            delta += (float) (Math.PI * 2.0);
+        }
+        return delta;
+    }
+
     private record CapSegment(CapVertex start, CapVertex end, int tintIndex, boolean shade) {
     }
 
@@ -284,6 +318,45 @@ public final class GirderCapAccumulator {
     }
 
     private record LoopKey(int tintIndex, boolean shade) {
+    }
+
+    private record LoopSignature(LoopKey key, String geometry) {
+
+        static LoopSignature from(CapLoop loop) {
+            return new LoopSignature(loop.key(), canonicalGeometry(loop));
+        }
+
+        private static String canonicalGeometry(CapLoop loop) {
+            List<VertexKey> keys = new ArrayList<>(loop.vertices().size());
+            for (CapVertex vertex : loop.vertices()) {
+                keys.add(VertexKey.from(vertex.position()));
+            }
+            String forward = canonicalOrientation(keys);
+            List<VertexKey> reversed = new ArrayList<>(keys);
+            java.util.Collections.reverse(reversed);
+            String backward = canonicalOrientation(reversed);
+            return forward.compareTo(backward) <= 0 ? forward : backward;
+        }
+
+        private static String canonicalOrientation(List<VertexKey> keys) {
+            if (keys.isEmpty()) {
+                return "";
+            }
+            int size = keys.size();
+            String best = null;
+            for (int offset = 0; offset < size; offset++) {
+                StringBuilder builder = new StringBuilder();
+                for (int i = 0; i < size; i++) {
+                    VertexKey key = keys.get((offset + i) % size);
+                    builder.append(key.x()).append(',').append(key.y()).append(',').append(key.z()).append(';');
+                }
+                String candidate = builder.toString();
+                if (best == null || candidate.compareTo(best) < 0) {
+                    best = candidate;
+                }
+            }
+            return best;
+        }
     }
 
     static final class CapVertex {
@@ -367,6 +440,7 @@ public final class GirderCapAccumulator {
         private final VertexKey startKey;
         private final VertexKey endKey;
         private final float angle;
+        private final float normalizedAngle;
         private CapEdge twin;
         private boolean used;
 
@@ -376,6 +450,7 @@ public final class GirderCapAccumulator {
             this.startKey = startKey;
             this.endKey = endKey;
             this.angle = angle;
+            this.normalizedAngle = normalizeAngle(angle);
         }
 
         CapVertex start() {
@@ -398,6 +473,10 @@ public final class GirderCapAccumulator {
             return angle;
         }
 
+        float normalizedAngle() {
+            return normalizedAngle;
+        }
+
         boolean used() {
             return used;
         }
@@ -412,6 +491,14 @@ public final class GirderCapAccumulator {
 
         void setTwin(CapEdge twin) {
             this.twin = twin;
+        }
+
+        static float normalizeAngle(float angle) {
+            float normalized = angle % (float) (Math.PI * 2.0);
+            if (normalized < 0f) {
+                normalized += (float) (Math.PI * 2.0);
+            }
+            return normalized;
         }
     }
 

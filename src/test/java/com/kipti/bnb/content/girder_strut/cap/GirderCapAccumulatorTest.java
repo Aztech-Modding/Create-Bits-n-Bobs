@@ -8,8 +8,10 @@ import org.joml.Vector3f;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -58,13 +60,14 @@ class GirderCapAccumulatorTest {
         accumulator.addSegments(null, 1, true, segments);
 
         List<GirderCapAccumulator.CapLoop> loops = accumulator.buildLoops(PLANE_POINT, PLANE_NORMAL);
-        assertEquals(2, loops.size(), "duplicated segments should trace two separate loops");
+        assertEquals(1, loops.size(), "duplicated segments with identical attributes collapse to a single loop");
 
         Set<Vector3f> expected = collectProjectedPositions(baseSegments, PLANE_POINT, PLANE_NORMAL);
-        for (GirderCapAccumulator.CapLoop loop : loops) {
-            assertEquals(4, loop.vertices().size(), "each loop should contain the square corners");
-            assertVerticesMatch(loop.vertices(), expected);
-        }
+        GirderCapAccumulator.CapLoop loop = loops.getFirst();
+        assertEquals(4, loop.vertices().size(), "loop should contain the square corners");
+        assertVerticesMatch(loop.vertices(), expected);
+        assertPositiveArea(loop.vertices());
+        assertAllProjectedVerticesCovered(loops, segments, PLANE_POINT, PLANE_NORMAL);
     }
 
     @Test
@@ -101,7 +104,9 @@ class GirderCapAccumulatorTest {
         for (GirderCapAccumulator.CapLoop loop : loops) {
             assertFalse(loop.vertices().isEmpty(), "loop should contain vertices");
             assertVerticesMatch(loop.vertices(), expected);
+            assertPositiveArea(loop.vertices());
         }
+        assertAllProjectedVerticesCovered(loops, segments, planePoint, PLANE_NORMAL);
     }
 
     private static void assertVerticesMatch(List<GirderCapAccumulator.CapVertex> vertices, Set<Vector3f> expected) {
@@ -110,6 +115,68 @@ class GirderCapAccumulatorTest {
             boolean match = expected.stream().anyMatch(candidate -> closeEnough(candidate, vertex.position()));
             assertTrue(match, "vertex %s not matched against expected set %s".formatted(vertex.position(), expected));
         }
+    }
+
+    private static void assertAllProjectedVerticesCovered(
+        List<GirderCapAccumulator.CapLoop> loops,
+        List<GirderMeshQuad.Segment> segments,
+        Vector3f planePoint,
+        Vector3f planeNormal
+    ) {
+        Map<String, Integer> usage = new HashMap<>();
+        for (GirderMeshQuad.Segment segment : segments) {
+            increment(usage, project(segment.start().position(), planePoint, planeNormal));
+            increment(usage, project(segment.end().position(), planePoint, planeNormal));
+        }
+
+        List<Vector3f> missing = new ArrayList<>();
+        for (Map.Entry<String, Integer> entry : usage.entrySet()) {
+            if (entry.getValue() < 2) {
+                continue;
+            }
+            Vector3f position = decode(entry.getKey());
+            boolean covered = false;
+            for (GirderCapAccumulator.CapLoop loop : loops) {
+                covered = loop.vertices().stream().anyMatch(vertex -> closeEnough(position, vertex.position()));
+                if (covered) {
+                    break;
+                }
+            }
+            if (!covered) {
+                missing.add(position);
+            }
+        }
+        assertTrue(missing.isEmpty(), "projected vertices were not covered: " + missing);
+    }
+
+    private static void assertPositiveArea(List<GirderCapAccumulator.CapVertex> vertices) {
+        float area = 0f;
+        int size = vertices.size();
+        for (int i = 0; i < size; i++) {
+            Vector3f current = vertices.get(i).position();
+            Vector3f next = vertices.get((i + 1) % size).position();
+            area += (current.x * next.y) - (next.x * current.y);
+        }
+        assertTrue(Math.abs(area) > GirderGeometry.EPSILON, "loop collapsed to zero-area polygon");
+    }
+
+    private static void increment(Map<String, Integer> usage, Vector3f position) {
+        usage.merge(quantize(position), 1, Integer::sum);
+    }
+
+    private static String quantize(Vector3f position) {
+        int x = Math.round(position.x / GirderGeometry.EPSILON);
+        int y = Math.round(position.y / GirderGeometry.EPSILON);
+        int z = Math.round(position.z / GirderGeometry.EPSILON);
+        return x + ":" + y + ":" + z;
+    }
+
+    private static Vector3f decode(String key) {
+        String[] parts = key.split(":");
+        float x = Integer.parseInt(parts[0]) * GirderGeometry.EPSILON;
+        float y = Integer.parseInt(parts[1]) * GirderGeometry.EPSILON;
+        float z = Integer.parseInt(parts[2]) * GirderGeometry.EPSILON;
+        return new Vector3f(x, y, z);
     }
 
     private static Set<Vector3f> collectProjectedPositions(
