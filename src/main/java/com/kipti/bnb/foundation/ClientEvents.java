@@ -1,6 +1,7 @@
 package com.kipti.bnb.foundation;
 
 import com.kipti.bnb.content.girder_strut.GirderStrutPlacementEffects;
+import com.kipti.bnb.content.girder_strut.cap.GirderCapDebugOutlines;
 import com.kipti.bnb.content.weathered_girder.WeatheredGirderWrenchBehaviour;
 import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
@@ -14,6 +15,7 @@ public class ClientEvents {
     @SubscribeEvent
     public static void onTickPost(ClientTickEvent.Post event) {
         WeatheredGirderWrenchBehaviour.tick();
+        GirderCapDebugOutlines.flush();
     }
 
     @SubscribeEvent

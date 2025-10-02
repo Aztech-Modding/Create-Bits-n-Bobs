@@ -4,6 +4,7 @@ import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.girder_strut.geometry.GirderGeometry;
 import com.kipti.bnb.content.girder_strut.geometry.GirderVertex;
 import com.kipti.bnb.content.girder_strut.mesh.GirderMeshQuad;
+import net.createmod.catnip.theme.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -20,10 +21,19 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public final class GirderCapAccumulator {
 
     private static final float POSITION_TOLERANCE = 1.0e-4f;
+    private static final boolean DEBUG_OUTLINES = true;
+    private static final AtomicInteger DEBUG_SEQUENCE = new AtomicInteger();
+    private static final String DEBUG_KEY_ROOT = "girderCap";
+    private static final Color SEGMENT_COLOR = new Color(245, 168, 66);
+    private static final Color LOOP_COLOR = new Color(201, 86, 228);
+    private static final Color PROJECTED_COLOR = new Color(86, 203, 228);
+    private static final Color FINAL_COLOR = new Color(114, 228, 86);
+    private static final Color PLANE_NORMAL_COLOR = new Color(255, 255, 255);
 
     private final ResourceLocation stoneLocation;
     private final List<CapSegment> segments = new ArrayList<>();
@@ -45,15 +55,26 @@ public final class GirderCapAccumulator {
     }
 
     public void emitCaps(Vector3f planePoint, Vector3f planeNormal, List<BakedQuad> consumer) {
+        int debugId = 0;
+        if (DEBUG_OUTLINES) {
+            debugId = DEBUG_SEQUENCE.incrementAndGet();
+            debugPlane(debugId, planePoint, planeNormal);
+            debugSegments(debugId);
+        }
+
         List<CapLoop> loops = buildLoops(planePoint, planeNormal);
+        if (DEBUG_OUTLINES) {
+            debugLoopInputs(debugId, loops);
+        }
         if (loops.isEmpty()) {
             return;
         }
 
         TextureAtlasSprite stoneSprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(stoneLocation);
 
-        for (CapLoop loop : loops) {
-            emitLoop(loop.vertices(), planeNormal, planePoint, stoneSprite, loop.key().tintIndex(), loop.key().shade(), consumer);
+        for (int i = 0; i < loops.size(); i++) {
+            CapLoop loop = loops.get(i);
+            emitLoop(loop.vertices(), planeNormal, planePoint, stoneSprite, loop.key().tintIndex(), loop.key().shade(), consumer, debugId, i);
         }
 
         segments.clear();
@@ -170,7 +191,9 @@ public final class GirderCapAccumulator {
         TextureAtlasSprite stoneSprite,
         int tintIndex,
         boolean shade,
-        List<BakedQuad> consumer
+        List<BakedQuad> consumer,
+        int debugId,
+        int loopIndex
     ) {
         Vector3f normalizedPlane = new Vector3f(planeNormal);
         if (normalizedPlane.lengthSquared() > GirderGeometry.EPSILON) {
@@ -193,10 +216,21 @@ public final class GirderCapAccumulator {
             ));
         }
 
+        if (DEBUG_OUTLINES) {
+            debugProjectedLoop(debugId, loopIndex, loop, PROJECTED_COLOR, 1f / 64f, "projected");
+        }
+
         List<GirderVertex> cleaned = GirderGeometry.dedupeLoopVertices(loop);
         if (cleaned.size() < 3) {
             CreateBitsnBobs.LOGGER.debug("[GirderCap] loop dropped after dedupe - insufficient vertices {}", cleaned.size());
+            if (DEBUG_OUTLINES) {
+                debugProjectedLoop(debugId, loopIndex, cleaned, FINAL_COLOR, 1f / 96f, "final");
+            }
             return;
+        }
+
+        if (DEBUG_OUTLINES) {
+            debugProjectedLoop(debugId, loopIndex, cleaned, FINAL_COLOR, 1f / 96f, "final");
         }
 
         Vector3f polygonNormal = GirderGeometry.computePolygonNormal(cleaned);
@@ -309,6 +343,91 @@ public final class GirderCapAccumulator {
             delta += (float) (Math.PI * 2.0);
         }
         return delta;
+    }
+
+    private void debugPlane(int debugId, Vector3f planePoint, Vector3f planeNormal) {
+        if (!DEBUG_OUTLINES) {
+            return;
+        }
+        Vector3f normal = new Vector3f(planeNormal);
+        if (normal.lengthSquared() <= GirderGeometry.EPSILON) {
+            return;
+        }
+        normal.normalize();
+        Vector3f start = new Vector3f(planePoint);
+        Vector3f end = new Vector3f(planePoint).add(new Vector3f(normal).mul(0.5f));
+        showLine(debugKey(debugId, "plane", 0, 0), start, end, PLANE_NORMAL_COLOR, 1f / 32f);
+    }
+
+    private void debugSegments(int debugId) {
+        if (!DEBUG_OUTLINES || segments.isEmpty()) {
+            return;
+        }
+        int index = 0;
+        for (CapSegment segment : segments) {
+            Vector3f start = segment.start().position();
+            Vector3f end = segment.end().position();
+            if (GirderGeometry.positionsEqual(start, end)) {
+                continue;
+            }
+            showLine(debugKey(debugId, "segments", index, 0), start, end, SEGMENT_COLOR, 1f / 24f);
+            index++;
+        }
+    }
+
+    private void debugLoopInputs(int debugId, List<CapLoop> loops) {
+        if (!DEBUG_OUTLINES || loops.isEmpty()) {
+            return;
+        }
+        for (int i = 0; i < loops.size(); i++) {
+            CapLoop loop = loops.get(i);
+            List<Vector3f> positions = new ArrayList<>(loop.vertices().size());
+            for (CapVertex vertex : loop.vertices()) {
+                positions.add(new Vector3f(vertex.position()));
+            }
+            showPolyline(debugId, "loops", i, positions, LOOP_COLOR, 1f / 48f, true);
+        }
+    }
+
+    private void debugProjectedLoop(int debugId, int loopIndex, List<GirderVertex> vertices, Color color, float width, String stage) {
+        if (!DEBUG_OUTLINES || vertices.isEmpty()) {
+            return;
+        }
+        List<Vector3f> positions = new ArrayList<>(vertices.size());
+        for (GirderVertex vertex : vertices) {
+            positions.add(new Vector3f(vertex.position()));
+        }
+        showPolyline(debugId, stage, loopIndex, positions, color, width, true);
+    }
+
+    private static void showPolyline(int debugId, String stage, int groupIndex, List<Vector3f> positions, Color color, float width, boolean closed) {
+        if (positions.size() < 2) {
+            return;
+        }
+        int segmentIndex = 0;
+        for (int i = 0; i < positions.size() - 1; i++) {
+            Vector3f start = positions.get(i);
+            Vector3f end = positions.get(i + 1);
+            if (GirderGeometry.positionsEqual(start, end)) {
+                continue;
+            }
+            showLine(debugKey(debugId, stage, groupIndex, segmentIndex++), start, end, color, width);
+        }
+        if (closed) {
+            Vector3f start = positions.get(positions.size() - 1);
+            Vector3f end = positions.get(0);
+            if (!GirderGeometry.positionsEqual(start, end)) {
+                showLine(debugKey(debugId, stage, groupIndex, segmentIndex), start, end, color, width);
+            }
+        }
+    }
+
+    private static void showLine(String key, Vector3f from, Vector3f to, Color color, float width) {
+        GirderCapDebugOutlines.queueLine(key, from, to, color, width);
+    }
+
+    private static String debugKey(int debugId, String stage, int groupIndex, int segmentIndex) {
+        return DEBUG_KEY_ROOT + '/' + debugId + '/' + stage + '/' + groupIndex + '/' + segmentIndex;
     }
 
     private record CapSegment(CapVertex start, CapVertex end, int tintIndex, boolean shade) {
