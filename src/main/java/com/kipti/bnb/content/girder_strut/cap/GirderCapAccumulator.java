@@ -1,5 +1,6 @@
 package com.kipti.bnb.content.girder_strut.cap;
 
+import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.girder_strut.geometry.GirderGeometry;
 import com.kipti.bnb.content.girder_strut.geometry.GirderVertex;
 import com.kipti.bnb.content.girder_strut.mesh.GirderMeshQuad;
@@ -12,9 +13,13 @@ import net.minecraft.world.inventory.InventoryMenu;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public final class GirderCapAccumulator {
+
+    private static final float POSITION_TOLERANCE = 1.0e-4f;
 
     private final ResourceLocation stoneLocation;
     private final List<CapSegment> segments = new ArrayList<>();
@@ -48,128 +53,117 @@ public final class GirderCapAccumulator {
 
         TextureAtlasSprite stoneSprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(stoneLocation);
 
-        java.util.Map<LoopKey, List<CapSegment>> grouped = new java.util.HashMap<>();
+        Map<LoopKey, List<CapSegment>> grouped = new HashMap<>();
         for (CapSegment segment : segments) {
             grouped.computeIfAbsent(new LoopKey(segment.tintIndex(), segment.shade()), key -> new ArrayList<>()).add(segment);
         }
 
-        for (java.util.Map.Entry<LoopKey, List<CapSegment>> entry : grouped.entrySet()) {
-            List<CapVertex> uniqueVertices = new ArrayList<>();
-            List<Edge> edges = new ArrayList<>();
-            LoopKey key = entry.getKey();
+        Vector3f uAxis = buildPerpendicular(normal);
+        Vector3f vAxis = new Vector3f(normal).cross(uAxis);
+        if (vAxis.lengthSquared() > GirderGeometry.EPSILON) {
+            vAxis.normalize();
+        }
 
-            for (CapSegment segment : entry.getValue()) {
-                int startIndex = indexFor(uniqueVertices, segment.start());
-                int endIndex = indexFor(uniqueVertices, segment.end());
+        CreateBitsnBobs.LOGGER.debug("[GirderCap] emitting {} segment groups", grouped.size());
+
+        for (Map.Entry<LoopKey, List<CapSegment>> entry : grouped.entrySet()) {
+            LoopKey key = entry.getKey();
+            List<CapSegment> groupSegments = entry.getValue();
+            CreateBitsnBobs.LOGGER.debug(
+                "[GirderCap] group tint={} shade={} segments={}",
+                key.tintIndex(),
+                key.shade(),
+                groupSegments.size()
+            );
+
+            Map<VertexKey, Integer> indices = new HashMap<>();
+            List<Vector3f> positions = new ArrayList<>();
+            List<HalfEdge> halfEdges = new ArrayList<>();
+            Map<Integer, List<HalfEdge>> outgoing = new HashMap<>();
+
+            for (CapSegment segment : groupSegments) {
+                int startIndex = indexForPosition(indices, positions, segment.start().position());
+                int endIndex = indexForPosition(indices, positions, segment.end().position());
                 if (startIndex == endIndex) {
                     continue;
                 }
-                edges.add(new Edge(startIndex, endIndex));
+
+                HalfEdge forward = new HalfEdge(startIndex, endIndex, segment.start().copy(), segment.end().copy());
+                HalfEdge reverse = new HalfEdge(endIndex, startIndex, segment.end().copy(), segment.start().copy());
+                forward.setTwin(reverse);
+                reverse.setTwin(forward);
+
+                halfEdges.add(forward);
+                halfEdges.add(reverse);
+
+                outgoing.computeIfAbsent(startIndex, keyIgnored -> new ArrayList<>()).add(forward);
+                outgoing.computeIfAbsent(endIndex, keyIgnored -> new ArrayList<>()).add(reverse);
             }
 
-            if (uniqueVertices.size() < 3 || edges.isEmpty()) {
+            if (positions.size() < 3 || halfEdges.isEmpty()) {
+                CreateBitsnBobs.LOGGER.debug("[GirderCap] group skipped - not enough data (vertices={}, halfEdges={})", positions.size(), halfEdges.size());
                 continue;
             }
 
-            List<List<Integer>> components = buildComponents(uniqueVertices.size(), edges);
-            for (List<Integer> component : components) {
-                if (component.size() < 3) {
+            for (List<HalfEdge> star : outgoing.values()) {
+                for (HalfEdge edge : star) {
+                    Vector3f start = positions.get(edge.startIndex());
+                    Vector3f end = positions.get(edge.endIndex());
+                    Vector3f delta = new Vector3f(end).sub(start);
+                    float u = delta.dot(uAxis);
+                    float v = delta.dot(vAxis);
+                    edge.setAngle((float) Math.atan2(v, u));
+                }
+                star.sort(java.util.Comparator.comparingDouble(HalfEdge::angle));
+            }
+
+            List<List<CapVertex>> loops = new ArrayList<>();
+            for (HalfEdge edge : halfEdges) {
+                if (edge.used()) {
                     continue;
                 }
-                List<Integer> ordered = orderComponent(component, uniqueVertices, normal);
-                if (ordered.size() < 3) {
-                    continue;
+                List<CapVertex> loopVertices = traceLoop(edge, outgoing);
+                if (loopVertices.size() >= 3) {
+                    loops.add(loopVertices);
                 }
-                emitLoop(ordered, uniqueVertices, key.tintIndex(), key.shade(), normal, point, stoneSprite, consumer);
+            }
+
+            CreateBitsnBobs.LOGGER.debug(
+                "[GirderCap] group produced {} loops from {} positions and {} directed edges",
+                loops.size(),
+                positions.size(),
+                halfEdges.size()
+            );
+
+            for (List<CapVertex> loop : loops) {
+                emitLoop(loop, normal, point, stoneSprite, key.tintIndex(), key.shade(), consumer);
             }
         }
 
         segments.clear();
     }
 
-    private int indexFor(List<CapVertex> vertices, CapVertex vertex) {
-        for (int i = 0; i < vertices.size(); i++) {
-            CapVertex existing = vertices.get(i);
-            if (!positionsClose(existing.position(), vertex.position())) {
-                continue;
-            }
-            if (!attributesMatch(existing, vertex)) {
-                // The geometry can contain seams where two quads share the same
-                // position but use different texture coordinates (or lighting).
-                // Treat these as distinct vertices so that both sides emit a cap.
-                continue;
-            }
-            return i;
-        }
-        vertices.add(vertex.copy());
-        return vertices.size() - 1;
-    }
-
-    /**
-     * Compare two positions using a tolerance that is tight enough to keep distinct
-     * features (like seams) separate while still swallowing minor floating point error.
-     */
-    private static boolean positionsClose(org.joml.Vector3f a, org.joml.Vector3f b) {
-        float dx = a.x - b.x;
-        float dy = a.y - b.y;
-        float dz = a.z - b.z;
-        // Use a tolerance that is high enough to cope with floating point
-        // rounding errors but small enough to keep distinct features apart.
-        float tol = 1.0e-4f;
-        return dx * dx + dy * dy + dz * dz <= tol * tol;
-    }
-
-    private static boolean attributesMatch(CapVertex a, CapVertex b) {
-        if (a.color() != b.color() || a.light() != b.light()) {
-            return false;
-        }
-        if (a.sourceSprite() != b.sourceSprite()) {
-            return false;
-        }
-        float tol = 1.0e-4f;
-        if (Math.abs(a.u() - b.u()) > tol) {
-            return false;
-        }
-        if (Math.abs(a.v() - b.v()) > tol) {
-            return false;
-        }
-        return true;
-    }
-
     private void emitLoop(
-        List<Integer> loopIndices,
-        List<CapVertex> vertices,
-        int tintIndex,
-        boolean shade,
+        List<CapVertex> loopVertices,
         Vector3f planeNormal,
         Vector3f planePoint,
         TextureAtlasSprite stoneSprite,
+        int tintIndex,
+        boolean shade,
         List<BakedQuad> consumer
     ) {
-        // Use the cut-facing normal (flip the supplied plane normal) so the cap
-        // quads face into the cut, not towards the surface.
         Vector3f normalizedPlane = new Vector3f(planeNormal);
         if (normalizedPlane.lengthSquared() > GirderGeometry.EPSILON) {
             normalizedPlane.normalize();
         }
         Vector3f faceNormal = new Vector3f(normalizedPlane).negate();
 
-        List<GirderVertex> loopVertices = new ArrayList<>(loopIndices.size());
-        for (int index : loopIndices) {
-            CapVertex data = vertices.get(index);
-            // Project the vertex onto the clipping plane
-            Vector3f projectedPosition = new Vector3f(data.position());
-            float distance = GirderGeometry.signedDistance(projectedPosition, normalizedPlane, planePoint);
-            if (Math.abs(distance) > GirderGeometry.EPSILON) {
-                projectedPosition.sub(new Vector3f(normalizedPlane).mul(distance));
-            }
-            
-            // Use proper UV mapping based on position
-            // Create a coordinate system on the plane for UV mapping
+        List<GirderVertex> loop = new ArrayList<>(loopVertices.size());
+        for (CapVertex data : loopVertices) {
+            Vector3f projectedPosition = projectOntoPlane(data.position(), normalizedPlane, planePoint);
             float remappedU = GirderGeometry.remapU(data.u(), data.sourceSprite(), stoneSprite);
             float remappedV = GirderGeometry.remapV(data.v(), data.sourceSprite(), stoneSprite);
-            
-            loopVertices.add(new GirderVertex(
+            loop.add(new GirderVertex(
                 projectedPosition,
                 new Vector3f(faceNormal),
                 remappedU,
@@ -179,12 +173,12 @@ public final class GirderCapAccumulator {
             ));
         }
 
-        List<GirderVertex> cleaned = GirderGeometry.dedupeLoopVertices(loopVertices);
+        List<GirderVertex> cleaned = GirderGeometry.dedupeLoopVertices(loop);
         if (cleaned.size() < 3) {
+            CreateBitsnBobs.LOGGER.debug("[GirderCap] loop dropped after dedupe - insufficient vertices {}", cleaned.size());
             return;
         }
 
-        // Check winding order and reverse if needed
         Vector3f polygonNormal = GirderGeometry.computePolygonNormal(cleaned);
         if (polygonNormal.lengthSquared() > GirderGeometry.EPSILON && polygonNormal.dot(faceNormal) < 0f) {
             java.util.Collections.reverse(cleaned);
@@ -192,6 +186,88 @@ public final class GirderCapAccumulator {
 
         Direction face = Direction.getNearest(faceNormal.x, faceNormal.y, faceNormal.z);
         GirderGeometry.emitPolygon(cleaned, stoneSprite, face, tintIndex, shade, consumer);
+    }
+
+    private static Vector3f projectOntoPlane(Vector3f position, Vector3f normal, Vector3f point) {
+        Vector3f projected = new Vector3f(position);
+        float distance = GirderGeometry.signedDistance(projected, normal, point);
+        if (Math.abs(distance) > GirderGeometry.EPSILON) {
+            projected.sub(new Vector3f(normal).mul(distance));
+        }
+        return projected;
+    }
+
+    private static int indexForPosition(Map<VertexKey, Integer> indices, List<Vector3f> positions, Vector3f position) {
+        VertexKey key = VertexKey.from(position);
+        Integer existing = indices.get(key);
+        if (existing != null) {
+            return existing;
+        }
+        int next = positions.size();
+        positions.add(new Vector3f(position));
+        indices.put(key, next);
+        return next;
+    }
+
+    private static List<CapVertex> traceLoop(HalfEdge start, Map<Integer, List<HalfEdge>> outgoing) {
+        List<CapVertex> loop = new ArrayList<>();
+        HalfEdge current = start;
+        int guard = 0;
+        while (true) {
+            if (current.used()) {
+                CreateBitsnBobs.LOGGER.debug("[GirderCap] aborting loop trace - encountered used edge mid trace");
+                return List.of();
+            }
+            current.setUsed(true);
+            if (current.twin() != null && !current.twin().used()) {
+                current.twin().setUsed(true);
+            }
+            loop.add(current.startVertex().copy());
+
+            HalfEdge next = findNextEdge(current, outgoing);
+            if (next == null) {
+                CreateBitsnBobs.LOGGER.debug("[GirderCap] loop trace failed - could not find next edge from vertex {}", current.endIndex());
+                return List.of();
+            }
+
+            current = next;
+            if (current == start) {
+                break;
+            }
+
+            guard++;
+            if (guard > 1024) {
+                CreateBitsnBobs.LOGGER.warn("[GirderCap] aborting loop trace - guard triggered");
+                return List.of();
+            }
+        }
+        return loop;
+    }
+
+    private static HalfEdge findNextEdge(HalfEdge current, Map<Integer, List<HalfEdge>> outgoing) {
+        List<HalfEdge> star = outgoing.get(current.endIndex());
+        if (star == null || star.isEmpty()) {
+            return null;
+        }
+        int twinIndex = current.twin() == null ? -1 : star.indexOf(current.twin());
+        if (twinIndex < 0) {
+            for (HalfEdge candidate : star) {
+                if (!candidate.used()) {
+                    return candidate;
+                }
+            }
+            return null;
+        }
+
+        int size = star.size();
+        for (int offset = 1; offset < size; offset++) {
+            int index = (twinIndex - offset + size) % size;
+            HalfEdge candidate = star.get(index);
+            if (!candidate.used()) {
+                return candidate;
+            }
+        }
+        return null;
     }
 
     private record CapSegment(CapVertex start, CapVertex end, int tintIndex, boolean shade) {
@@ -251,74 +327,6 @@ public final class GirderCapAccumulator {
         }
     }
 
-    private record Edge(int start, int end) {
-    }
-
-    private List<List<Integer>> buildComponents(int vertexCount, List<Edge> edges) {
-        java.util.Map<Integer, List<Integer>> adjacency = new java.util.HashMap<>();
-        java.util.Set<Integer> relevant = new java.util.HashSet<>();
-        for (Edge edge : edges) {
-            adjacency.computeIfAbsent(edge.start(), key -> new ArrayList<>()).add(edge.end());
-            adjacency.computeIfAbsent(edge.end(), key -> new ArrayList<>()).add(edge.start());
-            relevant.add(edge.start());
-            relevant.add(edge.end());
-        }
-
-        boolean[] visited = new boolean[vertexCount];
-        List<List<Integer>> components = new ArrayList<>();
-
-        java.util.ArrayDeque<Integer> queue = new java.util.ArrayDeque<>();
-        for (int start : relevant) {
-            if (visited[start]) {
-                continue;
-            }
-            List<Integer> component = new ArrayList<>();
-            queue.add(start);
-            while (!queue.isEmpty()) {
-                int current = queue.removeFirst();
-                if (visited[current]) {
-                    continue;
-                }
-                visited[current] = true;
-                component.add(current);
-                List<Integer> neighbours = adjacency.get(current);
-                if (neighbours == null) {
-                    continue;
-                }
-                for (int neighbour : neighbours) {
-                    if (!visited[neighbour]) {
-                        queue.add(neighbour);
-                    }
-                }
-            }
-            if (component.size() >= 3) {
-                components.add(component);
-            }
-        }
-        return components;
-    }
-
-    private List<Integer> orderComponent(List<Integer> component, List<CapVertex> vertices, Vector3f planeNormal) {
-        Vector3f centroid = new Vector3f();
-        for (int index : component) {
-            centroid.add(vertices.get(index).position());
-        }
-        centroid.div(component.size());
-
-        Vector3f uAxis = buildPerpendicular(planeNormal);
-        Vector3f vAxis = new Vector3f(planeNormal).cross(uAxis).normalize();
-
-        component.sort((a, b) -> {
-            Vector3f da = new Vector3f(vertices.get(a).position()).sub(centroid);
-            Vector3f db = new Vector3f(vertices.get(b).position()).sub(centroid);
-            float angleA = (float) Math.atan2(da.dot(vAxis), da.dot(uAxis));
-            float angleB = (float) Math.atan2(db.dot(vAxis), db.dot(uAxis));
-            return Float.compare(angleA, angleB);
-        });
-
-        return component;
-    }
-
     private Vector3f buildPerpendicular(Vector3f normal) {
         Vector3f basis = Math.abs(normal.x) < 0.9f ? new Vector3f(1f, 0f, 0f) : new Vector3f(0f, 1f, 0f);
         Vector3f perpendicular = new Vector3f(normal).cross(basis);
@@ -329,5 +337,74 @@ public final class GirderCapAccumulator {
             perpendicular.normalize();
         }
         return perpendicular;
+    }
+
+    private static final class HalfEdge {
+
+        private final int startIndex;
+        private final int endIndex;
+        private final CapVertex startVertex;
+        private final CapVertex endVertex;
+        private HalfEdge twin;
+        private boolean used;
+        private float angle;
+
+        HalfEdge(int startIndex, int endIndex, CapVertex startVertex, CapVertex endVertex) {
+            this.startIndex = startIndex;
+            this.endIndex = endIndex;
+            this.startVertex = startVertex;
+            this.endVertex = endVertex;
+        }
+
+        int startIndex() {
+            return startIndex;
+        }
+
+        int endIndex() {
+            return endIndex;
+        }
+
+        CapVertex startVertex() {
+            return startVertex;
+        }
+
+        CapVertex endVertex() {
+            return endVertex;
+        }
+
+        HalfEdge twin() {
+            return twin;
+        }
+
+        void setTwin(HalfEdge twin) {
+            this.twin = twin;
+        }
+
+        boolean used() {
+            return used;
+        }
+
+        void setUsed(boolean used) {
+            this.used = used;
+        }
+
+        float angle() {
+            return angle;
+        }
+
+        void setAngle(float angle) {
+            this.angle = angle;
+        }
+    }
+
+    private record VertexKey(int x, int y, int z) {
+
+        static VertexKey from(Vector3f position) {
+            return new VertexKey(
+                Math.round(position.x / POSITION_TOLERANCE),
+                Math.round(position.y / POSITION_TOLERANCE),
+                Math.round(position.z / POSITION_TOLERANCE)
+            );
+        }
     }
 }
