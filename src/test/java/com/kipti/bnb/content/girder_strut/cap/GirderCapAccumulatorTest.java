@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -23,7 +24,7 @@ class GirderCapAccumulatorTest {
 
     @Test
     void singleRectangleProducesLoopWithProjectedVertices() {
-        GirderCapAccumulator accumulator = new GirderCapAccumulator(new ResourceLocation("test", "stone"));
+        GirderCapAccumulator accumulator = new GirderCapAccumulator(ResourceLocation.fromNamespaceAndPath("test", "stone"));
         List<GirderMeshQuad.Segment> segments = List.of(
             new GirderMeshQuad.Segment(vertex(0f, 0f, 0f), vertex(1f, 0f, 0f)),
             new GirderMeshQuad.Segment(vertex(1f, 0f, 0f), vertex(1f, 1f, 0f)),
@@ -38,13 +39,13 @@ class GirderCapAccumulatorTest {
         GirderCapAccumulator.CapLoop loop = loops.getFirst();
         assertEquals(4, loop.vertices().size(), "loop should contain each corner");
 
-        Set<Vector3f> expected = collectProjectedPositions(segments);
+        Set<Vector3f> expected = collectProjectedPositions(segments, PLANE_POINT, PLANE_NORMAL);
         assertVerticesMatch(loop.vertices(), expected);
     }
 
     @Test
     void duplicateSegmentsProduceIndependentLoops() {
-        GirderCapAccumulator accumulator = new GirderCapAccumulator(new ResourceLocation("test", "stone"));
+        GirderCapAccumulator accumulator = new GirderCapAccumulator(ResourceLocation.fromNamespaceAndPath("test", "stone"));
         List<GirderMeshQuad.Segment> baseSegments = List.of(
             new GirderMeshQuad.Segment(vertex(0.25f, 0.25f, 0f), vertex(0.75f, 0.25f, 0f)),
             new GirderMeshQuad.Segment(vertex(0.75f, 0.25f, 0f), vertex(0.75f, 0.75f, 0f)),
@@ -59,9 +60,46 @@ class GirderCapAccumulatorTest {
         List<GirderCapAccumulator.CapLoop> loops = accumulator.buildLoops(PLANE_POINT, PLANE_NORMAL);
         assertEquals(2, loops.size(), "duplicated segments should trace two separate loops");
 
-        Set<Vector3f> expected = collectProjectedPositions(baseSegments);
+        Set<Vector3f> expected = collectProjectedPositions(baseSegments, PLANE_POINT, PLANE_NORMAL);
         for (GirderCapAccumulator.CapLoop loop : loops) {
             assertEquals(4, loop.vertices().size(), "each loop should contain the square corners");
+            assertVerticesMatch(loop.vertices(), expected);
+        }
+    }
+
+    @Test
+    void complexSegmentSetProducesExpectedCoverage() {
+        GirderCapAccumulator accumulator = new GirderCapAccumulator(ResourceLocation.fromNamespaceAndPath("test", "stone"));
+        List<GirderMeshQuad.Segment> segments = List.of(
+            segment(0.3750f, 1.0300f, 1.0010f, 0.3750f, 0.6768f, 1.0010f),
+            segment(0.3750f, 0.6768f, 1.0010f, 0.6250f, 0.6768f, 1.0010f),
+            segment(0.6250f, 0.6768f, 1.0010f, 0.6250f, 1.0300f, 1.0010f),
+            segment(0.6250f, 1.0300f, 1.0010f, 0.3750f, 1.0300f, 1.0010f),
+            segment(0.6250f, 0.9786f, 1.0010f, 0.6250f, 0.2714f, 1.0010f),
+            segment(0.3750f, 0.9786f, 1.0010f, 0.3750f, 0.2714f, 1.0010f),
+            segment(0.7500f, 0.09467f, 1.0010f, 0.2500f, 0.09467f, 1.0010f),
+            segment(0.7500f, 0.2714f, 1.0010f, 0.2500f, 0.2714f, 1.0010f),
+            segment(0.2500f, 0.6768f, 1.0010f, 0.2500f, 0.5884f, 1.0010f),
+            segment(0.2500f, 0.5884f, 1.0010f, 0.7500f, 0.5884f, 1.0010f),
+            segment(0.7500f, 0.5884f, 1.0010f, 0.7500f, 0.6768f, 1.0010f),
+            segment(0.7500f, 0.6768f, 1.0010f, 0.2500f, 0.6768f, 1.0010f),
+            segment(0.7500f, 0.2714f, 1.0010f, 0.7500f, 0.09467f, 1.0010f),
+            segment(0.2500f, 0.2714f, 1.0010f, 0.2500f, 0.09467f, 1.0010f),
+            segment(0.7500f, 0.9786f, 1.0010f, 0.2500f, 0.9786f, 1.0010f),
+            segment(0.2500f, 1.0820f, 1.0010f, 0.7500f, 1.0820f, 1.0010f),
+            segment(0.7500f, 1.0820f, 1.0010f, 0.7500f, 0.9786f, 1.0010f),
+            segment(0.2500f, 0.9786f, 1.0010f, 0.2500f, 1.0820f, 1.0010f)
+        );
+
+        assertDoesNotThrow(() -> accumulator.addSegments(null, 2, true, segments));
+        List<GirderCapAccumulator.CapLoop> loops = accumulator.buildLoops(new Vector3f(0f, 0f, 1.001f), PLANE_NORMAL);
+
+        assertEquals(4, loops.size(), "expected four discrete loops for the girder cap");
+
+        Vector3f planePoint = new Vector3f(0f, 0f, 1.001f);
+        Set<Vector3f> expected = collectProjectedPositions(segments, planePoint, PLANE_NORMAL);
+        for (GirderCapAccumulator.CapLoop loop : loops) {
+            assertFalse(loop.vertices().isEmpty(), "loop should contain vertices");
             assertVerticesMatch(loop.vertices(), expected);
         }
     }
@@ -74,20 +112,35 @@ class GirderCapAccumulatorTest {
         }
     }
 
-    private static Set<Vector3f> collectProjectedPositions(List<GirderMeshQuad.Segment> segments) {
+    private static Set<Vector3f> collectProjectedPositions(
+        List<GirderMeshQuad.Segment> segments,
+        Vector3f planePoint,
+        Vector3f planeNormal
+    ) {
         Set<Vector3f> projected = new HashSet<>();
         for (GirderMeshQuad.Segment segment : segments) {
-            projected.add(project(segment.start().position()));
-            projected.add(project(segment.end().position()));
+            projected.add(project(segment.start().position(), planePoint, planeNormal));
+            projected.add(project(segment.end().position(), planePoint, planeNormal));
         }
         return projected;
     }
 
-    private static Vector3f project(Vector3f position) {
+    private static GirderMeshQuad.Segment segment(
+        float sx,
+        float sy,
+        float sz,
+        float ex,
+        float ey,
+        float ez
+    ) {
+        return new GirderMeshQuad.Segment(vertex(sx, sy, sz), vertex(ex, ey, ez));
+    }
+
+    private static Vector3f project(Vector3f position, Vector3f planePoint, Vector3f planeNormal) {
         Vector3f projected = new Vector3f(position);
-        float distance = GirderGeometry.signedDistance(projected, PLANE_NORMAL, PLANE_POINT);
+        float distance = GirderGeometry.signedDistance(projected, planeNormal, planePoint);
         if (Math.abs(distance) > GirderGeometry.EPSILON) {
-            projected.sub(new Vector3f(PLANE_NORMAL).mul(distance));
+            projected.sub(new Vector3f(planeNormal).mul(distance));
         }
         return projected;
     }

@@ -13,7 +13,6 @@ import net.minecraft.world.inventory.InventoryMenu;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -97,7 +96,6 @@ public final class GirderCapAccumulator {
 
             List<CapEdge> edges = new ArrayList<>();
             Map<VertexKey, List<CapEdge>> outgoing = new HashMap<>();
-            Map<EdgeKey, ArrayDeque<CapEdge>> reverseBuckets = new HashMap<>();
 
             for (CapSegment segment : groupSegments) {
                 CapVertex start = segment.start().copy();
@@ -113,27 +111,21 @@ public final class GirderCapAccumulator {
                     continue;
                 }
 
-                float angle = (float) Math.atan2(delta.y, delta.x);
-                CapEdge edge = new CapEdge(start, end, angle);
-                edges.add(edge);
-
                 VertexKey startKey = VertexKey.from(start.position());
-                outgoing.computeIfAbsent(startKey, keyIgnored -> new ArrayList<>()).add(edge);
+                VertexKey endKey = VertexKey.from(end.position());
 
-                EdgeKey forwardKey = new EdgeKey(startKey, VertexKey.from(end.position()));
-                EdgeKey reverseKey = forwardKey.reverse();
-                ArrayDeque<CapEdge> reverse = reverseBuckets.get(reverseKey);
-                if (reverse != null) {
-                    CapEdge twin = reverse.poll();
-                    if (twin != null) {
-                        edge.setTwin(twin);
-                        twin.setTwin(edge);
-                    }
-                    if (reverse.isEmpty()) {
-                        reverseBuckets.remove(reverseKey);
-                    }
-                }
-                reverseBuckets.computeIfAbsent(forwardKey, ignored -> new ArrayDeque<>()).add(edge);
+                float forwardAngle = (float) Math.atan2(delta.y, delta.x);
+                float reverseAngle = (float) Math.atan2(-delta.y, -delta.x);
+
+                CapEdge forward = new CapEdge(start, end, startKey, endKey, forwardAngle);
+                CapEdge backward = new CapEdge(end.copy(), start.copy(), endKey, startKey, reverseAngle);
+                forward.setTwin(backward);
+                backward.setTwin(forward);
+
+                edges.add(forward);
+
+                registerEdge(outgoing, forward);
+                registerEdge(outgoing, backward);
             }
 
             for (List<CapEdge> star : outgoing.values()) {
@@ -218,6 +210,10 @@ public final class GirderCapAccumulator {
         return projected;
     }
 
+    private static void registerEdge(Map<VertexKey, List<CapEdge>> outgoing, CapEdge edge) {
+        outgoing.computeIfAbsent(edge.startKey(), keyIgnored -> new ArrayList<>()).add(edge);
+    }
+
     private static List<CapVertex> traceLoop(CapEdge start, Map<VertexKey, List<CapEdge>> outgoing) {
         List<CapVertex> loop = new ArrayList<>();
         CapEdge current = start;
@@ -228,6 +224,9 @@ public final class GirderCapAccumulator {
                 return List.of();
             }
             current.setUsed(true);
+            if (current.twin() != null) {
+                current.twin().setUsed(true);
+            }
             loop.add(current.start().copy());
 
             CapEdge next = findNextEdge(current, outgoing, start);
@@ -251,7 +250,7 @@ public final class GirderCapAccumulator {
     }
 
     private static CapEdge findNextEdge(CapEdge current, Map<VertexKey, List<CapEdge>> outgoing, CapEdge start) {
-        VertexKey endKey = VertexKey.from(current.end().position());
+        VertexKey endKey = current.endKey();
         List<CapEdge> star = outgoing.get(endKey);
         if (star == null || star.isEmpty()) {
             return null;
@@ -365,13 +364,17 @@ public final class GirderCapAccumulator {
 
         private final CapVertex start;
         private final CapVertex end;
+        private final VertexKey startKey;
+        private final VertexKey endKey;
         private final float angle;
         private CapEdge twin;
         private boolean used;
 
-        CapEdge(CapVertex start, CapVertex end, float angle) {
+        CapEdge(CapVertex start, CapVertex end, VertexKey startKey, VertexKey endKey, float angle) {
             this.start = start;
             this.end = end;
+            this.startKey = startKey;
+            this.endKey = endKey;
             this.angle = angle;
         }
 
@@ -381,6 +384,14 @@ public final class GirderCapAccumulator {
 
         CapVertex end() {
             return end;
+        }
+
+        VertexKey startKey() {
+            return startKey;
+        }
+
+        VertexKey endKey() {
+            return endKey;
         }
 
         float angle() {
@@ -401,13 +412,6 @@ public final class GirderCapAccumulator {
 
         void setTwin(CapEdge twin) {
             this.twin = twin;
-        }
-    }
-
-    private record EdgeKey(VertexKey start, VertexKey end) {
-
-        EdgeKey reverse() {
-            return new EdgeKey(end, start);
         }
     }
 
