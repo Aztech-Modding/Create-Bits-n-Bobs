@@ -92,3 +92,5 @@
   - Chain drives no longer drop chains when you are in creative mode
   - Chairs can now be wrenched to force an upwright back
   - Ru_Ru tweaks / fixes, thank you @VladisCrafter and @WatermelonGuy
+# 1.21.1-0.1.0
+- Changelog pending...
