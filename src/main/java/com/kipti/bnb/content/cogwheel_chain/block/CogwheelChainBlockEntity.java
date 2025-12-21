@@ -262,4 +262,18 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
         this.chainsToRefund = chainsUsed;
     }
 
+    public void clearStoredChains() {
+        if (isController) {
+            this.chainsToRefund = 0;
+        } else {
+            if (controllerOffset != null && level != null) {
+                final BlockPos controllerPos = worldPosition.offset(controllerOffset);
+                final BlockEntity be = level.getBlockEntity(controllerPos);
+                if (be instanceof final CogwheelChainBlockEntity controllerBE) {
+                    controllerBE.chainsToRefund = 0;
+                }
+            }
+        }
+    }
+
 }

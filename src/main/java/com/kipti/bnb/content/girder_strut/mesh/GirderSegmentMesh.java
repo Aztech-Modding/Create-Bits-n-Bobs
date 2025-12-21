@@ -12,29 +12,29 @@ public final class GirderSegmentMesh {
 
     private final List<GirderMeshQuad> baseQuads;
 
-    public GirderSegmentMesh(List<BakedQuad> quads) {
+    public GirderSegmentMesh(final List<BakedQuad> quads) {
         this.baseQuads = quads.stream()
-            .map(GirderMeshQuad::from)
-            .filter(Objects::nonNull)
-            .toList();
+                .map(GirderMeshQuad::from)
+                .filter(Objects::nonNull)
+                .toList();
     }
 
-    public List<GirderMeshQuad> forLength(float length) {
-        int fullSegments = Mth.floor(length + GirderGeometry.EPSILON);
-        float partial = length - fullSegments;
+    public List<GirderMeshQuad> forLength(final float length) {
+        final int fullSegments = Mth.floor(length + GirderGeometry.EPSILON);
+        final float partial = length - fullSegments;
 
-        List<GirderMeshQuad> result = new ArrayList<>(baseQuads.size() * (fullSegments + 1));
+        final List<GirderMeshQuad> result = new ArrayList<>(baseQuads.size() * (fullSegments + 1));
 
         for (int i = 0; i < fullSegments; i++) {
-            float offset = i;
-            for (GirderMeshQuad quad : baseQuads) {
+            final float offset = i;
+            for (final GirderMeshQuad quad : baseQuads) {
                 result.add(quad.translate(0f, 0f, offset));
             }
         }
 
         if (partial > GirderGeometry.EPSILON) {
-            for (GirderMeshQuad quad : baseQuads) {
-                GirderMeshQuad clipped = quad.clipZ(partial);
+            for (final GirderMeshQuad quad : baseQuads) {
+                final GirderMeshQuad clipped = quad.clipZ(partial);
                 if (clipped != null) {
                     result.add(clipped.translate(0f, 0f, fullSegments));
                 }
@@ -42,8 +42,8 @@ public final class GirderSegmentMesh {
         }
 
         if (result.isEmpty()) {
-            for (GirderMeshQuad quad : baseQuads) {
-                GirderMeshQuad fallback = quad.clipZ(Math.max(partial, GirderGeometry.EPSILON));
+            for (final GirderMeshQuad quad : baseQuads) {
+                final GirderMeshQuad fallback = quad.clipZ(Math.max(partial, GirderGeometry.EPSILON));
                 if (fallback != null) {
                     result.add(fallback);
                 }

@@ -2,12 +2,15 @@ package com.kipti.bnb.content.chair;
 
 import com.kipti.bnb.registry.BnbBlocks;
 import com.simibubi.create.AllBlocks;
+import com.simibubi.create.AllItems;
 import com.simibubi.create.content.contraptions.actors.seat.SeatBlock;
 import com.simibubi.create.content.contraptions.actors.seat.SeatEntity;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.utility.BlockHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -15,6 +18,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
@@ -38,6 +42,7 @@ public class ChairBlock extends SeatBlock implements IWrenchable {
     public static final BooleanProperty LEFT_ARM = BooleanProperty.create("left_arm");
     public static final BooleanProperty RIGHT_ARM = BooleanProperty.create("right_arm");
     public static final BooleanProperty BACK_FLAT = BooleanProperty.create("back_flat");
+    public static final BooleanProperty FORCED_BACK_FLAT = BooleanProperty.create("forced_back_flat");
     public static final BooleanProperty INVERTED_CORNER = BooleanProperty.create("inverted_corner");
     public static final BooleanProperty CORNER = BooleanProperty.create("corner");
 
@@ -49,8 +54,20 @@ public class ChairBlock extends SeatBlock implements IWrenchable {
                         .setValue(RIGHT_ARM, true)
                         .setValue(CORNER, false)
                         .setValue(BACK_FLAT, false)
+                        .setValue(FORCED_BACK_FLAT, false)
                         .setValue(INVERTED_CORNER, false)
         );
+    }
+
+    @Override
+    public InteractionResult onWrenched(final BlockState state, final UseOnContext context) {
+        if (context.getLevel().isClientSide)
+            return InteractionResult.SUCCESS;
+        final BlockState newState = state.cycle(FORCED_BACK_FLAT);
+        final boolean isForcedFlat = newState.getValue(FORCED_BACK_FLAT);
+        context.getLevel().setBlockAndUpdate(context.getClickedPos(), newState);
+        context.getLevel().playSound(null, context.getClickedPos(), isForcedFlat ? SoundEvents.WOODEN_TRAPDOOR_CLOSE : SoundEvents.WOODEN_TRAPDOOR_OPEN, SoundSource.BLOCKS, 1.0f, 1.0f);
+        return InteractionResult.SUCCESS;
     }
 
     @Override
@@ -60,7 +77,12 @@ public class ChairBlock extends SeatBlock implements IWrenchable {
             return InteractionResult.PASS;
 
         ItemStack stack = player.getItemInHand(hand);
+        if (stack.is(AllItems.WRENCH.get())) {
+            return InteractionResult.PASS;
+        }
+
         DyeColor color = DyeColor.getColor(stack);
+
         if (color != null && color != this.color) {
             if (level.isClientSide)
                 return InteractionResult.SUCCESS;
@@ -92,7 +114,7 @@ public class ChairBlock extends SeatBlock implements IWrenchable {
     @Override
     protected void createBlockStateDefinition(final StateDefinition.@NotNull Builder<Block, BlockState> pBuilder) {
         super.createBlockStateDefinition(pBuilder);
-        pBuilder.add(FACING, LEFT_ARM, RIGHT_ARM, CORNER, BACK_FLAT, INVERTED_CORNER);
+        pBuilder.add(FACING, LEFT_ARM, RIGHT_ARM, CORNER, BACK_FLAT, FORCED_BACK_FLAT, INVERTED_CORNER);
     }
 
     @Override
