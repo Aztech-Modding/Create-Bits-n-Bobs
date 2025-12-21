@@ -112,3 +112,6 @@
   - Turkish translation, thank you to @erdemarikaneskici
   - Fixed concurrent modification exception crash, thanks to @MarioSMB for the solution
   - Fixed glass tag in lightbulb recipe
+# 1.20.1-0.0.30b
+- Changes:
+  - Fix concurrent modification exception crash properly

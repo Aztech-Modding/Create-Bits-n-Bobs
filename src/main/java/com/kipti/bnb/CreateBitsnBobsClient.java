@@ -14,6 +14,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
@@ -24,11 +25,11 @@ public class CreateBitsnBobsClient {
         eventBus.addListener(CreateBitsnBobsClient::onClientSetup);
     }
 
-    private static void onClientSetup(final FMLLoadCompleteEvent event) {
-        event.enqueueWork(() -> CreateBitsnBobsClient.setup());
+    private static void onClientSetup(final FMLClientSetupEvent event) {
+        event.enqueueWork(CreateBitsnBobsClient::clientInit);
     }
 
-    private static void setup() {
+    private static void clientInit() {
         PonderIndex.addPlugin(new BnbPonderPlugin());
 
         BnbPartialModels.register();
