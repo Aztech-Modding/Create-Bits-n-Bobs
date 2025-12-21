@@ -13,7 +13,7 @@ public enum StrutModelType {
     private final PartialModel segmentPartial;
     private final ResourceLocation capTexture;
 
-    StrutModelType(PartialModel segmentPartial, ResourceLocation capTexture) {
+    StrutModelType(final PartialModel segmentPartial, final ResourceLocation capTexture) {
         this.segmentPartial = segmentPartial;
         this.capTexture = capTexture;
     }
