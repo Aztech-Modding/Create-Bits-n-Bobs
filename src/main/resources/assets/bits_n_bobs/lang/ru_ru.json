@@ -159,7 +159,7 @@
   "tooltip.bits_n_bobs.flywheel_bearing.angular_mass.heavy": "(тяжёлая)",
   "tooltip.bits_n_bobs.flywheel_bearing.angular_mass.light": "(лёгкая)",
   "tooltip.bits_n_bobs.flywheel_bearing.angular_mass.medium": "(средней массы)",
-  "tooltip.bits_n_bobs.flywheel_bearing.angular_mass.none": "(нулевая)",
+  "tooltip.bits_n_bobs.flywheel_bearing.angular_mass.none": "(невесомая)",
   "tooltip.bits_n_bobs.flywheel_bearing.angular_mass.super_heavy": "(очень тяжёлая)",
   "tooltip.bits_n_bobs.flywheel_bearing.angular_mass.super_light": "(очень лёгкая)",
   "tooltip.bits_n_bobs.flywheel_bearing.empty": "(пустой)",
