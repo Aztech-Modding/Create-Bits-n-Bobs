@@ -2,12 +2,16 @@ package com.kipti.bnb.content.girder_strut;
 
 import com.kipti.bnb.registry.BnbBlockEntities;
 import com.kipti.bnb.registry.BnbShapes;
+import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;
 import com.tterrag.registrate.util.nullness.NonNullFunction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -29,7 +33,7 @@ import org.jetbrains.annotations.Nullable;
 
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED;
 
-public class GirderStrutBlock extends Block implements IBE<GirderStrutBlockEntity>, SimpleWaterloggedBlock {
+public class GirderStrutBlock extends Block implements IBE<GirderStrutBlockEntity>, SimpleWaterloggedBlock, IWrenchable {
 
     public static final DirectionProperty FACING = DirectionalBlock.FACING;
     public static final int MAX_SPAN = 8;
@@ -40,6 +44,25 @@ public class GirderStrutBlock extends Block implements IBE<GirderStrutBlockEntit
         super(properties);
         registerDefaultState(defaultBlockState().setValue(FACING, Direction.UP).setValue(WATERLOGGED, false));
         this.modelType = modelType;
+    }
+
+    @Override
+    public InteractionResult onWrenched(final BlockState state, final UseOnContext context) {
+        return InteractionResult.PASS;
+    }
+
+    @Override
+    public InteractionResult onSneakWrenched(final BlockState state, final UseOnContext context) {
+        final Player player = context.getPlayer();
+        final Level level = context.getLevel();
+        final BlockPos pos = context.getClickedPos();
+        if (!level.isClientSide) {
+            final BlockState currentState = level.getBlockState(pos);
+            final ItemStack itemToReturn = new ItemStack(currentState.getBlock());
+            destroyConnectedStrut(level, pos, false);
+            player.getInventory().placeItemBackInInventory(itemToReturn);
+        }
+        return IWrenchable.super.onSneakWrenched(state, context);
     }
 
     public static NonNullFunction<Properties, GirderStrutBlock> normal() {
