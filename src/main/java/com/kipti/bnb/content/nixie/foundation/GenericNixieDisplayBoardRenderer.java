@@ -20,7 +20,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Style;
 import net.minecraft.util.FastColor;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
@@ -38,7 +38,7 @@ public class GenericNixieDisplayBoardRenderer extends SmartBlockEntityRenderer<G
         super.renderSafe(be, partialTicks, ms, buffer, light, overlay);
 
         final Font fontRenderer = Minecraft.getInstance().font;
-        final FontSet fontSet = ((FontAccess) fontRenderer).bits_n_bobs$getFontSet(ResourceLocation.withDefaultNamespace("default"));
+        final FontSet fontSet = ((FontAccess) fontRenderer).bits_n_bobs$getFontSet(Style.DEFAULT_FONT);
         if (fontSet == null) {
             return; // No font set available, nothing to render
         }
