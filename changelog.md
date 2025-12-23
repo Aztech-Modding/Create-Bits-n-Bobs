@@ -96,4 +96,5 @@
 - Changes:
     - Girder struts can be appropriately wrenched to break them
 # 1.21.1-0.1.0
-- Changelog pending...
+- Changes:
+  - Belts can be right-clicked with glow ink sacs to make them glow

@@ -14,6 +14,8 @@
     "GuiGameElementMixin",
     "RotationPropagatorMixin",
     "flywheel_bearing.KineticNetworkMixin",
+    "glowing_belts.BeltBlockMixin",
+    "glowing_belts.BeltSlicerMixin",
     "presets.ChunkGeneratorsMixin",
     "presets.WorldDimensionsMixin",
     "presets.WorldPresetsBootstrapMixin",
