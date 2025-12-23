@@ -138,7 +138,7 @@
   "block.bits_n_bobs.yellow_large_nixie_tube": "Жёлтый большой газоразрядный индикатор",
   "block.bits_n_bobs.yellow_nixie_board": "Жёлтый газоразрядный экран",
   "entity.bits_n_bobs.inert_stationary_contraption": "Инерционная стационарная штуковина",
-  "generator.bits_n_bobs.ponderous_planes": "Просторы для размышления",
+  "generator.bits_n_bobs.ponderous_planes": "Простор для размышления",
   "item.bits_n_bobs.icon_lightbulb": "Фальшивая газоразрядная лампа",
   "message.bits_n_bobs.cogwheel_chain.chain_addition_aborted.cannot_revisit_node": "Нельзя дважды протягивать цепь через одну и ту же шестерню",
   "message.bits_n_bobs.cogwheel_chain.chain_addition_aborted.cogwheels_cannot_touch": "Сцепляемые шестерни не должны соприкасаться",
