@@ -6,6 +6,9 @@ import com.kipti.bnb.content.chair.ChairBlock;
 import com.kipti.bnb.content.cogwheel_chain.block.CogwheelChainBlock;
 import com.kipti.bnb.content.cogwheel_chain.block.ConnectingCogwheelChainBlock;
 import com.kipti.bnb.content.cogwheel_chain.flanged_gear.EmptyFlangedGearBlock;
+import com.kipti.bnb.content.encased_blocks.BnbEncasedCogwheelBlock;
+import com.kipti.bnb.content.encased_blocks.BnbEncasedShaftBlock;
+import com.kipti.bnb.content.encased_blocks.piston_pole.EncasedPistonExtensionPoleBlock;
 import com.kipti.bnb.content.flywheel_bearing.FlywheelBearingBlock;
 import com.kipti.bnb.content.girder_strut.GirderStrutBlock;
 import com.kipti.bnb.content.girder_strut.GirderStrutBlockItem;
@@ -24,6 +27,8 @@ import com.kipti.bnb.content.weathered_girder.WeatheredConnectedGirderModel;
 import com.kipti.bnb.content.weathered_girder.WeatheredGirderBlock;
 import com.kipti.bnb.content.weathered_girder.WeatheredGirderBlockStateGenerator;
 import com.kipti.bnb.content.weathered_girder.WeatheredGirderEncasedShaftBlock;
+import com.kipti.bnb.foundation.BnbBuilderTransformers;
+import com.kipti.bnb.foundation.EncasedBlockList;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllDisplaySources;
 import com.simibubi.create.AllTags;
@@ -31,6 +36,8 @@ import com.simibubi.create.api.stress.BlockStressValues;
 import com.simibubi.create.content.contraptions.actors.seat.SeatInteractionBehaviour;
 import com.simibubi.create.content.contraptions.actors.seat.SeatMovementBehaviour;
 import com.simibubi.create.content.contraptions.pulley.PulleyBlock;
+import com.simibubi.create.content.decoration.encasing.EncasableBlock;
+import com.simibubi.create.content.decoration.encasing.EncasingRegistry;
 import com.simibubi.create.foundation.block.DyedBlockList;
 import com.simibubi.create.foundation.data.AssetLookup;
 import com.simibubi.create.foundation.data.BlockStateGen;
@@ -42,6 +49,7 @@ import com.tterrag.registrate.builders.BlockBuilder;
 import com.tterrag.registrate.providers.RegistrateRecipeProvider;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import com.tterrag.registrate.util.nullness.NonNullFunction;
+import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
@@ -50,12 +58,16 @@ import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
 
@@ -65,6 +77,7 @@ import static com.simibubi.create.api.behaviour.display.DisplaySource.displaySou
 import static com.simibubi.create.api.behaviour.display.DisplayTarget.displayTarget;
 import static com.simibubi.create.api.behaviour.interaction.MovingInteractionBehaviour.interactionBehaviour;
 import static com.simibubi.create.api.behaviour.movement.MovementBehaviour.movementBehaviour;
+import static com.simibubi.create.foundation.data.BlockStateGen.directionalBlockIgnoresWaterlogged;
 import static com.simibubi.create.foundation.data.ModelGen.customItemModel;
 import static com.simibubi.create.foundation.data.TagGen.*;
 
@@ -313,6 +326,7 @@ public class BnbBlocks {
             .register();
 
     public static final BlockEntry<EmptyFlangedGearBlock> SMALL_EMPTY_FLANGED_COGWHEEL = REGISTRATE.block("small_flanged_cogwheel", EmptyFlangedGearBlock::small)
+            .lang("Flanged Cogwheel")
             .initialProperties(SharedProperties::stone)
             .properties(p -> p.sound(SoundType.WOOD)
                     .mapColor(MapColor.DIRT))
@@ -403,6 +417,81 @@ public class BnbBlocks {
                 .build()
                 .register();
     });
+
+    //Base encasing extensions
+
+    public static final BlockEntry<BnbEncasedShaftBlock> INDUSTRIAL_IRON_ENCASED_SHAFT = REGISTRATE
+            .block("industrial_iron_encased_shaft", p -> new BnbEncasedShaftBlock(p, AllBlocks.INDUSTRIAL_IRON_BLOCK))
+            .properties(p -> p.mapColor(MapColor.COLOR_GRAY))
+            .transform(BnbBuilderTransformers.encasedShaftWithoutCT("industrial_iron"))
+            .transform(EncasingRegistry.addVariantTo(AllBlocks.SHAFT))
+            .transform(axeOrPickaxe())
+            .register();
+
+    public static final BlockEntry<BnbEncasedShaftBlock> WEATHERED_IRON_ENCASED_SHAFT = REGISTRATE
+            .block("weathered_iron_encased_shaft", p -> new BnbEncasedShaftBlock(p, AllBlocks.WEATHERED_IRON_BLOCK))
+            .properties(p -> p.mapColor(MapColor.COLOR_BROWN))
+            .transform(BnbBuilderTransformers.encasedShaftWithoutCT("weathered_iron"))
+            .transform(EncasingRegistry.addVariantTo(AllBlocks.SHAFT))
+            .transform(axeOrPickaxe())
+            .register();
+
+    public static final BlockEntry<BnbEncasedCogwheelBlock> INDUSTRIAL_IRON_ENCASED_COGWHEEL = REGISTRATE
+            .block("industrial_iron_encased_cogwheel", p -> new BnbEncasedCogwheelBlock(p, false, AllBlocks.INDUSTRIAL_IRON_BLOCK))
+            .properties(p -> p.mapColor(MapColor.COLOR_GRAY))
+            .transform(BnbBuilderTransformers.encasedCogwheelWithoutCT("industrial_iron"))
+            .transform(EncasingRegistry.addVariantTo(AllBlocks.COGWHEEL))
+            .transform(axeOrPickaxe())
+            .register();
+
+    public static final BlockEntry<BnbEncasedCogwheelBlock> WEATHERED_IRON_ENCASED_COGWHEEL = REGISTRATE
+            .block("weathered_iron_encased_cogwheel", p -> new BnbEncasedCogwheelBlock(p, false, AllBlocks.WEATHERED_IRON_BLOCK))
+            .properties(p -> p.mapColor(MapColor.COLOR_BROWN))
+            .transform(BnbBuilderTransformers.encasedCogwheelWithoutCT("weathered_iron"))
+            .transform(EncasingRegistry.addVariantTo(AllBlocks.COGWHEEL))
+            .transform(axeOrPickaxe())
+            .register();
+
+    public static final BlockEntry<BnbEncasedCogwheelBlock> INDUSTRIAL_IRON_ENCASED_LARGE_COGWHEEL = REGISTRATE
+            .block("industrial_iron_encased_large_cogwheel", p -> new BnbEncasedCogwheelBlock(p, true, AllBlocks.INDUSTRIAL_IRON_BLOCK))
+            .properties(p -> p.mapColor(MapColor.PODZOL))
+            .transform(BnbBuilderTransformers.encasedLargeCogwheelWithoutCT("industrial_iron"))
+            .transform(EncasingRegistry.addVariantTo(AllBlocks.LARGE_COGWHEEL))
+            .transform(axeOrPickaxe())
+            .register();
+
+    public static final BlockEntry<BnbEncasedCogwheelBlock> WEATHERED_IRON_ENCASED_LARGE_COGWHEEL = REGISTRATE
+            .block("weathered_iron_encased_large_cogwheel", p -> new BnbEncasedCogwheelBlock(p, true, AllBlocks.WEATHERED_IRON_BLOCK))
+            .properties(p -> p.mapColor(MapColor.TERRACOTTA_BROWN))
+            .transform(BnbBuilderTransformers.encasedLargeCogwheelWithoutCT("weathered_iron"))
+            .transform(EncasingRegistry.addVariantTo(AllBlocks.LARGE_COGWHEEL))
+            .transform(axeOrPickaxe())
+            .register();
+
+    public static final EncasedBlockList<EncasedPistonExtensionPoleBlock> ENCASED_PISTON_EXTENSION_POLE = new EncasedBlockList<>((casing) -> REGISTRATE
+            .block(casing.asId("encased_piston_extension_pole"), (p) -> new EncasedPistonExtensionPoleBlock(p, casing.getMaterial()))
+            .initialProperties(() -> Blocks.PISTON_HEAD)
+            .properties(p -> p.sound(SoundType.SCAFFOLDING)
+                    .mapColor(MapColor.DIRT)
+                    .forceSolidOn())
+            .transform(EncasingRegistry.addVariantTo(() -> ((Block & EncasableBlock) AllBlocks.PISTON_EXTENSION_POLE.get())))
+            .transform(axeOrPickaxe())
+            .blockstate((c, p) -> directionalBlockIgnoresWaterlogged(c, p, (blockState) -> {
+                final String suffix = blockState.getValue(EncasedPistonExtensionPoleBlock.EMPTY) ? "_empty" : "";
+                final String modelName = c.getName() + suffix;
+                return p.models()
+                        .withExistingParent(modelName, p.modLoc("block/encased_piston_pole/block" + suffix))
+                        .texture("casing", casing.getSurfaceTexture())
+                        .texture("opening", casing.getGearboxTexture());
+            }))
+            .loot((p, lb) -> p.add(lb, LootTable.lootTable()
+                    .withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
+                            .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(lb)
+                                    .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(EncasedPistonExtensionPoleBlock.EMPTY, false)))
+                            .add(LootItem.lootTableItem(AllBlocks.PISTON_EXTENSION_POLE.get().asItem())))
+            ))
+            .simpleItem()
+            .register());
 
     public static void register() {
     }

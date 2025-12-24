@@ -1,0 +1,7 @@
+{
+  "parent": "bits_n_bobs:block/encased_piston_pole/block",
+  "textures": {
+    "casing": "bits_n_bobs:block/industrial_iron_block",
+    "opening": "bits_n_bobs:block/industrial_iron_gearbox"
+  }
+}

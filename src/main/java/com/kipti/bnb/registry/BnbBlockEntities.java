@@ -15,6 +15,9 @@ import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 import com.simibubi.create.content.kinetics.base.ShaftRenderer;
 import com.simibubi.create.content.kinetics.base.SingleAxisRotatingVisual;
+import com.simibubi.create.content.kinetics.simpleRelays.SimpleKineticBlockEntity;
+import com.simibubi.create.content.kinetics.simpleRelays.encased.EncasedCogRenderer;
+import com.simibubi.create.content.kinetics.simpleRelays.encased.EncasedCogVisual;
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
 import dev.engine_room.flywheel.api.model.Model;
 import dev.engine_room.flywheel.lib.model.Models;
@@ -30,8 +33,22 @@ public class BnbBlockEntities {
     public static final BlockEntityEntry<KineticBlockEntity> ENCASED_SHAFT = REGISTRATE
             .blockEntity("encased_shaft", KineticBlockEntity::new)
             .visual(() -> SingleAxisRotatingVisual::shaft, false)
-            .validBlocks(BnbBlocks.WEATHERED_METAL_GIRDER_ENCASED_SHAFT)
+            .validBlocks(BnbBlocks.WEATHERED_METAL_GIRDER_ENCASED_SHAFT, BnbBlocks.INDUSTRIAL_IRON_ENCASED_SHAFT, BnbBlocks.WEATHERED_IRON_ENCASED_SHAFT)
             .renderer(() -> ShaftRenderer::new)
+            .register();
+
+    public static final BlockEntityEntry<SimpleKineticBlockEntity> ENCASED_COGWHEEL = REGISTRATE
+            .blockEntity("encased_cogwheel", SimpleKineticBlockEntity::new)
+            .visual(() -> EncasedCogVisual::small, false)
+            .validBlocks(BnbBlocks.INDUSTRIAL_IRON_ENCASED_COGWHEEL, BnbBlocks.WEATHERED_IRON_ENCASED_COGWHEEL)
+            .renderer(() -> EncasedCogRenderer::small)
+            .register();
+
+    public static final BlockEntityEntry<SimpleKineticBlockEntity> ENCASED_LARGE_COGWHEEL = REGISTRATE
+            .blockEntity("encased_large_cogwheel", SimpleKineticBlockEntity::new)
+            .visual(() -> EncasedCogVisual::large, false)
+            .validBlocks(BnbBlocks.INDUSTRIAL_IRON_ENCASED_LARGE_COGWHEEL, BnbBlocks.WEATHERED_IRON_ENCASED_LARGE_COGWHEEL)
+            .renderer(() -> EncasedCogRenderer::large)
             .register();
 
     public static final BlockEntityEntry<GenericNixieDisplayBlockEntity> GENERIC_NIXIE_DISPLAY = REGISTRATE.blockEntity("generic_nixie_display", GenericNixieDisplayBlockEntity::new)

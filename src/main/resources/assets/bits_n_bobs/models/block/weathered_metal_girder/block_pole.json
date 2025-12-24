@@ -3,7 +3,7 @@
 	"textures": {
 		"1": "bits_n_bobs:block/weathered_girder_pole",
 		"2": "bits_n_bobs:block/weathered_girder_pole_side",
-		"particle": "bits_n_bobs:block/weathered_industrial_iron_block"
+		"particle": "bits_n_bobs:block/weathered_iron_block"
 	},
 	"elements": [
 		{

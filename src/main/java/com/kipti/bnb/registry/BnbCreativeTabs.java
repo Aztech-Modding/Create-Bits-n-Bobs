@@ -2,6 +2,7 @@ package com.kipti.bnb.registry;
 
 import com.kipti.bnb.CreateBitsnBobs;
 import com.simibubi.create.AllCreativeModeTabs;
+import com.simibubi.create.content.decoration.encasing.EncasedBlock;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.tterrag.registrate.util.entry.RegistryEntry;
 import net.minecraft.core.registries.Registries;
@@ -37,9 +38,12 @@ public class BnbCreativeTabs {
                     .displayItems((p, o) -> buildCreativeTabContents(p, o, () -> BnbCreativeTabs.DECO_CREATIVE_TAB)).build());
 
     private static boolean matchesBlockFilter(final BlockItem item) {
-        if (BnbBlocks.CHAIRS.contains(item.getBlock()) && !BnbBlocks.CHAIRS.get(DyeColor.RED).is(item.getBlock())) {
+        if (BnbBlocks.CHAIRS.contains(item.getBlock()) && !BnbBlocks.CHAIRS.get(DyeColor.RED).is(item.getBlock()))
             return false;
-        }
+
+        if (item.getBlock() instanceof EncasedBlock)
+            return false;
+
         return true;
     }
 
@@ -75,7 +79,10 @@ public class BnbCreativeTabs {
     }
 
     private static boolean matchesItemFilter(final Item item) {
-        return !BnbItems.ICON_LIGHTBULB.is(item);
+        if (BnbItems.ICON_LIGHTBULB.is(item))
+            return false;
+
+        return true;
     }
 
 }
