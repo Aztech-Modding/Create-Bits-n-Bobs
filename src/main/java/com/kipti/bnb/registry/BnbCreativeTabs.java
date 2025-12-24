@@ -61,7 +61,7 @@ public class BnbCreativeTabs {
 
     private static void buildCreativeTabContents(final CreativeModeTab.ItemDisplayParameters parameters, final CreativeModeTab.Output output, final Supplier<DeferredHolder<CreativeModeTab, CreativeModeTab>> tabToGet) {
         for (final RegistryEntry<Item, Item> item : CreateBitsnBobs.REGISTRATE.getAll(Registries.ITEM)) {
-            if (!(CreateRegistrate.isInCreativeTab(item, tabToGet.get()) && item.get() instanceof final BlockItem blockItem) || !BnbFeatureFlag.isEnabled(blockItem))
+            if (!CreateRegistrate.isInCreativeTab(item, tabToGet.get()) || !(item.get() instanceof final BlockItem blockItem) || !BnbFeatureFlag.isEnabled(blockItem))
                 continue;
 
             if (matchesSearchOnlyBlockFilter(blockItem))
@@ -69,6 +69,7 @@ public class BnbCreativeTabs {
             else if (matchesBlockFilter(blockItem))
                 output.accept(item.get());
         }
+
         for (final RegistryEntry<Item, Item> item : CreateBitsnBobs.REGISTRATE.getAll(Registries.ITEM)) {
             if (!CreateRegistrate.isInCreativeTab(item, tabToGet.get()) || (item.get() instanceof BlockItem))
                 continue;

@@ -1,7 +1,7 @@
 package com.kipti.bnb.mixin.presets;
 
 import com.kipti.bnb.CreateBitsnBobs;
-import com.kipti.bnb.foundation.generation.PonderLevelSource;
+import com.kipti.bnb.foundation.generation.PonderflatLevelSource;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Registry;
 import net.minecraft.world.level.chunk.ChunkGenerator;
@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class ChunkGeneratorsMixin {
     @Inject(method = "bootstrap", at = @At("TAIL"))
     private static void bootstrap(Registry<MapCodec<? extends ChunkGenerator>> registry, CallbackInfoReturnable<MapCodec<? extends ChunkGenerator>> cir) {
-        Registry.register(registry, CreateBitsnBobs.asResource("ponderous_planes"), PonderLevelSource.CODEC);
+        Registry.register(registry, CreateBitsnBobs.asResource("ponderous_planes"), PonderflatLevelSource.CODEC);
 
     }
 }

@@ -10,8 +10,10 @@ import net.minecraft.world.level.LevelHeightAccessor;
 import net.minecraft.world.level.NoiseColumn;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.WorldGenLevel;
-import net.minecraft.world.level.biome.*;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.BiomeManager;
+import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.level.biome.FixedBiomeSource;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkGenerator;
@@ -23,19 +25,27 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Function;
 
-public class PonderLevelSource extends ChunkGenerator {
-    public static final MapCodec<PonderLevelSource> CODEC = RecordCodecBuilder.mapCodec(
-            p_255576_ -> p_255576_.group(RegistryOps.retrieveElement(Biomes.THE_VOID)).apply(p_255576_, p_255576_.stable(PonderLevelSource::new))
+public class PonderflatLevelSource extends ChunkGenerator {
+    public static final MapCodec<PonderflatLevelSource> CODEC = RecordCodecBuilder.mapCodec(
+            p_255576_ -> p_255576_.group(
+                            RegistryOps.retrieveElement(Biomes.THE_VOID),
+                            PonderflatGeneratorSettings.CODEC.fieldOf("settings")
+                                    .orElse(new PonderflatGeneratorSettings())
+                                    .forGetter(PonderflatLevelSource::getSettings)
+                    )
+                    .apply(p_255576_, p_255576_.stable(PonderflatLevelSource::new))
     );
 
-    public PonderLevelSource(final Holder.Reference<Biome> biome) {
+    private final PonderflatGeneratorSettings settings;
+
+    public PonderflatLevelSource(final Holder.Reference<Biome> biome, final PonderflatGeneratorSettings settings) {
         super(new FixedBiomeSource(biome));
+        this.settings = settings;
     }
 
-    public PonderLevelSource(final BiomeSource biomeSource, final Function<Holder<Biome>, BiomeGenerationSettings> generationSettingsGetter) {
-        super(biomeSource, generationSettingsGetter);
+    public PonderflatGeneratorSettings getSettings() {
+        return settings;
     }
 
     @Override
@@ -58,11 +68,13 @@ public class PonderLevelSource extends ChunkGenerator {
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
                 for (int y = -64; y < (-64 + 16); y++) {
-                    final BlockState blockState = getBlockStateFor(x, y, z);
                     pos.set(
                             chunk.getPos().getBlockX(x),
                             y,
-                            chunk.getPos().getBlockX(z)
+                            chunk.getPos().getBlockZ(z)
+                    );
+                    final BlockState blockState = settings.getBlockState(
+                            pos.getX(), y, pos.getZ()
                     );
                     chunk.setBlockState(pos, blockState, false);
                 }
@@ -84,10 +96,6 @@ public class PonderLevelSource extends ChunkGenerator {
 
     @Override
     public void addDebugScreenInfo(final @NotNull List<String> info, final @NotNull RandomState random, final @NotNull BlockPos pos) {
-    }
-
-    public static BlockState getBlockStateFor(final int chunkX, final int chunkY, final int chunkZ) {
-        return ((chunkX + chunkY + chunkZ) % 2 == 0) ? Blocks.SNOW_BLOCK.defaultBlockState() : Blocks.WHITE_CONCRETE.defaultBlockState();
     }
 
     @Override
