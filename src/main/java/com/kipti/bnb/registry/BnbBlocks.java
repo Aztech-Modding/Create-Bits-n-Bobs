@@ -27,6 +27,7 @@ import com.kipti.bnb.content.weathered_girder.WeatheredConnectedGirderModel;
 import com.kipti.bnb.content.weathered_girder.WeatheredGirderBlock;
 import com.kipti.bnb.content.weathered_girder.WeatheredGirderBlockStateGenerator;
 import com.kipti.bnb.content.weathered_girder.WeatheredGirderEncasedShaftBlock;
+import com.kipti.bnb.foundation.BnbBlockStateGen;
 import com.kipti.bnb.foundation.BnbBuilderTransformers;
 import com.kipti.bnb.foundation.EncasedBlockList;
 import com.simibubi.create.AllBlocks;
@@ -37,6 +38,7 @@ import com.simibubi.create.content.contraptions.actors.seat.SeatInteractionBehav
 import com.simibubi.create.content.contraptions.actors.seat.SeatMovementBehaviour;
 import com.simibubi.create.content.contraptions.pulley.PulleyBlock;
 import com.simibubi.create.content.decoration.encasing.EncasableBlock;
+import com.simibubi.create.content.decoration.encasing.EncasedCTBehaviour;
 import com.simibubi.create.content.decoration.encasing.EncasingRegistry;
 import com.simibubi.create.foundation.block.DyedBlockList;
 import com.simibubi.create.foundation.data.AssetLookup;
@@ -77,7 +79,6 @@ import static com.simibubi.create.api.behaviour.display.DisplaySource.displaySou
 import static com.simibubi.create.api.behaviour.display.DisplayTarget.displayTarget;
 import static com.simibubi.create.api.behaviour.interaction.MovingInteractionBehaviour.interactionBehaviour;
 import static com.simibubi.create.api.behaviour.movement.MovementBehaviour.movementBehaviour;
-import static com.simibubi.create.foundation.data.BlockStateGen.directionalBlockIgnoresWaterlogged;
 import static com.simibubi.create.foundation.data.ModelGen.customItemModel;
 import static com.simibubi.create.foundation.data.TagGen.*;
 
@@ -476,14 +477,20 @@ public class BnbBlocks {
                     .forceSolidOn())
             .transform(EncasingRegistry.addVariantTo(() -> ((Block & EncasableBlock) AllBlocks.PISTON_EXTENSION_POLE.get())))
             .transform(axeOrPickaxe())
-            .blockstate((c, p) -> directionalBlockIgnoresWaterlogged(c, p, (blockState) -> {
+            .transform(casing.withCT(
+                    (builder, ct) -> builder
+                            .onRegister(CreateRegistrate.connectedTextures(() -> new EncasedCTBehaviour(ct)))
+                            .onRegister(CreateRegistrate.casingConnectivity((block, cc) -> cc.make(block, ct,
+                                    (s, f) -> f.getAxis() != s.getValue(EncasedPistonExtensionPoleBlock.FACING).getAxis())))
+            ))
+            .blockstate((c, p) -> BnbBlockStateGen.directionalBlockIgnoresWaterlogged(c, p, (blockState) -> {
                 final String suffix = blockState.getValue(EncasedPistonExtensionPoleBlock.EMPTY) ? "_empty" : "";
                 final String modelName = c.getName() + suffix;
                 return p.models()
                         .withExistingParent(modelName, p.modLoc("block/encased_piston_pole/block" + suffix))
                         .texture("casing", casing.getSurfaceTexture())
                         .texture("opening", casing.getGearboxTexture());
-            }))
+            }, true))
             .loot((p, lb) -> p.add(lb, LootTable.lootTable()
                     .withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
                             .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(lb)

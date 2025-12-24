@@ -2,14 +2,21 @@ package com.kipti.bnb.foundation;
 
 import com.kipti.bnb.CreateBitsnBobs;
 import com.simibubi.create.AllBlocks;
+import com.simibubi.create.AllSpriteShifts;
+import com.simibubi.create.Create;
+import com.simibubi.create.foundation.block.connected.CTSpriteShiftEntry;
+import com.tterrag.registrate.builders.BlockBuilder;
 import com.tterrag.registrate.util.entry.BlockEntry;
+import com.tterrag.registrate.util.nullness.NonNullUnaryOperator;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -19,8 +26,8 @@ import java.util.function.Supplier;
 public class EncasedBlockList<T extends Block> implements Iterable<BlockEntry<T>> {
 
     public enum CasingMaterial {
-        ANDESITE(AllBlocks.ANDESITE_CASING, "andesite_casing", "andesite_gearbox"),
-        BRASS(AllBlocks.BRASS_CASING, "brass_casing", "brass_gearbox"),
+        ANDESITE(AllBlocks.ANDESITE_CASING, "andesite_casing", "gearbox", AllSpriteShifts.ANDESITE_CASING, true),
+        BRASS(AllBlocks.BRASS_CASING, "brass_casing", "brass_gearbox", AllSpriteShifts.BRASS_CASING, true),
         INDUSTRIAL_IRON(AllBlocks.INDUSTRIAL_IRON_BLOCK, "industrial_iron_block", "industrial_iron_gearbox"),
         WEATHERED_IRON(AllBlocks.WEATHERED_IRON_BLOCK, "weathered_iron_block", "weathered_iron_gearbox"),
         ;
@@ -30,10 +37,18 @@ public class EncasedBlockList<T extends Block> implements Iterable<BlockEntry<T>
         private final ResourceLocation surfaceTexture;
         private final ResourceLocation gearboxTexture;
 
+        @Nullable
+        private final CTSpriteShiftEntry connectedTextureShift;
+
         CasingMaterial(final Supplier<? extends Block> material, final String surfaceTexture, final String gearboxTexture) {
+            this(material, surfaceTexture, gearboxTexture, null, false);
+        }
+
+        CasingMaterial(final Supplier<? extends Block> material, final String surfaceTexture, final String gearboxTexture, final @Nullable CTSpriteShiftEntry connectedTextureShift, final boolean isCreateNamespace) {
             this.material = material;
-            this.surfaceTexture = CreateBitsnBobs.asResource("block/" + surfaceTexture);
-            this.gearboxTexture = CreateBitsnBobs.asResource("block/" + gearboxTexture);
+            this.surfaceTexture = isCreateNamespace ? Create.asResource("block/" + surfaceTexture) : CreateBitsnBobs.asResource("block/" + surfaceTexture);
+            this.gearboxTexture = isCreateNamespace ? Create.asResource("block/" + gearboxTexture) : CreateBitsnBobs.asResource("block/" + gearboxTexture);
+            this.connectedTextureShift = connectedTextureShift;
         }
 
         public String asId(final String blockId) {
@@ -50,6 +65,16 @@ public class EncasedBlockList<T extends Block> implements Iterable<BlockEntry<T>
 
         public ResourceLocation getGearboxTexture() {
             return gearboxTexture;
+        }
+
+        public <B extends Block, P> NonNullUnaryOperator<BlockBuilder<B, P>> withCT(final BiConsumer<BlockBuilder<B, P>, CTSpriteShiftEntry> transformer) {
+            return builder -> {
+                if (this.connectedTextureShift != null) {
+                    transformer.accept(builder, this.connectedTextureShift);
+                }
+                return builder;
+            };
+
         }
 
     }

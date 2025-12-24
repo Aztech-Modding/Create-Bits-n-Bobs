@@ -1,7 +1,7 @@
 {
   "parent": "bits_n_bobs:block/encased_piston_pole/block_empty",
   "textures": {
-    "casing": "bits_n_bobs:block/brass_casing",
-    "opening": "bits_n_bobs:block/brass_gearbox"
+    "casing": "create:block/brass_casing",
+    "opening": "create:block/brass_gearbox"
   }
 }
