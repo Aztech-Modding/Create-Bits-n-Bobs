@@ -66,4 +66,7 @@ public record PathedCogwheelNode(int side, boolean isLarge, Direction.Axis rotat
         return Vec3.ZERO;
     }
 
+    public double dist(final PathedCogwheelNode other) {
+        return center().distanceTo(other.center());
+    }
 }

@@ -123,3 +123,8 @@
 # 1.21.1-0.0.32
 - Changes:
     - Girder struts can be appropriately wrenched to break them
+# 1.21.1-0.0.33jolly
+- Changes:
+    - Ru_Ru translation update, thank you @VladisCrafter and @WatermelonGuy
+    - Turkish localization update, thank you @erdemarikaneskici
+    - Fixed chain drives placed from schematics resulting in corrupted blocks, this will retroactively fix broken blocks

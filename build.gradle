@@ -225,17 +225,25 @@ def getRelevantChangelog(String version) {
     if (!changelogFile.exists()) {
         println("Couldn't read changelog for version " + version + ", file does not exist.")
         throw new GradleException("Changelog file CHANGELOG.md does not exist.")
-//        return "No changelog provided."
     }
-    println("Reading changelog for version " + version)
-    Map<String, String> versionChangelogMap = [:]
+
+    // Use LinkedHashMap to preserve the order of versions as they appear in the file
+    Map<String, String> versionChangelogMap = [:] as LinkedHashMap
 
     def currentBlockVersion = null
     def currentBlockLines = []
+
     changelogFile.eachLine { line ->
         def headerDefinition = "# "
         def isHeader = line.startsWith(headerDefinition)
+
         if (isHeader) {
+            // IF we were already processing a block, save it before starting the new one
+            if (currentBlockVersion != null) {
+                versionChangelogMap[currentBlockVersion] = currentBlockLines.join("\n").trim()
+            }
+
+            // Start the new block
             currentBlockVersion = line.substring(headerDefinition.length()).trim()
             currentBlockLines = []
         } else if (currentBlockVersion != null) {
@@ -243,13 +251,30 @@ def getRelevantChangelog(String version) {
         }
     }
 
+    // Capture the very last block after the loop finishes
     if (currentBlockVersion != null) {
         versionChangelogMap[currentBlockVersion] = currentBlockLines.join("\n").trim()
     }
-    var log = versionChangelogMap.get(version.trim())
+
+    def cleanVersion = version.trim()
+    def log = versionChangelogMap.get(cleanVersion)
+
     if (log == null) {
         throw new GradleException("Couldn't find changelog for version " + version)
     }
+
+    // --- Warning Logic ---
+    // This assumes your CHANGELOG.md is ordered from Newest (top) to Oldest (bottom).
+    // It grabs all version keys.
+    def allVersions = versionChangelogMap.keySet().toList()
+
+    // If the requested version is not the first one in the list, a newer one exists.
+    if (!allVersions.isEmpty() && allVersions[0] != cleanVersion) {
+        println "\n**************************************************"
+        println " WARNING: You are generating a changelog for ${cleanVersion}, but a newer version (${allVersions[0]}) was detected in CHANGELOG.md."
+        println "**************************************************\n"
+    }
+
     return log
 }
 

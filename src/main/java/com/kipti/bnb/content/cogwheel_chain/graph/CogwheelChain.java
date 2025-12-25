@@ -65,10 +65,14 @@ public class CogwheelChain {
                 BnbBlocks.LARGE_FLANGED_COGWHEEL_CHAIN.is(state.getBlock()) || BnbBlocks.SMALL_FLANGED_COGWHEEL_CHAIN.is(state.getBlock());
     }
 
-    public static class InvalidGeometryException extends Exception {
-        public InvalidGeometryException(final String reason) {
-            super(reason);
+    public int getChainsRequired() {
+        double length = 0;
+        for (int i = 0; i <= cogwheelNodes.size(); i++) {
+            final PathedCogwheelNode startNode = cogwheelNodes.get(i % cogwheelNodes.size());
+            final PathedCogwheelNode endNode = cogwheelNodes.get((i + 1) % cogwheelNodes.size());
+            length += startNode.dist(endNode);
         }
+        return PlacingCogwheelChain.getChainsRequiredForLength(length);
     }
 
     public void write(final CompoundTag tag) {

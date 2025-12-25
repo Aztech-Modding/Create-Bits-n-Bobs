@@ -3,9 +3,11 @@ package com.kipti.bnb.content.cogwheel_chain.block;
 import com.kipti.bnb.content.cogwheel_chain.graph.CogwheelChain;
 import com.kipti.bnb.content.cogwheel_chain.graph.PathedCogwheelNode;
 import com.kipti.bnb.content.girder_strut.IBlockEntityRelighter;
+import com.simibubi.create.api.schematic.requirement.SpecialBlockEntityItemRequirement;
 import com.simibubi.create.content.kinetics.base.IRotate;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.simpleRelays.SimpleKineticBlockEntity;
+import com.simibubi.create.content.schematics.requirement.ItemRequirement;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Vec3i;
@@ -13,6 +15,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -22,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implements IBlockEntityRelighter {
+public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implements IBlockEntityRelighter, SpecialBlockEntityItemRequirement {
 
     private boolean isController = false;
     @Nullable
@@ -83,6 +86,16 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
     @Override
     protected void write(final CompoundTag compound, final boolean clientPacket) {
         super.write(compound, clientPacket);
+        writeConnectionInfo(compound);
+    }
+
+    @Override
+    public void writeSafe(final CompoundTag tag) {
+        super.writeSafe(tag);
+        writeConnectionInfo(tag);
+    }
+
+    private void writeConnectionInfo(final CompoundTag compound) {
         compound.putBoolean("IsController", isController);
 
         if (controllerOffset != null) {
@@ -108,7 +121,7 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
     public ItemStack destroyChain(final boolean dropItemsInWorld) {
         //Try drop chains from the current block for convenience
         int chainsToReturn = chainsToRefund;
-        if (!isController) {
+        if (!isController && controllerOffset != null && level != null) {
             final BlockPos controllerPos = worldPosition.offset(controllerOffset);
             final BlockEntity be = level.getBlockEntity(controllerPos);
             if (be instanceof final CogwheelChainBlockEntity controllerBE) {
@@ -276,4 +289,11 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
         }
     }
 
+    @Override
+    public ItemRequirement getRequiredItems(final BlockState state) {
+        return isController ? new ItemRequirement(
+                ItemRequirement.ItemUseType.CONSUME,
+                Blocks.CHAIN.asItem().getDefaultInstance().copyWithCount(chain != null ? chain.getChainsRequired() : 0)
+        ) : ItemRequirement.NONE;
+    }
 }
