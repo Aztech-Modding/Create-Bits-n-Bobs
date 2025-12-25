@@ -224,7 +224,7 @@ def getRelevantChangelog(String version) {
     def changelogFile = file("CHANGELOG.md")
     if (!changelogFile.exists()) {
         println("Couldn't read changelog for version " + version + ", file does not exist.")
-        throw new GradleException("Changelog file CHANGELOG.md does not exist.")
+        throw new FileNotFoundException("Changelog file CHANGELOG.md does not exist.")
     }
 
     // 1. Read the file
@@ -252,7 +252,7 @@ def getRelevantChangelog(String version) {
     def log = versionChangelogMap.get(cleanVersion)
 
     if (log == null) {
-        throw new GradleException("Couldn't find changelog for version " + version)
+        throw new IllegalArgumentException("Couldn't find changelog for version " + version)
     }
 
     // --- 2. Smart Comparison Logic ---

@@ -110,14 +110,14 @@ public class CogwheelChainBlock extends RotatedPillarKineticBlock
     }
 
     @Override
-    public BlockState playerWillDestroy(final Level level, final BlockPos pos, final BlockState state, final Player player) {
-        if (!level.isClientSide && player.hasInfiniteMaterials()) {
+    public void playerWillDestroy(final Level level, final @NotNull BlockPos pos, final @NotNull BlockState state, final @NotNull Player player) {
+        if (!level.isClientSide && player.isCreative()) {
             final BlockEntity be = level.getBlockEntity(pos);
             if (be instanceof final CogwheelChainBlockEntity cogwheelChainBE) {
                 cogwheelChainBE.clearStoredChains();
             }
         }
-        return super.playerWillDestroy(level, pos, state, player);
+        super.playerWillDestroy(level, pos, state, player);
     }
 
     @Override

@@ -128,3 +128,11 @@
     - Ru_Ru translation update, thank you @VladisCrafter and @WatermelonGuy
     - Turkish localization update, thank you @erdemarikaneskici
     - Fixed chain drives placed from schematics resulting in corrupted blocks, this will retroactively fix broken blocks
+# 1.20.1-0.0.33jolly
+- Changes (Carried through from 1.21.1-0.0.31 to 0.0.33jolly):
+  - Girder struts can be appropriately wrenched to break them
+  - Chain drives no longer drop chains when you are in creative mode
+  - Chairs can now be wrenched to force an upwright back
+  - Ru_Ru translation update, thank you @VladisCrafter and @WatermelonGuy
+  - Turkish localization update, thank you @erdemarikaneskici
+  - Fixed chain drives placed from schematics resulting in errored blocks (Not corrupted, this issue was not as severe as in 1.21.1)
