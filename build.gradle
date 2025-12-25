@@ -227,31 +227,23 @@ def getRelevantChangelog(String version) {
         throw new GradleException("Changelog file CHANGELOG.md does not exist.")
     }
 
-    // Use LinkedHashMap to preserve the order of versions as they appear in the file
+    // 1. Read the file
     Map<String, String> versionChangelogMap = [:] as LinkedHashMap
-
     def currentBlockVersion = null
     def currentBlockLines = []
 
     changelogFile.eachLine { line ->
         def headerDefinition = "# "
-        def isHeader = line.startsWith(headerDefinition)
-
-        if (isHeader) {
-            // IF we were already processing a block, save it before starting the new one
+        if (line.startsWith(headerDefinition)) {
             if (currentBlockVersion != null) {
                 versionChangelogMap[currentBlockVersion] = currentBlockLines.join("\n").trim()
             }
-
-            // Start the new block
             currentBlockVersion = line.substring(headerDefinition.length()).trim()
             currentBlockLines = []
         } else if (currentBlockVersion != null) {
             currentBlockLines << line
         }
     }
-
-    // Capture the very last block after the loop finishes
     if (currentBlockVersion != null) {
         versionChangelogMap[currentBlockVersion] = currentBlockLines.join("\n").trim()
     }
@@ -263,15 +255,54 @@ def getRelevantChangelog(String version) {
         throw new GradleException("Couldn't find changelog for version " + version)
     }
 
-    // --- Warning Logic ---
-    // This assumes your CHANGELOG.md is ordered from Newest (top) to Oldest (bottom).
-    // It grabs all version keys.
-    def allVersions = versionChangelogMap.keySet().toList()
+    // --- 2. Smart Comparison Logic ---
 
-    // If the requested version is not the first one in the list, a newer one exists.
-    if (!allVersions.isEmpty() && allVersions[0] != cleanVersion) {
+    // Helper: Split version into parts (e.g., "1.21-0.3jolly" -> [1, 21, 0, 3])
+    // This extracts only numbers for comparison to avoid "9 > 33" text issues.
+    def getVersionParts = { String v ->
+        return v.split(/[-.]/).collect { part ->
+            // Extract the first number found in the segment (handles "33jolly" -> 33)
+            def matcher = (part =~ /^(\d+)/)
+            return matcher.find() ? matcher[0][1].toInteger() : -1
+        }
+    }
+
+    // Helper: Returns true if vCandidate > vTarget
+    def isNewer = { String vCandidate, String vTarget ->
+        def p1 = getVersionParts(vCandidate)
+        def p2 = getVersionParts(vTarget)
+
+        // Compare segment by segment
+        for (int i = 0; i < Math.min(p1.size(), p2.size()); i++) {
+            if (p1[i] != p2[i]) {
+                return p1[i] > p2[i]
+            }
+        }
+        return p1.size() > p2.size() // If all match, longer one is "newer" (usually)
+    }
+
+    // Helper: Extract MC version (assumes format MC-MOD or similar)
+    def getMcPrefix = { String v -> v.split("-")[0] }
+    def currentMcVersion = getMcPrefix(cleanVersion)
+
+    // --- 3. Check for Newer Versions ---
+
+    // Filter map keys to find warnings
+    def newerVersions = versionChangelogMap.keySet().findAll { candidateVersion ->
+        // Only check if candidate is distinct from current
+        if (candidateVersion == cleanVersion) return false
+
+        // strict check: Must be same Minecraft version
+        if (getMcPrefix(candidateVersion) != currentMcVersion) return false
+
+        // Check if candidate is actually newer numerically
+        return isNewer(candidateVersion, cleanVersion)
+    }
+
+    if (!newerVersions.isEmpty()) {
         println "\n**************************************************"
-        println " WARNING: You are generating a changelog for ${cleanVersion}, but a newer version (${allVersions[0]}) was detected in CHANGELOG.md."
+        println " WARNING: You are generating a changelog for ${cleanVersion}, but newer version(s) were detected for this MC version:"
+        newerVersions.each { println "  - ${it}" }
         println "**************************************************\n"
     }
 
