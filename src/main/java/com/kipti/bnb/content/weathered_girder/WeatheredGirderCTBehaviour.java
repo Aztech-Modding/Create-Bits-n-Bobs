@@ -26,7 +26,7 @@ public class WeatheredGirderCTBehaviour extends ConnectedTextureBehaviour.Base {
     @Override
     public boolean connectsTo(BlockState state, BlockState other, BlockAndTintGetter reader, BlockPos pos,
                               BlockPos otherPos, Direction face) {
-        if (other.getBlock() != state.getBlock())
+        if (other.getBlock() != state.getBlock() && !(other.getBlock() instanceof GirderBlock))
             return false;
         return !other.getValue(GirderBlock.X) && !other.getValue(GirderBlock.Z);
     }

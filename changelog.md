@@ -136,3 +136,7 @@
   - Ru_Ru translation update, thank you @VladisCrafter and @WatermelonGuy
   - Turkish localization update, thank you @erdemarikaneskici
   - Fixed chain drives placed from schematics resulting in errored blocks (Not corrupted, this issue was not as severe as in 1.21.1)
+# 1.21.1-0.0.34
+- Changes:
+    - Fixed a corrupted state with the chair blocks
+    - Nudged the chair armrest arms to be slightly inset to avoid z-fighting with certain blocks

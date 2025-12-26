@@ -90,6 +90,17 @@ public class ChairBlockStateGen {
                         .condition(ChairBlock.INVERTED_CORNER, false)
                         .end();
 
+                //- Confusion fallback but for inverted corner being true even if normal corner is true
+                p.getMultipartBuilder(c.get())
+                        .part()
+                        .modelFile(chairBaseBlock)
+                        .rotationY((int) (direction.toYRot() + 180) % 360)
+                        .addModel()
+                        .condition(ChairBlock.FACING, direction)
+                        .condition(ChairBlock.CORNER, true)
+                        .condition(ChairBlock.INVERTED_CORNER, true)
+                        .end();
+
                 // Corner base model
                 p.getMultipartBuilder(c.get())
                         .part()
