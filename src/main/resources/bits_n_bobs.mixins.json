@@ -9,9 +9,6 @@
     "AllPaletteStoneTypesMixin",
     "ContraptionColliderMixin",
     "DynamicComponentMixin",
-    "FontAccessMixin",
-    "GirderCTBehaviourMixin",
-    "GuiGameElementMixin",
     "RotationPropagatorMixin",
     "flywheel_bearing.KineticNetworkMixin",
     "presets.WorldDimensionsMixin",
@@ -19,6 +16,9 @@
     "presets.WorldPresetsMixin"
   ],
   "client": [
+    "FontAccessMixin",
+    "GirderCTBehaviourMixin",
+    "GuiGameElementMixin"
   ],
   "server": [
   ],
