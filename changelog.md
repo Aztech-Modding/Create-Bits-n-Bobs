@@ -140,3 +140,8 @@
 - Changes:
     - Fixed a corrupted state with the chair blocks
     - Nudged the chair armrest arms to be slightly inset to avoid z-fighting with certain blocks
+# 1.20.1-0.0.34
+- Changes (Carried through from 1.21.1-0.0.33jolly to 0.0.35):
+  - Fixed a corrupted state with the chair blocks
+  - Nudged the chair armrest arms to be slightly inset to avoid z-fighting with certain blocks
+  - Specified forge version since older versions crash, for some reason
