@@ -1,8 +1,8 @@
 package com.kipti.bnb.foundation;
 
-import com.kipti.bnb.content.cogwheel_chain.item.CogwheelChainPlacementEffect;
-import com.kipti.bnb.content.girder_strut.GirderStrutPlacementEffects;
-import com.kipti.bnb.content.weathered_girder.WeatheredGirderWrenchBehaviour;
+import com.kipti.bnb.content.decoration.girder_strut.GirderStrutPlacementEffects;
+import com.kipti.bnb.content.decoration.weathered_girder.WeatheredGirderWrenchBehaviour;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.placement.CogwheelChainPlacementEffect;
 import com.kipti.bnb.foundation.generation.PonderflatGeneratorSettings;
 import com.kipti.bnb.foundation.generation.PonderflatLevelSource;
 import com.kipti.bnb.foundation.generation.editor.PonderflatEditor;

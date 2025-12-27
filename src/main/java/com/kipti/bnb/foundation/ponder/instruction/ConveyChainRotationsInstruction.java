@@ -1,9 +1,9 @@
 package com.kipti.bnb.foundation.ponder.instruction;
 
 import com.kipti.bnb.CreateBitsnBobs;
-import com.kipti.bnb.content.cogwheel_chain.block.CogwheelChainBlockEntity;
-import com.kipti.bnb.content.cogwheel_chain.graph.CogwheelChain;
-import com.kipti.bnb.content.cogwheel_chain.graph.PathedCogwheelNode;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.block.CogwheelChainBlockEntity;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChain;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.PathedCogwheelNode;
 import net.createmod.ponder.foundation.PonderScene;
 import net.createmod.ponder.foundation.instruction.PonderInstruction;
 import net.minecraft.core.BlockPos;

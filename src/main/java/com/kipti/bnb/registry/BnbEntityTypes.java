@@ -1,7 +1,7 @@
 package com.kipti.bnb.registry;
 
 import com.kipti.bnb.CreateBitsnBobs;
-import com.kipti.bnb.content.flywheel_bearing.contraption.InertControlledContraptionEntity;
+import com.kipti.bnb.content.kinetics.flywheel_bearing.contraption.InertControlledContraptionEntity;
 import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
 import com.simibubi.create.content.contraptions.render.ContraptionEntityRenderer;
 import com.simibubi.create.content.contraptions.render.ContraptionVisual;

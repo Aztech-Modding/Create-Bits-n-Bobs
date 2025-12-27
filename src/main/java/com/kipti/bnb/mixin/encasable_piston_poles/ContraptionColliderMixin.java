@@ -1,6 +1,6 @@
 package com.kipti.bnb.mixin.encasable_piston_poles;
 
-import com.kipti.bnb.content.encased_blocks.piston_pole.EncasedPistonExtensionPoleBlock;
+import com.kipti.bnb.content.kinetics.encased_blocks.piston_pole.EncasedPistonExtensionPoleBlock;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.simibubi.create.content.contraptions.ContraptionCollider;

@@ -1,16 +1,16 @@
 package com.kipti.bnb.registry;
 
-import com.kipti.bnb.content.chain_pulley.ChainPulleyBlockEntity;
-import com.kipti.bnb.content.chain_pulley.ChainPulleyRenderer;
-import com.kipti.bnb.content.cogwheel_chain.block.CogwheelChainBlockEntity;
-import com.kipti.bnb.content.cogwheel_chain.block.CogwheelChainBlockEntityRenderer;
-import com.kipti.bnb.content.flywheel_bearing.FlywheelBearingBlockEntity;
-import com.kipti.bnb.content.flywheel_bearing.FlywheelBearingBlockEntityRenderer;
-import com.kipti.bnb.content.girder_strut.GirderStrutBlockEntity;
-import com.kipti.bnb.content.girder_strut.GirderStrutBlockEntityRenderer;
-import com.kipti.bnb.content.light.headlamp.HeadlampBlockEntity;
-import com.kipti.bnb.content.nixie.foundation.GenericNixieDisplayBlockEntity;
-import com.kipti.bnb.content.nixie.foundation.GenericNixieDisplayBoardRenderer;
+import com.kipti.bnb.content.decoration.girder_strut.GirderStrutBlockEntity;
+import com.kipti.bnb.content.decoration.girder_strut.GirderStrutBlockEntityRenderer;
+import com.kipti.bnb.content.decoration.light.headlamp.HeadlampBlockEntity;
+import com.kipti.bnb.content.decoration.nixie.foundation.GenericNixieDisplayBlockEntity;
+import com.kipti.bnb.content.decoration.nixie.foundation.GenericNixieDisplayBoardRenderer;
+import com.kipti.bnb.content.kinetics.chain_pulley.ChainPulleyBlockEntity;
+import com.kipti.bnb.content.kinetics.chain_pulley.ChainPulleyRenderer;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.block.CogwheelChainBlockEntity;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.block.CogwheelChainBlockEntityRenderer;
+import com.kipti.bnb.content.kinetics.flywheel_bearing.FlywheelBearingBlockEntity;
+import com.kipti.bnb.content.kinetics.flywheel_bearing.FlywheelBearingBlockEntityRenderer;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 import com.simibubi.create.content.kinetics.base.ShaftRenderer;

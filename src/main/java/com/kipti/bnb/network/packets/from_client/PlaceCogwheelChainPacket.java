@@ -1,6 +1,6 @@
 package com.kipti.bnb.network.packets.from_client;
 
-import com.kipti.bnb.content.cogwheel_chain.graph.*;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.*;
 import com.kipti.bnb.network.BnbPackets;
 import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorBlockEntity;
 import net.createmod.catnip.net.base.ServerboundPacketPayload;

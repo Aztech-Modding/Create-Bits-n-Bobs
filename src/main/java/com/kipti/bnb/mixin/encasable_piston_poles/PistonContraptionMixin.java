@@ -1,6 +1,6 @@
 package com.kipti.bnb.mixin.encasable_piston_poles;
 
-import com.kipti.bnb.content.encased_blocks.piston_pole.EncasedPistonExtensionPoleBlock;
+import com.kipti.bnb.content.kinetics.encased_blocks.piston_pole.EncasedPistonExtensionPoleBlock;
 import com.kipti.bnb.registry.BnbBlocks;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;

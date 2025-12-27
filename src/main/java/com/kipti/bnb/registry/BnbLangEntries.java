@@ -1,7 +1,7 @@
 package com.kipti.bnb.registry;
 
 import com.kipti.bnb.CreateBitsnBobs;
-import com.kipti.bnb.content.cogwheel_chain.graph.ChainInteractionFailedException;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.ChainInteractionFailedException;
 
 public class BnbLangEntries {
 

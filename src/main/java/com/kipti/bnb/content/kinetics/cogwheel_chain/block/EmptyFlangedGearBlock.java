@@ -1,0 +1,67 @@
+package com.kipti.bnb.content.kinetics.cogwheel_chain.block;
+
+import com.kipti.bnb.registry.BnbBlockEntities;
+import com.simibubi.create.AllShapes;
+import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
+import com.simibubi.create.content.kinetics.base.RotatedPillarKineticBlock;
+import com.simibubi.create.foundation.block.IBE;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.NotNull;
+
+public class EmptyFlangedGearBlock extends RotatedPillarKineticBlock implements IBE<KineticBlockEntity> {
+
+    final private boolean isLarge;
+
+    public EmptyFlangedGearBlock(final Properties properties, final boolean large) {
+        super(properties);
+        this.isLarge = large;
+    }
+
+    @Override
+    protected @NotNull VoxelShape getShape(final BlockState state, final @NotNull BlockGetter level, final @NotNull BlockPos pos, final @NotNull CollisionContext context) {
+        return (isLarge ? AllShapes.LARGE_GEAR : AllShapes.SMALL_GEAR).get(state.getValue(AXIS));
+    }
+
+    public static EmptyFlangedGearBlock small(final Properties properties) {
+        return new EmptyFlangedGearBlock(properties, false);
+    }
+
+    public static EmptyFlangedGearBlock large(final Properties properties) {
+        return new EmptyFlangedGearBlock(properties, true);
+    }
+
+    @Override
+    protected @NotNull RenderShape getRenderShape(final @NotNull BlockState state) {
+        return RenderShape.ENTITYBLOCK_ANIMATED;
+    }
+
+    @Override
+    public Direction.Axis getRotationAxis(final BlockState state) {
+        return state.getValue(AXIS);
+    }
+
+    @Override
+    public boolean hasShaftTowards(final LevelReader world, final BlockPos pos, final BlockState state, final Direction face) {
+        return state.getValue(AXIS) == face.getAxis();
+    }
+
+
+    @Override
+    public Class<KineticBlockEntity> getBlockEntityClass() {
+        return KineticBlockEntity.class;
+    }
+
+    @Override
+    public BlockEntityType<? extends KineticBlockEntity> getBlockEntityType() {
+        return BnbBlockEntities.EMPTY_FLANGED_COGWHEEL.get();
+    }
+
+}

@@ -1,7 +1,7 @@
 package com.kipti.bnb.registry;
 
 import com.kipti.bnb.CreateBitsnBobs;
-import com.kipti.bnb.content.nixie.foundation.GenericNixieDisplayTarget;
+import com.kipti.bnb.content.decoration.nixie.foundation.GenericNixieDisplayTarget;
 import com.simibubi.create.api.behaviour.display.DisplayTarget;
 import com.tterrag.registrate.util.entry.RegistryEntry;
 

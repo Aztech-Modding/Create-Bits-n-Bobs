@@ -1,7 +1,7 @@
 package com.kipti.bnb.registry;
 
-import com.kipti.bnb.content.palette.BnbPaletteBlockPattern;
-import com.kipti.bnb.content.palette.BnbPalettesVariantEntry;
+import com.kipti.bnb.content.decoration.palette.BnbPaletteBlockPattern;
+import com.kipti.bnb.content.decoration.palette.BnbPalettesVariantEntry;
 import com.simibubi.create.AllTags;
 import com.simibubi.create.Create;
 import com.simibubi.create.content.decoration.palettes.AllPaletteStoneTypes;
@@ -21,7 +21,7 @@ import net.minecraft.world.level.material.MapColor;
 
 import java.util.function.Function;
 
-import static com.kipti.bnb.content.palette.BnbPaletteBlockPattern.ADDITIONS_TO_BASE;
+import static com.kipti.bnb.content.decoration.palette.BnbPaletteBlockPattern.ADDITIONS_TO_BASE;
 
 public enum BnbPaletteStoneTypes {
 
