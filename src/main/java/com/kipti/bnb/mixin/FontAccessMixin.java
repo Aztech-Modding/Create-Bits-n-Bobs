@@ -7,11 +7,11 @@ import net.minecraft.resources.ResourceLocation;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-
 @Mixin(Font.class)
 public abstract class FontAccessMixin implements FontAccess {
 
-    @Shadow abstract FontSet getFontSet(ResourceLocation fontLocation);
+    @Shadow
+    abstract FontSet getFontSet(ResourceLocation fontLocation);
 
     @Override
     public FontSet bits_n_bobs$getFontSet(ResourceLocation fontLocation) {

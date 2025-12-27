@@ -61,6 +61,14 @@ public class PlacingCogwheelChain {
             final Vec3i offset = visitedNodes.get(i + 1).pos().subtract(visitedNodes.get(i).pos());
             length += Vec3.atLowerCornerOf(offset).length();
         }
+        return getChainsRequiredForLength(length);
+    }
+
+    public static int getChainsRequiredForLength(final double length) {
+        final float factor = BnbConfigs.server().COGWHEEL_CHAIN_DRIVE_COST_FACTOR.getF();
+        if (factor == 0) {
+            return 0;
+        }
         return (int) Math.max(Math.round(factor * length / 5), 1);
     }
 

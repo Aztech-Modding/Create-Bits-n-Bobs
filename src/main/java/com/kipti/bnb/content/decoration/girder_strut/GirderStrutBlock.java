@@ -60,7 +60,8 @@ public class GirderStrutBlock extends Block implements IBE<GirderStrutBlockEntit
             final BlockState currentState = level.getBlockState(pos);
             final ItemStack itemToReturn = new ItemStack(currentState.getBlock());
             destroyConnectedStrut(level, pos, false);
-            player.getInventory().placeItemBackInInventory(itemToReturn);
+            if (player != null && !player.hasInfiniteMaterials())
+                player.getInventory().placeItemBackInInventory(itemToReturn);
         }
         return IWrenchable.super.onSneakWrenched(state, context);
     }

@@ -95,6 +95,19 @@
 # 1.21.1-0.0.32
 - Changes:
     - Girder struts can be appropriately wrenched to break them
+# 1.21.1-0.0.33jolly
+- Changes:
+    - Ru_Ru translation update, thank you @VladisCrafter and @WatermelonGuy
+    - Turkish localization update, thank you @erdemarikaneskici
+    - Fixed chain drives placed from schematics resulting in corrupted blocks, this will retroactively fix broken blocks
+# 1.21.1-0.0.34
+- Changes:
+    - Fixed a corrupted state with the chair blocks
+    - Nudged the chair armrest arms to be slightly inset to avoid z-fighting with certain blocks
+# 1.21.1-0.0.35
+- Changes:
+    - Proper dist for mixins
+    - Flipped 9 number texture in the atlas for nixie tubes and boards
 # 1.21.1-0.1.0
 - Changes:
   - Belts can be right-clicked with glow ink sacs to make them glow

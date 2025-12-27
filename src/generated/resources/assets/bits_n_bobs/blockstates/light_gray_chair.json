@@ -38,6 +38,17 @@
     },
     {
       "apply": {
+        "model": "bits_n_bobs:block/chair/block_single_light_gray",
+        "y": 180
+      },
+      "when": {
+        "corner": "true",
+        "facing": "south",
+        "inverted_corner": "true"
+      }
+    },
+    {
+      "apply": {
         "model": "bits_n_bobs:block/chair/block_corner_light_gray",
         "y": 180
       },
@@ -506,6 +517,17 @@
     },
     {
       "apply": {
+        "model": "bits_n_bobs:block/chair/block_single_light_gray",
+        "y": 270
+      },
+      "when": {
+        "corner": "true",
+        "facing": "west",
+        "inverted_corner": "true"
+      }
+    },
+    {
+      "apply": {
         "model": "bits_n_bobs:block/chair/block_corner_light_gray",
         "y": 270
       },
@@ -967,6 +989,16 @@
     },
     {
       "apply": {
+        "model": "bits_n_bobs:block/chair/block_single_light_gray"
+      },
+      "when": {
+        "corner": "true",
+        "facing": "north",
+        "inverted_corner": "true"
+      }
+    },
+    {
+      "apply": {
         "model": "bits_n_bobs:block/chair/block_corner_light_gray"
       },
       "when": {
@@ -1410,6 +1442,17 @@
         "inverted_corner": "false",
         "left_arm": "true",
         "right_arm": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/block_single_light_gray",
+        "y": 90
+      },
+      "when": {
+        "corner": "true",
+        "facing": "east",
+        "inverted_corner": "true"
       }
     },
     {

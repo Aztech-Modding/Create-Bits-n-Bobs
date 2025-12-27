@@ -10,8 +10,6 @@
     "AllPaletteStoneTypesMixin",
     "ContraptionColliderMixin",
     "DynamicComponentMixin",
-    "FontAccessMixin",
-    "GuiGameElementMixin",
     "RotationPropagatorMixin",
     "encasable_piston_poles.ContraptionColliderMixin",
     "encasable_piston_poles.MechanicalPistonBlockMixin",
@@ -26,6 +24,9 @@
     "presets.WorldPresetsMixin"
   ],
   "client": [
+    "FontAccessMixin",
+    "GirderCTBehaviourMixin",
+    "GuiGameElementMixin"
   ],
   "server": [
   ],
