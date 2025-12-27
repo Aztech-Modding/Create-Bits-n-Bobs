@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(GirderCTBehaviour.class)
+@Mixin(value = GirderCTBehaviour.class, remap = false)
 public class GirderCTBehaviourMixin {
 
     @Inject(method = "connectsTo", at = @At("RETURN"), cancellable = true)
