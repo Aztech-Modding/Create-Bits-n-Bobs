@@ -1,6 +1,7 @@
 package com.kipti.bnb.network.packets.from_client;
 
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.*;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.types.CogwheelChainType;
 import com.kipti.bnb.network.BnbPackets;
 import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorBlockEntity;
 import net.createmod.catnip.net.base.ServerboundPacketPayload;
@@ -14,6 +15,7 @@ import java.util.List;
 
 public record PlaceCogwheelChainPacket(
         PlacingCogwheelChain worldSpacePartialChain,
+        CogwheelChainType chainType,
         int priorityChainTakeHand
 ) implements ServerboundPacketPayload {
 
@@ -21,6 +23,8 @@ public record PlaceCogwheelChainPacket(
             StreamCodec.composite(
                     PlacingCogwheelChain.STREAM_CODEC,
                     PlaceCogwheelChainPacket::worldSpacePartialChain,
+                    CogwheelChainType.STEAM_CODEC,
+                    PlaceCogwheelChainPacket::chainType,
                     ByteBufCodecs.INT,
                     PlaceCogwheelChainPacket::priorityChainTakeHand,
                     PlaceCogwheelChainPacket::new
@@ -32,7 +36,7 @@ public record PlaceCogwheelChainPacket(
         if (worldSpacePartialChain.maxBounds() > PlacingCogwheelChain.MAX_CHAIN_BOUNDS)
             return;
 
-        if (!worldSpacePartialChain.checkMatchingNodesInLevel(player.level()))
+        if (worldSpacePartialChain.checkMissingNodesInLevel(player.level(), chainType))
             return;
 
         final int chainsRequired = worldSpacePartialChain.getChainsRequiredInLoop();
@@ -53,7 +57,7 @@ public record PlaceCogwheelChainPacket(
         if (chainGeometry == null)
             return;
 
-        final CogwheelChain chain = new CogwheelChain(chainGeometry);
+        final CogwheelChain chain = new CogwheelChain(chainGeometry, chainType);
 
         chain.placeInLevel(player.level(), worldSpacePartialChain);
     }

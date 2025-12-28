@@ -7,7 +7,7 @@ import com.simibubi.create.infrastructure.config.CStress;
 
 public class BnbCreateStresses {
 
-    public static void register() {
+    public static void registerRedirects() {
         BlockStressValues.IMPACTS.registerProvider((p) -> {
             if (BnbBlocks.CHAIN_PULLEY.is(p)) {
                 final CStress stress = AllConfigs.server().kinetics.stressValues;

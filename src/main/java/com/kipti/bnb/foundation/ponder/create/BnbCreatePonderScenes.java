@@ -9,7 +9,7 @@ import com.tterrag.registrate.util.entry.RegistryEntry;
 import net.createmod.ponder.api.registration.PonderSceneRegistrationHelper;
 import net.minecraft.resources.ResourceLocation;
 
-public class BnbBaseCreatePonderScenes {
+public class BnbCreatePonderScenes {
 
     public static void register(final PonderSceneRegistrationHelper<ResourceLocation> helper) {
         final PonderSceneRegistrationHelper<ItemProviderEntry<?, ?>> HELPER = helper.withKeyFunction(RegistryEntry::getId);

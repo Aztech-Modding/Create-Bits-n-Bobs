@@ -12,8 +12,8 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -23,8 +23,7 @@ import org.joml.Vector3f;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.kipti.bnb.content.kinetics.cogwheel_chain.placement.CogwheelChainPlacementInteraction.currentBuildingChain;
-import static com.kipti.bnb.content.kinetics.cogwheel_chain.placement.CogwheelChainPlacementInteraction.currentChainLevel;
+import static com.kipti.bnb.content.kinetics.cogwheel_chain.placement.CogwheelChainPlacementInteraction.*;
 
 public class CogwheelChainPlacementEffect {
 
@@ -34,19 +33,17 @@ public class CogwheelChainPlacementEffect {
         if (Minecraft.getInstance().isPaused() || Minecraft.getInstance().hitResult == null) return;
 
         final ClientLevel level = Minecraft.getInstance().level;
-        if (level == null || currentChainLevel == null || currentBuildingChain == null) {
-            return;
-        }
-        if (!currentChainLevel.equals(level.dimension()) || !currentBuildingChain.checkMatchingNodesInLevel(level)) {
-            currentBuildingChain = null;
-            currentChainLevel = null;
+        if (level == null || currentChainLevel == null || currentBuildingChain == null || currentChainType == null) {
             return;
         }
 
+        if (!currentChainLevel.equals(level.dimension()) || currentBuildingChain.checkMissingNodesInLevel(level, currentChainType)) {
+            CogwheelChainPlacementInteraction.clearPlacingChain();
+            return;
+        }
 
         //Get held chain
-        final ItemStack heldItem = isChain(player.getMainHandItem()) ? player.getMainHandItem() :
-                isChain(player.getOffhandItem()) ? player.getOffhandItem() : null;
+        final ItemStack heldItem = getChainItemInHand(player);
         if (heldItem != null) {
             final BlockPos targetedPos = getTargetedBlockAndDisplay();
 
@@ -55,14 +52,11 @@ public class CogwheelChainPlacementEffect {
                         Vec3.atLowerCornerOf(targetedPos.subtract(currentBuildingChain.getLastNode().pos())).length() : 0;
                 final int chainsRequired = currentBuildingChain.getChainsRequired(additionalDistance);
 
-                final boolean hasEnough = ChainConveyorBlockEntity.getChainsFromInventory(player, Items.CHAIN.getDefaultInstance(), chainsRequired, true);
-                BlueprintOverlayRenderer.displayChainRequirements(Items.CHAIN, chainsRequired, hasEnough);
+                final Item relatedItem = currentChainType.getRelatedItem().get();
+                final boolean hasEnough = ChainConveyorBlockEntity.getChainsFromInventory(player, relatedItem.getDefaultInstance(), chainsRequired, true);
+                BlueprintOverlayRenderer.displayChainRequirements(relatedItem, chainsRequired, hasEnough);
             }
         }
-    }
-
-    private static boolean isChain(final ItemStack offhandItem) {
-        return offhandItem.is(Items.CHAIN);
     }
 
     private static @Nullable BlockPos getTargetedBlockAndDisplay() {
@@ -72,7 +66,7 @@ public class CogwheelChainPlacementEffect {
         final ClientLevel level = Minecraft.getInstance().level;
 
         final HitResult genericHit = Minecraft.getInstance().hitResult;
-        if (!(genericHit instanceof BlockHitResult hit)) {
+        if (!(genericHit instanceof final BlockHitResult hit)) {
             return null;
         }
 

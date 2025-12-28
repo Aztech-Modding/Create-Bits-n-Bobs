@@ -36,7 +36,7 @@ public class CogwheelChainGeometryBuilder {
             final Pair<Vec3, Vec3> currentOffsets = offsetsAtNodes.get(i);
             final Pair<Vec3, Vec3> nextOffsets = offsetsAtNodes.get((i + 1) % n);
 
-            resultNodes.add(new RenderedChainPathNode(currentNode.localPos(), currentOffsets.getFirst()));
+            resultNodes.add(new RenderedChainPathNode(currentNode.localPos(), currentOffsets.getFirst(), currentNode.rotationAxisVec()));
             resultNodes.addAll(
                     wrappedArcBetweenPoints(
                             currentNode,
@@ -46,7 +46,7 @@ public class CogwheelChainGeometryBuilder {
                             nextOffsets.getFirst().add(nextNode.center())
                     )
             );
-            resultNodes.add(new RenderedChainPathNode(currentNode.localPos(), currentOffsets.getSecond()));
+            resultNodes.add(new RenderedChainPathNode(currentNode.localPos(), currentOffsets.getSecond(), currentNode.rotationAxisVec()));
         }
 
         return resultNodes;
@@ -134,7 +134,7 @@ public class CogwheelChainGeometryBuilder {
             final double t = (double) i / (double) segments;
             final double theta = signedAngle * t;
             final Vec3 rotatedLocal = rotateAroundAxis(startLocal, axis, theta);
-            result.add(new RenderedChainPathNode(currentNode.localPos(), rotatedLocal));
+            result.add(new RenderedChainPathNode(currentNode.localPos(), rotatedLocal, currentNode.rotationAxisVec()));
         }
 
         return result;

@@ -3,12 +3,16 @@ package com.kipti.bnb.content.kinetics.cogwheel_chain.graph;
 import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.block.CogwheelChainBlock;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.block.CogwheelChainBlockEntity;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.types.BnbCogwheelChainTypes;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.types.CogwheelChainType;
 import com.kipti.bnb.registry.BnbBlocks;
+import com.kipti.bnb.registry.BnbRegistries;
 import com.simibubi.create.content.kinetics.simpleRelays.CogWheelBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -21,17 +25,20 @@ import java.util.Objects;
 public class CogwheelChain {
 
     private final List<PathedCogwheelNode> cogwheelNodes;
-    private List<RenderedChainPathNode> renderedNodes;
+    private final List<RenderedChainPathNode> renderedNodes;
+    private CogwheelChainType type;
 
     public CogwheelChain(final CompoundTag tag) {
         renderedNodes = new ArrayList<>();
         cogwheelNodes = new ArrayList<>();
+        type = BnbCogwheelChainTypes.CHAIN.get();
         read(tag);
     }
 
-    public CogwheelChain(final List<PathedCogwheelNode> path) {
+    public CogwheelChain(final List<PathedCogwheelNode> path, final CogwheelChainType type) {
         this.cogwheelNodes = path;
         this.renderedNodes = CogwheelChainGeometryBuilder.buildFullChainFromPathNodes(path);
+        this.type = type;
     }
 
     public @Nullable PathedCogwheelNode getNodeFromControllerOffset(final Vec3i controllerOffset) {
@@ -82,6 +89,7 @@ public class CogwheelChain {
             cogwheelNodes.get(i).write(posTag);
             tag.put("cogwheel_pos_" + i, posTag);
         }
+        tag.putString("chain_type", type.getKey().toString());
     }
 
     public void read(final CompoundTag tag) {
@@ -93,7 +101,14 @@ public class CogwheelChain {
             cogwheelNodes.add(pos);
         }
         renderedNodes.clear();
-        renderedNodes = CogwheelChainGeometryBuilder.buildFullChainFromPathNodes(cogwheelNodes);
+        renderedNodes.addAll(CogwheelChainGeometryBuilder.buildFullChainFromPathNodes(cogwheelNodes));
+        if (tag.contains("chain_type")) {
+            final ResourceLocation typeId = ResourceLocation.parse(tag.getString("chain_type"));
+            final CogwheelChainType foundType = BnbRegistries.COGWHEEL_CHAIN_TYPES.get(typeId);
+            if (foundType != null) {
+                type = foundType;
+            }
+        }
     }
 
     @Override
@@ -172,4 +187,12 @@ public class CogwheelChain {
     public List<PathedCogwheelNode> getChainPathCogwheelNodes() {
         return cogwheelNodes;
     }
+
+    /**
+     * See {@link BnbCogwheelChainTypes} for available types (in this mod).
+     */
+    public CogwheelChainType getChainType() {
+        return type;
+    }
+
 }

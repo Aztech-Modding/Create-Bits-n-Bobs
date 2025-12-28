@@ -1,5 +1,6 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.graph;
 
+import com.kipti.bnb.content.kinetics.cogwheel_chain.types.CogwheelChainType;
 import com.kipti.bnb.registry.BnbBlocks;
 import com.kipti.bnb.registry.BnbConfigs;
 import com.mojang.serialization.Codec;
@@ -86,11 +87,15 @@ public class PlacingCogwheelChain {
     }
 
 
-    public boolean tryAddNode(final BlockPos newPos, final BlockState newBlockState) throws ChainInteractionFailedException {
+    public boolean tryAddNode(final BlockPos newPos, final BlockState newBlockState, final CogwheelChainType type) throws ChainInteractionFailedException {
         final PlacingCogwheelNode lastNode = getLastNode();
 
         if (!isValidBlockTarget(newBlockState)) {
             return false;
+        }
+
+        if (!type.getCogwheelPredicate().test(newBlockState.getBlock())) {
+            throw new ChainInteractionFailedException("invalid_cogwheel_type." + type.getTranslationKey());
         }
 
         //For each node, check if this is already in the list
@@ -118,11 +123,16 @@ public class PlacingCogwheelChain {
         final double totalRadius = (isLarge ? 1 : 0.5) + (lastNode.isLarge() ? 1 : 0.5);
         final boolean isAdjacent = isFlat && newPos.distSqr(lastNode.pos()) <= totalRadius * totalRadius;
         final boolean isValidFlat = isSameAxis && isFlat && !isAdjacent;
-        final boolean isValidAxisChange = isValidLargeCogAxisConnection(lastNode, newPos, axis, isLarge);
+        final boolean isAxisChangePermitted = type.permitsAxisChanges();
+        final boolean isValidAxisChange = isAxisChangePermitted && isValidLargeCogAxisConnection(lastNode, newPos, axis, isLarge);
 
         final boolean isValidCandidate = isValidFlat || isValidAxisChange;
 
         if (!isValidCandidate) {
+            if (!isFlat && !isAxisChangePermitted) {
+                throw new ChainInteractionFailedException("axis_change_forbidden_by_type");
+            }
+
             if (isAdjacent) {
                 throw new ChainInteractionFailedException("cogwheels_cannot_touch");
             }
@@ -265,20 +275,23 @@ public class PlacingCogwheelChain {
         return Math.max(Math.max(max.getX() - min.getX(), max.getY() - min.getY()), max.getZ() - min.getZ());
     }
 
-    public boolean checkMatchingNodesInLevel(final Level level) {
+    public boolean checkMissingNodesInLevel(final Level level, final CogwheelChainType type) {
         for (final PlacingCogwheelNode node : visitedNodes) {
             final BlockState state = level.getBlockState(node.pos());
             if (!isValidBlockTarget(state)) {
-                return false;
+                return true;
+            }
+            if (!type.getCogwheelPredicate().test(state.getBlock())) {
+                return true;
             }
             final Direction.Axis axis = state.getValue(CogWheelBlock.AXIS);
             final boolean isLarge = isLargeBlockTarget(state);
             final boolean hasSmallCogwheelOffset = hasSmallCogwheelOffset(state);
             if (axis != node.rotationAxis() || isLarge != node.isLarge() || hasSmallCogwheelOffset != node.hasOffsetForSmallCogwheel()) {
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     public PlacingCogwheelChain toLocalSpaceChain() {

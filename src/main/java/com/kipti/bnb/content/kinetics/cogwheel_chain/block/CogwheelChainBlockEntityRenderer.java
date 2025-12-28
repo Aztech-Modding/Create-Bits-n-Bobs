@@ -2,6 +2,7 @@ package com.kipti.bnb.content.kinetics.cogwheel_chain.block;
 
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChain;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.RenderedChainPathNode;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.types.CogwheelChainType;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
@@ -14,20 +15,19 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
-import org.joml.Vector3d;
 import org.joml.Vector3f;
 
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer<CogwheelChainBlockEntity> {
 
-    public static final ResourceLocation CHAIN_LOCATION = ResourceLocation.withDefaultNamespace("textures/block/chain.png");
     public static final int MIP_DISTANCE = 48;
     public static final int SEAM_DIST = 16;
 
@@ -41,7 +41,9 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
 
         final Function<Vector3f, Integer> lighter = be.createGlobalLighter();
         final CogwheelChain chain = be.getChain();
+
         if (be.isController() && chain != null) {
+            final CogwheelChainType type = chain.getChainType();
             final float rotationsPerTick = be.getChainRotationFactor() * be.getSpeed() / (60 * 20);
             final float time = be.getLevel() != null ? AnimationTickHolder.getRenderTime(be.getLevel()) : AnimationTickHolder.getRenderTime();
 
@@ -65,7 +67,19 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
                 final double distance = node1.getPosition().add(origin).distanceTo(node2.getPosition().add(origin));
                 accumulatedUV += distance;
 
-                renderChain(be, ms, buffer, node3.getPosition().add(origin), node2.getPosition().add(origin), node1.getPosition().add(origin), node0.getPosition().add(origin), lighter, (float) stretchOffset, (float) chainTextureSquish);
+                renderChain(be,
+                        ms,
+                        buffer,
+                        node3.getPosition().add(origin),
+                        node2.getPosition().add(origin),
+                        node1.getPosition().add(origin),
+                        node0.getPosition().add(origin),
+                        node2.sourceCogwheelAxis(),
+                        node1.sourceCogwheelAxis(),
+                        lighter,
+                        (float) stretchOffset,
+                        (float) chainTextureSquish,
+                        type);
             }
         }
     }
@@ -89,9 +103,12 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
                              final Vec3 from,
                              final Vec3 to,
                              final Vec3 postTo,
+                             final Vec3 fromCogwheelAxis,
+                             final Vec3 toCogwheelAxis,
                              final Function<Vector3f, Integer> lighter,
                              final float offset,
-                             final float textureSquish) {
+                             final float textureSquish,
+                             final CogwheelChainType type) {
         final Vec3 diff = to.subtract(from);
         final double yaw = Mth.RAD_TO_DEG * Mth.atan2(diff.x, diff.z);
         final double pitch = Mth.RAD_TO_DEG * Mth.atan2(diff.y, diff.multiply(1, 0, 1)
@@ -116,8 +133,8 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
                 .getBlockEntityRenderDispatcher().camera.getPosition()
                 .closerThan(from.lerp(to, 0.5), SEAM_DIST);
 
-        if (close)
-            renderChainSlowerButWithoutGaps(ms, buffer, offset, textureSquish, preFrom, from, to, postTo, light1, light2);
+        if (close || type.getRenderType() != CogwheelChainType.ChainRenderInfo.CHAIN) //For now there is only slow rendering of diff types TODO implement fast
+            renderChainSlowerButWithoutGaps(ms, buffer, offset, textureSquish, preFrom, from, to, postTo, fromCogwheelAxis, toCogwheelAxis, light1, light2, type);
         else {
             chain.rotateYDegrees((float) yaw);
             chain.rotateXDegrees(90 - (float) pitch);
@@ -131,53 +148,112 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
         ms.popPose();
     }
 
-    private static void renderChainSlowerButWithoutGaps(final PoseStack ms, final MultiBufferSource buffer, final float offset, final float textureSquish, final Vec3 preFrom, final Vec3 from, final Vec3 to, final Vec3 postTo, final int light1, final int light2) {
-        final List<Vec3> endPoints = getEndPointsForChainJoint(from, to, postTo);
-        final List<Vec3> fromPoint = getEndPointsForChainJoint(preFrom, from, to);
+    private static void renderChainSlowerButWithoutGaps(final PoseStack ms,
+                                                        final MultiBufferSource buffer,
+                                                        final float offset,
+                                                        final float textureSquish,
+                                                        final Vec3 preFrom,
+                                                        final Vec3 from,
+                                                        final Vec3 to,
+                                                        final Vec3 postTo,
+                                                        final Vec3 fromCogwheelAxis,
+                                                        final Vec3 toCogwheelAxis,
+                                                        final int light1,
+                                                        final int light2,
+                                                        CogwheelChainType type) {
+        final CogwheelChainType.ChainRenderInfo chainChainRenderInfo = type.getRenderType();
+
+        final List<Vec3> endPoints = getEndPointsForChainJoint(from, to, postTo, chainChainRenderInfo, toCogwheelAxis);
+        final List<Vec3> fromPoint = getEndPointsForChainJoint(preFrom, from, to, chainChainRenderInfo, fromCogwheelAxis);
         final float length = (float) from.distanceTo(to);
         final float minV = offset * textureSquish;
         final float maxV = length * textureSquish + minV;
-        final float minU = 0;
-        final float maxU = 3 / 16f;
-        ms.pushPose();
+        final float maxUW = chainChainRenderInfo.getWidth() / 16f;
+        final float maxUH = chainChainRenderInfo.getHeight() / 16f;
 
-        final VertexConsumer vc = buffer.getBuffer(RenderTypes.chain(CHAIN_LOCATION));
+        ms.pushPose();
+        final VertexConsumer vc = buffer.getBuffer(RenderTypes.chain(type.getRenderTexture()));
         final Matrix4f matrix4f = ms.last().pose();
         for (int i = 0; i < 4; i += 1) {
-            final float uO = (i % 2 == 1) ? 0 : 3 / 16f;
-            addVertex(matrix4f, ms.last(), vc, endPoints.get((i + 2) % 4).subtract(from), minU + uO, minV, light1);
-            addVertex(matrix4f, ms.last(), vc, fromPoint.get((i + 2) % 4).subtract(from), minU + uO, maxV, light1);
-            addVertex(matrix4f, ms.last(), vc, fromPoint.get(i).subtract(from), maxU + uO, maxV, light1);
-            addVertex(matrix4f, ms.last(), vc, endPoints.get(i).subtract(from), maxU + uO, minV, light1);
+            if (chainChainRenderInfo.getVertexShape() == CogwheelChainType.VertexShape.CROSS) {
+                final float uO = (i % 2 == 1) ? 0 : 3 / 16f;
+                final float maxU = 3 / 16f;
+                final float minU = 0f;
+
+                addVertex(matrix4f, ms.last(), vc, endPoints.get((i + 2) % 4).subtract(from), minU + uO, minV, light1);
+                addVertex(matrix4f, ms.last(), vc, fromPoint.get((i + 2) % 4).subtract(from), minU + uO, maxV, light1);
+                addVertex(matrix4f, ms.last(), vc, fromPoint.get(i).subtract(from), maxU + uO, maxV, light1);
+                addVertex(matrix4f, ms.last(), vc, endPoints.get(i).subtract(from), maxU + uO, minV, light1);
+            } else {
+                final float minU = (i % 2 == 0) ? maxUH : 0;
+                final float maxU = minU + ((i % 2 == 0) ? maxUW : maxUH);
+                addVertex(matrix4f, ms.last(), vc, endPoints.get((i + 1) % 4).subtract(from), minU, minV, light1);
+                addVertex(matrix4f, ms.last(), vc, fromPoint.get((i + 1) % 4).subtract(from), minU, maxV, light1);
+                addVertex(matrix4f, ms.last(), vc, fromPoint.get(i).subtract(from), maxU, maxV, light1);
+                addVertex(matrix4f, ms.last(), vc, endPoints.get(i).subtract(from), maxU, minV, light1);
+            }
         }
 
         ms.popPose();
     }
 
-    private static List<Vec3> getEndPointsForChainJoint(final Vec3 before, final Vec3 point, final Vec3 after) {
+    private static List<Vec3> getEndPointsForChainJoint(final Vec3 before, final Vec3 point, final Vec3 after, final CogwheelChainType.ChainRenderInfo chainRenderInfo, final Vec3 cogwheelAxis) {
         final float radius = 1.5f / 16f;
         final Vec3 dirToBefore = point.subtract(before).normalize();
         final Vec3 dirToAfter = after.subtract(point).normalize();
 
-        final Vec3 averagedDir = dirToBefore.add(dirToAfter).normalize();
+        Vec3 averagedDir = dirToBefore.add(dirToAfter).normalize();
 
-        final Quaternionf quat = new Quaternionf().rotationTo(0, 1, 0, (float) averagedDir.x, (float) averagedDir.y, (float) averagedDir.z);
+        final Matrix3f transform;
 
-        final Vector3d localAxis1Joml = quat.transform(1f, 0f, 0f, new Vector3d());
-        final Vec3 localAxis1 = new Vec3(localAxis1Joml.x, localAxis1Joml.y, localAxis1Joml.z).normalize();
-        final Vector3d localAxis2Joml = quat.transform(0f, 0f, 1f, new Vector3d());
-        final Vec3 localAxis2 = new Vec3(localAxis2Joml.x, localAxis2Joml.y, localAxis2Joml.z).normalize();
+        if (chainRenderInfo.isDefaultDimensions()) {
+            transform = new Quaternionf()
+                    .rotationTo(0, 1, 0, (float) averagedDir.x, (float) averagedDir.y, (float) averagedDir.z)
+                    .get(new Matrix3f());
+        } else {
+            //Project averagedDir to axis if needed
+            if (averagedDir.dot(cogwheelAxis) > 1e-4)
+                averagedDir = averagedDir.subtract(cogwheelAxis.multiply(averagedDir)).normalize();
 
-        return List.of(
-                point.add(localAxis1.add(localAxis2).normalize().scale(radius)),
-                point.add(localAxis1.subtract(localAxis2).normalize().scale(radius)),
-                point.add(localAxis2.scale(-1).subtract(localAxis1).normalize().scale(radius)),
-                point.add(localAxis2.subtract(localAxis1).normalize().scale(radius))
-        );
+            //Some s****y fallback
+            if (averagedDir.lengthSqr() < 1e-4)
+                averagedDir = cogwheelAxis.cross(new Vec3(1, 0, 0));
+            if (averagedDir.lengthSqr() < 1e-4)
+                averagedDir = cogwheelAxis.cross(new Vec3(0, 1, 0));
+
+            final Vec3 perpendicular = cogwheelAxis.cross(averagedDir);
+            transform = new Matrix3f(
+                    (float) perpendicular.x, (float) perpendicular.y, (float) perpendicular.z,
+                    (float) averagedDir.x, (float) averagedDir.y, (float) averagedDir.z,
+                    (float) cogwheelAxis.x, (float) cogwheelAxis.y, (float) cogwheelAxis.z
+            );
+        }
+
+
+        final Vector3f localAxis1Joml = transform.transform(1f, 0f, 0f, new Vector3f());
+        final Vec3 localAxis1Direction = new Vec3(localAxis1Joml.x, localAxis1Joml.y, localAxis1Joml.z).normalize();
+        final Vec3 localAxis1 = localAxis1Direction.scale(chainRenderInfo.getHeight() / 3f);
+        final Vector3f localAxis2Joml = transform.transform(0f, 0f, 1f, new Vector3f());
+        final Vec3 localAxis2 = new Vec3(localAxis2Joml.x, localAxis2Joml.y, localAxis2Joml.z).normalize().scale(chainRenderInfo.getWidth() / 3f);
+
+        return Stream.of(
+                        point.add(localAxis1.add(localAxis2).normalize().scale(radius)),
+                        point.add(localAxis1.subtract(localAxis2).normalize().scale(radius)),
+                        point.add(localAxis2.scale(-1).subtract(localAxis1).normalize().scale(radius)),
+                        point.add(localAxis2.subtract(localAxis1).normalize().scale(radius))
+                )
+                .map(e -> chainRenderInfo.getHeight() < 3 ? e.add(localAxis1Direction.scale((3f - chainRenderInfo.getHeight()) / (2 * 3 * 16))) : e)
+                .toList();
     }
 
-    private static void renderChainFastButWithGaps(final PoseStack ms, final MultiBufferSource buffer, final float offset, final float textureSquish, final float length, final int light1,
-                                                   final int light2, final boolean far) {
+    private static void renderChainFastButWithGaps(final PoseStack ms,
+                                                   final MultiBufferSource buffer,
+                                                   final float offset,
+                                                   final float textureSquish,
+                                                   final float length,
+                                                   final int light1,
+                                                   final int light2,
+                                                   final boolean far) {
         final float radius = far ? 1f / 16f : 1.5f / 16f;
         final float minV = far ? 0 : offset * textureSquish;
         final float maxV = far ? 1 / 16f : length * textureSquish + minV;
@@ -187,7 +263,7 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
         ms.pushPose();
         ms.translate(0.5D, 0.0D, 0.5D);
 
-        final VertexConsumer vc = buffer.getBuffer(RenderTypes.chain(CHAIN_LOCATION));
+        final VertexConsumer vc = buffer.getBuffer(RenderTypes.chain(CogwheelChainType.DEFAULT_CHAIN_TEXTURE_LOCATION));
         renderPart(ms, vc, length, 0.0F, radius, radius, 0.0F, -radius, 0.0F, 0.0F, -radius, minU, maxU, minV, maxV,
                 light1, light2, far);
 
