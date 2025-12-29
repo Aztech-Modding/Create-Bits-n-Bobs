@@ -11,8 +11,11 @@ import com.simibubi.create.content.kinetics.simpleRelays.CogWheelBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -27,18 +30,21 @@ public class CogwheelChain {
     private final List<PathedCogwheelNode> cogwheelNodes;
     private final List<RenderedChainPathNode> renderedNodes;
     private CogwheelChainType type;
+    private Item returnedItem;
 
     public CogwheelChain(final CompoundTag tag) {
         renderedNodes = new ArrayList<>();
         cogwheelNodes = new ArrayList<>();
         type = BnbCogwheelChainTypes.CHAIN.get();
+        returnedItem = Items.CHAIN;
         read(tag);
     }
 
-    public CogwheelChain(final List<PathedCogwheelNode> path, final CogwheelChainType type) {
+    public CogwheelChain(final List<PathedCogwheelNode> path, final CogwheelChainType type, final Item returnedItem) {
         this.cogwheelNodes = path;
         this.renderedNodes = CogwheelChainGeometryBuilder.buildFullChainFromPathNodes(path);
         this.type = type;
+        this.returnedItem = returnedItem;
     }
 
     public @Nullable PathedCogwheelNode getNodeFromControllerOffset(final Vec3i controllerOffset) {
@@ -90,6 +96,7 @@ public class CogwheelChain {
             tag.put("cogwheel_pos_" + i, posTag);
         }
         tag.putString("chain_type", type.getKey().toString());
+        tag.putString("returned_item", BuiltInRegistries.ITEM.getKey(returnedItem).toString());
     }
 
     public void read(final CompoundTag tag) {
@@ -107,6 +114,13 @@ public class CogwheelChain {
             final CogwheelChainType foundType = BnbRegistries.COGWHEEL_CHAIN_TYPES.get(typeId);
             if (foundType != null) {
                 type = foundType;
+            }
+        }
+        if (tag.contains("returned_item")) {
+            final ResourceLocation itemId = ResourceLocation.parse(tag.getString("returned_item"));
+            final Item foundItem = BuiltInRegistries.ITEM.get(itemId);
+            if (foundItem != Items.AIR) {
+                returnedItem = foundItem;
             }
         }
     }
@@ -195,4 +209,7 @@ public class CogwheelChain {
         return type;
     }
 
+    public Item getReturnedItem() {
+        return returnedItem;
+    }
 }

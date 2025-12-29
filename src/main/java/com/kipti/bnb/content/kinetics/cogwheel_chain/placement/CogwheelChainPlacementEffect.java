@@ -12,7 +12,6 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.DustParticleOptions;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
@@ -33,7 +32,7 @@ public class CogwheelChainPlacementEffect {
         if (Minecraft.getInstance().isPaused() || Minecraft.getInstance().hitResult == null) return;
 
         final ClientLevel level = Minecraft.getInstance().level;
-        if (level == null || currentChainLevel == null || currentBuildingChain == null || currentChainType == null) {
+        if (level == null || currentChainLevel == null || currentBuildingChain == null || currentChainType == null || currentChainItemType == null) {
             return;
         }
 
@@ -52,9 +51,8 @@ public class CogwheelChainPlacementEffect {
                         Vec3.atLowerCornerOf(targetedPos.subtract(currentBuildingChain.getLastNode().pos())).length() : 0;
                 final int chainsRequired = currentBuildingChain.getChainsRequired(additionalDistance);
 
-                final Item relatedItem = currentChainType.getRelatedItem().get();
-                final boolean hasEnough = ChainConveyorBlockEntity.getChainsFromInventory(player, relatedItem.getDefaultInstance(), chainsRequired, true);
-                BlueprintOverlayRenderer.displayChainRequirements(relatedItem, chainsRequired, hasEnough);
+                final boolean hasEnough = ChainConveyorBlockEntity.getChainsFromInventory(player, currentChainItemType.getDefaultInstance(), chainsRequired, true);
+                BlueprintOverlayRenderer.displayChainRequirements(currentChainItemType, chainsRequired, hasEnough);
             }
         }
     }

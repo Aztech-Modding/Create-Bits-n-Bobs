@@ -4,10 +4,12 @@ import com.kipti.bnb.registry.BnbRegistries;
 import com.kipti.bnb.registry.BnbResourceKeys;
 import com.simibubi.create.api.registry.SimpleRegistry;
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
@@ -25,8 +27,7 @@ public class CogwheelChainType {
         COGWHEEL_TYPE_BY_ITEM
                 .registerProvider((item) -> BnbRegistries.COGWHEEL_CHAIN_TYPES
                         .holders()
-                        .filter(typeHolder ->
-                                typeHolder.value().getRelatedItem().get() == item)
+                        .filter(typeHolder -> typeHolder.value().isRelatedItem(item))
                         .findFirst()
                         .map(Holder.Reference::value)
                         .orElse(null));
@@ -76,14 +77,14 @@ public class CogwheelChainType {
     private final double costFactor;
     private final ChainRenderInfo chainRenderInfo;
     private final ResourceLocation renderTexture;
-    private final Supplier<Item> relatedItem;
+    private final Predicate<Item> relatedItem;
     private final Predicate<Block> cogwheelPredicate;
     private final boolean permitsAxisChange;
 
     public CogwheelChainType(final float costFactor,
                              final ChainRenderInfo chainRenderInfo,
                              final ResourceLocation renderTexture,
-                             final Supplier<Item> relatedItem,
+                             final Predicate<Item> relatedItem,
                              final Predicate<Block> cogwheelPredicate,
                              final boolean permitsAxisChange) {
         this.costFactor = costFactor;
@@ -102,7 +103,7 @@ public class CogwheelChainType {
         private float costFactor = 1.0f;
         private ChainRenderInfo chainRenderInfo = ChainRenderInfo.CHAIN;
         private ResourceLocation renderTexture = DEFAULT_CHAIN_TEXTURE_LOCATION;
-        private Supplier<Item> relatedItem = () -> Items.CHAIN;
+        private Predicate<Item> relatedItem = (item) -> item == Items.CHAIN;
         private Predicate<Block> cogwheelPredicate = (block) -> true;
         private boolean permitsAxisChange = true;
 
@@ -121,8 +122,16 @@ public class CogwheelChainType {
             return this;
         }
 
-        public Builder relatedItem(final Supplier<Item> refundItem) {
-            this.relatedItem = refundItem;
+        public Builder relatedItem(final Supplier<Item> relatedItemSupplier) {
+            this.relatedItem = (item) -> item == relatedItemSupplier.get();
+            return this;
+        }
+
+        public Builder relatedTag(final TagKey<Item> itemTag) {
+            this.relatedItem = (item) -> BuiltInRegistries.ITEM
+                    .getHolder(BuiltInRegistries.ITEM.getKey(item))
+                    .map(itemReference -> itemReference.is(itemTag))
+                    .orElse(false);
             return this;
         }
 
@@ -139,7 +148,6 @@ public class CogwheelChainType {
         public CogwheelChainType build() {
             return new CogwheelChainType(costFactor, chainRenderInfo, renderTexture, relatedItem, cogwheelPredicate, permitsAxisChange);
         }
-
     }
 
     public ResourceLocation getKey() {
@@ -164,8 +172,8 @@ public class CogwheelChainType {
         return renderTexture;
     }
 
-    public Supplier<Item> getRelatedItem() {
-        return relatedItem;
+    private boolean isRelatedItem(final Item item) {
+        return relatedItem.test(item);
     }
 
     public Predicate<Block> getCogwheelPredicate() {

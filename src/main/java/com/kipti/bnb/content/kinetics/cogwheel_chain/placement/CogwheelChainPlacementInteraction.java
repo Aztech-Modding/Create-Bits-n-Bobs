@@ -12,8 +12,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -31,6 +33,7 @@ public class CogwheelChainPlacementInteraction {
     public static @Nullable PlacingCogwheelChain currentBuildingChain = null;
     public static @Nullable ResourceKey<Level> currentChainLevel = null;
     public static @Nullable CogwheelChainType currentChainType = null;
+    public static @Nullable Item currentChainItemType = null;
 
     @SubscribeEvent
     public static void onClickInput(final InputEvent.InteractionKeyMappingTriggered event) {
@@ -87,18 +90,22 @@ public class CogwheelChainPlacementInteraction {
             player.displayClientMessage(new ChainInteractionFailedException("config_forbids").getComponent(), true);
             return true;
         }
+        if (validBlockTarget && !heldChainType.getCogwheelPredicate().test(targetedState.getBlock())) {
+            player.displayClientMessage(new ChainInteractionFailedException("invalid_cogwheel_type." + heldChainType.getTranslationKey()).getComponent(), true);
+            return true;
+        }
 
         if (!validBlockTarget) {
+            event.setSwingHand(false);
             return currentBuildingChain != null;
         }
-        //Cancel normal interaction
-        event.setSwingHand(true);
 
         if (currentBuildingChain == null || currentChainLevel == null || !currentChainLevel.equals(level.dimension())) {
             //Start a new chain
             currentBuildingChain = new PlacingCogwheelChain(hitPos, targetedState.getValue(CogWheelBlock.AXIS), PlacingCogwheelChain.isLargeBlockTarget(targetedState), PlacingCogwheelChain.hasSmallCogwheelOffset(targetedState));
             currentChainLevel = level.dimension();
             currentChainType = heldChainType;
+            currentChainItemType = chainItemInHand.getItem();
 
             player.displayClientMessage(Component.translatable("tooltip.bits_n_bobs.chain_drive_placing_hint"), true);
         } else {
@@ -132,7 +139,12 @@ public class CogwheelChainPlacementInteraction {
 
                 if (completed) {
                     //If completed, send to server, clear current chain
-                    CatnipServices.NETWORK.sendToServer(new PlaceCogwheelChainPacket(currentBuildingChain, currentChainType, event.getHand().ordinal()));
+                    CatnipServices.NETWORK.sendToServer(new PlaceCogwheelChainPacket(
+                            currentBuildingChain,
+                            currentChainType,
+                            event.getHand().ordinal(),
+                            BuiltInRegistries.ITEM.getHolder(BuiltInRegistries.ITEM.getKey(chainItemInHand.getItem())).orElseThrow()
+                    ));
                     clearPlacingChain();
                 }
             } catch (final ChainInteractionFailedException exception) {

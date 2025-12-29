@@ -18,6 +18,8 @@ public class BnbItems {
     public static final ItemEntry<Item> ICON_LIGHTBULB = REGISTRATE.item("icon_lightbulb", Item::new)
             .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/lightbulb/lightbulb_on")))
             .register();
+    public static final ItemEntry<Item> TEST_ROPE = REGISTRATE.item("test_rope", Item::new)
+            .register();
 
     public static void register() {
     }

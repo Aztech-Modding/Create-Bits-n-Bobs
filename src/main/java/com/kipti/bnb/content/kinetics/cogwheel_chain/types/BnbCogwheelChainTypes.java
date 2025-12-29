@@ -5,6 +5,7 @@ import com.kipti.bnb.registry.BnbBlocks;
 import com.kipti.bnb.registry.BnbRegistries;
 import com.simibubi.create.AllItems;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -23,6 +24,14 @@ public class BnbCogwheelChainTypes {
                     .setCogwheelPredicate((block) -> BnbBlocks.LARGE_EMPTY_FLANGED_COGWHEEL.get() == block || BnbBlocks.SMALL_EMPTY_FLANGED_COGWHEEL.get() == block) //TODO: tag
                     .permitsAxisChange(false)
                     .build());
+    public static final DeferredHolder<CogwheelChainType, CogwheelChainType> ROPE_CHAIN = REGISTRY
+            .register("rope", () -> new CogwheelChainType.Builder()
+                    .relatedTag(Tags.Items.ROPES)
+                    .renderType(CogwheelChainType.ChainRenderInfo.ROPE)
+                    .renderTexture(CreateBitsnBobs.asResource("textures/block/chain_rope.png"))
+                    .setCogwheelPredicate((block) -> BnbBlocks.LARGE_EMPTY_FLANGED_COGWHEEL.get() == block || BnbBlocks.SMALL_EMPTY_FLANGED_COGWHEEL.get() == block) //TODO: tag
+                    .build());
+
 
     public static void register(final IEventBus bus) {
         REGISTRY.register(bus);

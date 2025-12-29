@@ -1,5 +1,6 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.block;
 
+import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.decoration.girder_strut.IBlockEntityRelighter;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChain;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.PathedCogwheelNode;
@@ -13,7 +14,6 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -121,15 +121,21 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
     public ItemStack destroyChain(final boolean dropItemsInWorld) {
         //Try drop chains from the current block for convenience
         int chainsToReturn = chainsToRefund;
+        CogwheelChain chain = this.chain;
         if (!isController && controllerOffset != null && level != null) {
             final BlockPos controllerPos = worldPosition.offset(controllerOffset);
             final BlockEntity be = level.getBlockEntity(controllerPos);
             if (be instanceof final CogwheelChainBlockEntity controllerBE) {
                 chainsToReturn = controllerBE.chainsToRefund;
                 controllerBE.chainsToRefund = 0;
+                chain = controllerBE.chain;
             }
         }
-        final ItemStack drops = Items.CHAIN.getDefaultInstance().copyWithCount(chainsToReturn);
+        if (chain == null) {
+            CreateBitsnBobs.LOGGER.warn("Failed to destroy chain with missing chain data at {}", worldPosition);
+            return ItemStack.EMPTY;
+        }
+        final ItemStack drops = chain.getReturnedItem().getDefaultInstance().copyWithCount(chainsToReturn);
         if (dropItemsInWorld) {
             Block.popResource(level, worldPosition, drops);
         }
