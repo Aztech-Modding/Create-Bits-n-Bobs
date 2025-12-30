@@ -57,7 +57,7 @@ public class CogwheelChainBlock extends RotatedPillarKineticBlock
     }
 
     @Override
-    public @NotNull ItemStack getCloneItemStack(final @NotNull BlockState state, final @NotNull HitResult target, final @NotNull LevelReader level, final @NotNull BlockPos pos, final @NotNull Player player) {
+    public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter level, BlockPos pos, Player player) {
         return sourceBlock.get().asStack();
     }
 
