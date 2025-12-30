@@ -150,6 +150,7 @@
   "entity.bits_n_bobs.inert_stationary_contraption": "Inert Stationary Contraption",
   "generator.bits_n_bobs.ponderous_planes": "Ponderflat",
   "item.bits_n_bobs.icon_lightbulb": "Icon Lightbulb",
+  "item.bits_n_bobs.test_rope": "Test Rope",
   "message.bits_n_bobs.cogwheel_chain.chain_addition_aborted.cannot_revisit_node": "You cannot self-intersect the chain!",
   "message.bits_n_bobs.cogwheel_chain.chain_addition_aborted.cogwheels_cannot_touch": "Cogwheels must not touch each other!",
   "message.bits_n_bobs.cogwheel_chain.chain_addition_aborted.config_forbids": "Server has disabled chain drives!",

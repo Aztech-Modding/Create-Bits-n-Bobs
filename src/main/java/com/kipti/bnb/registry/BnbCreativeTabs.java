@@ -80,10 +80,8 @@ public class BnbCreativeTabs {
     }
 
     private static boolean matchesItemFilter(final Item item) {
-        if (BnbItems.ICON_LIGHTBULB.is(item))
-            return false;
-
-        return true;
+        //Ignore testing / fake items
+        return !BnbItems.ICON_LIGHTBULB.is(item) && !BnbItems.TEST_ROPE.is(item);
     }
 
 }

@@ -3,6 +3,7 @@ package com.kipti.bnb.registry;
 import com.kipti.bnb.CreateBitsnBobs;
 import com.tterrag.registrate.util.entry.ItemEntry;
 import net.minecraft.world.item.Item;
+import net.neoforged.neoforge.common.Tags;
 
 import static com.kipti.bnb.CreateBitsnBobs.REGISTRATE;
 
@@ -19,6 +20,7 @@ public class BnbItems {
             .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/lightbulb/lightbulb_on")))
             .register();
     public static final ItemEntry<Item> TEST_ROPE = REGISTRATE.item("test_rope", Item::new)
+            .tag(Tags.Items.ROPES)
             .register();
 
     public static void register() {

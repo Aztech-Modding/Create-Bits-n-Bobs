@@ -99,7 +99,17 @@ public class CogwheelChainPlacementInteraction {
             event.setSwingHand(false);
             return currentBuildingChain != null;
         }
+        rightClickForChain(event, level, hitPos, targetedState, heldChainType, chainItemInHand, player);
+        return true;
+    }
 
+    private static void rightClickForChain(final InputEvent.InteractionKeyMappingTriggered event,
+                                           final ClientLevel level,
+                                           final BlockPos hitPos,
+                                           final BlockState targetedState,
+                                           final CogwheelChainType heldChainType,
+                                           final ItemStack chainItemInHand,
+                                           final LocalPlayer player) {
         if (currentBuildingChain == null || currentChainLevel == null || !currentChainLevel.equals(level.dimension())) {
             //Start a new chain
             currentBuildingChain = new PlacingCogwheelChain(hitPos, targetedState.getValue(CogWheelBlock.AXIS), PlacingCogwheelChain.isLargeBlockTarget(targetedState), PlacingCogwheelChain.hasSmallCogwheelOffset(targetedState));
@@ -117,7 +127,7 @@ public class CogwheelChainPlacementInteraction {
                 if (currentBuildingChain.getNodes().isEmpty()) {
                     clearPlacingChain();
                 }
-                return true;
+                return;
             }
 
             //Try to add to existing chain
@@ -125,7 +135,7 @@ public class CogwheelChainPlacementInteraction {
                 final boolean added = currentBuildingChain.tryAddNode(hitPos, targetedState, currentChainType);
 
                 if (!added) { //Only happens with invalid target, ignore quietly
-                    return true;
+                    return;
                 }
 
                 final boolean completed;
@@ -134,7 +144,7 @@ public class CogwheelChainPlacementInteraction {
                 } catch (final ChainInteractionFailedException exception) {
                     player.displayClientMessage(exception.getComponent(), true);
                     clearPlacingChain();
-                    return true;
+                    return;
                 }
 
                 if (completed) {
@@ -152,7 +162,6 @@ public class CogwheelChainPlacementInteraction {
                 player.displayClientMessage(exception.getComponent(), true);
             }
         }
-        return true;
     }
 
     public static @Nullable ItemStack getChainItemInHand(final LocalPlayer player) {
