@@ -151,3 +151,6 @@
   - Specified forge version since older versions crash, for some reason
   - Proper dist for mixins
   - Flipped 9 number texture in the atlas for nixie tubes and boards
+# 1.21.1-0.0.36
+- Changes:
+  - Girder strut memory leak fix
