@@ -163,3 +163,6 @@
   - Chain drive middle click
   - Reverted asset changes
   - (Girder strut memory leak fix is 1.21.1 only)
+# 1.21.1-0.0.38
+- Changes:
+    - Portuguese and Brazilian localization, thank you to @Aquila_Limonida
