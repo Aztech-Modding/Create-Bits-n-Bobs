@@ -62,10 +62,10 @@ public class BakedGlyphMixin implements ReverseRenderableBakedGlyph {
         final float f3 = y + this.down;
         final float f4 = italic ? 1.0F - 0.25F * this.up : 0.0F;
         final float f5 = italic ? 1.0F - 0.25F * this.down : 0.0F;
-        buffer.addVertex(matrix, f1 + f4, f2, 0.0F).setColor(red, green, blue, alpha).setUv(this.u1, this.v0).setLight(packedLight);
-        buffer.addVertex(matrix, f1 + f5, f3, 0.0F).setColor(red, green, blue, alpha).setUv(this.u1, this.v1).setLight(packedLight);
-        buffer.addVertex(matrix, f + f5, f3, 0.0F).setColor(red, green, blue, alpha).setUv(this.u0, this.v1).setLight(packedLight);
-        buffer.addVertex(matrix, f + f4, f2, 0.0F).setColor(red, green, blue, alpha).setUv(this.u0, this.v0).setLight(packedLight);
+        buffer.vertex(matrix, f1 + f4, f2, 0.0F).color(red, green, blue, alpha).uv(this.u1, this.v0).uv2(packedLight).endVertex();
+        buffer.vertex(matrix, f1 + f5, f3, 0.0F).color(red, green, blue, alpha).uv(this.u1, this.v1).uv2(packedLight).endVertex();
+        buffer.vertex(matrix, f + f5, f3, 0.0F).color(red, green, blue, alpha).uv(this.u0, this.v1).uv2(packedLight).endVertex();
+        buffer.vertex(matrix, f + f4, f2, 0.0F).color(red, green, blue, alpha).uv(this.u0, this.v0).uv2(packedLight).endVertex();
     }
 
 }

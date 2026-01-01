@@ -174,3 +174,12 @@
     - Added reviewed machine translations for popular languages that are missing native translations
     - Fixed a crash with girder struts and cogwheel chain drives related to VS plotyards and large distances
     - Corrected UVS of tile slabs and tile stairs
+# 1.20.1-0.0.39
+- Changes:
+  - Portuguese and Brazilian localization, thank you to @Aquila_Limonida
+  - Added link to crowdin translations
+  - Nixie tubes properly render the back of the text for international (unicode) characters
+  - Item tooltips for the lights now notes they can be toggled on
+  - Added reviewed machine translations for popular languages that are missing native translations
+  - Fixed a crash with girder struts and cogwheel chain drives related to VS plotyards and large distances
+  - Corrected UVS of tile slabs and tile stairs
