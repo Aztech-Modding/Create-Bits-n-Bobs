@@ -43,7 +43,6 @@ public class CogwheelChainPlacementEffect {
             return;
         }
 
-
         //Get held chain
         final ItemStack heldItem = isChain(player.getMainHandItem()) ? player.getMainHandItem() :
                 isChain(player.getOffhandItem()) ? player.getOffhandItem() : null;
@@ -144,6 +143,9 @@ public class CogwheelChainPlacementEffect {
     private static void renderParticlesBetween(final ClientLevel level, final Vec3 from, final Vec3 to) {
         final Vec3 delta = to.subtract(from);
         final double length = delta.length();
+        if (length < 1.0E-3 || length > 256) {
+            return;
+        }
         final Vec3 dir = delta.normalize();
         final double step = 0.25;
 

@@ -3,8 +3,8 @@ package com.kipti.bnb.content.nixie.foundation;
 import com.kipti.bnb.content.nixie.large_nixie_tube.LargeNixieTubeBlockNixie;
 import com.kipti.bnb.content.nixie.nixie_board.NixieBoardBlockNixie;
 import com.kipti.bnb.mixin_accessor.FontAccess;
+import com.kipti.bnb.mixin_accessor.ReverseRenderableBakedGlyph;
 import com.kipti.bnb.registry.BnbBlocks;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
@@ -187,7 +187,8 @@ public class GenericNixieDisplayBoardRenderer extends SmartBlockEntityRenderer<G
 
     private static void renderUsingNormalFont(final PoseStack ms, final MultiBufferSource buffer, final FontSet fontSet, final int glyph, final Matrix4f pose, final Couple<Integer> colours) {
         final BakedGlyph bakedGlyph = fontSet.getGlyph(glyph);
-        final VertexConsumer vertexconsumer = buffer.getBuffer(bakedGlyph.renderType(Font.DisplayMode.NORMAL));
+        final RenderType renderType = bakedGlyph.renderType(Font.DisplayMode.NORMAL);
+        final VertexConsumer vertexconsumer = buffer.getBuffer(renderType);
         final float width = fontSet.getGlyphInfo(glyph, true).getAdvance(false) - 1;
 
         final float r = (colours.get(true) >> 16 & 0xFF) / 255.0f;
@@ -197,30 +198,19 @@ public class GenericNixieDisplayBoardRenderer extends SmartBlockEntityRenderer<G
         final float gSecondary = (colours.get(false) >> 8 & 0xFF) / 255.0f;
         final float bSecondary = (colours.get(false) & 0xFF) / 255.0f;
 
-        bakedGlyph.render(false, -width / 2, 0, ms.last().pose(), vertexconsumer, r, g, b, 1, LightTexture.FULL_BRIGHT);
-
-        ms.pushPose();
-        ms.scale(-1, 1, 1);
-        bakedGlyph.render(false, -width / 2, 0, ms.last().pose(), vertexconsumer, r, g, b, 1, LightTexture.FULL_BRIGHT);
-        ms.popPose();
+        renderGlyph(ms, 0, bakedGlyph, width, vertexconsumer, r, g, b);
 
         ms.pushPose();
         ms.translate(0, 0, 0.1f);
-        bakedGlyph.render(false, -width / 2 + 0.5f, 0.5f, ms.last().pose(), vertexconsumer,
-            rSecondary, gSecondary, bSecondary,
-            1, LightTexture.FULL_BRIGHT);
-
-        ms.pushPose();
-        ms.scale(-1, 1, 1);
-        bakedGlyph.render(false, -width / 2 + 0.5f, 0.5f, ms.last().pose(), vertexconsumer,
-            rSecondary, gSecondary, bSecondary,
-            1, LightTexture.FULL_BRIGHT);
+        renderGlyph(ms, 0.5f, bakedGlyph, width, vertexconsumer, rSecondary, gSecondary, bSecondary);
         ms.popPose();
 
-        ms.popPose();
+    }
 
-        if (buffer instanceof final MultiBufferSource.BufferSource bs) {
-            bs.endBatch(bakedGlyph.renderType(Font.DisplayMode.NORMAL));
+    private static void renderGlyph(final PoseStack ms, final float offset, final BakedGlyph bakedGlyph, final float width, final VertexConsumer vertexconsumer, final float r, final float g, final float b) {
+        bakedGlyph.render(false, -width / 2 + offset, offset, ms.last().pose(), vertexconsumer, r, g, b, 1, LightTexture.FULL_BRIGHT);
+        if (bakedGlyph instanceof ReverseRenderableBakedGlyph) { //Font render types don't support normal transforms, so we have to do this hacky thing, i still cant get over create not doing this, IT'S NOT FLIPPED IN BASE CREATE!?
+            ((ReverseRenderableBakedGlyph) bakedGlyph).bits_n_bobs$renderReverse(false, -width / 2 + offset, offset, ms.last().pose(), vertexconsumer, r, g, b, 1, LightTexture.FULL_BRIGHT);
         }
     }
 }

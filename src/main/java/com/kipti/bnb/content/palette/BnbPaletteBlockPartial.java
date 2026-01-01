@@ -29,12 +29,12 @@ import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.WallBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.Property;
-import net.minecraft.world.level.block.state.properties.WallSide;
+import net.minecraft.world.level.block.state.properties.*;
 import net.minecraftforge.client.model.generators.BlockModelBuilder;
+import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.client.model.generators.MultiPartBlockStateBuilder;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
@@ -48,10 +48,12 @@ public abstract class BnbPaletteBlockPartial<B extends Block> {
     public static final BnbPaletteBlockPartial<SlabBlock> SLAB = new BnbPaletteBlockPartial.Slab(false);
     public static final BnbPaletteBlockPartial<SlabBlock> UNIQUE_SLAB = new BnbPaletteBlockPartial.Slab(true);
     public static final BnbPaletteBlockPartial<WallBlock> WALL = new BnbPaletteBlockPartial.Wall();
+    public static final BnbPaletteBlockPartial<StairBlock> TILE_STAIR = new BnbPaletteBlockPartial.TileStairs();
+    public static final BnbPaletteBlockPartial<SlabBlock> TILE_SLAB = new BnbPaletteBlockPartial.TileSlab();
     public static final BnbPaletteBlockPartial<WallBlock> TILE_WALL = new BnbPaletteBlockPartial.TileWall();
 
     public static final BnbPaletteBlockPartial<?>[] ALL_PARTIALS = {STAIR, SLAB, WALL};
-    public static final BnbPaletteBlockPartial<?>[] ALL_PARTIALS_TILE = {STAIR, SLAB, TILE_WALL};
+    public static final BnbPaletteBlockPartial<?>[] ALL_PARTIALS_TILE = {TILE_STAIR, TILE_SLAB, TILE_WALL};
     public static final BnbPaletteBlockPartial<?>[] FOR_POLISHED = {STAIR, UNIQUE_SLAB, WALL};
 
     private final String name;
@@ -230,6 +232,169 @@ public abstract class BnbPaletteBlockPartial<B extends Block> {
 
     }
 
+    //Are these the right ways to do tile stairs/slabs/walls? No.
+
+    private static class TileStairs extends BnbPaletteBlockPartial<StairBlock> {
+
+        public TileStairs() {
+            super("stairs");
+        }
+
+        @Override
+        protected StairBlock createBlock(final Supplier<? extends Block> block) {
+            return new StairBlock(block.get().defaultBlockState(), BlockBehaviour.Properties.copy(block.get()));
+        }
+
+        @Override
+        protected void generateBlockState(final DataGenContext<Block, StairBlock> ctx, final RegistrateBlockstateProvider prov,
+                                          final String variantName, final BnbPaletteBlockPattern pattern, final Supplier<? extends Block> block) {
+            final String name = ctx.getName();
+            final ResourceLocation mainTexture = getTexture(variantName, pattern, 0);
+            final ResourceLocation flippedTexture = getFlippedTexture(variantName, pattern, 0);
+
+            final ModelFile stairs = getStairModel(prov, name, "block/tile_stairs/stairs", mainTexture, flippedTexture);
+            final ModelFile stairsAlternate = getStairModel(prov, name + "_alternate", "block/tile_stairs/stairs_alternate", mainTexture, flippedTexture);
+
+            final ModelFile stairsInner = getStairModel(prov, name + "_inner", "block/tile_stairs/inner_stairs", mainTexture, flippedTexture);
+            final ModelFile stairsInnerAlternate = getStairModel(prov, name + "_inner_alternate", "block/tile_stairs/inner_stairs_alternate", mainTexture, flippedTexture);
+
+            final ModelFile stairsOuter = getStairModel(prov, name + "_outer", "block/tile_stairs/outer_stairs", mainTexture, flippedTexture);
+            final ModelFile stairsOuterAlternate = getStairModel(prov, name + "_outer_alternate", "block/tile_stairs/outer_stairs_alternate", mainTexture, flippedTexture);
+
+            prov.getVariantBuilder(ctx.get())
+                    .forAllStatesExcept(state -> {
+                        final Direction facing = state.getValue(StairBlock.FACING);
+                        final Half half = state.getValue(StairBlock.HALF);
+                        final StairsShape shape = state.getValue(StairBlock.SHAPE);
+                        int yRot = (int) facing.getClockWise().toYRot(); // Stairs model is rotated 90 degrees clockwise for some reason
+                        if (shape == StairsShape.INNER_LEFT || shape == StairsShape.OUTER_LEFT) {
+                            yRot += 270; // Left facing stairs are rotated 90 degrees clockwise
+                        }
+                        if (shape != StairsShape.STRAIGHT && half == Half.TOP) {
+                            yRot += 90; // Top stairs are rotated 90 degrees clockwise
+                        }
+                        yRot %= 360;
+
+                        final boolean alternate = yRot % 180 != 0;
+
+                        final boolean uvlock = yRot != 0 || half == Half.TOP; // Don't set uvlock for states that have no rotation
+                        return ConfiguredModel.builder()
+                                .modelFile(shape == StairsShape.STRAIGHT ?
+                                        (alternate ? stairsAlternate : stairs) :
+                                        shape == StairsShape.INNER_LEFT || shape == StairsShape.INNER_RIGHT ?
+                                                (alternate ? stairsInnerAlternate : stairsInner) : (alternate ? stairsOuterAlternate : stairsOuter))
+                                .rotationX(half == Half.BOTTOM ? 0 : 180)
+                                .rotationY(yRot)
+                                .uvLock(uvlock)
+                                .build();
+                    }, StairBlock.WATERLOGGED);
+        }
+
+        private static @NotNull BlockModelBuilder getStairModel(RegistrateBlockstateProvider prov, String name, String s, ResourceLocation mainTexture, ResourceLocation flippedTexture) {
+            return prov.models()
+                    .withExistingParent(name, CreateBitsnBobs.asResource(s))
+                    .texture("side", mainTexture)
+                    .texture("side_flipped", flippedTexture)
+                    .texture("bottom", mainTexture)
+                    .texture("top", mainTexture);
+        }
+
+        @Override
+        protected Iterable<TagKey<Block>> getBlockTags() {
+            return List.of(BlockTags.STAIRS);
+        }
+
+        @Override
+        protected Iterable<TagKey<Item>> getItemTags() {
+            return List.of(ItemTags.STAIRS);
+        }
+
+        @Override
+        protected void createRecipes(final BnbPaletteStoneTypes type, final BlockEntry<? extends Block> patternBlock,
+                                     final DataGenContext<Block, ? extends Block> c, final RegistrateRecipeProvider p) {
+            final RecipeCategory category = RecipeCategory.BUILDING_BLOCKS;
+            p.stairs(DataIngredient.items(patternBlock.get()), category, c, c.getName(), false);
+            p.stonecutting(DataIngredient.tag(type.materialTag), category, c, 1);
+        }
+
+    }
+
+    private static class TileSlab extends BnbPaletteBlockPartial<SlabBlock> {
+
+        public TileSlab() {
+            super("slab");
+        }
+
+        @Override
+        protected SlabBlock createBlock(final Supplier<? extends Block> block) {
+            return new SlabBlock(BlockBehaviour.Properties.copy(block.get()));
+        }
+
+        @Override
+        protected boolean canRecycle() {
+            return false;
+        }
+
+        @Override
+        protected void generateBlockState(final DataGenContext<Block, SlabBlock> ctx, final RegistrateBlockstateProvider prov,
+                                          final String variantName, final BnbPaletteBlockPattern pattern, final Supplier<? extends Block> block) {
+            final String name = ctx.getName();
+            final ResourceLocation mainTexture = getTexture(variantName, pattern, 0);
+            final ResourceLocation flippedTexture = getFlippedTexture(variantName, pattern, 0);
+
+            final ModelFile bottom = prov.models()
+                    .withExistingParent(name, CreateBitsnBobs.asResource("block/tile_slab/slab"))
+                    .texture("side", mainTexture)
+                    .texture("side_flipped", flippedTexture)
+                    .texture("bottom", mainTexture)
+                    .texture("top", mainTexture);
+            final ModelFile top = prov.models()
+                    .withExistingParent(name + "_top", CreateBitsnBobs.asResource("block/tile_slab/slab_top"))
+                    .texture("side", mainTexture)
+                    .texture("side_flipped", flippedTexture)
+                    .texture("bottom", mainTexture)
+                    .texture("top", mainTexture);
+            final ModelFile doubleSlab;
+
+            doubleSlab = prov.models()
+                    .getExistingFile(prov.modLoc(pattern.createName(variantName)));
+
+            prov.slabBlock(ctx.get(), bottom, top, doubleSlab);
+        }
+
+        @Override
+        protected Iterable<TagKey<Block>> getBlockTags() {
+            return List.of(BlockTags.SLABS);
+        }
+
+        @Override
+        protected Iterable<TagKey<Item>> getItemTags() {
+            return List.of(ItemTags.SLABS);
+        }
+
+        @Override
+        protected void createRecipes(final BnbPaletteStoneTypes type, final BlockEntry<? extends Block> patternBlock,
+                                     final DataGenContext<Block, ? extends Block> c, final RegistrateRecipeProvider p) {
+            final RecipeCategory category = RecipeCategory.BUILDING_BLOCKS;
+            p.slab(DataIngredient.items(patternBlock.get()), category, c, c.getName(), false);
+            p.stonecutting(DataIngredient.tag(type.materialTag), category, c, 2);
+            final DataIngredient ingredient = DataIngredient.items(c.get());
+            ShapelessRecipeBuilder.shapeless(category, patternBlock.get())
+                    .requires(ingredient)
+                    .requires(ingredient)
+                    .unlockedBy("has_" + c.getName(), ingredient.getCritereon(p))
+                    .save(p, Create.ID + ":" + c.getName() + "_recycling");
+        }
+
+        @Override
+        protected BlockBuilder<SlabBlock, CreateRegistrate> transformBlock(
+                final BlockBuilder<SlabBlock, CreateRegistrate> builder, final String variantName, final BnbPaletteBlockPattern pattern) {
+            builder.loot((lt, block) -> lt.add(block, lt.createSlabItemTable(block)));
+            return super.transformBlock(builder, variantName, pattern);
+        }
+
+    }
+
     private static class Wall extends BnbPaletteBlockPartial<WallBlock> {
 
         public Wall() {
@@ -291,7 +456,7 @@ public abstract class BnbPaletteBlockPartial<B extends Block> {
         protected WallBlock createBlock(final Supplier<? extends Block> block) {
             return new WallBlock(BlockBehaviour.Properties.copy(block.get()).forceSolidOn());
         }
-        
+
         @Override
         protected ItemBuilder<BlockItem, BlockBuilder<WallBlock, CreateRegistrate>> transformItem(
                 final ItemBuilder<BlockItem, BlockBuilder<WallBlock, CreateRegistrate>> builder, final String variantName,
@@ -306,27 +471,27 @@ public abstract class BnbPaletteBlockPartial<B extends Block> {
         }
 
 
-        public BlockModelBuilder tileWallPost(final RegistrateBlockstateProvider p, String name, ResourceLocation wall, ResourceLocation wallFlipped) {
+        public BlockModelBuilder tileWallPost(final RegistrateBlockstateProvider p, final String name, final ResourceLocation wall, final ResourceLocation wallFlipped) {
             return p.models().singleTexture(name, CreateBitsnBobs.asResource("block/tile_wall/template_wall_post"), "wall", wall)
                     .texture("wall_flipped", wallFlipped);
         }
 
-        public BlockModelBuilder tileWallSide(final RegistrateBlockstateProvider p, String name, ResourceLocation wall, ResourceLocation wallFlipped) {
+        public BlockModelBuilder tileWallSide(final RegistrateBlockstateProvider p, final String name, final ResourceLocation wall, final ResourceLocation wallFlipped) {
             return p.models().singleTexture(name, CreateBitsnBobs.asResource("block/tile_wall/template_wall_side"), "wall", wall)
                     .texture("wall_flipped", wallFlipped);
         }
 
-        public BlockModelBuilder tileWallSideTall(final RegistrateBlockstateProvider p, String name, ResourceLocation wall, ResourceLocation wallFlipped) {
+        public BlockModelBuilder tileWallSideTall(final RegistrateBlockstateProvider p, final String name, final ResourceLocation wall, final ResourceLocation wallFlipped) {
             return p.models().singleTexture(name, CreateBitsnBobs.asResource("block/tile_wall/template_wall_side_tall"), "wall", wall)
                     .texture("wall_flipped", wallFlipped);
         }
 
-        public BlockModelBuilder tileWallSideAlternate(final RegistrateBlockstateProvider p, String name, ResourceLocation wall, ResourceLocation wallFlipped) {
+        public BlockModelBuilder tileWallSideAlternate(final RegistrateBlockstateProvider p, final String name, final ResourceLocation wall, final ResourceLocation wallFlipped) {
             return p.models().singleTexture(name, CreateBitsnBobs.asResource("block/tile_wall/template_wall_side_alternate"), "wall", wall)
                     .texture("wall_flipped", wallFlipped);
         }
 
-        public BlockModelBuilder tileWallSideTallAlternate(final RegistrateBlockstateProvider p, String name, ResourceLocation wall, ResourceLocation wallFlipped) {
+        public BlockModelBuilder tileWallSideTallAlternate(final RegistrateBlockstateProvider p, final String name, final ResourceLocation wall, final ResourceLocation wallFlipped) {
             return p.models().singleTexture(name, CreateBitsnBobs.asResource("block/tile_wall/template_wall_side_tall_alternate"), "wall", wall)
                     .texture("wall_flipped", wallFlipped);
         }
@@ -359,7 +524,7 @@ public abstract class BnbPaletteBlockPartial<B extends Block> {
         }
 
         private void tileWallSidePart(final MultiPartBlockStateBuilder builder, final ModelFile model, final ModelFile modelAlternate, final Map.Entry<Direction, Property<WallSide>> entry, final WallSide height) {
-            int yRot = (((int) entry.getKey().toYRot()) + 180) % 360;
+            final int yRot = (((int) entry.getKey().toYRot()) + 180) % 360;
             builder.part()
                     .modelFile((yRot == 0 || yRot == 180) ? model : modelAlternate)
                     .rotationY(yRot)

@@ -1,8 +1,9 @@
 {
-  "parent": "minecraft:block/inner_stairs",
+  "parent": "bits_n_bobs:block/tile_stairs/inner_stairs",
   "textures": {
     "bottom": "bits_n_bobs:block/palettes/stone_types/tiles/scoria_cut_tiles",
     "side": "bits_n_bobs:block/palettes/stone_types/tiles/scoria_cut_tiles",
+    "side_flipped": "bits_n_bobs:block/palettes/stone_types/tiles_flipped/scoria_cut_tiles_flipped",
     "top": "bits_n_bobs:block/palettes/stone_types/tiles/scoria_cut_tiles"
   }
 }

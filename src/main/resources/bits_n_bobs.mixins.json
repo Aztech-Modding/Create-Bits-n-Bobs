@@ -16,6 +16,7 @@
     "presets.WorldPresetsMixin"
   ],
   "client": [
+    "BakedGlyphMixin",
     "FontAccessMixin",
     "GirderCTBehaviourMixin",
     "GuiGameElementMixin"
