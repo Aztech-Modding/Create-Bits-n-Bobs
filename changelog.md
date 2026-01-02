@@ -183,3 +183,6 @@
   - Added reviewed machine translations for popular languages that are missing native translations
   - Fixed a crash with girder struts and cogwheel chain drives related to VS plotyards and large distances
   - Corrected UVS of tile slabs and tile stairs
+# 1.21.1-0.0.40
+- Changes:
+  - Added resource reload detection for girder struts. Ideally should prevent wrong textures appearing on the model
