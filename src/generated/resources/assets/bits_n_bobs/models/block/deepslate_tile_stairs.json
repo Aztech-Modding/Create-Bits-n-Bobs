@@ -1,8 +1,9 @@
 {
-  "parent": "minecraft:block/stairs",
+  "parent": "bits_n_bobs:block/tile_stairs/stairs",
   "textures": {
     "bottom": "bits_n_bobs:block/palettes/stone_types/tiles/deepslate_cut_tiles",
     "side": "bits_n_bobs:block/palettes/stone_types/tiles/deepslate_cut_tiles",
+    "side_flipped": "bits_n_bobs:block/palettes/stone_types/tiles_flipped/deepslate_cut_tiles_flipped",
     "top": "bits_n_bobs:block/palettes/stone_types/tiles/deepslate_cut_tiles"
   }
 }

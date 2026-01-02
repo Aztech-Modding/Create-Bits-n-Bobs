@@ -25,6 +25,7 @@ import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.common.util.Lazy;
@@ -53,6 +54,11 @@ public class CogwheelChainBlock extends RotatedPillarKineticBlock
         this.isLarge = large;
         this.sourceBlock = sourceBlock;
         ALL_CHAIN_BLOCKS.add(this);
+    }
+
+    @Override
+    public @NotNull ItemStack getCloneItemStack(final @NotNull BlockState state, final @NotNull HitResult target, final @NotNull LevelReader level, final @NotNull BlockPos pos, final @NotNull Player player) {
+        return sourceBlock.get().asStack();
     }
 
     public static @Nullable BlockState getChainState(final BlockState existingState, final boolean large, final Direction.Axis axis) {
@@ -110,7 +116,7 @@ public class CogwheelChainBlock extends RotatedPillarKineticBlock
     }
 
     @Override
-    public BlockState playerWillDestroy(final Level level, final BlockPos pos, final BlockState state, final Player player) {
+    public @NotNull BlockState playerWillDestroy(final Level level, final @NotNull BlockPos pos, final @NotNull BlockState state, final @NotNull Player player) {
         if (!level.isClientSide && player.hasInfiniteMaterials()) {
             final BlockEntity be = level.getBlockEntity(pos);
             if (be instanceof final CogwheelChainBlockEntity cogwheelChainBE) {

@@ -163,7 +163,7 @@
   "tooltip.bits_n_bobs.flywheel_bearing.angular_mass.super_heavy": "(super pesado)",
   "tooltip.bits_n_bobs.flywheel_bearing.angular_mass.super_light": "(super ligero)",
   "tooltip.bits_n_bobs.flywheel_bearing.empty": "(vacío)",
-  "tooltip.bits_n_bobs.flywheel_bearing.flywheel_stats": "Estadísticas del volante:",
+  "tooltip.bits_n_bobs.flywheel_bearing.flywheel_stats": "Estadísticas del volante de inercia:",
   "tooltip.bits_n_bobs.flywheel_bearing.full": "(lleno)",
   "tooltip.bits_n_bobs.flywheel_bearing.kinetic_transfer": "Transferencia cinética:",
   "tooltip.bits_n_bobs.flywheel_bearing.stored_stress": "Esfuerzo almacenado:"

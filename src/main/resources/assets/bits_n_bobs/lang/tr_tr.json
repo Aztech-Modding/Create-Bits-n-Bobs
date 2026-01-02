@@ -150,8 +150,7 @@
   "message.bits_n_bobs.cogwheel_chain.chain_addition_aborted.out_of_bounds": "Dişli izin verilen sınırların dışında!",
   "message.bits_n_bobs.cogwheel_chain.chain_addition_aborted.pathfinding_failed": "Zincir için uygun yol bulunamadı! (Ara nokta eklemeyi dene?)",
   "message.bits_n_bobs.cogwheel_chain.chain_addition_aborted.pathfinding_failed_at_node": "İki nokta arasında geçerli yol bulunamadı! (Ara nokta eklemeyi dene?)",
-  "message.bits_n_bobs.girder_strut.missing_anchors": "%s Kiriş Desteği daha gerekli"
-  "tab.bits_n_bobs.base": "Bits 'n' Bobs",
+  "message.bits_n_bobs.girder_strut.missing_anchors": "%s Kiriş Desteği daha gerekli",
   "tab.bits_n_bobs.deco": "Bits 'n' Bobs İnşa Blokları",
   "tooltip.bits_n_bobs.chain_drive_placing_hint": "Zincir tahriki yerleştiriliyor, bitirmek için tam bir döngü oluştur.",
   "tooltip.bits_n_bobs.flywheel_bearing.angular_mass": "Açısal Kütle:",

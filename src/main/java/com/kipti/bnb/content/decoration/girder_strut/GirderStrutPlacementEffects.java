@@ -60,7 +60,7 @@ public class GirderStrutPlacementEffects {
 
         final Vec3 delta = renderTo.subtract(renderFrom);
         final double length = delta.length();
-        if (length < 1.0E-3) {
+        if (length < 1.0E-3 || length > GirderStrutBlock.MAX_SPAN * 3) {
             return;
         }
 

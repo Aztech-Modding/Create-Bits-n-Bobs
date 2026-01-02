@@ -25,16 +25,16 @@ import java.util.function.Consumer;
 public class GirderStrutBlockEntityRenderer extends SmartBlockEntityRenderer<GirderStrutBlockEntity> {
 
 
-    public GirderStrutBlockEntityRenderer(BlockEntityRendererProvider.Context context) {
+    public GirderStrutBlockEntityRenderer(final BlockEntityRendererProvider.Context context) {
         super(context);
     }
 
     @Override
-    protected void renderSafe(GirderStrutBlockEntity blockEntity, float partialTicks, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
+    protected void renderSafe(final GirderStrutBlockEntity blockEntity, final float partialTicks, final PoseStack ms, final MultiBufferSource buffer, final int light, final int overlay) {
         super.renderSafe(blockEntity, partialTicks, ms, buffer, light, overlay);
 
-        StrutModelType modelType;
-        if (blockEntity.getBlockState().getBlock() instanceof GirderStrutBlock girderStrutBlock) {
+        final StrutModelType modelType;
+        if (blockEntity.getBlockState().getBlock() instanceof final GirderStrutBlock girderStrutBlock) {
             modelType = girderStrutBlock.getModelType();
         } else {
             return;
@@ -45,29 +45,29 @@ public class GirderStrutBlockEntityRenderer extends SmartBlockEntityRenderer<Gir
             // Render the girder strut segment
             for (BlockPos pos : blockEntity.getConnectionsCopy()) {
                 pos = pos.offset(blockEntity.getBlockPos());
-                BlockState state = blockEntity.getLevel().getBlockState(pos);
+                final BlockState state = blockEntity.getLevel().getBlockState(pos);
                 if (!
                         (state.getBlock() instanceof GirderStrutBlock)) {
                     continue; // Skip if the block is not a Girder Strut
                 }
 
-                Vec3i relative = pos.subtract(blockEntity.getBlockPos());
+                final Vec3i relative = pos.subtract(blockEntity.getBlockPos());
                 // Calculate the length of the strut segment based on the distance to the connected block
-                Vec3 thisAttachment = Vec3.atCenterOf(blockEntity.getBlockPos()).relative(blockEntity.getBlockState().getValue(GirderStrutBlock.FACING), -0.4);
-                BlockState otherState = blockEntity.getLevel().getBlockState(pos);
-                Vec3 otherAttachment = Vec3.atCenterOf(pos).relative(otherState.getValue(GirderStrutBlock.FACING), -0.4);
+                final Vec3 thisAttachment = Vec3.atCenterOf(blockEntity.getBlockPos()).relative(blockEntity.getBlockState().getValue(GirderStrutBlock.FACING), -0.4);
+                final BlockState otherState = blockEntity.getLevel().getBlockState(pos);
+                final Vec3 otherAttachment = Vec3.atCenterOf(pos).relative(otherState.getValue(GirderStrutBlock.FACING), -0.4);
 
-                double length = thisAttachment.distanceTo(otherAttachment);
-                int segments = (int) Math.ceil(length);
-                double lengthOffset = (length - segments) / 2.0;
+                final double length = thisAttachment.distanceTo(otherAttachment);
+                final int segments = (int) Math.ceil(length);
+                final double lengthOffset = (length - segments) / 2.0;
 
                 // Render the segments of the girder strut
                 ms.pushPose();
 
-                Vec3 relativeVec = otherAttachment.subtract(thisAttachment);
-                float distHorizontal = (float) Math.sqrt(relativeVec.x() * relativeVec.x() + relativeVec.z() * relativeVec.z());
-                double yRot = distHorizontal == 0 ? 0 : Math.atan2(relativeVec.x(), relativeVec.z());
-                double xRot = (float) Math.atan2(relativeVec.y(), distHorizontal);
+                final Vec3 relativeVec = otherAttachment.subtract(thisAttachment);
+                final float distHorizontal = (float) Math.sqrt(relativeVec.x() * relativeVec.x() + relativeVec.z() * relativeVec.z());
+                final double yRot = distHorizontal == 0 ? 0 : Math.atan2(relativeVec.x(), relativeVec.z());
+                final double xRot = (float) Math.atan2(relativeVec.y(), distHorizontal);
 
                 TransformStack.of(ms)
                         .translate(Vec3.atLowerCornerOf(blockEntity.getBlockState().getValue(GirderStrutBlock.FACING).getNormal()).scale(-0.4))
@@ -84,22 +84,24 @@ public class GirderStrutBlockEntityRenderer extends SmartBlockEntityRenderer<Gir
             }
         } else { //use GirderStrutModelManipulator
             if (blockEntity.connectionRenderBufferCache == null) {
-                GirderStrutModelBuilder.GirderStrutModelData connectionData = GirderStrutModelBuilder.GirderStrutModelData.collect(blockEntity.getLevel(), blockEntity.getBlockPos(), blockEntity.getBlockState(), blockEntity);
-                List<Consumer<BufferBuilder>> quads = connectionData.connections()
-                        .stream()
-                        .flatMap(c -> GirderStrutModelManipulator.bakeConnectionToConsumer(c, modelType, blockEntity.createLighter()).stream())
-                        .toList();
+                try (final ByteBufferBuilder bufferBuilder = new ByteBufferBuilder(256)) {
+                    final GirderStrutModelBuilder.GirderStrutModelData connectionData = GirderStrutModelBuilder.GirderStrutModelData.collect(blockEntity.getLevel(), blockEntity.getBlockPos(), blockEntity.getBlockState(), blockEntity);
+                    final List<Consumer<BufferBuilder>> quads = connectionData.connections()
+                            .stream()
+                            .flatMap(c -> GirderStrutModelManipulator.bakeConnectionToConsumer(c, modelType, blockEntity.createLighter()).stream())
+                            .toList();
 
-                BufferBuilder builder = new BufferBuilder(new ByteBufferBuilder(256), VertexFormat.Mode.QUADS, DefaultVertexFormat.BLOCK);
+                    final BufferBuilder builder = new BufferBuilder(bufferBuilder, VertexFormat.Mode.QUADS, DefaultVertexFormat.BLOCK);
 
-                for (Consumer<BufferBuilder> quad : quads) {
-                    quad.accept(builder);
+                    for (final Consumer<BufferBuilder> quad : quads) {
+                        quad.accept(builder);
+                    }
+                    final MeshData meshData = builder.build();
+
+                    if (meshData == null) return;
+
+                    blockEntity.connectionRenderBufferCache = SuperBufferFactory.getInstance().create(meshData);
                 }
-                MeshData meshData = builder.build();
-
-                if (meshData == null) return;
-
-                blockEntity.connectionRenderBufferCache = SuperBufferFactory.getInstance().create(meshData);
             }
             blockEntity.connectionRenderBufferCache.renderInto(ms, buffer.getBuffer(RenderType.solid()));
         }
@@ -107,7 +109,7 @@ public class GirderStrutBlockEntityRenderer extends SmartBlockEntityRenderer<Gir
     }
 
 
-    protected void renderSegments(BlockState state, PartialModel model, PoseStack ms, int length, MultiBufferSource buffer, int light) {
+    protected void renderSegments(final BlockState state, final PartialModel model, final PoseStack ms, final int length, final MultiBufferSource buffer, final int light) {
         // Render the segments of the girder strut
         for (int i = 0; i < length; i++) {
             ms.pushPose();
@@ -122,12 +124,12 @@ public class GirderStrutBlockEntityRenderer extends SmartBlockEntityRenderer<Gir
     /**
      * Used to track which one of the two is more positive
      */
-    protected int getRenderPriority(Vec3i relative) {
+    protected int getRenderPriority(final Vec3i relative) {
         return relative.getY() * 10000 + relative.getX() * 100 + relative.getZ();
     }
 
     @Override
-    public @NotNull AABB getRenderBoundingBox(@NotNull GirderStrutBlockEntity blockEntity) {
+    public @NotNull AABB getRenderBoundingBox(@NotNull final GirderStrutBlockEntity blockEntity) {
         return super.getRenderBoundingBox(blockEntity).inflate(10);
     }
 

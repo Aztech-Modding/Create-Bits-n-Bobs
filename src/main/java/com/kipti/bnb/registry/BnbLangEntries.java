@@ -25,24 +25,35 @@ public class BnbLangEntries {
                 "pathfinding_failed", "Couldn't find valid path across chain! (Try inserting more nodes?)"
         );
 
+        //Reused tooltips that cant be shared by changing keys
+        final String commonRightClickWithEmptyHand = "When R-Clicked with empty hand";
+        final String commonRightClickTurnOnBehaviour = "Toggles if the lightbulb should be _always on_, irregardless of redstone power.";
+
         final String[] entries = {
                 "generator.bits_n_bobs.ponderous_planes", "Ponderflat",
-//                "tooltip.bits_n_bobs.new_ponder_notification", "New ponder",
                 "tooltip.bits_n_bobs.chain_drive_placing_hint", "Placing chain drive, create a complete loop to finish.",
                 //Tooltips
                 "block.bits_n_bobs.headlamp.tooltip.summary", "Can be dyed and placed _multiple times in same block_. Useful for trains or fancy signage too!",
+                "block.bits_n_bobs.headlamp.tooltip.condition1", commonRightClickWithEmptyHand,
+                "block.bits_n_bobs.headlamp.tooltip.behaviour1", commonRightClickTurnOnBehaviour,
 
-                "block.bits_n_bobs.lightbulb.tooltip.summary", "_Its a lightbulb_, what do you expect.",
+                "block.bits_n_bobs.brass_lamp.tooltip.summary", "_It's not just a lightbulb_, this one's got a fancy brass casing.",
+                "block.bits_n_bobs.brass_lamp.tooltip.condition1", commonRightClickWithEmptyHand,
+                "block.bits_n_bobs.brass_lamp.tooltip.behaviour1", commonRightClickTurnOnBehaviour,
+
+                "block.bits_n_bobs.lightbulb.tooltip.summary", "_It's just a lightbulb_, what do you expect.",
                 "block.bits_n_bobs.lightbulb.tooltip.condition1", "When R-Clicked with Wrench",
                 "block.bits_n_bobs.lightbulb.tooltip.behaviour1", "Toggles the lightbulb _cage variant_.",
+                "block.bits_n_bobs.lightbulb.tooltip.condition2", commonRightClickWithEmptyHand,
+                "block.bits_n_bobs.lightbulb.tooltip.behaviour2", commonRightClickTurnOnBehaviour,
 
                 "block.bits_n_bobs.girder_strut.tooltip.summary", "A type of girder used to span a distance _between two anchor points_.",
-                "block.bits_n_bobs.weathered_girder_strut.tooltip.summary", "A type of girder used to span a distance _between two anchor points_.",
 
                 "block.bits_n_bobs.chair.tooltip.summary", "Sit yourself down and enjoy the ride! Will anchor a player onto a moving _contraption_. Even _fancier than a seat_ for static furniture too! Comes in a variety of colours. Will form _corners_ and _flat backs_ when placed against other chairs and blocks accordingly",
                 "block.bits_n_bobs.chair.tooltip.condition1", "Right click on Chair",
                 "block.bits_n_bobs.chair.tooltip.behaviour1", "Sits the player on the _Chair_. Press L-shift to leave the _Chair_.",
 
+                //Flywheel Bearing Tooltip
                 "tooltip.bits_n_bobs.flywheel_bearing.flywheel_stats", "Flywheel Stats:",
                 "tooltip.bits_n_bobs.flywheel_bearing.angular_mass", "Angular Mass:",
                 "tooltip.bits_n_bobs.flywheel_bearing.stored_stress", "Stored Stress:",

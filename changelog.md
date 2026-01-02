@@ -108,6 +108,28 @@
 - Changes:
     - Proper dist for mixins
     - Flipped 9 number texture in the atlas for nixie tubes and boards
-# 1.21.1-0.1.0
+# 1.21.1-0.0.36
 - Changes:
-  - Belts can be right-clicked with glow ink sacs to make them glow
+    - Girder strut memory leak fix
+# 1.21.1-0.0.37
+- Changes:
+    - Chain drive middle click
+    - Reverted asset changes
+# 1.21.1-0.0.38
+- Changes:
+    - Portuguese and Brazilian localization, thank you to @Aquila_Limonida
+# 1.21.1-0.0.39
+- Changes:
+    - Added link to crowdin translations
+    - Nixie tubes properly render the back of the text for international (unicode) characters
+    - Item tooltips for the lights now notes they can be toggled on
+    - Added reviewed machine translations for popular languages that are missing native translations
+    - Fixed a crash with girder struts and cogwheel chain drives related to VS plotyards and large distances
+    - Corrected UVS of tile slabs and tile stairs
+# 1.21.1-0.0.40
+- Changes:
+    - Added resource reload detection for girder struts. Ideally should prevent wrong textures appearing on the model
+# 1.21.1-1.0.0
+- Changes:
+    - Belts can be right-clicked with glow ink sacs to make them glow
+    - TODO: all the other ones

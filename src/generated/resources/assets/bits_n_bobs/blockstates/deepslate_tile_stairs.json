@@ -1,7 +1,7 @@
 {
   "variants": {
     "facing=east,half=bottom,shape=inner_left": {
-      "model": "bits_n_bobs:block/deepslate_tile_stairs_inner",
+      "model": "bits_n_bobs:block/deepslate_tile_stairs_inner_alternate",
       "uvlock": true,
       "y": 270
     },
@@ -9,7 +9,7 @@
       "model": "bits_n_bobs:block/deepslate_tile_stairs_inner"
     },
     "facing=east,half=bottom,shape=outer_left": {
-      "model": "bits_n_bobs:block/deepslate_tile_stairs_outer",
+      "model": "bits_n_bobs:block/deepslate_tile_stairs_outer_alternate",
       "uvlock": true,
       "y": 270
     },
@@ -25,7 +25,7 @@
       "x": 180
     },
     "facing=east,half=top,shape=inner_right": {
-      "model": "bits_n_bobs:block/deepslate_tile_stairs_inner",
+      "model": "bits_n_bobs:block/deepslate_tile_stairs_inner_alternate",
       "uvlock": true,
       "x": 180,
       "y": 90
@@ -36,7 +36,7 @@
       "x": 180
     },
     "facing=east,half=top,shape=outer_right": {
-      "model": "bits_n_bobs:block/deepslate_tile_stairs_outer",
+      "model": "bits_n_bobs:block/deepslate_tile_stairs_outer_alternate",
       "uvlock": true,
       "x": 180,
       "y": 90
@@ -52,7 +52,7 @@
       "y": 180
     },
     "facing=north,half=bottom,shape=inner_right": {
-      "model": "bits_n_bobs:block/deepslate_tile_stairs_inner",
+      "model": "bits_n_bobs:block/deepslate_tile_stairs_inner_alternate",
       "uvlock": true,
       "y": 270
     },
@@ -62,17 +62,17 @@
       "y": 180
     },
     "facing=north,half=bottom,shape=outer_right": {
-      "model": "bits_n_bobs:block/deepslate_tile_stairs_outer",
+      "model": "bits_n_bobs:block/deepslate_tile_stairs_outer_alternate",
       "uvlock": true,
       "y": 270
     },
     "facing=north,half=bottom,shape=straight": {
-      "model": "bits_n_bobs:block/deepslate_tile_stairs",
+      "model": "bits_n_bobs:block/deepslate_tile_stairs_alternate",
       "uvlock": true,
       "y": 270
     },
     "facing=north,half=top,shape=inner_left": {
-      "model": "bits_n_bobs:block/deepslate_tile_stairs_inner",
+      "model": "bits_n_bobs:block/deepslate_tile_stairs_inner_alternate",
       "uvlock": true,
       "x": 180,
       "y": 270
@@ -83,7 +83,7 @@
       "x": 180
     },
     "facing=north,half=top,shape=outer_left": {
-      "model": "bits_n_bobs:block/deepslate_tile_stairs_outer",
+      "model": "bits_n_bobs:block/deepslate_tile_stairs_outer_alternate",
       "uvlock": true,
       "x": 180,
       "y": 270
@@ -94,7 +94,7 @@
       "x": 180
     },
     "facing=north,half=top,shape=straight": {
-      "model": "bits_n_bobs:block/deepslate_tile_stairs",
+      "model": "bits_n_bobs:block/deepslate_tile_stairs_alternate",
       "uvlock": true,
       "x": 180,
       "y": 270
@@ -103,7 +103,7 @@
       "model": "bits_n_bobs:block/deepslate_tile_stairs_inner"
     },
     "facing=south,half=bottom,shape=inner_right": {
-      "model": "bits_n_bobs:block/deepslate_tile_stairs_inner",
+      "model": "bits_n_bobs:block/deepslate_tile_stairs_inner_alternate",
       "uvlock": true,
       "y": 90
     },
@@ -111,17 +111,17 @@
       "model": "bits_n_bobs:block/deepslate_tile_stairs_outer"
     },
     "facing=south,half=bottom,shape=outer_right": {
-      "model": "bits_n_bobs:block/deepslate_tile_stairs_outer",
+      "model": "bits_n_bobs:block/deepslate_tile_stairs_outer_alternate",
       "uvlock": true,
       "y": 90
     },
     "facing=south,half=bottom,shape=straight": {
-      "model": "bits_n_bobs:block/deepslate_tile_stairs",
+      "model": "bits_n_bobs:block/deepslate_tile_stairs_alternate",
       "uvlock": true,
       "y": 90
     },
     "facing=south,half=top,shape=inner_left": {
-      "model": "bits_n_bobs:block/deepslate_tile_stairs_inner",
+      "model": "bits_n_bobs:block/deepslate_tile_stairs_inner_alternate",
       "uvlock": true,
       "x": 180,
       "y": 90
@@ -133,7 +133,7 @@
       "y": 180
     },
     "facing=south,half=top,shape=outer_left": {
-      "model": "bits_n_bobs:block/deepslate_tile_stairs_outer",
+      "model": "bits_n_bobs:block/deepslate_tile_stairs_outer_alternate",
       "uvlock": true,
       "x": 180,
       "y": 90
@@ -145,13 +145,13 @@
       "y": 180
     },
     "facing=south,half=top,shape=straight": {
-      "model": "bits_n_bobs:block/deepslate_tile_stairs",
+      "model": "bits_n_bobs:block/deepslate_tile_stairs_alternate",
       "uvlock": true,
       "x": 180,
       "y": 90
     },
     "facing=west,half=bottom,shape=inner_left": {
-      "model": "bits_n_bobs:block/deepslate_tile_stairs_inner",
+      "model": "bits_n_bobs:block/deepslate_tile_stairs_inner_alternate",
       "uvlock": true,
       "y": 90
     },
@@ -161,7 +161,7 @@
       "y": 180
     },
     "facing=west,half=bottom,shape=outer_left": {
-      "model": "bits_n_bobs:block/deepslate_tile_stairs_outer",
+      "model": "bits_n_bobs:block/deepslate_tile_stairs_outer_alternate",
       "uvlock": true,
       "y": 90
     },
@@ -182,7 +182,7 @@
       "y": 180
     },
     "facing=west,half=top,shape=inner_right": {
-      "model": "bits_n_bobs:block/deepslate_tile_stairs_inner",
+      "model": "bits_n_bobs:block/deepslate_tile_stairs_inner_alternate",
       "uvlock": true,
       "x": 180,
       "y": 270
@@ -194,7 +194,7 @@
       "y": 180
     },
     "facing=west,half=top,shape=outer_right": {
-      "model": "bits_n_bobs:block/deepslate_tile_stairs_outer",
+      "model": "bits_n_bobs:block/deepslate_tile_stairs_outer_alternate",
       "uvlock": true,
       "x": 180,
       "y": 270

@@ -174,6 +174,7 @@ public class BnbBlocks {
                             "block/girder_strut/weathered_girder_strut_attachment")
                     )))
             .onRegister(CreateRegistrate.blockModel(() -> GirderStrutModelBuilder::new))
+            .onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "block.bits_n_bobs.girder_strut"))
             .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
             .item(GirderStrutBlockItem::new)
             .model((c, p) ->

@@ -9,8 +9,10 @@
 	"elements": [
 		{
 			"name": "bulbglass",
-			"from": [5, 5, 5],
-			"to": [11, 13, 11],
+			"from": [4.5, 5, 4.5],
+			"to": [11.5, 13.5, 11.5],
+			"shade": false,
+			"light_emission": 15,
 			"faces": {
 				"north": {"uv": [0, 0, 3, 4], "texture": "#2"},
 				"east": {"uv": [0, 0, 3, 4], "texture": "#2"},
@@ -18,6 +20,21 @@
 				"west": {"uv": [0, 0, 3, 4], "texture": "#2"},
 				"up": {"uv": [6, 3, 3, 0], "texture": "#2"},
 				"down": {"uv": [6, 0, 3, 3], "texture": "#2"}
+			}
+		},
+		{
+			"name": "bulbglass glow",
+			"from": [4.25, 4.75, 4.25],
+			"to": [11.75, 13.75, 11.75],
+			"shade": false,
+			"light_emission": 15,
+			"faces": {
+				"north": {"uv": [3, 8, 6, 12], "texture": "#2"},
+				"east": {"uv": [3, 8, 6, 12], "texture": "#2"},
+				"south": {"uv": [3, 8, 6, 12], "texture": "#2"},
+				"west": {"uv": [3, 8, 6, 12], "texture": "#2"},
+				"up": {"uv": [9, 11, 6, 8], "texture": "#2"},
+				"down": {"uv": [9, 8, 6, 11], "texture": "#2"}
 			}
 		},
 		{
@@ -57,8 +74,19 @@
 			}
 		},
 		{
+			"from": [4.75, 4, 4.75],
+			"to": [11.25, 5, 11.25],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 4.5, 8]},
+			"faces": {
+				"north": {"uv": [0, 4, 3, 4.5], "texture": "#2"},
+				"east": {"uv": [0, 4, 3, 4.5], "texture": "#2"},
+				"south": {"uv": [0, 4, 3, 4.5], "texture": "#2"},
+				"west": {"uv": [0, 4, 3, 4.5], "texture": "#2"}
+			}
+		},
+		{
 			"name": "cage",
-			"from": [4, 5, 4],
+			"from": [4, 4.5, 4],
 			"to": [12, 14, 12],
 			"faces": {
 				"north": {"uv": [6, 0, 10, 4.5], "texture": "#2"},
@@ -72,7 +100,7 @@
 		{
 			"name": "cage inverted",
 			"from": [12, 14, 12],
-			"to": [4, 5, 4],
+			"to": [4, 4.5, 4],
 			"faces": {
 				"north": {"uv": [6, 4.5, 10, 0], "texture": "#2"},
 				"east": {"uv": [6, 4.5, 10, 0], "texture": "#2"},
@@ -119,9 +147,11 @@
 			"name": "log by bulb",
 			"origin": [0, 0, 0],
 			"color": 0,
-			"children": [0, 1, 2, 3]
+			"stepParentName": "",
+			"backdrop": false,
+			"children": [0, 1, 2, 3, 4, 5]
 		},
-		4,
-		5
+		6,
+		7
 	]
 }
