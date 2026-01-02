@@ -186,3 +186,6 @@
 # 1.21.1-0.0.40
 - Changes:
   - Added resource reload detection for girder struts. Ideally should prevent wrong textures appearing on the model
+# 1.20.1-0.0.40
+- Changes:
+  - Added resource reload detection for girder struts. Ideally should prevent wrong textures appearing on the model
