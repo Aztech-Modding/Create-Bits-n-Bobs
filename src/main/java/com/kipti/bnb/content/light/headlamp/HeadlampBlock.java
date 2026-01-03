@@ -1,6 +1,5 @@
 package com.kipti.bnb.content.light.headlamp;
 
-import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.light.founation.LightBlock;
 import com.kipti.bnb.registry.BnbBlockEntities;
 import com.kipti.bnb.registry.BnbBlocks;
@@ -39,12 +38,11 @@ import net.neoforged.neoforge.event.level.BlockEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicReference;
 
-//TODO SpecialBlockItemRequirement
-public class HeadlampBlock extends LightBlock implements IBE<HeadlampBlockEntity>, IWrenchable{
+public class HeadlampBlock extends LightBlock implements IBE<HeadlampBlockEntity>, IWrenchable {
 
-    public HeadlampBlock(Properties p_52591_) {
+    public HeadlampBlock(final Properties p_52591_) {
         super(p_52591_, BnbShapes.LIGHTBULB_SHAPE);
     }
 
@@ -55,7 +53,7 @@ public class HeadlampBlock extends LightBlock implements IBE<HeadlampBlockEntity
             return;
         }
 
-        Vec3 location = getPlayerLocationInBlock(pos, placer);
+        final Vec3 location = getPlayerLocationInBlock(pos, placer);
         withBlockEntityDo(level, pos, (headlampBlockEntity) -> headlampBlockEntity.placeHeadlampIntoBlock(
                 location.subtract(pos.getCenter()), state.getValue(FACING)));
     }
@@ -64,9 +62,9 @@ public class HeadlampBlock extends LightBlock implements IBE<HeadlampBlockEntity
         double range = 10;
         HitResult hitResult = placer.pick(range, 1, false);
         Vec3 location = hitResult.getLocation();
-        Vec3 direction = placer.getLookAngle();
+        final Vec3 direction = placer.getLookAngle();
 
-        AABB hitBox = new AABB(pos);
+        final AABB hitBox = new AABB(pos);
         location = hitBox.clip(location.add(direction.scale(2)), location).orElse(location);
         return location;
     }
@@ -77,7 +75,7 @@ public class HeadlampBlock extends LightBlock implements IBE<HeadlampBlockEntity
         Vec3 location = hitResult.getLocation();
         Vec3 direction = placer.getLookAngle();
 
-        BlockHitResult clip = level.getBlockState(pos).getShape(level, pos).clip(location, direction.scale(2), pos);
+        final BlockHitResult clip = level.getBlockState(pos).getShape(level, pos).clip(location, direction.scale(2), pos);
         if (clip == null) {
             return location;
         }
@@ -89,42 +87,46 @@ public class HeadlampBlock extends LightBlock implements IBE<HeadlampBlockEntity
     public boolean canBeReplaced(@NotNull BlockState state, BlockPlaceContext useContext) {
         if (useContext.isSecondaryUseActive())
             return false;
-        ItemStack stack = useContext.getItemInHand();
-        if (stack.getItem() instanceof BlockItem blockItem && blockItem.getBlock() != this)
+        final ItemStack stack = useContext.getItemInHand();
+        if (stack.getItem() instanceof final BlockItem blockItem && blockItem.getBlock() != this)
             return super.canBeReplaced(state, useContext);
-        Vec3 location = useContext.getClickLocation();
+        final Vec3 location = useContext.getClickLocation();
 
-        BlockPos pos = useContext.getClickedPos();
-        if (useContext.getLevel().getBlockEntity(pos) instanceof HeadlampBlockEntity headlampBlockEntity) {
+        final BlockPos pos = useContext.getClickedPos();
+        if (useContext.getLevel().getBlockEntity(pos) instanceof final HeadlampBlockEntity headlampBlockEntity) {
             return headlampBlockEntity.canPlaceHeadlampIntoBlock(location.subtract(pos.getCenter()), state.getValue(FACING));
         }
         return super.canBeReplaced(state, useContext);
     }
 
     @Override
-    public BlockState getStateForPlacement(@NotNull BlockPlaceContext pContext) {
-        BlockState stateForPlacement = super.getStateForPlacement(pContext);
-        if (stateForPlacement == null)
+    public @Nullable BlockState getStateForPlacement(@NotNull final BlockPlaceContext pContext) {
+        AtomicReference<BlockState> stateForPlacement = new AtomicReference<>(super.getStateForPlacement(pContext));
+        if (stateForPlacement.get() == null)
             return null;
 
-        Level level = pContext.getLevel();
-        BlockPos pos = pContext.getClickedPos();
-        BlockState blockState = level.getBlockState(pos);
-        HeadlampBlockEntity fpbe = getBlockEntity(level, pos);
+        final Level level = pContext.getLevel();
+        final BlockPos pos = pContext.getClickedPos();
+        final BlockState blockState = level.getBlockState(pos);
+        final HeadlampBlockEntity fpbe = getBlockEntity(level, pos);
 
-        Vec3 location = pContext.getClickLocation().subtract(pos.getCenter());
-        Direction facing = stateForPlacement.getValue(FACING);
+        final Vec3 location = pContext.getClickLocation().subtract(pos.getCenter());
+        final Direction facing = stateForPlacement.get().getValue(FACING);
 
-        if (blockState.is(this) && location != null && fpbe != null) {
+        if (blockState.is(this) && fpbe != null) {
             if (!level.isClientSide()) {
-                Vec3 finalLocation = location;
-                withBlockEntityDo(level, pos, (headlampBlockEntity) -> headlampBlockEntity
-                        .placeHeadlampIntoBlock(finalLocation, facing));
+                withBlockEntityDo(level, pos, (headlampBlockEntity) -> {
+                    final boolean placed = headlampBlockEntity
+                            .placeHeadlampIntoBlock(location, facing);
+                    if (!placed) {
+                        stateForPlacement.set(null);
+                    }
+                });
                 level.playSound(null, pos, soundType.getPlaceSound(), SoundSource.BLOCKS);
             }
-            stateForPlacement = blockState;
+            stateForPlacement.set(blockState);
         }
-        return stateForPlacement;
+        return stateForPlacement.get();
     }
 
     @Override
@@ -144,9 +146,9 @@ public class HeadlampBlock extends LightBlock implements IBE<HeadlampBlockEntity
     }
 
     @Override
-    public boolean onDestroyedByPlayer(BlockState state, Level level, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
-        Vec3 location = getPlayerLocationInBlockExact(pos, level, player);
-        if (!player.isCrouching() && level.getBlockEntity(pos) instanceof HeadlampBlockEntity headlampBlockEntity &&
+    public boolean onDestroyedByPlayer(final @NotNull BlockState state, final @NotNull Level level, final @NotNull BlockPos pos, final @NotNull Player player, final boolean willHarvest, final @NotNull FluidState fluid) {
+        final Vec3 location = getPlayerLocationInBlockExact(pos, level, player);
+        if (!player.isCrouching() && level.getBlockEntity(pos) instanceof final HeadlampBlockEntity headlampBlockEntity &&
                 headlampBlockEntity.removeNearestHeadlamp(location.subtract(pos.getCenter()), state.getValue(FACING))) {
             if (!level.isClientSide && !player.isCreative()) {
                 HeadlampBlock.popResource(level, pos, BnbBlocks.HEADLAMP.asStack());
@@ -158,7 +160,7 @@ public class HeadlampBlock extends LightBlock implements IBE<HeadlampBlockEntity
 
     @Override
     public void onRemove(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState newState, boolean movedByPiston) {
-        if (newState != null && newState.is(state.getBlock())) {
+        if ( newState.is(state.getBlock())) {
             super.onRemove(state, level, pos, newState, movedByPiston);
             return; // Block is being replaced by the same block, do nothing
         }
@@ -171,34 +173,33 @@ public class HeadlampBlock extends LightBlock implements IBE<HeadlampBlockEntity
     }
 
     @Override
-    public InteractionResult onSneakWrenched(BlockState state, UseOnContext context) {
-        Level world = context.getLevel();
-        BlockPos pos = context.getClickedPos();
-        Player player = context.getPlayer();
-        HeadlampBlockEntity headlampBlockEntity = (HeadlampBlockEntity) context.getLevel().getBlockEntity(pos);
-        Vec3 location = getPlayerLocationInBlockExact(context.getClickedPos(), context.getLevel(), context.getPlayer());
+    public InteractionResult onSneakWrenched(final BlockState state, final UseOnContext context) {
+        final Level world = context.getLevel();
+        final BlockPos pos = context.getClickedPos();
+        final Player player = context.getPlayer();
+        final Vec3 location = getPlayerLocationInBlockExact(context.getClickedPos(), context.getLevel(), context.getPlayer());
 
-        if (!(world instanceof ServerLevel serverLevel))
+        if (!(world instanceof final ServerLevel serverLevel))
             return InteractionResult.SUCCESS;
 
-        BlockEvent.BreakEvent event = new BlockEvent.BreakEvent(world, pos, world.getBlockState(pos), player);
+        final BlockEvent.BreakEvent event = new BlockEvent.BreakEvent(world, pos, world.getBlockState(pos), player);
         NeoForge.EVENT_BUS.post(event);
         if (event.isCanceled())
             return InteractionResult.SUCCESS;
 
-        if (player != null && !player.isCreative()) {
+        if (!player.isCreative()) {
             Block.getDrops(state, serverLevel, pos, world.getBlockEntity(pos), player, context.getItemInHand()).forEach(itemStack -> player.getInventory().placeItemBackInInventory(itemStack));
         }
 
         state.spawnAfterBreak(serverLevel, pos, ItemStack.EMPTY, true);
 
-        // middle headlamps is sometimes weird.
-        if (headlampBlockEntity.getExistingPlacements().toArray().length > 1) {
-            headlampBlockEntity.removeNearestHeadlamp(location.subtract(context.getClickedPos().getCenter()), state.getValue(FACING));
-        } else {
-            world.destroyBlock(pos, false);
-        }
-
+        withBlockEntityDo(world, pos, (headlampBlockEntity) -> {
+            if (headlampBlockEntity.getExistingPlacements().size() > 1) {
+                headlampBlockEntity.removeNearestHeadlamp(location.subtract(context.getClickedPos().getCenter()), state.getValue(FACING));
+            } else {
+                world.destroyBlock(pos, false);
+            }
+        });
 
         IWrenchable.playRemoveSound(world, pos);
         return InteractionResult.SUCCESS;

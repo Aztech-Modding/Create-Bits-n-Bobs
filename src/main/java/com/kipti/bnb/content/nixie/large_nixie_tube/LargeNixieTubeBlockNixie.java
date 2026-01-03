@@ -6,13 +6,17 @@ import com.kipti.bnb.registry.BnbBlocks;
 import com.kipti.bnb.registry.BnbShapes;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;
+import net.createmod.catnip.placement.IPlacementHelper;
+import net.createmod.catnip.placement.PlacementHelpers;
+import net.createmod.catnip.placement.PlacementOffset;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -23,13 +27,16 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 public class LargeNixieTubeBlockNixie extends GenericNixieDisplayBlock implements IBE<GenericNixieDisplayBlockEntity>, IWrenchable, IGenericNixieDisplayBlock, DyeProviderBlock {
 
-    final @Nullable DyeColor dyeColor;
+    private final @Nullable DyeColor dyeColor;
+    private static final int placementHelperId = PlacementHelpers.register(new PlacementHelper());
 
     public LargeNixieTubeBlockNixie(final Properties p_52591_, @Nullable final DyeColor dyeColor) {
         super(p_52591_);
@@ -44,20 +51,13 @@ public class LargeNixieTubeBlockNixie extends GenericNixieDisplayBlock implement
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand interactionHand, BlockHitResult hitResult) {
         final ItemStack heldItem = player.getItemInHand(interactionHand);
-        if (heldItem.getItem() instanceof final DyeItem dyeItem && dyeItem.getDyeColor() != dyeColor) {
-            if (!level.isClientSide) {
-                withBlockEntityDo(level, pos, be -> be.applyToEachElementOfThisStructure((display) -> {
-                    final DyeColor newColor = dyeItem.getDyeColor();
-                    final BlockState newState = BnbBlocks.DYED_LARGE_NIXIE_TUBE.get(newColor).getDefaultState()
-                        .setValue(FACING, display.getBlockState().getValue(FACING))
-                        .setValue(ORIENTATION, display.getBlockState().getValue(ORIENTATION))
-                        .setValue(LIT, display.getBlockState().getValue(LIT));
-                    level.setBlockAndUpdate(display.getBlockPos(), newState);
-                    final GenericNixieDisplayBlockEntity newBe = (GenericNixieDisplayBlockEntity) level.getBlockEntity(display.getBlockPos());
-                    newBe.inheritDataFrom(display);
-                }));
+        final IPlacementHelper placementHelper = PlacementHelpers.get(placementHelperId);
+        if (!player.isShiftKeyDown() && player.mayBuild()) {
+            if (placementHelper.matchesItem(stack)) {
+                placementHelper.getOffset(player, level, state, pos, hitResult)
+                        .placeInWorld(level, (BlockItem) stack.getItem(), player, hand, hitResult);
+                return InteractionResult.SUCCESS;
             }
-            return InteractionResult.SUCCESS;
         }
         return super.use(state, level, pos, player, interactionHand, hitResult);
     }
@@ -86,6 +86,33 @@ public class LargeNixieTubeBlockNixie extends GenericNixieDisplayBlock implement
 
     public List<GenericNixieDisplayBlockEntity.ConfigurableDisplayOptions> getPossibleDisplayOptions() {
         return List.of(GenericNixieDisplayBlockEntity.ConfigurableDisplayOptions.NONE, GenericNixieDisplayBlockEntity.ConfigurableDisplayOptions.ALWAYS_UP);
+    }
+
+    @MethodsReturnNonnullByDefault
+    private static class PlacementHelper implements IPlacementHelper {
+        @Override
+        public Predicate<ItemStack> getItemPredicate() {
+            return BnbBlocks.LARGE_NIXIE_TUBE::isIn;
+        }
+
+        @Override
+        public Predicate<BlockState> getStatePredicate() {
+            return s -> s.getBlock() instanceof LargeNixieTubeBlockNixie;
+        }
+
+        @Override
+        public PlacementOffset getOffset(@NotNull final Player player, @NotNull final Level world, final BlockState state, @NotNull final BlockPos pos, final BlockHitResult ray) {
+            final List<Direction> directions = IPlacementHelper.orderedByDistanceOnlyAxis(pos, ray.getLocation(),
+                    DoubleOrientedDirections.getLeft(state.getValue(LargeNixieTubeBlockNixie.ORIENTATION), state.getValue(LargeNixieTubeBlockNixie.FACING)).getAxis(), dir -> world.getBlockState(pos.relative(dir)).canBeReplaced());
+
+            if (directions.isEmpty()) {
+                return PlacementOffset.fail();
+            } else {
+                final BlockPos newPos = pos.relative(directions.get(0));
+
+                return PlacementOffset.success(newPos, sourceState -> state);
+            }
+        }
     }
 
 }
