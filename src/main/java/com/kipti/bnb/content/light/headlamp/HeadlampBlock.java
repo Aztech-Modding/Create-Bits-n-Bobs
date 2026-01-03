@@ -1,5 +1,6 @@
 package com.kipti.bnb.content.light.headlamp;
 
+import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.light.founation.LightBlock;
 import com.kipti.bnb.registry.BnbBlockEntities;
 import com.kipti.bnb.registry.BnbBlocks;
@@ -8,6 +9,7 @@ import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -20,6 +22,7 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -31,11 +34,15 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.level.BlockEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
+
 //TODO SpecialBlockItemRequirement
-public class HeadlampBlock extends LightBlock implements IBE<HeadlampBlockEntity> {
+public class HeadlampBlock extends LightBlock implements IBE<HeadlampBlockEntity>, IWrenchable{
 
     public HeadlampBlock(Properties p_52591_) {
         super(p_52591_, BnbShapes.LIGHTBULB_SHAPE);
@@ -165,16 +172,36 @@ public class HeadlampBlock extends LightBlock implements IBE<HeadlampBlockEntity
 
     @Override
     public InteractionResult onSneakWrenched(BlockState state, UseOnContext context) {
+        Level world = context.getLevel();
+        BlockPos pos = context.getClickedPos();
+        Player player = context.getPlayer();
+        HeadlampBlockEntity headlampBlockEntity = (HeadlampBlockEntity) context.getLevel().getBlockEntity(pos);
         Vec3 location = getPlayerLocationInBlockExact(context.getClickedPos(), context.getLevel(), context.getPlayer());
-        if (context.getLevel().getBlockEntity(context.getClickedPos()) instanceof HeadlampBlockEntity headlampBlockEntity &&
-                headlampBlockEntity.removeNearestHeadlamp(location.subtract(context.getClickedPos().getCenter()), state.getValue(FACING))) {
-            if (!context.getLevel().isClientSide && !context.getPlayer().isCreative()) {
-                context.getPlayer().addItem(BnbBlocks.HEADLAMP.asStack());
-            }
-            IWrenchable.playRemoveSound(context.getLevel(), context.getClickedPos());
+
+        if (!(world instanceof ServerLevel serverLevel))
             return InteractionResult.SUCCESS;
+
+        BlockEvent.BreakEvent event = new BlockEvent.BreakEvent(world, pos, world.getBlockState(pos), player);
+        NeoForge.EVENT_BUS.post(event);
+        if (event.isCanceled())
+            return InteractionResult.SUCCESS;
+
+        if (player != null && !player.isCreative()) {
+            Block.getDrops(state, serverLevel, pos, world.getBlockEntity(pos), player, context.getItemInHand()).forEach(itemStack -> player.getInventory().placeItemBackInInventory(itemStack));
         }
-        return super.onSneakWrenched(state, context);
+
+        state.spawnAfterBreak(serverLevel, pos, ItemStack.EMPTY, true);
+
+        // middle headlamps is sometimes weird.
+        if (headlampBlockEntity.getExistingPlacements().toArray().length > 1) {
+            headlampBlockEntity.removeNearestHeadlamp(location.subtract(context.getClickedPos().getCenter()), state.getValue(FACING));
+        } else {
+            world.destroyBlock(pos, false);
+        }
+
+
+        IWrenchable.playRemoveSound(world, pos);
+        return InteractionResult.SUCCESS;
     }
 
     @Override
