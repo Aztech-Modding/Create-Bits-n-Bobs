@@ -189,3 +189,19 @@
 # 1.20.1-0.0.40
 - Changes:
   - Added resource reload detection for girder struts. Ideally should prevent wrong textures appearing on the model
+# 1.21.1-0.0.41
+- Changes (Credit to astral for locking in):
+    - Fix chair corner states
+    - Properly fix girder strut texture reloads
+    - Added placement helper for nixie board and large nixie tube
+    - Fixed lightbulb texture
+    - Fix girder strut placement in water, and added sound
+    - Fix text atlas having C and D swapped
+# 1.20.1-0.0.41
+- Changes (Credit to astral for locking in):
+    - Fix chair corner states
+    - Properly fix girder strut texture reloads
+    - Added placement helper for nixie board and large nixie tube
+    - Fixed lightbulb texture
+    - Fix girder strut placement in water, and added sound
+    - Fix text atlas having C and D swapped

@@ -101,7 +101,7 @@ public class GirderStrutBlock extends Block implements IBE<GirderStrutBlockEntit
         final BlockState state = super.getStateForPlacement(context);
         if (state == null)
             return null;
-        return state.setValue(FACING, context.getClickedFace()).setValue(WATERLOGGED, Boolean.valueOf(ifluidstate.getType() == Fluids.WATER));
+        return state.setValue(FACING, context.getClickedFace()).setValue(WATERLOGGED, ifluidstate.getType() == Fluids.WATER);
     }
 
     @Override

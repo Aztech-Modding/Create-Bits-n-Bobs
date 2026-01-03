@@ -2,6 +2,7 @@ package com.kipti.bnb.content.girder_strut;
 
 import net.createmod.catnip.data.Pair;
 import net.createmod.catnip.nbt.NBTHelper;
+import net.createmod.catnip.data.Pair;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -19,23 +20,26 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 
 public class GirderStrutBlockItem extends BlockItem {
 
     private static final double MAX_ANGLE_DEGREES = 75.0;
     private static final double MIN_DOT_THRESHOLD = Math.cos(Math.toRadians(MAX_ANGLE_DEGREES));
 
-    public GirderStrutBlockItem(Block block, Properties properties) {
+    public GirderStrutBlockItem(final Block block, final Properties properties) {
         super(block, properties);
     }
 
     @Override
-    public InteractionResult useOn(UseOnContext context) {
-        ItemStack stack = context.getItemInHand();
-        Level level = context.getLevel();
-        BlockPos clickedPos = context.getClickedPos();
-        Direction face = context.getClickedFace();
+    public @NotNull InteractionResult useOn(final UseOnContext context) {
+        final ItemStack stack = context.getItemInHand();
+        final Level level = context.getLevel();
+        final BlockPos clickedPos = context.getClickedPos();
+        final Direction face = context.getClickedFace();
 
         if (context.isSecondaryUseActive()) {
             if (hasPlacement(stack)) {
@@ -45,17 +49,17 @@ public class GirderStrutBlockItem extends BlockItem {
             return InteractionResult.PASS;
         }
 
-        BlockPos placementPos = resolvePlacementPos(level, clickedPos, face);
-        Direction placementFace = face;
+        final BlockPos placementPos = resolvePlacementPos(level, clickedPos, face);
+        Direction targetFace = face;
         if (placementPos != null && level.getBlockState(placementPos).getBlock().equals(getBlock())) {
-            placementFace = level.getBlockState(placementPos).getValue(GirderStrutBlock.FACING);
+            targetFace = level.getBlockState(placementPos).getValue(GirderStrutBlock.FACING);
         }
 
         if (!hasPlacement(stack)) {
             if (placementPos == null) {
                 return InteractionResult.FAIL;
             }
-            setPlacement(stack, placementPos, placementFace);
+            setPlacement(stack, placementPos, targetFace);
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
 
@@ -73,21 +77,16 @@ public class GirderStrutBlockItem extends BlockItem {
         }
 
         if (fromFace == null) {
-            BlockState fromState = level.getBlockState(fromPos);
+            final BlockState fromState = level.getBlockState(fromPos);
             if (fromState.getBlock().equals(getBlock())) {
                 fromFace = fromState.getValue(GirderStrutBlock.FACING);
             } else {
-                fromFace = placementFace.getOpposite();
+                fromFace = targetFace.getOpposite();
             }
         }
 
-        Direction targetFace = placementFace;
-        if (targetFace == null) {
-            targetFace = Direction.UP;
-        }
-
         if (!level.isClientSide) {
-            ConnectionResult result = tryConnect(context, fromPos, fromFace, placementPos, targetFace);
+            final ConnectionResult result = tryConnect(context, fromPos, fromFace, placementPos, targetFace);
             if (result != ConnectionResult.SUCCESS) {
                 if (result == ConnectionResult.INVALID) {
                     clearPlacement(stack);
@@ -132,7 +131,7 @@ public class GirderStrutBlockItem extends BlockItem {
         return hasPlacement(stack) || super.isFoil(stack);
     }
 
-    public static boolean isValidConnection(Level level, BlockPos fromPos, Direction fromFace, BlockPos toPos, Direction toFace) {
+    public static boolean isValidConnection(final Level level, final BlockPos fromPos, final Direction fromFace, final BlockPos toPos, final Direction toFace) {
         if (fromPos == null || toPos == null || fromFace == null || toFace == null) {
             return false;
         }
@@ -141,24 +140,24 @@ public class GirderStrutBlockItem extends BlockItem {
             return false;
         }
 
-        int diffX = toPos.getX() - fromPos.getX();
-        int diffY = toPos.getY() - fromPos.getY();
-        int diffZ = toPos.getZ() - fromPos.getZ();
+        final int diffX = toPos.getX() - fromPos.getX();
+        final int diffY = toPos.getY() - fromPos.getY();
+        final int diffZ = toPos.getZ() - fromPos.getZ();
 
-        int nonZero = (diffX != 0 ? 1 : 0) + (diffY != 0 ? 1 : 0) + (diffZ != 0 ? 1 : 0);
+        final int nonZero = (diffX != 0 ? 1 : 0) + (diffY != 0 ? 1 : 0) + (diffZ != 0 ? 1 : 0);
         if (nonZero >= 3) {
             return false;
         }
 
-        double lengthSq = diffX * diffX + diffY * diffY + diffZ * diffZ;
+        final double lengthSq = diffX * diffX + diffY * diffY + diffZ * diffZ;
         if (lengthSq > GirderStrutBlock.MAX_SPAN * GirderStrutBlock.MAX_SPAN) {
             return false;
         }
 
-        Vec3 fromCenter = Vec3.atCenterOf(fromPos);
-        Vec3 toCenter = Vec3.atCenterOf(toPos);
-        Vec3 connection = toCenter.subtract(fromCenter);
-        Vec3 reverseConnection = fromCenter.subtract(toCenter);
+        final Vec3 fromCenter = Vec3.atCenterOf(fromPos);
+        final Vec3 toCenter = Vec3.atCenterOf(toPos);
+        final Vec3 connection = toCenter.subtract(fromCenter);
+        final Vec3 reverseConnection = fromCenter.subtract(toCenter);
 
         if (!isWithinAngle(connection, fromFace)) {
             return false;
@@ -167,32 +166,32 @@ public class GirderStrutBlockItem extends BlockItem {
         return isWithinAngle(reverseConnection, toFace);
     }
 
-    private static boolean isWithinAngle(Vec3 vector, Direction face) {
+    private static boolean isWithinAngle(final Vec3 vector, final Direction face) {
         if (vector.lengthSqr() < 1.0E-6) {
             return false;
         }
-        Vec3 unitVec = vector.normalize();
-        Vec3 faceNormal = Vec3.atLowerCornerOf(face.getNormal()).normalize();
-        double dot = unitVec.dot(faceNormal);
+        final Vec3 unitVec = vector.normalize();
+        final Vec3 faceNormal = Vec3.atLowerCornerOf(face.getNormal()).normalize();
+        final double dot = unitVec.dot(faceNormal);
         return dot >= MIN_DOT_THRESHOLD;
     }
 
-    private ConnectionResult tryConnect(UseOnContext context, BlockPos fromPos, Direction fromFace, BlockPos targetPos, Direction targetFace) {
-        Level level = context.getLevel();
-        Player player = context.getPlayer();
-        ItemStack stack = context.getItemInHand();
+    private ConnectionResult tryConnect(final UseOnContext context, final BlockPos fromPos, final Direction fromFace, final BlockPos targetPos, final Direction targetFace) {
+        final Level level = context.getLevel();
+        final Player player = context.getPlayer();
+        final ItemStack stack = context.getItemInHand();
 
         if (!isValidConnection(level, fromPos, fromFace, targetPos, targetFace)) {
             return ConnectionResult.INVALID;
         }
 
-        BlockState fromState = level.getBlockState(fromPos);
-        BlockState targetState = level.getBlockState(targetPos);
+        final BlockState fromState = level.getBlockState(fromPos);
+        final BlockState targetState = level.getBlockState(targetPos);
 
-        boolean fromNeedsPlacement = !(fromState.getBlock().equals(getBlock()));
-        boolean targetNeedsPlacement = !(targetState.getBlock().equals(getBlock()));
+        final boolean fromNeedsPlacement = !(fromState.getBlock().equals(getBlock()));
+        final boolean targetNeedsPlacement = !(targetState.getBlock().equals(getBlock()));
 
-        int requiredAnchors = (fromNeedsPlacement ? 1 : 0) + (targetNeedsPlacement ? 1 : 0);
+        final int requiredAnchors = (fromNeedsPlacement ? 1 : 0) + (targetNeedsPlacement ? 1 : 0);
 
         if (fromNeedsPlacement && !canOccupy(level, fromPos)) {
             return ConnectionResult.INVALID;
@@ -231,8 +230,8 @@ public class GirderStrutBlockItem extends BlockItem {
             level.setBlock(targetPos, targetState.setValue(GirderStrutBlock.FACING, targetFace), Block.UPDATE_ALL);
         }
 
-        BlockState newFromState = level.getBlockState(fromPos);
-        BlockState newTargetState = level.getBlockState(targetPos);
+        final BlockState newFromState = level.getBlockState(fromPos);
+        final BlockState newTargetState = level.getBlockState(targetPos);
 
         if (!(newFromState.getBlock().equals(getBlock())) || !(newTargetState.getBlock().equals(getBlock()))) {
             return ConnectionResult.INVALID;
@@ -242,27 +241,30 @@ public class GirderStrutBlockItem extends BlockItem {
             consumeAnchors(player, stack, placedCount);
         }
 
+        final SoundType soundType = getBlock().defaultBlockState().getSoundType(level, targetPos, context.getPlayer());
+        level.playSound(null, targetPos, soundType.getPlaceSound(), SoundSource.BLOCKS, (soundType.getVolume() + 1.0F) / 2.0F, soundType.getPitch() * 0.8F);
+
         connect(level, fromPos, targetPos);
         return ConnectionResult.SUCCESS;
     }
 
-    private void connect(Level level, BlockPos fromPos, BlockPos targetPos) {
-        if (!(level.getBlockEntity(fromPos) instanceof GirderStrutBlockEntity from)) {
+    private void connect(final Level level, final BlockPos fromPos, final BlockPos targetPos) {
+        if (!(level.getBlockEntity(fromPos) instanceof final GirderStrutBlockEntity from)) {
             return;
         }
-        if (!(level.getBlockEntity(targetPos) instanceof GirderStrutBlockEntity target)) {
+        if (!(level.getBlockEntity(targetPos) instanceof final GirderStrutBlockEntity target)) {
             return;
         }
         from.addConnection(targetPos);
         target.addConnection(fromPos);
 
-        BlockState updatedFromState = level.getBlockState(fromPos);
-        BlockState updatedTargetState = level.getBlockState(targetPos);
+        final BlockState updatedFromState = level.getBlockState(fromPos);
+        final BlockState updatedTargetState = level.getBlockState(targetPos);
         level.sendBlockUpdated(fromPos, updatedFromState, updatedFromState, Block.UPDATE_ALL);
         level.sendBlockUpdated(targetPos, updatedTargetState, updatedTargetState, Block.UPDATE_ALL);
     }
 
-    private boolean hasRequiredAnchors(Player player, ItemStack heldStack, int required) {
+    private boolean hasRequiredAnchors(final Player player, final ItemStack heldStack, final int required) {
         if (required <= 0) {
             return true;
         }
@@ -270,7 +272,7 @@ public class GirderStrutBlockItem extends BlockItem {
             return heldStack.getCount() >= required;
         }
 
-        int available = countAnchors(player, heldStack);
+        final int available = countAnchors(player, heldStack);
         if (available < required) {
             notifyMissingAnchors(player, required - available);
             return false;
@@ -278,7 +280,7 @@ public class GirderStrutBlockItem extends BlockItem {
         return true;
     }
 
-    private void consumeAnchors(Player player, ItemStack heldStack, int amount) {
+    private void consumeAnchors(final Player player, final ItemStack heldStack, final int amount) {
         if (amount <= 0 || player == null || player.getAbilities().instabuild) {
             return;
         }
@@ -286,9 +288,9 @@ public class GirderStrutBlockItem extends BlockItem {
         int remaining = amount;
         remaining -= drainStack(heldStack, remaining);
 
-        Inventory inventory = player.getInventory();
+        final Inventory inventory = player.getInventory();
         for (int i = 0; i < inventory.getContainerSize() && remaining > 0; i++) {
-            ItemStack slotStack = inventory.getItem(i);
+            final ItemStack slotStack = inventory.getItem(i);
             if (slotStack == heldStack) {
                 continue;
             }
@@ -299,22 +301,22 @@ public class GirderStrutBlockItem extends BlockItem {
         }
     }
 
-    private int drainStack(ItemStack stack, int amount) {
+    private int drainStack(final ItemStack stack, final int amount) {
         if (amount <= 0) {
             return 0;
         }
-        int toRemove = Math.min(stack.getCount(), amount);
+        final int toRemove = Math.min(stack.getCount(), amount);
         if (toRemove > 0) {
             stack.shrink(toRemove);
         }
         return toRemove;
     }
 
-    private int countAnchors(Player player, ItemStack reference) {
-        Inventory inventory = player.getInventory();
+    private int countAnchors(final Player player, final ItemStack reference) {
+        final Inventory inventory = player.getInventory();
         int total = 0;
         for (int i = 0; i < inventory.getContainerSize(); i++) {
-            ItemStack slotStack = inventory.getItem(i);
+            final ItemStack slotStack = inventory.getItem(i);
             if (!isMatchingStrut(slotStack, reference)) {
                 continue;
             }
@@ -323,33 +325,35 @@ public class GirderStrutBlockItem extends BlockItem {
         return total;
     }
 
-    private boolean isMatchingStrut(ItemStack candidate, ItemStack reference) {
+    private boolean isMatchingStrut(final ItemStack candidate, final ItemStack reference) {
         return !candidate.isEmpty() && candidate.getItem() == reference.getItem();
     }
 
-    private void notifyMissingAnchors(Player player, int missing) {
+    private void notifyMissingAnchors(final Player player, final int missing) {
         if (missing <= 0) {
             return;
         }
-        Component message = Component.translatable("message.bits_n_bobs.girder_strut.missing_anchors", missing)
+        final Component message = Component.translatable("message.bits_n_bobs.girder_strut.missing_anchors", missing)
                 .withStyle(ChatFormatting.RED); //TODO: proper red color this is ew, and for the chains
-        if (player instanceof ServerPlayer serverPlayer) {
+        if (player instanceof final ServerPlayer serverPlayer) {
             serverPlayer.displayClientMessage(message, true);
         } else {
             player.displayClientMessage(message, true);
         }
     }
 
-    private boolean placeAnchor(Level level, BlockPos pos, Direction face, Player player, ItemStack stackSnapshot) {
-        BlockState newState = getBlock().defaultBlockState().setValue(GirderStrutBlock.FACING, face);
+    private boolean placeAnchor(final Level level, final BlockPos pos, final Direction face, final Player player, final ItemStack stackSnapshot) {
+        final BlockState newState = getBlock().defaultBlockState()
+                .setValue(GirderStrutBlock.FACING, face)
+                .setValue(BlockStateProperties.WATERLOGGED, level.getFluidState(pos).getType() == Fluids.WATER);
         if (!level.setBlock(pos, newState, Block.UPDATE_ALL)) {
             return false;
         }
 
-        Block block = newState.getBlock();
+        final Block block = newState.getBlock();
         block.setPlacedBy(level, pos, newState, player, stackSnapshot);
 
-        SoundType soundType = newState.getSoundType();
+        final SoundType soundType = newState.getSoundType();
         level.playSound(player, pos, soundType.getPlaceSound(), SoundSource.BLOCKS,
                 (soundType.getVolume() + 1.0F) / 2.0F,
                 soundType.getPitch() * 0.8F);
@@ -357,19 +361,19 @@ public class GirderStrutBlockItem extends BlockItem {
         return true;
     }
 
-    private boolean canOccupy(Level level, BlockPos pos) {
-        BlockState state = level.getBlockState(pos);
-        return state.isAir() || state.getBlock().equals(getBlock());
+    private boolean canOccupy(final Level level, final BlockPos pos) {
+        final BlockState state = level.getBlockState(pos);
+        return state.canBeReplaced() || state.getBlock().equals(getBlock());
     }
 
-    private BlockPos resolvePlacementPos(Level level, BlockPos clickedPos, Direction face) {
-        BlockState clickedState = level.getBlockState(clickedPos);
+    private BlockPos resolvePlacementPos(final Level level, final BlockPos clickedPos, final Direction face) {
+        final BlockState clickedState = level.getBlockState(clickedPos);
         if (clickedState.getBlock().equals(getBlock())) {
             return clickedPos;
         }
-        BlockPos pos = clickedPos.relative(face);
-        BlockState state = level.getBlockState(pos);
-        if (!state.isAir() && !(state.getBlock().equals(getBlock()))) {
+        final BlockPos pos = clickedPos.relative(face);
+        final BlockState state = level.getBlockState(pos);
+        if (!state.canBeReplaced() && !(state.getBlock().equals(getBlock()))) {
             return null;
         }
         return pos;
