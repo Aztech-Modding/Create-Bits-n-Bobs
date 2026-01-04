@@ -4,7 +4,8 @@
 	"texture_size": [32, 32],
 	"textures": {
 		"1": "bits_n_bobs:block/lightbulb",
-		"2": "bits_n_bobs:block/lightbulb_on"
+		"2": "bits_n_bobs:block/lightbulb_on",
+		"particle": "bits_n_bobs:block/lightbulb"
 	},
 	"elements": [
 		{

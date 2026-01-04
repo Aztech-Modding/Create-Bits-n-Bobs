@@ -7,6 +7,7 @@ import com.mojang.serialization.MapCodec;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.equipment.clipboard.ClipboardEntry;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
+import com.simibubi.create.foundation.utility.BlockHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
@@ -26,10 +27,10 @@ import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
@@ -47,17 +48,16 @@ public class GenericNixieDisplayBlock extends DirectionalBlock implements IWrenc
     public static final MapCodec<GenericNixieDisplayBlock> CODEC = simpleCodec(GenericNixieDisplayBlock::new);
 
     public static final DirectionProperty ORIENTATION = DirectionProperty.create("orientation");
-    public static final BooleanProperty LIT = BooleanProperty.create("lit");
 
     public GenericNixieDisplayBlock(final Properties p_52591_) {
         super(p_52591_);
-        registerDefaultState(defaultBlockState().setValue(FACING, Direction.UP).setValue(ORIENTATION, Direction.NORTH).setValue(LIT, false));
+        registerDefaultState(defaultBlockState().setValue(FACING, Direction.UP).setValue(ORIENTATION, Direction.NORTH));
     }
 
     @Override
-    protected void createBlockStateDefinition(final StateDefinition.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(final @NotNull StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
-        builder.add(FACING, ORIENTATION, LIT);
+        builder.add(FACING, ORIENTATION);
     }
 
     @Override
@@ -103,13 +103,32 @@ public class GenericNixieDisplayBlock extends DirectionalBlock implements IWrenc
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(final ItemStack stack, final BlockState state, final Level level, final BlockPos pos, final Player player, final InteractionHand hand, final BlockHitResult hitResult) {
+    protected @NotNull ItemInteractionResult useItemOn(final ItemStack stack,
+                                                       final @NotNull BlockState state,
+                                                       final @NotNull Level level,
+                                                       final @NotNull BlockPos pos,
+                                                       final @NotNull Player player,
+                                                       final @NotNull InteractionHand hand,
+                                                       final @NotNull BlockHitResult hitResult) {
         final boolean display =
                 stack.getItem() == Items.NAME_TAG && stack.has(DataComponents.CUSTOM_NAME) || AllBlocks.CLIPBOARD.isIn(stack);
         final DyeColor dye = DyeColor.getColor(stack);
 
-        if (!display && dye == null || (!(level.getBlockEntity(pos) instanceof GenericNixieDisplayBlockEntity startBlockEntity)))
+        if (!display && dye == null || (!(level.getBlockEntity(pos) instanceof final GenericNixieDisplayBlockEntity startBlockEntity)))
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+
+        if (dye != null) {
+            GenericNixieDisplayTarget.walkNixies(level, pos, (currentPos, consumedCharsOnRow, initialBE) -> {
+                final BlockState coloredState = withColor(initialBE.getBlockState(), dye);
+                level.setBlock(currentPos, coloredState, 3);
+
+                final BlockEntity be = level.getBlockEntity(currentPos);
+                if (be instanceof final GenericNixieDisplayBlockEntity currentBe) {
+                    currentBe.inheritDataFrom(initialBE);
+                }
+            });
+            return ItemInteractionResult.SUCCESS;
+        }
 
         Component component = stack.getOrDefault(DataComponents.CUSTOM_NAME, Component.empty());
         @Nullable Component secondRowComponent = null;
@@ -136,18 +155,15 @@ public class GenericNixieDisplayBlock extends DirectionalBlock implements IWrenc
 
         final GenericNixieDisplayBlockEntity.ConfigurableDisplayOptions currentDisplay = startBlockEntity.getCurrentDisplayOption();
         GenericNixieDisplayTarget.walkNixies(level, pos, (currentPos, consumedCharsOnRow, blockEntity) -> {
-            if (display)
-                if (blockEntity instanceof final GenericNixieDisplayBlockEntity displayBlockEntity) {
-                    if (displayBlockEntity.getCurrentDisplayOption() != currentDisplay && displayBlockEntity.getPossibleDisplayOptions().contains(currentDisplay)) {
-                        displayBlockEntity.setDisplayOption(currentDisplay);
-                    }
-
-                    displayBlockEntity.displayCustomText(tagUsed, consumedCharsOnRow, startLine);
-                    if (secondRowTagUsed != null && startLine == 0)
-                        displayBlockEntity.displayCustomText(secondRowTagUsed, consumedCharsOnRow, 1);
+            if (blockEntity instanceof final GenericNixieDisplayBlockEntity displayBlockEntity) {
+                if (displayBlockEntity.getCurrentDisplayOption() != currentDisplay && displayBlockEntity.getPossibleDisplayOptions().contains(currentDisplay)) {
+                    displayBlockEntity.setDisplayOption(currentDisplay);
                 }
-            if (dye != null)
-                level.setBlockAndUpdate(currentPos, withColor(state, dye));
+
+                displayBlockEntity.displayCustomText(tagUsed, consumedCharsOnRow, startLine);
+                if (secondRowTagUsed != null)
+                    displayBlockEntity.displayCustomText(secondRowTagUsed, consumedCharsOnRow, 1);
+            }
         });
 
         return ItemInteractionResult.SUCCESS;
@@ -156,16 +172,10 @@ public class GenericNixieDisplayBlock extends DirectionalBlock implements IWrenc
     private static BlockState withColor(final BlockState state, final DyeColor color) {
         if (isLargeNixieTube(state.getBlock())) {
             final Block block = color == null ? BnbBlocks.LARGE_NIXIE_TUBE.get() : BnbBlocks.DYED_LARGE_NIXIE_TUBE.get(color).get();
-            return block.defaultBlockState()
-                    .setValue(FACING, state.getValue(FACING))
-                    .setValue(ORIENTATION, state.getValue(ORIENTATION))
-                    .setValue(LIT, state.getValue(LIT));
+            return BlockHelper.copyProperties(state, block.defaultBlockState());
         } else if (isNixieBoard(state.getBlock())) {
             final Block block = color == null ? BnbBlocks.NIXIE_BOARD.get() : BnbBlocks.DYED_NIXIE_BOARD.get(color).get();
-            return block.defaultBlockState()
-                    .setValue(FACING, state.getValue(FACING))
-                    .setValue(ORIENTATION, state.getValue(ORIENTATION))
-                    .setValue(LIT, state.getValue(LIT));
+            return BlockHelper.copyProperties(state, block.defaultBlockState());
         }
         return state;
     }
@@ -178,7 +188,7 @@ public class GenericNixieDisplayBlock extends DirectionalBlock implements IWrenc
         return BnbBlocks.DYED_NIXIE_BOARD.contains(block) || BnbBlocks.NIXIE_BOARD.is(block);
     }
 
-    private int getLineForPlacement(final BlockState state, final BlockPos blockPos, final BlockHitResult hitResult, final Level level) { //TODO: reimplement
+    private int getLineForPlacement(final BlockState state, final BlockPos blockPos, final BlockHitResult hitResult, final Level level) {
         if (!(state.getBlock() instanceof NixieBoardBlockNixie)) {
             return 0; // Nixie tubes always place on the first line
         }
@@ -201,7 +211,7 @@ public class GenericNixieDisplayBlock extends DirectionalBlock implements IWrenc
     }
 
     @Override
-    protected MapCodec<? extends DirectionalBlock> codec() {
+    protected @NotNull MapCodec<? extends DirectionalBlock> codec() {
         return CODEC;
     }
 

@@ -6,6 +6,7 @@
 		"2": "bits_n_bobs:block/nixie/large_nixie_tube",
 		"particle": "bits_n_bobs:block/nixie/large_nixie_tube"
 	},
+	"ambientocclusion": false,
 	"elements": [
 		{
 			"from": [0, 0, 6],

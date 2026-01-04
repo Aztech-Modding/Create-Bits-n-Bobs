@@ -361,7 +361,6 @@ public class BnbBlocks {
                 .onRegister(CreateRegistrate.blockModel(() -> DoubleOrientedBlockModel::new))
                 .properties(p -> p
                         .noOcclusion()
-                        .lightLevel(state -> state.getValue(NixieBoardBlockNixie.LIT) ? 4 : 1)
                         .mapColor(DyeColor.ORANGE)
                         .forceSolidOn())
                 .addLayer(() -> RenderType::translucent);
@@ -376,7 +375,6 @@ public class BnbBlocks {
                 .onRegister(CreateRegistrate.blockModel(() -> DoubleOrientedBlockModel::new))
                 .properties(p -> p
                         .noOcclusion()
-                        .lightLevel(state -> state.getValue(NixieBoardBlockNixie.LIT) ? 4 : 1)
                         .mapColor(DyeColor.ORANGE)
                         .forceSolidOn())
                 .addLayer(() -> RenderType::translucent);

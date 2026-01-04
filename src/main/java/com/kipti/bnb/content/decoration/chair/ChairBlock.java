@@ -129,6 +129,36 @@ public class ChairBlock extends SeatBlock implements IWrenchable {
     private @NotNull BlockState calculateShape(final BlockState blockState, final LevelAccessor pLevel, final BlockPos pCurrentPos) {
         final Direction facing = blockState.getValue(FACING);
 
+        final ConnectableSides connectableSides = getConnectableSides(pLevel, pCurrentPos, facing);
+
+        final BlockState stateBack = pLevel.getBlockState(pCurrentPos.relative(facing.getOpposite()));
+
+        boolean isFlatBack = BnbBlocks.CHAIRS.contains(stateBack.getBlock()) || stateBack.isCollisionShapeFullBlock(pLevel, pCurrentPos.relative(facing.getOpposite()));
+        final boolean isBackCorner = stateBack.getOptionalValue(CORNER).orElse(false);
+
+        final boolean isInvertedCorner = stateBack.getBlock() instanceof ChairBlock &&
+                (stateBack.getValue(FACING).getAxis() != facing.getAxis()) &&
+                (connectableSides.hasConnectableRight() || connectableSides.hasConnectableLeft()) && !(connectableSides.hasConnectableRight() && connectableSides.hasConnectableLeft()) && !isBackCorner;
+
+        final boolean isCorner = connectableSides.hasConnectableFront() && (connectableSides.hasConnectableLeft() != connectableSides.hasConnectableRight());
+
+        if (connectableSides.hasConnectableFront()) {
+            final Direction cornerFacing = connectableSides.hasConnectableLeft() ? facing.getCounterClockWise() : facing.getClockWise();
+            final BlockPos cornerPos = pCurrentPos.relative(cornerFacing);
+            final BlockState stateBackCorner = pLevel.getBlockState(cornerPos);
+
+            isFlatBack = isFlatBack || (isCorner && (BnbBlocks.CHAIRS.contains(stateBackCorner.getBlock()) || stateBackCorner.isCollisionShapeFullBlock(pLevel, cornerPos)));
+        }
+
+        return blockState
+                .setValue(LEFT_ARM, !connectableSides.hasConnectableLeft())
+                .setValue(RIGHT_ARM, !connectableSides.hasConnectableRight())
+                .setValue(CORNER, isCorner)
+                .setValue(BACK_FLAT, isFlatBack)
+                .setValue(INVERTED_CORNER, isInvertedCorner);
+    }
+
+    private static @NotNull ChairBlock.ConnectableSides getConnectableSides(LevelAccessor pLevel, BlockPos pCurrentPos, Direction facing) {
         final BlockState stateLeft = pLevel.getBlockState(pCurrentPos.relative(facing.getClockWise()));
         final boolean hasConnectableLeft = AllBlocks.SEATS.contains(stateLeft.getBlock()) || stateLeft.getBlock() instanceof ChairBlock &&
                 (stateLeft.getValue(FACING) == facing || stateLeft.getValue(FACING) == facing.getCounterClockWise() || stateLeft.getValue(INVERTED_CORNER));
@@ -140,29 +170,11 @@ public class ChairBlock extends SeatBlock implements IWrenchable {
         final BlockState stateFront = pLevel.getBlockState(pCurrentPos.relative(facing));
         final boolean hasConnectableFront = stateFront.getBlock() instanceof ChairBlock &&
                 (stateFront.getValue(FACING) == facing.getCounterClockWise() || stateFront.getValue(FACING) == facing.getClockWise());
+        return new ConnectableSides(hasConnectableLeft, hasConnectableRight, hasConnectableFront);
+    }
 
-        final BlockState stateBack = pLevel.getBlockState(pCurrentPos.relative(facing.getOpposite()));
-//        boolean isFlatBack = stateBack.getBlock() instanceof ChairBlock &&
-//            (stateBack.getValue(FACING) == facing.getOpposite() || stateBack.getValue(CORNER) && stateBack.getValue(FACING) != facing);
-
-        boolean isFlatBack = BnbBlocks.CHAIRS.contains(stateBack.getBlock()) || stateBack.isCollisionShapeFullBlock(pLevel, pCurrentPos.relative(facing.getOpposite()));
-        final boolean isInvertedCorner = stateBack.getBlock() instanceof ChairBlock &&
-                (stateBack.getValue(FACING).getAxis() != facing.getAxis()) && (hasConnectableRight || hasConnectableLeft);
-
-        final boolean isCorner = hasConnectableFront && (hasConnectableLeft != hasConnectableRight);
-        if (hasConnectableFront) {
-            final Direction cornerFacing = hasConnectableLeft ? facing.getCounterClockWise() : facing.getClockWise();
-            final BlockPos cornerPos = pCurrentPos.relative(cornerFacing);
-            final BlockState stateBackCorner = pLevel.getBlockState(cornerPos);
-            isFlatBack = isFlatBack || (isCorner && (BnbBlocks.CHAIRS.contains(stateBackCorner.getBlock()) || stateBackCorner.isCollisionShapeFullBlock(pLevel, cornerPos)));
-        }
-
-        return blockState
-                .setValue(LEFT_ARM, !hasConnectableLeft)
-                .setValue(RIGHT_ARM, !hasConnectableRight)
-                .setValue(CORNER, isCorner)
-                .setValue(BACK_FLAT, isFlatBack)
-                .setValue(INVERTED_CORNER, isInvertedCorner);
+    private record ConnectableSides(boolean hasConnectableLeft, boolean hasConnectableRight,
+                                    boolean hasConnectableFront) {
     }
 
     private static boolean getFlatObstructing(final LevelAccessor pLevel, final BlockState thisState, final BlockPos pCurrentPos, final Direction facing, final BlockState blockState, final BooleanProperty property) {

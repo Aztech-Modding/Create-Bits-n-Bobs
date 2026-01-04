@@ -28,7 +28,7 @@ import java.util.List;
 
 public class HeadlampBlockEntity extends SmartBlockEntity implements SpecialBlockEntityItemRequirement {
 
-    int[] activePlacements = new int[9];
+    private final int[] activePlacements = new int[9];
 
     public HeadlampBlockEntity(final BlockEntityType<?> type, final BlockPos pos, final BlockState state) {
         super(type, pos, state);

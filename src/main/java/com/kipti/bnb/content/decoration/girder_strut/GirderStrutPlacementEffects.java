@@ -10,6 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -53,7 +54,12 @@ public class GirderStrutPlacementEffects {
             return;
         }
 
-        final Direction targetFace = hit.getDirection();
+        Direction targetFace = hit.getDirection();
+
+        final BlockState targetState = level.getBlockState(targetPos);
+        if (targetState.getBlock() instanceof GirderStrutBlock) {
+            targetFace = targetState.getValue(GirderStrutBlock.FACING);
+        }
 
         final Vec3 renderFrom = Vec3.atCenterOf(fromPos);
         final Vec3 renderTo = Vec3.atCenterOf(targetPos);
@@ -106,7 +112,7 @@ public class GirderStrutPlacementEffects {
         BlockPos pos = clickedPos;
         if (!(level.getBlockState(pos).getBlock() instanceof GirderStrutBlock)) {
             pos = pos.relative(face);
-            if (!(level.getBlockState(pos).isAir() || level.getBlockState(pos).getBlock() instanceof GirderStrutBlock)) {
+            if (!(level.getBlockState(pos).canBeReplaced() || level.getBlockState(pos).getBlock() instanceof GirderStrutBlock)) {
                 return null;
             }
         }
