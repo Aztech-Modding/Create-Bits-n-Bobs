@@ -40,6 +40,9 @@ import com.simibubi.create.content.contraptions.pulley.PulleyBlock;
 import com.simibubi.create.content.decoration.encasing.EncasableBlock;
 import com.simibubi.create.content.decoration.encasing.EncasedCTBehaviour;
 import com.simibubi.create.content.decoration.encasing.EncasingRegistry;
+import com.simibubi.create.content.decoration.bracket.BracketBlock;
+import com.simibubi.create.content.decoration.bracket.BracketBlockItem;
+import com.simibubi.create.content.decoration.bracket.BracketGenerator;
 import com.simibubi.create.foundation.block.DyedBlockList;
 import com.simibubi.create.foundation.data.AssetLookup;
 import com.simibubi.create.foundation.data.BlockStateGen;
@@ -420,6 +423,15 @@ public class BnbBlocks {
 
     //Base encasing extensions
 
+    public static final BlockEntry<BracketBlock> WEATHERED_METAL_BRACKET = REGISTRATE.block("weathered_metal_bracket", BracketBlock::new)
+            .blockstate(new BracketGenerator("weathered_metal")::generate)
+            .properties(p -> p.sound(SoundType.NETHERITE_BLOCK))
+            .transform(pickaxeOnly())
+            .item(BracketBlockItem::new)
+            .tag(AllTags.AllItemTags.INVALID_FOR_TRACK_PAVING.tag)
+            .transform(BracketGenerator.itemModel("weathered_metal"))
+            .register();
+
     public static final BlockEntry<BnbEncasedShaftBlock> INDUSTRIAL_IRON_ENCASED_SHAFT = REGISTRATE
             .block("industrial_iron_encased_shaft", p -> new BnbEncasedShaftBlock(p, AllBlocks.INDUSTRIAL_IRON_BLOCK))
             .properties(p -> p.mapColor(MapColor.COLOR_GRAY))
@@ -467,6 +479,8 @@ public class BnbBlocks {
             .transform(EncasingRegistry.addVariantTo(AllBlocks.LARGE_COGWHEEL))
             .transform(axeOrPickaxe())
             .register();
+
+    // New encasing types
 
     public static final EncasedBlockList<EncasedPistonExtensionPoleBlock> ENCASED_PISTON_EXTENSION_POLE = new EncasedBlockList<>((casing) -> REGISTRATE
             .block(casing.asId("encased_piston_extension_pole"), (p) -> new EncasedPistonExtensionPoleBlock(p, casing.getMaterial()))

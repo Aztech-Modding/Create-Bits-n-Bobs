@@ -244,39 +244,39 @@ def getRelevantChangelog(String version) {
     return log
 }
 
-publishMods {
-    file = jar.archiveFile
-    def changelogText = getRelevantChangelog(minecraft_version + "-" + mod_version)
-    changelog = changelogText
-    println("Using changelog:\n" + changelogText + "\n")
-    type = STABLE
-    modLoaders.add("neoforge")
-    displayName = mod_name + " " + mod_version + " NeoForge " + minecraft_version
-
-    curseforge {
-        projectId = "1398383"
-        projectSlug = "create-bits-n-bobs"
-        accessToken = env.fetch("CURSEFORGE_TOKEN")
-        minecraftVersions.add("1.21.1")
-        requires("create")
-    }
-    modrinth {
-        projectId = "T8bvmqVZ"
-        accessToken = env.fetch("MODRINTH_TOKEN")
-        minecraftVersions.add("1.21.1")
-        requires("create")
-    }
-
-    discord {
-        webhookUrl = env.fetch("DISCORD_WEBHOOK_URL")
-        username = "bits n bober version bot"
-        avatarUrl = "https://cataas.com/cat?width=500&height=500"
-        content = """
-        # New Mod Release: ${getDisplayName().get()}
-        ${changelogText}
-        """.trim()
-        style {
-            look = "CLASSIC"
-        }
-    }
-}
+//publishMods {
+//    file = jar.archiveFile
+//    def changelogText = getRelevantChangelog(minecraft_version + "-" + mod_version)
+//    changelog = changelogText
+//    println("Using changelog:\n" + changelogText + "\n")
+//    type = STABLE
+//    modLoaders.add("neoforge")
+//    displayName = mod_name + " " + mod_version + " NeoForge " + minecraft_version
+//
+//    curseforge {
+//        projectId = "1398383"
+//        projectSlug = "create-bits-n-bobs"
+//        accessToken = env.fetch("CURSEFORGE_TOKEN")
+//        minecraftVersions.add("1.21.1")
+//        requires("create")
+//    }
+//    modrinth {
+//        projectId = "T8bvmqVZ"
+//        accessToken = env.fetch("MODRINTH_TOKEN")
+//        minecraftVersions.add("1.21.1")
+//        requires("create")
+//    }
+//
+//    discord {
+//        webhookUrl = env.fetch("DISCORD_WEBHOOK_URL")
+//        username = "bits n bober version bot"
+//        avatarUrl = "https://cataas.com/cat?width=500&height=500"
+//        content = """
+//        # New Mod Release: ${getDisplayName().get()}
+//        ${changelogText}
+//        """.trim()
+//        style {
+//            look = "CLASSIC"
+//        }
+//    }
+//}

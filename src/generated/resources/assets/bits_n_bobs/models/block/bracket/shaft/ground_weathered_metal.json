@@ -1,0 +1,7 @@
+{
+  "parent": "bits_n_bobs:block/bracket/shaft/ground",
+  "textures": {
+    "bracket": "bits_n_bobs:block/bracket_weathered_metal",
+    "plate": "bits_n_bobs:block/bracket_plate_weathered_metal"
+  }
+}

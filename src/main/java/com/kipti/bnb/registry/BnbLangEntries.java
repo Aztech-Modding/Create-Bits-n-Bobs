@@ -53,6 +53,8 @@ public class BnbLangEntries {
                 "block.bits_n_bobs.chair.tooltip.condition1", "Right click on Chair",
                 "block.bits_n_bobs.chair.tooltip.behaviour1", "Sits the player on the _Chair_. Press L-shift to leave the _Chair_.",
 
+                "block.bits_n_bobs.weathered_metal_bracket.tooltip.summary", "_Decorate_ your _Shafts, Cogwheels_ and _Pipes_ with an old and rusty bit of reinforcement.",
+
                 //Flywheel Bearing Tooltip
                 "tooltip.bits_n_bobs.flywheel_bearing.flywheel_stats", "Flywheel Stats:",
                 "tooltip.bits_n_bobs.flywheel_bearing.angular_mass", "Angular Mass:",
