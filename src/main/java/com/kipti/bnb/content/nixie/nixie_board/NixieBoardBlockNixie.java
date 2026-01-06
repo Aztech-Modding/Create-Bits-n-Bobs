@@ -100,7 +100,7 @@ public class NixieBoardBlockNixie extends GenericNixieDisplayBlock implements IB
         if (!player.isShiftKeyDown() && player.mayBuild()) {
             if (placementHelper.matchesItem(heldItem)) {
                 placementHelper.getOffset(player, level, state, pos, hitResult)
-                        .placeInWorld(level, (BlockItem) heldItem.getItem(), player, hand, hitResult);
+                        .placeInWorld(level, (BlockItem) heldItem.getItem(), player, interactionHand, hitResult);
                 return InteractionResult.SUCCESS;
             }
         }
@@ -155,7 +155,7 @@ public class NixieBoardBlockNixie extends GenericNixieDisplayBlock implements IB
             if (directions.isEmpty()) {
                 return PlacementOffset.fail();
             } else {
-                final BlockPos newPos = pos.relative(directions.getFirst());
+                final BlockPos newPos = pos.relative(directions.get(0));
 
                 return PlacementOffset.success(newPos, sourceState ->
                         getConnectedState(world, state, state.getValue(ORIENTATION), state.getValue(FACING), newPos));

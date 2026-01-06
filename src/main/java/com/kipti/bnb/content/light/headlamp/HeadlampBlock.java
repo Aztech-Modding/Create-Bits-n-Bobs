@@ -33,8 +33,8 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.level.BlockEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.level.BlockEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -182,13 +182,17 @@ public class HeadlampBlock extends LightBlock implements IBE<HeadlampBlockEntity
         if (!(world instanceof final ServerLevel serverLevel))
             return InteractionResult.SUCCESS;
 
-        final BlockEvent.BreakEvent event = new BlockEvent.BreakEvent(world, pos, world.getBlockState(pos), player);
-        NeoForge.EVENT_BUS.post(event);
+        BlockEvent.BreakEvent event = new BlockEvent.BreakEvent(world, pos, world.getBlockState(pos), player);
+        MinecraftForge.EVENT_BUS.post(event);
         if (event.isCanceled())
             return InteractionResult.SUCCESS;
 
-        if (!player.isCreative()) {
-            Block.getDrops(state, serverLevel, pos, world.getBlockEntity(pos), player, context.getItemInHand()).forEach(itemStack -> player.getInventory().placeItemBackInInventory(itemStack));
+        if (player != null && !player.isCreative()) {
+            Block.getDrops(state, serverLevel, pos, world.getBlockEntity(pos), player, context.getItemInHand())
+                .forEach(itemStack -> {
+                    player.getInventory()
+                        .placeItemBackInInventory(itemStack);
+                });
         }
 
         state.spawnAfterBreak(serverLevel, pos, ItemStack.EMPTY, true);

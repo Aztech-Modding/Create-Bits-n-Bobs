@@ -49,8 +49,8 @@ public class LargeNixieTubeBlockNixie extends GenericNixieDisplayBlock implement
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand interactionHand, BlockHitResult hitResult) {
-        final ItemStack heldItem = player.getItemInHand(interactionHand);
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        final ItemStack stack = player.getItemInHand(hand);
         final IPlacementHelper placementHelper = PlacementHelpers.get(placementHelperId);
         if (!player.isShiftKeyDown() && player.mayBuild()) {
             if (placementHelper.matchesItem(stack)) {
@@ -59,7 +59,7 @@ public class LargeNixieTubeBlockNixie extends GenericNixieDisplayBlock implement
                 return InteractionResult.SUCCESS;
             }
         }
-        return super.use(state, level, pos, player, interactionHand, hitResult);
+        return super.use(state, level, pos, player, hand, hitResult);
     }
 
     @Override
