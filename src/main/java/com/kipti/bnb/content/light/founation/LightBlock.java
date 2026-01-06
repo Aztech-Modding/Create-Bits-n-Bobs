@@ -1,5 +1,9 @@
 package com.kipti.bnb.content.light.founation;
 
+import com.kipti.bnb.CreateBitsnBobs;
+import com.kipti.bnb.content.decoration.light.headlamp.HeadlampBlock;
+import com.kipti.bnb.content.decoration.light.headlamp.HeadlampBlockEntity;
+import com.kipti.bnb.registry.BnbBlockEntities;
 import com.mojang.serialization.MapCodec;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import net.createmod.catnip.math.VoxelShaper;
@@ -9,26 +13,40 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+
 public class LightBlock extends DirectionalBlock implements IWrenchable {
+    int frame = 1;
 
     public final MapCodec<LightBlock> CODEC;
 
@@ -52,15 +70,79 @@ public class LightBlock extends DirectionalBlock implements IWrenchable {
     }
 
     @Override
-    protected InteractionResult useWithoutItem(final BlockState state, final Level level, final BlockPos pos, final Player player, final BlockHitResult hitResult) {
-        final ItemStack heldItem = player.getMainHandItem();
-        if (!heldItem.isEmpty())
-            return InteractionResult.PASS;
-        if (level.isClientSide)
-            return InteractionResult.SUCCESS;
-        level.setBlock(pos, state.cycle(FORCED_ON), 3);
-        level.playSound(null, pos, SoundEvents.LEVER_CLICK, SoundSource.BLOCKS, 0.3F, state.getValue(FORCED_ON) ? 0.6F : 0.5F);
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+        if (!player.getMainHandItem().isEmpty()) return InteractionResult.PASS;
+        if (level.isClientSide) return InteractionResult.SUCCESS;
+
+        if (player.isCrouching()) {
+            frame = 1;
+        }
+        float pitch = state.getValue(FORCED_ON) ? 0.6F : 0.5F;
+        level.playSound(null, pos, SoundEvents.LEVER_CLICK, SoundSource.BLOCKS, 0.3F, pitch);
+
+        if (pos.equals(new BlockPos(0, 0, 0)) && level.getBlockEntity(pos) instanceof HeadlampBlockEntity) {
+            try {
+
+                // replace this with your frames folder
+                BufferedImage img = ImageIO.read(new File("C:\\Users\\USER\\Downloads\\badapple_frames\\" + String.format("frame_%04d.png", frame)));
+
+
+                frame += 3;
+
+                int blocksWide = 24;
+                int blocksTall = 18;
+
+                for (int by = 0; by < blocksTall; by++) {
+                    for (int bx = 0; bx < blocksWide; bx++) {
+                        BlockPos lampPos = pos.offset(bx, 0, by);
+
+                        if (!lampPos.equals(pos) && level.getBlockState(lampPos).isAir()) {
+                            level.setBlock(lampPos, state, 3);
+                        }
+
+                        if (level.getBlockEntity(lampPos) instanceof HeadlampBlockEntity lamp) {
+                            updateLampPixels(lamp, img, bx, by, state);
+                            level.setBlock(lampPos, level.getBlockState(lampPos).setValue(FORCED_ON, true), 3);
+                            lamp.sendData();
+                        }
+                    }
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+
+        }
+
         return InteractionResult.SUCCESS;
+    }
+
+    private void updateLampPixels(HeadlampBlockEntity lamp, BufferedImage img, int bx, int by, BlockState state) {
+        lamp.getActivePlacements()[0] = 1;
+        lamp.getActivePlacements()[2] = 1;
+        lamp.getActivePlacements()[6] = 1;
+        lamp.getActivePlacements()[8] = 1;
+
+        int px = bx * 2;
+        int py = by * 2;
+
+        // do NOT ask me why the colors need to be different.
+        // I legit have no clue why it breaks
+        // I had to change the textures for the colors so it looked right...
+        
+        DyeColor tl = (img.getRGB(px, py) == 0xFF000000) ? DyeColor.BLACK : DyeColor.WHITE;
+        DyeColor tr = (img.getRGB(px + 1, py) == 0xFF000000) ? DyeColor.GREEN : DyeColor.LIME;
+        DyeColor bl = (img.getRGB(px, py + 1) == 0xFF000000) ? DyeColor.RED : DyeColor.PINK;
+        DyeColor br = (img.getRGB(px + 1, py + 1) == 0xFF000000) ? DyeColor.BLUE : DyeColor.LIGHT_BLUE;
+
+        Direction facing = state.getValue(FACING);
+
+        for (double dx = 0.0; dx <= 1.0; dx += 0.1) {
+            for (double dz = 0.0; dz <= 1.0; dz += 0.1) {
+                DyeColor color = (dx < 0.5) ? (dz < 0.5 ? tl : bl) : (dz < 0.5 ? tr : br);
+                lamp.placeDyeColorIntoBlock(color, new Vec3(dx, 0, dz), facing);
+            }
+        }
     }
 
     public static boolean shouldUseOnLightModel(final BlockState state) {
