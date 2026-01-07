@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "bits_n_bobs:block/industrial_grating"
+  }
+}

@@ -74,6 +74,8 @@
   "block.bits_n_bobs.headlamp.tooltip.behaviour1": "Toggles if the lightbulb should be _always on_, irregardless of redstone power.",
   "block.bits_n_bobs.headlamp.tooltip.condition1": "When R-Clicked with empty hand",
   "block.bits_n_bobs.headlamp.tooltip.summary": "Can be dyed and placed _multiple times in same block_. Useful for trains or fancy signage too!",
+  "block.bits_n_bobs.industrial_grating": "Industrial Grating",
+  "block.bits_n_bobs.industrial_grating_panel": "Industrial Grating Panel",
   "block.bits_n_bobs.industrial_iron_encased_cogwheel": "Industrial Iron Encased Cogwheel",
   "block.bits_n_bobs.industrial_iron_encased_large_cogwheel": "Industrial Iron Encased Large Cogwheel",
   "block.bits_n_bobs.industrial_iron_encased_piston_extension_pole": "Industrial Iron Encased Piston Extension Pole",

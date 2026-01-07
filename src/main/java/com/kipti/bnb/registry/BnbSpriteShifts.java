@@ -18,6 +18,13 @@ public class BnbSpriteShifts {
     public static final CTSpriteShiftEntry
             WEATHERED_GIRDER_POLE = vertical("weathered_girder_pole_side");
 
+    public static final CTSpriteShiftEntry
+            INDUSTRIAL_GRATING = omni("industrial_grating");
+
+    private static CTSpriteShiftEntry omni(String name) {
+        return getCT(AllCTTypes.OMNIDIRECTIONAL, name);
+    }
+
     private static CTSpriteShiftEntry vertical(final String name) {
         return getCT(AllCTTypes.VERTICAL, name);
     }
