@@ -2,27 +2,33 @@
   "variants": {
     "facing=down": {
       "model": "bits_n_bobs:block/industrial_grating_panel",
+      "uvlock": true,
       "x": 180
     },
     "facing=east": {
       "model": "bits_n_bobs:block/industrial_grating_panel",
+      "uvlock": true,
       "x": 90,
       "y": 90
     },
     "facing=north": {
       "model": "bits_n_bobs:block/industrial_grating_panel",
+      "uvlock": true,
       "x": 90
     },
     "facing=south": {
       "model": "bits_n_bobs:block/industrial_grating_panel",
+      "uvlock": true,
       "x": 90,
       "y": 180
     },
     "facing=up": {
-      "model": "bits_n_bobs:block/industrial_grating_panel"
+      "model": "bits_n_bobs:block/industrial_grating_panel",
+      "uvlock": true
     },
     "facing=west": {
       "model": "bits_n_bobs:block/industrial_grating_panel",
+      "uvlock": true,
       "x": 90,
       "y": 270
     }

@@ -3,6 +3,8 @@ package com.kipti.bnb.registry;
 import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.decoration.grating.GratingBlock;
 import com.kipti.bnb.content.decoration.grating.GratingPanelBlock;
+import com.kipti.bnb.content.decoration.grating.GratingPanelCTBehaviour;
+import com.kipti.bnb.foundation.BnbBlockStateGen;
 import com.simibubi.create.foundation.block.connected.SimpleCTBehaviour;
 import com.simibubi.create.foundation.data.TagGen;
 import com.tterrag.registrate.util.entry.BlockEntry;
@@ -48,11 +50,11 @@ public class BnbDecoBlocks {
                     .isViewBlocking((state, level, pos) -> false)
             )
             .transform(TagGen.pickaxeOnly())
-            .blockstate((c, p) -> p.directionalBlock(c.get(), p.models()
+            .blockstate((c, p) -> BnbBlockStateGen.directionalUvLockBlock(c, p, (state) -> p.models()
                     .withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/grating_panel"))
                     .texture("panel", CreateBitsnBobs.asResource("block/industrial_grating"))
             ))
-            .onRegister(connectedTextures(() -> new SimpleCTBehaviour(BnbSpriteShifts.INDUSTRIAL_GRATING)))
+            .onRegister(connectedTextures(() -> new GratingPanelCTBehaviour(BnbSpriteShifts.INDUSTRIAL_GRATING)))
             .addLayer(() -> RenderType::cutout)
             .simpleItem()
             .register();

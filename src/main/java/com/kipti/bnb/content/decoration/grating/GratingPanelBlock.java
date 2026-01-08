@@ -109,6 +109,6 @@ public class GratingPanelBlock extends GratingBlock {
 
     @Override
     protected boolean skipRendering(final BlockState state, final BlockState adjacentState, final Direction direction) {
-        return adjacentState.getBlock() instanceof GratingPanelBlock && !(adjacentState.getBlock() instanceof GratingBlock) || super.skipRendering(state, adjacentState, direction);
+        return adjacentState.getBlock() instanceof GratingPanelBlock && (adjacentState.getValue(FACING) == state.getValue(FACING)) || super.skipRendering(state, adjacentState, direction);
     }
 }
