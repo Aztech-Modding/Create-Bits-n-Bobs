@@ -1,0 +1,17 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "bits_n_bobs:block/industrial_truss",
+      "x": 90,
+      "y": 90
+    },
+    "axis=y": {
+      "model": "bits_n_bobs:block/industrial_truss"
+    },
+    "axis=z": {
+      "model": "bits_n_bobs:block/industrial_truss",
+      "x": 90,
+      "y": 180
+    }
+  }
+}

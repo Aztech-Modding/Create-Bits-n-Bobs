@@ -4,6 +4,7 @@ import com.tterrag.registrate.providers.DataGenContext;
 import com.tterrag.registrate.providers.RegistrateBlockstateProvider;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
@@ -45,5 +46,16 @@ public class BnbBlockStateGen {
                 }, BlockStateProperties.WATERLOGGED);
     }
 
-
+    public static <T extends Block> void axisModel(final DataGenContext<Block, T> ctx,
+                                                   final RegistrateBlockstateProvider prov) {
+        prov.getVariantBuilder(ctx.get())
+                .forAllStates(state -> {
+                    final Direction dir = Direction.fromAxisAndDirection(state.getValue(RotatedPillarBlock.AXIS), Direction.AxisDirection.POSITIVE);
+                    return ConfiguredModel.builder()
+                            .modelFile(prov.models().getExistingFile(ctx.getId()))
+                            .rotationX(dir == Direction.DOWN ? 180 : dir.getAxis().isHorizontal() ? 90 : 0)
+                            .rotationY(dir.getAxis().isVertical() ? 0 : (((int) dir.toYRot()) + DEFAULT_ANGLE_OFFSET) % 360)
+                            .build();
+                });
+    }
 }
