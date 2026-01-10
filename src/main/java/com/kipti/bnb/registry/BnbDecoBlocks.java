@@ -4,6 +4,7 @@ import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.decoration.grating.GratingBlock;
 import com.kipti.bnb.content.decoration.grating.GratingPanelBlock;
 import com.kipti.bnb.content.decoration.grating.GratingPanelCTBehaviour;
+import com.kipti.bnb.content.decoration.truss.AlternatingTrussBlock;
 import com.kipti.bnb.content.decoration.truss.TrussBlock;
 import com.kipti.bnb.foundation.BnbBlockStateGen;
 import com.simibubi.create.foundation.block.connected.SimpleCTBehaviour;
@@ -74,6 +75,22 @@ public class BnbDecoBlocks {
             .addLayer(() -> RenderType::cutout)
             .simpleItem()
             .register();
+
+    public static final BlockEntry<AlternatingTrussBlock> ALTERNATING_INDUSTRIAL_TRUSS = CreateBitsnBobs.REGISTRATE.block("alternating_industrial_truss", AlternatingTrussBlock::new)
+            .properties(p -> p.mapColor(MapColor.METAL)
+                    .strength(0.1f, 6.0f)
+                    .sound(SoundType.METAL)
+                    .isSuffocating((state, level, pos) -> false)
+                    .isViewBlocking((state, level, pos) -> false)
+                    .noOcclusion()
+            )
+            .transform(TagGen.pickaxeOnly())
+            .blockstate((c, p) -> BnbBlockStateGen.alternatingTrussModel(c, p))
+            .onRegister(connectedTextures(() -> new GratingPanelCTBehaviour(BnbSpriteShifts.INDUSTRIAL_GRATING)))
+            .addLayer(() -> RenderType::cutout)
+            .simpleItem()
+            .register();
+
 
     static {
         CreateBitsnBobs.REGISTRATE.setCreativeTab(BnbCreativeTabs.BASE_CREATIVE_TAB);
