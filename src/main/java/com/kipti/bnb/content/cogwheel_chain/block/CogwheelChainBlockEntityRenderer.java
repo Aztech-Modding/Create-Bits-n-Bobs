@@ -2,6 +2,7 @@ package com.kipti.bnb.content.cogwheel_chain.block;
 
 import com.kipti.bnb.content.cogwheel_chain.graph.CogwheelChain;
 import com.kipti.bnb.content.cogwheel_chain.graph.RenderedChainPathNode;
+import com.kipti.bnb.foundation.client.ShipyardLodHelper;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
@@ -109,11 +110,13 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
         final int light1 = lighter.apply(new Vector3f((float) from.x, (float) from.y, (float) from.z));
         final int light2 = lighter.apply(new Vector3f((float) to.x, (float) to.y, (float) to.z));
 
-        final boolean far = Minecraft.getInstance().level == be.getLevel() && !Minecraft.getInstance()
-                .getBlockEntityRenderDispatcher().camera.getPosition()
+        final Vec3 cameraPosition = Minecraft.getInstance()
+                .getBlockEntityRenderDispatcher().camera.getPosition();
+        final boolean inShipyardLod = ShipyardLodHelper.isProbablyRenderingInShipyard(BlockPos.containing(from));
+
+        final boolean far = !inShipyardLod && Minecraft.getInstance().level == be.getLevel() && !cameraPosition
                 .closerThan(from.lerp(to, 0.5), MIP_DISTANCE);
-        final boolean close = Minecraft.getInstance().level == be.getLevel() && Minecraft.getInstance()
-                .getBlockEntityRenderDispatcher().camera.getPosition()
+        final boolean close = !inShipyardLod && Minecraft.getInstance().level == be.getLevel() && cameraPosition
                 .closerThan(from.lerp(to, 0.5), SEAM_DIST);
 
         if (close)

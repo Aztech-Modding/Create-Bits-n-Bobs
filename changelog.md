@@ -137,3 +137,6 @@
   - Fixed lightbulb texture
   - Fix girder strut placement in water, and added sound
   - Fix text atlas having C and D swapped
+# 1.21.1-0.0.42
+- Changes:
+  - Fixed LODs activating when a chain is part of a sublevel or ship in VS / sable
