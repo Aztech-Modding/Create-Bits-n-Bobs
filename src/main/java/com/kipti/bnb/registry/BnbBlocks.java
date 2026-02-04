@@ -15,6 +15,7 @@ import com.kipti.bnb.content.light.headlamp.HeadlampBlock;
 import com.kipti.bnb.content.light.headlamp.HeadlampBlockItem;
 import com.kipti.bnb.content.light.headlamp.HeadlampModelBuilder;
 import com.kipti.bnb.content.light.lightbulb.LightbulbBlock;
+import com.kipti.bnb.content.light.lightbulb.SimpleFacingBlockModel;
 import com.kipti.bnb.content.nixie.foundation.DoubleOrientedBlockModel;
 import com.kipti.bnb.content.nixie.large_nixie_tube.LargeNixieTubeBlockNixie;
 import com.kipti.bnb.content.nixie.large_nixie_tube.LargeNixieTubeBlockStateGen;
@@ -214,23 +215,23 @@ public class BnbBlocks {
                 .register();
     });
 
-    public static final BlockEntry<LightbulbBlock> LIGHTBULB = REGISTRATE.block("lightbulb", LightbulbBlock::new)
-            .initialProperties(SharedProperties::softMetal)
-            .transform(pickaxeOnly())
-            .blockstate((c, p) -> p.directionalBlock(c.get(),
-                    (state) -> p.models().getExistingFile(CreateBitsnBobs.asResource(
-                            "block/lightbulb/lightbulb" + (state.getValue(LightbulbBlock.CAGE) ? "" : "_uncaged") + (LightBlock.shouldUseOnLightModel(state) ? "_on" : "")
-                    ))))
-            .properties(p -> p
-                    .noOcclusion()
-                    .lightLevel(LightBlock::getLightLevel)
-                    .emissiveRendering((state, level, pos) -> state.getValue(LightBlock.POWER) > 0)
-                    .forceSolidOn())
-            .addLayer(() -> RenderType::translucent)
+    public static final BlockEntry<LightbulbBlock> WHITE_LIGHTBULB = REGISTRATE.block("lightbulb", properties -> new LightbulbBlock(properties, DyeColor.WHITE))
+            .transform(lightbulb("white"))
+
             .item()
             .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/lightbulb/lightbulb_uncaged")))
             .build()
             .register();
+
+    public static final DyedBlockList<LightbulbBlock> LIGHTBULBS = new DyedBlockList<>(colour -> {
+        if (colour == DyeColor.WHITE)
+            return WHITE_LIGHTBULB;
+        String colourName = colour.getSerializedName();
+        return REGISTRATE.block(colourName + "_lightbulb", p -> new LightbulbBlock(p, colour))
+                .transform(lightbulb(colourName))
+                .loot((p, b) -> p.dropOther(b, WHITE_LIGHTBULB.get()))
+                .register();
+    });
 
     public static final BlockEntry<HeadlampBlock> HEADLAMP = REGISTRATE.block("headlamp", HeadlampBlock::new)
             .initialProperties(SharedProperties::softMetal)
@@ -348,6 +349,29 @@ public class BnbBlocks {
                         .noOcclusion()
                         .mapColor(DyeColor.ORANGE)
                         .forceSolidOn())
+                .addLayer(() -> RenderType::translucent);
+    }
+
+    public static <T extends LightbulbBlock, P> NonNullFunction<BlockBuilder<T, P>, BlockBuilder<T, P>> lightbulb(String colourName) {
+        return b -> b
+                .initialProperties(SharedProperties::softMetal)
+                .addLayer(() -> RenderType::translucent)
+                .transform(pickaxeOnly())
+                .properties(p -> p
+                        .noOcclusion()
+                        .lightLevel(LightBlock::getLightLevel)
+                        .emissiveRendering((state, level, pos) -> state.getValue(LightBlock.POWER) > 0)
+                        .forceSolidOn())
+
+
+                .onRegister(CreateRegistrate.blockModel(() -> SimpleFacingBlockModel::new))
+
+
+                .blockstate((c, p) -> p.directionalBlock(c.get(),
+                        (state) -> p.models().getExistingFile(CreateBitsnBobs.asResource(
+                                "block/lightbulb/"+((LightBlock.shouldUseOnLightModel(state) && !"white".equals(colourName)) ? colourName + "/" : "")+"lightbulb" + (state.getValue(LightbulbBlock.CAGE) ? "" : "_uncaged") + (LightBlock.shouldUseOnLightModel(state) ? "_on" : "")
+                        ))))
+
                 .addLayer(() -> RenderType::translucent);
     }
 

@@ -1,0 +1,1668 @@
+{
+  "variants": {
+    "cage=false,facing=down,forced_on=false,power=0": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb_uncaged",
+      "x": 180
+    },
+    "cage=false,facing=down,forced_on=false,power=1": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb_uncaged",
+      "x": 180
+    },
+    "cage=false,facing=down,forced_on=false,power=10": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 180
+    },
+    "cage=false,facing=down,forced_on=false,power=11": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 180
+    },
+    "cage=false,facing=down,forced_on=false,power=12": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 180
+    },
+    "cage=false,facing=down,forced_on=false,power=13": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 180
+    },
+    "cage=false,facing=down,forced_on=false,power=14": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 180
+    },
+    "cage=false,facing=down,forced_on=false,power=15": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 180
+    },
+    "cage=false,facing=down,forced_on=false,power=2": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb_uncaged",
+      "x": 180
+    },
+    "cage=false,facing=down,forced_on=false,power=3": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb_uncaged",
+      "x": 180
+    },
+    "cage=false,facing=down,forced_on=false,power=4": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb_uncaged",
+      "x": 180
+    },
+    "cage=false,facing=down,forced_on=false,power=5": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb_uncaged",
+      "x": 180
+    },
+    "cage=false,facing=down,forced_on=false,power=6": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb_uncaged",
+      "x": 180
+    },
+    "cage=false,facing=down,forced_on=false,power=7": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 180
+    },
+    "cage=false,facing=down,forced_on=false,power=8": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 180
+    },
+    "cage=false,facing=down,forced_on=false,power=9": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 180
+    },
+    "cage=false,facing=down,forced_on=true,power=0": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 180
+    },
+    "cage=false,facing=down,forced_on=true,power=1": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 180
+    },
+    "cage=false,facing=down,forced_on=true,power=10": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 180
+    },
+    "cage=false,facing=down,forced_on=true,power=11": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 180
+    },
+    "cage=false,facing=down,forced_on=true,power=12": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 180
+    },
+    "cage=false,facing=down,forced_on=true,power=13": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 180
+    },
+    "cage=false,facing=down,forced_on=true,power=14": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 180
+    },
+    "cage=false,facing=down,forced_on=true,power=15": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 180
+    },
+    "cage=false,facing=down,forced_on=true,power=2": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 180
+    },
+    "cage=false,facing=down,forced_on=true,power=3": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 180
+    },
+    "cage=false,facing=down,forced_on=true,power=4": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 180
+    },
+    "cage=false,facing=down,forced_on=true,power=5": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 180
+    },
+    "cage=false,facing=down,forced_on=true,power=6": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 180
+    },
+    "cage=false,facing=down,forced_on=true,power=7": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 180
+    },
+    "cage=false,facing=down,forced_on=true,power=8": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 180
+    },
+    "cage=false,facing=down,forced_on=true,power=9": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 180
+    },
+    "cage=false,facing=east,forced_on=false,power=0": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb_uncaged",
+      "x": 90,
+      "y": 90
+    },
+    "cage=false,facing=east,forced_on=false,power=1": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb_uncaged",
+      "x": 90,
+      "y": 90
+    },
+    "cage=false,facing=east,forced_on=false,power=10": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=false,facing=east,forced_on=false,power=11": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=false,facing=east,forced_on=false,power=12": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=false,facing=east,forced_on=false,power=13": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=false,facing=east,forced_on=false,power=14": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=false,facing=east,forced_on=false,power=15": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=false,facing=east,forced_on=false,power=2": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb_uncaged",
+      "x": 90,
+      "y": 90
+    },
+    "cage=false,facing=east,forced_on=false,power=3": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb_uncaged",
+      "x": 90,
+      "y": 90
+    },
+    "cage=false,facing=east,forced_on=false,power=4": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb_uncaged",
+      "x": 90,
+      "y": 90
+    },
+    "cage=false,facing=east,forced_on=false,power=5": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb_uncaged",
+      "x": 90,
+      "y": 90
+    },
+    "cage=false,facing=east,forced_on=false,power=6": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb_uncaged",
+      "x": 90,
+      "y": 90
+    },
+    "cage=false,facing=east,forced_on=false,power=7": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=false,facing=east,forced_on=false,power=8": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=false,facing=east,forced_on=false,power=9": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=false,facing=east,forced_on=true,power=0": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=false,facing=east,forced_on=true,power=1": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=false,facing=east,forced_on=true,power=10": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=false,facing=east,forced_on=true,power=11": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=false,facing=east,forced_on=true,power=12": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=false,facing=east,forced_on=true,power=13": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=false,facing=east,forced_on=true,power=14": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=false,facing=east,forced_on=true,power=15": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=false,facing=east,forced_on=true,power=2": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=false,facing=east,forced_on=true,power=3": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=false,facing=east,forced_on=true,power=4": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=false,facing=east,forced_on=true,power=5": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=false,facing=east,forced_on=true,power=6": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=false,facing=east,forced_on=true,power=7": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=false,facing=east,forced_on=true,power=8": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=false,facing=east,forced_on=true,power=9": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=false,facing=north,forced_on=false,power=0": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb_uncaged",
+      "x": 90
+    },
+    "cage=false,facing=north,forced_on=false,power=1": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb_uncaged",
+      "x": 90
+    },
+    "cage=false,facing=north,forced_on=false,power=10": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90
+    },
+    "cage=false,facing=north,forced_on=false,power=11": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90
+    },
+    "cage=false,facing=north,forced_on=false,power=12": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90
+    },
+    "cage=false,facing=north,forced_on=false,power=13": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90
+    },
+    "cage=false,facing=north,forced_on=false,power=14": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90
+    },
+    "cage=false,facing=north,forced_on=false,power=15": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90
+    },
+    "cage=false,facing=north,forced_on=false,power=2": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb_uncaged",
+      "x": 90
+    },
+    "cage=false,facing=north,forced_on=false,power=3": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb_uncaged",
+      "x": 90
+    },
+    "cage=false,facing=north,forced_on=false,power=4": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb_uncaged",
+      "x": 90
+    },
+    "cage=false,facing=north,forced_on=false,power=5": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb_uncaged",
+      "x": 90
+    },
+    "cage=false,facing=north,forced_on=false,power=6": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb_uncaged",
+      "x": 90
+    },
+    "cage=false,facing=north,forced_on=false,power=7": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90
+    },
+    "cage=false,facing=north,forced_on=false,power=8": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90
+    },
+    "cage=false,facing=north,forced_on=false,power=9": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90
+    },
+    "cage=false,facing=north,forced_on=true,power=0": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90
+    },
+    "cage=false,facing=north,forced_on=true,power=1": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90
+    },
+    "cage=false,facing=north,forced_on=true,power=10": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90
+    },
+    "cage=false,facing=north,forced_on=true,power=11": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90
+    },
+    "cage=false,facing=north,forced_on=true,power=12": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90
+    },
+    "cage=false,facing=north,forced_on=true,power=13": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90
+    },
+    "cage=false,facing=north,forced_on=true,power=14": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90
+    },
+    "cage=false,facing=north,forced_on=true,power=15": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90
+    },
+    "cage=false,facing=north,forced_on=true,power=2": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90
+    },
+    "cage=false,facing=north,forced_on=true,power=3": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90
+    },
+    "cage=false,facing=north,forced_on=true,power=4": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90
+    },
+    "cage=false,facing=north,forced_on=true,power=5": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90
+    },
+    "cage=false,facing=north,forced_on=true,power=6": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90
+    },
+    "cage=false,facing=north,forced_on=true,power=7": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90
+    },
+    "cage=false,facing=north,forced_on=true,power=8": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90
+    },
+    "cage=false,facing=north,forced_on=true,power=9": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90
+    },
+    "cage=false,facing=south,forced_on=false,power=0": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb_uncaged",
+      "x": 90,
+      "y": 180
+    },
+    "cage=false,facing=south,forced_on=false,power=1": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb_uncaged",
+      "x": 90,
+      "y": 180
+    },
+    "cage=false,facing=south,forced_on=false,power=10": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=false,facing=south,forced_on=false,power=11": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=false,facing=south,forced_on=false,power=12": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=false,facing=south,forced_on=false,power=13": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=false,facing=south,forced_on=false,power=14": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=false,facing=south,forced_on=false,power=15": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=false,facing=south,forced_on=false,power=2": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb_uncaged",
+      "x": 90,
+      "y": 180
+    },
+    "cage=false,facing=south,forced_on=false,power=3": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb_uncaged",
+      "x": 90,
+      "y": 180
+    },
+    "cage=false,facing=south,forced_on=false,power=4": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb_uncaged",
+      "x": 90,
+      "y": 180
+    },
+    "cage=false,facing=south,forced_on=false,power=5": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb_uncaged",
+      "x": 90,
+      "y": 180
+    },
+    "cage=false,facing=south,forced_on=false,power=6": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb_uncaged",
+      "x": 90,
+      "y": 180
+    },
+    "cage=false,facing=south,forced_on=false,power=7": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=false,facing=south,forced_on=false,power=8": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=false,facing=south,forced_on=false,power=9": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=false,facing=south,forced_on=true,power=0": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=false,facing=south,forced_on=true,power=1": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=false,facing=south,forced_on=true,power=10": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=false,facing=south,forced_on=true,power=11": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=false,facing=south,forced_on=true,power=12": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=false,facing=south,forced_on=true,power=13": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=false,facing=south,forced_on=true,power=14": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=false,facing=south,forced_on=true,power=15": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=false,facing=south,forced_on=true,power=2": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=false,facing=south,forced_on=true,power=3": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=false,facing=south,forced_on=true,power=4": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=false,facing=south,forced_on=true,power=5": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=false,facing=south,forced_on=true,power=6": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=false,facing=south,forced_on=true,power=7": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=false,facing=south,forced_on=true,power=8": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=false,facing=south,forced_on=true,power=9": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=false,facing=up,forced_on=false,power=0": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb_uncaged"
+    },
+    "cage=false,facing=up,forced_on=false,power=1": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb_uncaged"
+    },
+    "cage=false,facing=up,forced_on=false,power=10": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on"
+    },
+    "cage=false,facing=up,forced_on=false,power=11": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on"
+    },
+    "cage=false,facing=up,forced_on=false,power=12": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on"
+    },
+    "cage=false,facing=up,forced_on=false,power=13": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on"
+    },
+    "cage=false,facing=up,forced_on=false,power=14": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on"
+    },
+    "cage=false,facing=up,forced_on=false,power=15": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on"
+    },
+    "cage=false,facing=up,forced_on=false,power=2": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb_uncaged"
+    },
+    "cage=false,facing=up,forced_on=false,power=3": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb_uncaged"
+    },
+    "cage=false,facing=up,forced_on=false,power=4": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb_uncaged"
+    },
+    "cage=false,facing=up,forced_on=false,power=5": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb_uncaged"
+    },
+    "cage=false,facing=up,forced_on=false,power=6": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb_uncaged"
+    },
+    "cage=false,facing=up,forced_on=false,power=7": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on"
+    },
+    "cage=false,facing=up,forced_on=false,power=8": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on"
+    },
+    "cage=false,facing=up,forced_on=false,power=9": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on"
+    },
+    "cage=false,facing=up,forced_on=true,power=0": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on"
+    },
+    "cage=false,facing=up,forced_on=true,power=1": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on"
+    },
+    "cage=false,facing=up,forced_on=true,power=10": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on"
+    },
+    "cage=false,facing=up,forced_on=true,power=11": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on"
+    },
+    "cage=false,facing=up,forced_on=true,power=12": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on"
+    },
+    "cage=false,facing=up,forced_on=true,power=13": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on"
+    },
+    "cage=false,facing=up,forced_on=true,power=14": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on"
+    },
+    "cage=false,facing=up,forced_on=true,power=15": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on"
+    },
+    "cage=false,facing=up,forced_on=true,power=2": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on"
+    },
+    "cage=false,facing=up,forced_on=true,power=3": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on"
+    },
+    "cage=false,facing=up,forced_on=true,power=4": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on"
+    },
+    "cage=false,facing=up,forced_on=true,power=5": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on"
+    },
+    "cage=false,facing=up,forced_on=true,power=6": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on"
+    },
+    "cage=false,facing=up,forced_on=true,power=7": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on"
+    },
+    "cage=false,facing=up,forced_on=true,power=8": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on"
+    },
+    "cage=false,facing=up,forced_on=true,power=9": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on"
+    },
+    "cage=false,facing=west,forced_on=false,power=0": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb_uncaged",
+      "x": 90,
+      "y": 270
+    },
+    "cage=false,facing=west,forced_on=false,power=1": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb_uncaged",
+      "x": 90,
+      "y": 270
+    },
+    "cage=false,facing=west,forced_on=false,power=10": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=false,facing=west,forced_on=false,power=11": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=false,facing=west,forced_on=false,power=12": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=false,facing=west,forced_on=false,power=13": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=false,facing=west,forced_on=false,power=14": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=false,facing=west,forced_on=false,power=15": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=false,facing=west,forced_on=false,power=2": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb_uncaged",
+      "x": 90,
+      "y": 270
+    },
+    "cage=false,facing=west,forced_on=false,power=3": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb_uncaged",
+      "x": 90,
+      "y": 270
+    },
+    "cage=false,facing=west,forced_on=false,power=4": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb_uncaged",
+      "x": 90,
+      "y": 270
+    },
+    "cage=false,facing=west,forced_on=false,power=5": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb_uncaged",
+      "x": 90,
+      "y": 270
+    },
+    "cage=false,facing=west,forced_on=false,power=6": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb_uncaged",
+      "x": 90,
+      "y": 270
+    },
+    "cage=false,facing=west,forced_on=false,power=7": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=false,facing=west,forced_on=false,power=8": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=false,facing=west,forced_on=false,power=9": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=false,facing=west,forced_on=true,power=0": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=false,facing=west,forced_on=true,power=1": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=false,facing=west,forced_on=true,power=10": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=false,facing=west,forced_on=true,power=11": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=false,facing=west,forced_on=true,power=12": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=false,facing=west,forced_on=true,power=13": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=false,facing=west,forced_on=true,power=14": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=false,facing=west,forced_on=true,power=15": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=false,facing=west,forced_on=true,power=2": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=false,facing=west,forced_on=true,power=3": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=false,facing=west,forced_on=true,power=4": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=false,facing=west,forced_on=true,power=5": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=false,facing=west,forced_on=true,power=6": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=false,facing=west,forced_on=true,power=7": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=false,facing=west,forced_on=true,power=8": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=false,facing=west,forced_on=true,power=9": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_uncaged_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=true,facing=down,forced_on=false,power=0": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb",
+      "x": 180
+    },
+    "cage=true,facing=down,forced_on=false,power=1": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb",
+      "x": 180
+    },
+    "cage=true,facing=down,forced_on=false,power=10": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 180
+    },
+    "cage=true,facing=down,forced_on=false,power=11": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 180
+    },
+    "cage=true,facing=down,forced_on=false,power=12": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 180
+    },
+    "cage=true,facing=down,forced_on=false,power=13": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 180
+    },
+    "cage=true,facing=down,forced_on=false,power=14": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 180
+    },
+    "cage=true,facing=down,forced_on=false,power=15": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 180
+    },
+    "cage=true,facing=down,forced_on=false,power=2": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb",
+      "x": 180
+    },
+    "cage=true,facing=down,forced_on=false,power=3": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb",
+      "x": 180
+    },
+    "cage=true,facing=down,forced_on=false,power=4": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb",
+      "x": 180
+    },
+    "cage=true,facing=down,forced_on=false,power=5": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb",
+      "x": 180
+    },
+    "cage=true,facing=down,forced_on=false,power=6": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb",
+      "x": 180
+    },
+    "cage=true,facing=down,forced_on=false,power=7": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 180
+    },
+    "cage=true,facing=down,forced_on=false,power=8": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 180
+    },
+    "cage=true,facing=down,forced_on=false,power=9": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 180
+    },
+    "cage=true,facing=down,forced_on=true,power=0": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 180
+    },
+    "cage=true,facing=down,forced_on=true,power=1": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 180
+    },
+    "cage=true,facing=down,forced_on=true,power=10": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 180
+    },
+    "cage=true,facing=down,forced_on=true,power=11": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 180
+    },
+    "cage=true,facing=down,forced_on=true,power=12": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 180
+    },
+    "cage=true,facing=down,forced_on=true,power=13": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 180
+    },
+    "cage=true,facing=down,forced_on=true,power=14": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 180
+    },
+    "cage=true,facing=down,forced_on=true,power=15": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 180
+    },
+    "cage=true,facing=down,forced_on=true,power=2": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 180
+    },
+    "cage=true,facing=down,forced_on=true,power=3": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 180
+    },
+    "cage=true,facing=down,forced_on=true,power=4": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 180
+    },
+    "cage=true,facing=down,forced_on=true,power=5": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 180
+    },
+    "cage=true,facing=down,forced_on=true,power=6": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 180
+    },
+    "cage=true,facing=down,forced_on=true,power=7": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 180
+    },
+    "cage=true,facing=down,forced_on=true,power=8": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 180
+    },
+    "cage=true,facing=down,forced_on=true,power=9": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 180
+    },
+    "cage=true,facing=east,forced_on=false,power=0": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb",
+      "x": 90,
+      "y": 90
+    },
+    "cage=true,facing=east,forced_on=false,power=1": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb",
+      "x": 90,
+      "y": 90
+    },
+    "cage=true,facing=east,forced_on=false,power=10": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=true,facing=east,forced_on=false,power=11": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=true,facing=east,forced_on=false,power=12": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=true,facing=east,forced_on=false,power=13": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=true,facing=east,forced_on=false,power=14": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=true,facing=east,forced_on=false,power=15": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=true,facing=east,forced_on=false,power=2": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb",
+      "x": 90,
+      "y": 90
+    },
+    "cage=true,facing=east,forced_on=false,power=3": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb",
+      "x": 90,
+      "y": 90
+    },
+    "cage=true,facing=east,forced_on=false,power=4": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb",
+      "x": 90,
+      "y": 90
+    },
+    "cage=true,facing=east,forced_on=false,power=5": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb",
+      "x": 90,
+      "y": 90
+    },
+    "cage=true,facing=east,forced_on=false,power=6": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb",
+      "x": 90,
+      "y": 90
+    },
+    "cage=true,facing=east,forced_on=false,power=7": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=true,facing=east,forced_on=false,power=8": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=true,facing=east,forced_on=false,power=9": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=true,facing=east,forced_on=true,power=0": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=true,facing=east,forced_on=true,power=1": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=true,facing=east,forced_on=true,power=10": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=true,facing=east,forced_on=true,power=11": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=true,facing=east,forced_on=true,power=12": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=true,facing=east,forced_on=true,power=13": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=true,facing=east,forced_on=true,power=14": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=true,facing=east,forced_on=true,power=15": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=true,facing=east,forced_on=true,power=2": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=true,facing=east,forced_on=true,power=3": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=true,facing=east,forced_on=true,power=4": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=true,facing=east,forced_on=true,power=5": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=true,facing=east,forced_on=true,power=6": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=true,facing=east,forced_on=true,power=7": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=true,facing=east,forced_on=true,power=8": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=true,facing=east,forced_on=true,power=9": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 90
+    },
+    "cage=true,facing=north,forced_on=false,power=0": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb",
+      "x": 90
+    },
+    "cage=true,facing=north,forced_on=false,power=1": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb",
+      "x": 90
+    },
+    "cage=true,facing=north,forced_on=false,power=10": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90
+    },
+    "cage=true,facing=north,forced_on=false,power=11": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90
+    },
+    "cage=true,facing=north,forced_on=false,power=12": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90
+    },
+    "cage=true,facing=north,forced_on=false,power=13": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90
+    },
+    "cage=true,facing=north,forced_on=false,power=14": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90
+    },
+    "cage=true,facing=north,forced_on=false,power=15": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90
+    },
+    "cage=true,facing=north,forced_on=false,power=2": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb",
+      "x": 90
+    },
+    "cage=true,facing=north,forced_on=false,power=3": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb",
+      "x": 90
+    },
+    "cage=true,facing=north,forced_on=false,power=4": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb",
+      "x": 90
+    },
+    "cage=true,facing=north,forced_on=false,power=5": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb",
+      "x": 90
+    },
+    "cage=true,facing=north,forced_on=false,power=6": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb",
+      "x": 90
+    },
+    "cage=true,facing=north,forced_on=false,power=7": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90
+    },
+    "cage=true,facing=north,forced_on=false,power=8": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90
+    },
+    "cage=true,facing=north,forced_on=false,power=9": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90
+    },
+    "cage=true,facing=north,forced_on=true,power=0": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90
+    },
+    "cage=true,facing=north,forced_on=true,power=1": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90
+    },
+    "cage=true,facing=north,forced_on=true,power=10": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90
+    },
+    "cage=true,facing=north,forced_on=true,power=11": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90
+    },
+    "cage=true,facing=north,forced_on=true,power=12": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90
+    },
+    "cage=true,facing=north,forced_on=true,power=13": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90
+    },
+    "cage=true,facing=north,forced_on=true,power=14": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90
+    },
+    "cage=true,facing=north,forced_on=true,power=15": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90
+    },
+    "cage=true,facing=north,forced_on=true,power=2": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90
+    },
+    "cage=true,facing=north,forced_on=true,power=3": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90
+    },
+    "cage=true,facing=north,forced_on=true,power=4": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90
+    },
+    "cage=true,facing=north,forced_on=true,power=5": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90
+    },
+    "cage=true,facing=north,forced_on=true,power=6": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90
+    },
+    "cage=true,facing=north,forced_on=true,power=7": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90
+    },
+    "cage=true,facing=north,forced_on=true,power=8": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90
+    },
+    "cage=true,facing=north,forced_on=true,power=9": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90
+    },
+    "cage=true,facing=south,forced_on=false,power=0": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb",
+      "x": 90,
+      "y": 180
+    },
+    "cage=true,facing=south,forced_on=false,power=1": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb",
+      "x": 90,
+      "y": 180
+    },
+    "cage=true,facing=south,forced_on=false,power=10": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=true,facing=south,forced_on=false,power=11": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=true,facing=south,forced_on=false,power=12": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=true,facing=south,forced_on=false,power=13": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=true,facing=south,forced_on=false,power=14": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=true,facing=south,forced_on=false,power=15": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=true,facing=south,forced_on=false,power=2": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb",
+      "x": 90,
+      "y": 180
+    },
+    "cage=true,facing=south,forced_on=false,power=3": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb",
+      "x": 90,
+      "y": 180
+    },
+    "cage=true,facing=south,forced_on=false,power=4": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb",
+      "x": 90,
+      "y": 180
+    },
+    "cage=true,facing=south,forced_on=false,power=5": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb",
+      "x": 90,
+      "y": 180
+    },
+    "cage=true,facing=south,forced_on=false,power=6": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb",
+      "x": 90,
+      "y": 180
+    },
+    "cage=true,facing=south,forced_on=false,power=7": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=true,facing=south,forced_on=false,power=8": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=true,facing=south,forced_on=false,power=9": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=true,facing=south,forced_on=true,power=0": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=true,facing=south,forced_on=true,power=1": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=true,facing=south,forced_on=true,power=10": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=true,facing=south,forced_on=true,power=11": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=true,facing=south,forced_on=true,power=12": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=true,facing=south,forced_on=true,power=13": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=true,facing=south,forced_on=true,power=14": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=true,facing=south,forced_on=true,power=15": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=true,facing=south,forced_on=true,power=2": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=true,facing=south,forced_on=true,power=3": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=true,facing=south,forced_on=true,power=4": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=true,facing=south,forced_on=true,power=5": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=true,facing=south,forced_on=true,power=6": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=true,facing=south,forced_on=true,power=7": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=true,facing=south,forced_on=true,power=8": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=true,facing=south,forced_on=true,power=9": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 180
+    },
+    "cage=true,facing=up,forced_on=false,power=0": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb"
+    },
+    "cage=true,facing=up,forced_on=false,power=1": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb"
+    },
+    "cage=true,facing=up,forced_on=false,power=10": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on"
+    },
+    "cage=true,facing=up,forced_on=false,power=11": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on"
+    },
+    "cage=true,facing=up,forced_on=false,power=12": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on"
+    },
+    "cage=true,facing=up,forced_on=false,power=13": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on"
+    },
+    "cage=true,facing=up,forced_on=false,power=14": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on"
+    },
+    "cage=true,facing=up,forced_on=false,power=15": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on"
+    },
+    "cage=true,facing=up,forced_on=false,power=2": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb"
+    },
+    "cage=true,facing=up,forced_on=false,power=3": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb"
+    },
+    "cage=true,facing=up,forced_on=false,power=4": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb"
+    },
+    "cage=true,facing=up,forced_on=false,power=5": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb"
+    },
+    "cage=true,facing=up,forced_on=false,power=6": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb"
+    },
+    "cage=true,facing=up,forced_on=false,power=7": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on"
+    },
+    "cage=true,facing=up,forced_on=false,power=8": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on"
+    },
+    "cage=true,facing=up,forced_on=false,power=9": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on"
+    },
+    "cage=true,facing=up,forced_on=true,power=0": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on"
+    },
+    "cage=true,facing=up,forced_on=true,power=1": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on"
+    },
+    "cage=true,facing=up,forced_on=true,power=10": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on"
+    },
+    "cage=true,facing=up,forced_on=true,power=11": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on"
+    },
+    "cage=true,facing=up,forced_on=true,power=12": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on"
+    },
+    "cage=true,facing=up,forced_on=true,power=13": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on"
+    },
+    "cage=true,facing=up,forced_on=true,power=14": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on"
+    },
+    "cage=true,facing=up,forced_on=true,power=15": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on"
+    },
+    "cage=true,facing=up,forced_on=true,power=2": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on"
+    },
+    "cage=true,facing=up,forced_on=true,power=3": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on"
+    },
+    "cage=true,facing=up,forced_on=true,power=4": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on"
+    },
+    "cage=true,facing=up,forced_on=true,power=5": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on"
+    },
+    "cage=true,facing=up,forced_on=true,power=6": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on"
+    },
+    "cage=true,facing=up,forced_on=true,power=7": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on"
+    },
+    "cage=true,facing=up,forced_on=true,power=8": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on"
+    },
+    "cage=true,facing=up,forced_on=true,power=9": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on"
+    },
+    "cage=true,facing=west,forced_on=false,power=0": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb",
+      "x": 90,
+      "y": 270
+    },
+    "cage=true,facing=west,forced_on=false,power=1": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb",
+      "x": 90,
+      "y": 270
+    },
+    "cage=true,facing=west,forced_on=false,power=10": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=true,facing=west,forced_on=false,power=11": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=true,facing=west,forced_on=false,power=12": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=true,facing=west,forced_on=false,power=13": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=true,facing=west,forced_on=false,power=14": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=true,facing=west,forced_on=false,power=15": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=true,facing=west,forced_on=false,power=2": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb",
+      "x": 90,
+      "y": 270
+    },
+    "cage=true,facing=west,forced_on=false,power=3": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb",
+      "x": 90,
+      "y": 270
+    },
+    "cage=true,facing=west,forced_on=false,power=4": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb",
+      "x": 90,
+      "y": 270
+    },
+    "cage=true,facing=west,forced_on=false,power=5": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb",
+      "x": 90,
+      "y": 270
+    },
+    "cage=true,facing=west,forced_on=false,power=6": {
+      "model": "bits_n_bobs:block/lightbulb/lightbulb",
+      "x": 90,
+      "y": 270
+    },
+    "cage=true,facing=west,forced_on=false,power=7": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=true,facing=west,forced_on=false,power=8": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=true,facing=west,forced_on=false,power=9": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=true,facing=west,forced_on=true,power=0": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=true,facing=west,forced_on=true,power=1": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=true,facing=west,forced_on=true,power=10": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=true,facing=west,forced_on=true,power=11": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=true,facing=west,forced_on=true,power=12": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=true,facing=west,forced_on=true,power=13": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=true,facing=west,forced_on=true,power=14": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=true,facing=west,forced_on=true,power=15": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=true,facing=west,forced_on=true,power=2": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=true,facing=west,forced_on=true,power=3": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=true,facing=west,forced_on=true,power=4": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=true,facing=west,forced_on=true,power=5": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=true,facing=west,forced_on=true,power=6": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=true,facing=west,forced_on=true,power=7": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=true,facing=west,forced_on=true,power=8": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 270
+    },
+    "cage=true,facing=west,forced_on=true,power=9": {
+      "model": "bits_n_bobs:block/lightbulb/brown/lightbulb_on",
+      "x": 90,
+      "y": 270
+    }
+  }
+}

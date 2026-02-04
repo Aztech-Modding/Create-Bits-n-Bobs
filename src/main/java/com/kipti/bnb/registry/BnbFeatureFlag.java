@@ -26,7 +26,7 @@ public enum BnbFeatureFlag {
     NIXIE_BOARD("Availability of Nixie Board block.", BnbBlocks.NIXIE_BOARD::get),
     LARGE_NIXIE_TUBE("Availability of Large Nixie Tube block.", BnbBlocks.LARGE_NIXIE_TUBE::get),
 
-    LIGHTBULB("Availability of the Lightbulb block.", BnbBlocks.LIGHTBULB::get),
+    LIGHTBULB("Availability of the Lightbulb block.", BnbBlocks.WHITE_LIGHTBULB::get),
     BRASS_LAMP("Availability of the Brass Lamp block.", BnbBlocks.BRASS_LAMP::get),
     HEADLAMP("Availability of the Headlamp block.", BnbBlocks.HEADLAMP::get),
     CHAIRS("Availability of the Chair blocks.", createSupplierSet(BnbBlocks.CHAIRS)),
