@@ -2,6 +2,7 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'net.neoforged.gradle.userdev' version '7.0.190'
+    id 'com.matthewprenger.cursegradle' version '1.4.0'
     id "me.modmuss50.mod-publish-plugin" version "1.1.0"
     id "co.uzzu.dotenv.gradle" version "1.1.0"
 }
@@ -240,7 +241,7 @@ def getRelevantChangelog(String version) {
         newerVersions.each { println "  - ${it}" }
         println "**************************************************\n"
     }
-
+    
     return log
 }
 
@@ -256,21 +257,20 @@ publishMods {
     curseforge {
         projectId = "1398383"
         projectSlug = "create-bits-n-bobs"
-        accessToken = env.fetch("CURSEFORGE_TOKEN")
+        accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
         minecraftVersions.add("1.21.1")
         requires("create")
     }
     modrinth {
         projectId = "T8bvmqVZ"
-        accessToken = env.fetch("MODRINTH_TOKEN")
+        accessToken = providers.environmentVariable("MODRINTH_TOKEN")
         minecraftVersions.add("1.21.1")
         requires("create")
     }
 
     discord {
-        webhookUrl = env.fetch("DISCORD_WEBHOOK_URL")
+        webhookUrl = providers.environmentVariable("DISCORD_WEBHOOK_URL")
         username = "bits n bober version bot"
-        avatarUrl = "https://cataas.com/cat?width=500&height=500"
         content = """
         # New Mod Release: ${getDisplayName().get()}
         ${changelogText}
