@@ -10,7 +10,7 @@
 		{
 			"name": "bulbglass",
 			"from": [5, 5, 5],
-			"to": [11, 13, 11],
+			"to": [11, 13.5, 11],
 			"shade": false,
 			"light_emission": 15,
 			"faces": {
