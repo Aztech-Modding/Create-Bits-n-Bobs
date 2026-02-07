@@ -1,21 +1,34 @@
 {
 	"format_version": "1.9.0",
 	"credit": "Made with Blockbench by cak :)",
-	"texture_size": [64, 64],
+	"texture_size": [32, 32],
 	"textures": {
 		"4": "bits_n_bobs:block/flywheel_bearing"
 	},
 	"elements": [
 		{
-			"from": [0, 0, 0],
-			"to": [16, 4, 16],
+			"from": [0, 10, 0],
+			"to": [16, 12, 16],
+			"rotation": {"angle": 0, "axis": "y", "origin": [0, 10, 0]},
 			"faces": {
-				"north": {"uv": [4, 8, 8, 9.25], "texture": "#4"},
-				"east": {"uv": [8, 4, 12, 5.25], "texture": "#4"},
-				"south": {"uv": [8, 5.25, 12, 6.5], "texture": "#4"},
-				"west": {"uv": [8, 6.5, 12, 7.75], "texture": "#4"},
-				"up": {"uv": [4, 4, 0, 0], "texture": "#4"},
-				"down": {"uv": [4, 4, 0, 8], "texture": "#4"}
+				"north": {"uv": [0, 2, 8, 3], "texture": "#4"},
+				"east": {"uv": [0, 2, 8, 3], "texture": "#4"},
+				"south": {"uv": [0, 2, 8, 3], "texture": "#4"},
+				"west": {"uv": [0, 2, 8, 3], "texture": "#4"},
+				"up": {"uv": [8, 0, 16, 8], "texture": "#4"},
+				"down": {"uv": [8, 0, 16, 8], "texture": "#4"}
+			}
+		},
+		{
+			"from": [0, 0, 0],
+			"to": [16, 6, 16],
+			"faces": {
+				"north": {"uv": [0, 5, 8, 8], "texture": "#4"},
+				"east": {"uv": [0, 5, 8, 8], "texture": "#4"},
+				"south": {"uv": [0, 5, 8, 8], "texture": "#4"},
+				"west": {"uv": [0, 5, 8, 8], "texture": "#4"},
+				"up": {"uv": [8, 0, 16, 8], "texture": "#4"},
+				"down": {"uv": [8, 8, 16, 16], "texture": "#4"}
 			}
 		}
 	],
@@ -24,13 +37,19 @@
 			"name": "body",
 			"origin": [0, 0, 0],
 			"color": 0,
-			"children": [0]
+			"stepParentName": "",
+			"backdrop": false,
+			"children": []
 		},
 		{
 			"name": "Head",
 			"origin": [8, 15, 8],
 			"color": 0,
+			"stepParentName": "",
+			"backdrop": false,
 			"children": []
-		}
+		},
+		0,
+		1
 	]
 }
