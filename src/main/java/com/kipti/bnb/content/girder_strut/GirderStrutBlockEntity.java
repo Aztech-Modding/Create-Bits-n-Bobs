@@ -1,6 +1,8 @@
 package com.kipti.bnb.content.girder_strut;
 
+import com.simibubi.create.api.contraption.transformable.TransformableBlockEntity;
 import com.simibubi.create.api.schematic.requirement.SpecialBlockEntityItemRequirement;
+import com.simibubi.create.content.contraptions.StructureTransform;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import net.createmod.catnip.render.SuperByteBuffer;
@@ -10,6 +12,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
@@ -19,16 +22,16 @@ import java.util.List;
 import java.util.Set;
 
 //TODO: impl SpecialBlockEntityItemRequirement
-public class GirderStrutBlockEntity extends SmartBlockEntity implements IBlockEntityRelighter, SpecialBlockEntityItemRequirement {
+public class GirderStrutBlockEntity extends SmartBlockEntity implements IBlockEntityRelighter, SpecialBlockEntityItemRequirement, TransformableBlockEntity {
 
     private final Set<BlockPos> connections = new HashSet<>();
     public @Nullable SuperByteBuffer connectionRenderBufferCache;
 
-    public GirderStrutBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+    public GirderStrutBlockEntity(final BlockEntityType<?> type, final BlockPos pos, final BlockState state) {
         super(type, pos, state);
     }
 
-    public void addConnection(BlockPos other) {
+    public void addConnection(final BlockPos other) {
         if (!other.equals(getBlockPos()) && connections.add(other.immutable().subtract(getBlockPos()))) {
             setChanged();
             sendData();
@@ -36,7 +39,7 @@ public class GirderStrutBlockEntity extends SmartBlockEntity implements IBlockEn
         }
     }
 
-    public void removeConnection(BlockPos pos) {
+    public void removeConnection(final BlockPos pos) {
         if (connections.remove(pos.subtract(getBlockPos()))) {
             setChanged();
             sendData();
@@ -44,7 +47,7 @@ public class GirderStrutBlockEntity extends SmartBlockEntity implements IBlockEn
         }
     }
 
-    public boolean hasConnectionTo(BlockPos pos) {
+    public boolean hasConnectionTo(final BlockPos pos) {
         return connections.contains(pos.subtract(getBlockPos()));
     }
 
@@ -57,11 +60,11 @@ public class GirderStrutBlockEntity extends SmartBlockEntity implements IBlockEn
     }
 
     @Override
-    protected void write(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
+    protected void write(final CompoundTag tag, final HolderLookup.Provider registries, final boolean clientPacket) {
         super.write(tag, registries, clientPacket);
-        ListTag list = new ListTag();
-        for (BlockPos p : connections) {
-            CompoundTag ct = new CompoundTag();
+        final ListTag list = new ListTag();
+        for (final BlockPos p : connections) {
+            final CompoundTag ct = new CompoundTag();
             ct.putInt("X", p.getX());
             ct.putInt("Y", p.getY());
             ct.putInt("Z", p.getZ());
@@ -71,13 +74,13 @@ public class GirderStrutBlockEntity extends SmartBlockEntity implements IBlockEn
     }
 
     @Override
-    protected void read(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
+    protected void read(final CompoundTag tag, final HolderLookup.Provider registries, final boolean clientPacket) {
         super.read(tag, registries, clientPacket);
         connections.clear();
         if (tag.contains("Connections", Tag.TAG_LIST)) {
-            ListTag list = tag.getList("Connections", Tag.TAG_COMPOUND);
-            for (Tag t : list) {
-                if (t instanceof CompoundTag ct) {
+            final ListTag list = tag.getList("Connections", Tag.TAG_COMPOUND);
+            for (final Tag t : list) {
+                if (t instanceof final CompoundTag ct) {
                     connections.add(new BlockPos(ct.getInt("X"), ct.getInt("Y"), ct.getInt("Z")));
                 }
             }
@@ -88,7 +91,7 @@ public class GirderStrutBlockEntity extends SmartBlockEntity implements IBlockEn
     }
 
     @Override
-    public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
+    public void addBehaviours(final List<BlockEntityBehaviour> behaviours) {
     }
 
     private void notifyModelChange() {
@@ -100,4 +103,14 @@ public class GirderStrutBlockEntity extends SmartBlockEntity implements IBlockEn
         }
     }
 
+    @Override
+    public void transform(final BlockEntity blockEntity, final StructureTransform transform) {
+        final List<BlockPos> newConnections = connections.stream()
+                .map(transform::applyWithoutOffset)
+                .filter(p -> !p.equals(getBlockPos()))
+                .toList();
+        connections.clear();
+
+        connections.addAll(newConnections);
+    }
 }

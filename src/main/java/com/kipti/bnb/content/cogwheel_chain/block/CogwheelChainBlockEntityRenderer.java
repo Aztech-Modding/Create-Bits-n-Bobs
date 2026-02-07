@@ -2,7 +2,7 @@ package com.kipti.bnb.content.cogwheel_chain.block;
 
 import com.kipti.bnb.content.cogwheel_chain.graph.CogwheelChain;
 import com.kipti.bnb.content.cogwheel_chain.graph.RenderedChainPathNode;
-import com.kipti.bnb.foundation.client.ShipyardLodHelper;
+import com.kipti.bnb.foundation.client.ShipyardHelper;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
@@ -112,7 +112,7 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
 
         final Vec3 cameraPosition = Minecraft.getInstance()
                 .getBlockEntityRenderDispatcher().camera.getPosition();
-        final boolean inShipyardLod = ShipyardLodHelper.isProbablyRenderingInShipyard(BlockPos.containing(from));
+        final boolean inShipyardLod = ShipyardHelper.isProbablyInShipyard(BlockPos.containing(from));
 
         final boolean far = !inShipyardLod && Minecraft.getInstance().level == be.getLevel() && !cameraPosition
                 .closerThan(from.lerp(to, 0.5), MIP_DISTANCE);

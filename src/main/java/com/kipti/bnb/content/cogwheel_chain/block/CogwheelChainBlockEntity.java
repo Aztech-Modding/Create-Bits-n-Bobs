@@ -3,7 +3,9 @@ package com.kipti.bnb.content.cogwheel_chain.block;
 import com.kipti.bnb.content.cogwheel_chain.graph.CogwheelChain;
 import com.kipti.bnb.content.cogwheel_chain.graph.PathedCogwheelNode;
 import com.kipti.bnb.content.girder_strut.IBlockEntityRelighter;
+import com.simibubi.create.api.contraption.transformable.TransformableBlockEntity;
 import com.simibubi.create.api.schematic.requirement.SpecialBlockEntityItemRequirement;
+import com.simibubi.create.content.contraptions.StructureTransform;
 import com.simibubi.create.content.kinetics.base.IRotate;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.simpleRelays.SimpleKineticBlockEntity;
@@ -25,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implements IBlockEntityRelighter, SpecialBlockEntityItemRequirement {
+public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implements IBlockEntityRelighter, SpecialBlockEntityItemRequirement, TransformableBlockEntity {
 
     private boolean isController = false;
     @Nullable
@@ -295,5 +297,15 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
                 ItemRequirement.ItemUseType.CONSUME,
                 Blocks.CHAIN.asItem().getDefaultInstance().copyWithCount(chain != null ? chain.getChainsRequired() : 0)
         ) : ItemRequirement.NONE;
+    }
+
+    @Override
+    public void transform(final BlockEntity blockEntity, final StructureTransform transform) {
+        if (chain != null)
+            chain.transform(blockEntity, transform);
+        if (controllerOffset != null) {
+            final Vec3i transformedOffset = transform.applyWithoutOffset(new BlockPos(controllerOffset));
+            setController(transformedOffset);
+        }
     }
 }

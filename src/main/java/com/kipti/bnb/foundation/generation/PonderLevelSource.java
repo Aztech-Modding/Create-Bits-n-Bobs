@@ -1,5 +1,6 @@
 package com.kipti.bnb.foundation.generation;
 
+import com.kipti.bnb.foundation.client.ShipyardHelper;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
@@ -54,6 +55,9 @@ public class PonderLevelSource extends ChunkGenerator {
     @Override
     public @NotNull CompletableFuture<ChunkAccess> fillFromNoise(final @NotNull Blender blender, final @NotNull RandomState randomState, final @NotNull StructureManager structureManager, final @NotNull ChunkAccess chunk) {
         final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+
+        if (ShipyardHelper.isProbablyInShipyard(chunk.getPos().getWorldPosition()))
+            return CompletableFuture.completedFuture(chunk);
 
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {

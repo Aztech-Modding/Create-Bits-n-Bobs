@@ -15,9 +15,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.DirectionalBlock;
-import net.minecraft.world.level.block.SimpleWaterloggedBlock;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -44,6 +42,18 @@ public class GirderStrutBlock extends Block implements IBE<GirderStrutBlockEntit
         super(properties);
         registerDefaultState(defaultBlockState().setValue(FACING, Direction.UP).setValue(WATERLOGGED, false));
         this.modelType = modelType;
+    }
+
+    @Override
+    protected BlockState rotate(final BlockState state, final Rotation rotation) {
+        return super.rotate(state, rotation)
+                .setValue(FACING, rotation.rotate(state.getValue(FACING)));
+    }
+
+    @Override
+    protected BlockState mirror(final BlockState state, final Mirror mirror) {
+        return super.mirror(state, mirror)
+                .setValue(FACING, mirror.mirror(state.getValue(FACING)));
     }
 
     @Override

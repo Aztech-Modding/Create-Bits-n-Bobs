@@ -6,9 +6,12 @@ import net.minecraft.core.Vec3i;
 /**
  * TODO: implement compat with sable, but needs to be released since devs wont have
  */
-public class ShipyardLodHelper {
+public class ShipyardHelper {
 
-    public static boolean isProbablyRenderingInShipyard(final BlockPos containing) {
+    /**
+     * Fuck up behaviour for stuff absurdly far out, idk if this may break other shit, but this breaks the least amount of shit
+     */
+    public static boolean isProbablyInShipyard(final BlockPos containing) {
         return containing.distSqr(Vec3i.ZERO) >= 2_000_000d * 2_000_000d;
     }
 }

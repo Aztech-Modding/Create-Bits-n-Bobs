@@ -4,6 +4,7 @@ import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.cogwheel_chain.block.CogwheelChainBlock;
 import com.kipti.bnb.content.cogwheel_chain.block.CogwheelChainBlockEntity;
 import com.kipti.bnb.registry.BnbBlocks;
+import com.simibubi.create.content.contraptions.StructureTransform;
 import com.simibubi.create.content.kinetics.simpleRelays.CogWheelBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -20,7 +21,7 @@ import java.util.Objects;
 
 public class CogwheelChain {
 
-    private final List<PathedCogwheelNode> cogwheelNodes;
+    private List<PathedCogwheelNode> cogwheelNodes;
     private List<RenderedChainPathNode> renderedNodes;
 
     public CogwheelChain(final CompoundTag tag) {
@@ -171,5 +172,14 @@ public class CogwheelChain {
      */
     public List<PathedCogwheelNode> getChainPathCogwheelNodes() {
         return cogwheelNodes;
+    }
+
+    public void transform(final BlockEntity blockEntity, final StructureTransform transform) {
+        final List<PathedCogwheelNode> newNodes = new ArrayList<>();
+        for (final PathedCogwheelNode node : cogwheelNodes) {
+            newNodes.add(node.transform(transform));
+        }
+        cogwheelNodes = newNodes;
+        renderedNodes = CogwheelChainGeometryBuilder.buildFullChainFromPathNodes(cogwheelNodes);
     }
 }
