@@ -1,8 +1,0 @@
-{
-  "values": [
-    "bits_n_bobs:deepslate_tiles",
-    "bits_n_bobs:deepslate_tile_stairs",
-    "bits_n_bobs:deepslate_tile_wall",
-    "minecraft:deepslate"
-  ]
-}

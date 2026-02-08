@@ -1,7 +1,0 @@
-{
-  "parent": "bits_n_bobs:block/tile_wall/template_wall_side",
-  "textures": {
-    "wall": "bits_n_bobs:block/palettes/stone_types/tiles/scorchia_cut_tiles",
-    "wall_flipped": "bits_n_bobs:block/palettes/stone_types/tiles_flipped/scorchia_cut_tiles_flipped"
-  }
-}

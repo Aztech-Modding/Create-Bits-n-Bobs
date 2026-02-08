@@ -1,7 +1,0 @@
-{
-  "parent": "bits_n_bobs:block/chair/left_armrest",
-  "ambientocclusion": false,
-  "textures": {
-    "2": "bits_n_bobs:block/chair/chair_cyan"
-  }
-}

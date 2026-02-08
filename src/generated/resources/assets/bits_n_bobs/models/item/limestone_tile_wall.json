@@ -1,7 +1,0 @@
-{
-  "parent": "bits_n_bobs:block/tile_wall/wall_inventory",
-  "textures": {
-    "wall": "bits_n_bobs:block/palettes/stone_types/tiles/limestone_cut_tiles",
-    "wall_flipped": "bits_n_bobs:block/palettes/stone_types/tiles_flipped/limestone_cut_tiles_flipped"
-  }
-}
