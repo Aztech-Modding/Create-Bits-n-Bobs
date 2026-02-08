@@ -186,6 +186,24 @@ public class BnbBlocks {
             .build()
             .register();
 
+    public static final BlockEntry<GirderStrutBlock> WOODEN_GIRDER_STRUT = REGISTRATE.block("wooden_girder_strut", GirderStrutBlock.wooden())
+            .initialProperties(SharedProperties::wooden)
+            .transform(axeOnly())
+            .properties(p -> p.noOcclusion())
+            .blockstate((c, p) -> p.directionalBlock(c.get(),
+                    (state) -> p.models().getExistingFile(CreateBitsnBobs.asResource(
+                            "block/girder_strut/wooden_girder_strut_attachment")
+                    )))
+            .onRegister(CreateRegistrate.blockModel(() -> GirderStrutModelBuilder::new))
+            .onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "block.bits_n_bobs.girder_strut"))
+            .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
+            .item(GirderStrutBlockItem::new)
+            .model((c, p) ->
+                    p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/girder_strut/wooden_girder_item"))
+            )
+            .build()
+            .register();
+
     public static final BlockEntry<NixieBoardBlockNixie> NIXIE_BOARD = REGISTRATE.block("nixie_board", p -> new NixieBoardBlockNixie(p, null))
             .transform(nixieBoard())
             .item()
