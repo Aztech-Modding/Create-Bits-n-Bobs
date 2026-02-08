@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "veridium_tile_stairs",
+  "key": {
+    "X": {
+      "item": "bits_n_bobs:veridium_tiles"
+    }
+  },
+  "pattern": [
+    "X  ",
+    "XX ",
+    "XXX"
+  ],
+  "result": {
+    "count": 4,
+    "id": "bits_n_bobs:veridium_tile_stairs"
+  }
+}

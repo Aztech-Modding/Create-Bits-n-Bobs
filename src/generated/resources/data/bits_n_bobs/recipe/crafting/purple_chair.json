@@ -1,0 +1,22 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "bits_n_bobs:feature_enabled",
+      "feature": "chairs"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "ingredients": [
+    {
+      "item": "minecraft:purple_wool"
+    },
+    {
+      "tag": "minecraft:wooden_stairs"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "bits_n_bobs:purple_chair"
+  }
+}

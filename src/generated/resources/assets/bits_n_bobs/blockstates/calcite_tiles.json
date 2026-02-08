@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "bits_n_bobs:block/calcite_tiles"
+    }
+  }
+}

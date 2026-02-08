@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "tag": "create:stone_types/veridium"
+  },
+  "result": {
+    "count": 1,
+    "id": "bits_n_bobs:veridium_tile_wall"
+  }
+}
