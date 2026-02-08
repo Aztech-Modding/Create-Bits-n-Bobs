@@ -1,0 +1,33 @@
+{
+	"format_version": "1.9.0",
+	"credit": "Made with Blockbench",
+	"textures": {
+		"0": "bits_n_bobs:block/wooden_girder",
+		"particle": "bits_n_bobs:block/wooden_girder"
+	},
+	"elements": [
+		{
+			"from": [4, 4, 0],
+			"to": [12, 12, 16],
+			"faces": {
+				"north": {"uv": [0, 8, 8, 16], "texture": "#0"},
+				"east": {"uv": [0, 0, 16, 8], "texture": "#0"},
+				"south": {"uv": [0, 8, 8, 16], "texture": "#0"},
+				"west": {"uv": [16, 0, 0, 8], "texture": "#0"},
+				"up": {"uv": [16, 8, 0, 0], "rotation": 90, "texture": "#0"},
+				"down": {"uv": [0, 8, 16, 0], "rotation": 90, "texture": "#0"}
+			}
+		}
+	],
+	"groups": [
+		{
+			"name": "Beam Z",
+			"origin": [8, 13, 8],
+			"color": 0,
+			"stepParentName": "",
+			"backdrop": false,
+			"children": []
+		},
+		0
+	]
+}

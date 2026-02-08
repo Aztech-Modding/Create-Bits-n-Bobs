@@ -7,9 +7,9 @@
 	},
 	"elements": [
 		{
-			"from": [6, 4, 0],
-			"to": [10, 12, 16],
-			"rotation": {"angle": 0, "axis": "y", "origin": [8, 8, 8]},
+			"from": [6, 7, -1],
+			"to": [10, 15, 15],
+			"rotation": {"angle": -22.5, "axis": "x", "origin": [8, 11, 7]},
 			"faces": {
 				"north": {"uv": [8, 1, 12, 3], "rotation": 270, "texture": "#0"},
 				"east": {"uv": [0, 5, 8, 9], "texture": "#0"},
@@ -18,8 +18,9 @@
 			}
 		},
 		{
-			"from": [4, 2, 0],
-			"to": [12, 4, 16],
+			"from": [4, 5, -1],
+			"to": [12, 7, 15],
+			"rotation": {"angle": -22.5, "axis": "x", "origin": [8, 11, 7]},
 			"faces": {
 				"north": {"uv": [12, 2, 16, 3], "texture": "#0"},
 				"east": {"uv": [0, 4, 8, 5], "rotation": 180, "texture": "#0"},
@@ -30,9 +31,9 @@
 			}
 		},
 		{
-			"from": [4, 12, 0],
-			"to": [12, 14, 16],
-			"rotation": {"angle": 0, "axis": "y", "origin": [8, 13, 8]},
+			"from": [4, 15, -1],
+			"to": [12, 17, 15],
+			"rotation": {"angle": -22.5, "axis": "x", "origin": [8, 16, 7]},
 			"faces": {
 				"north": {"uv": [12, 1, 16, 2], "texture": "#0"},
 				"east": {"uv": [0, 4, 8, 5], "texture": "#0"},
@@ -56,9 +57,9 @@
 			}
 		},
 		{
-			"from": [3, 3, 12],
-			"to": [13, 13, 18],
-			"rotation": {"angle": 0, "axis": "y", "origin": [8, 8, 15]},
+			"from": [3, 9, 12],
+			"to": [13, 19, 18],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 14, 15]},
 			"faces": {
 				"north": {"uv": [8, 8, 13, 13], "rotation": 180, "texture": "#0"},
 				"east": {"uv": [13, 8, 16, 13], "rotation": 180, "texture": "#0"},
@@ -93,7 +94,8 @@
 			"scale": [0.25, 0.25, 0.25]
 		},
 		"gui": {
-			"rotation": [30, -135, 0],
+			"rotation": [30, 45, 0],
+			"translation": [0, -1.5, 0],
 			"scale": [0.625, 0.625, 0.625]
 		},
 		"fixed": {
@@ -105,28 +107,38 @@
 			"name": "Beam Z",
 			"origin": [8, 13, 8],
 			"color": 0,
+			"stepParentName": "",
+			"backdrop": false,
 			"children": [0, 1, 2]
 		},
 		{
 			"name": "weathered_girder_strut_attachment",
 			"origin": [8, 8, 8],
 			"color": 0,
+			"stepParentName": "",
+			"backdrop": false,
 			"children": [
 				{
 					"name": "Brace",
 					"origin": [0, 0, 0],
 					"color": 0,
+					"stepParentName": "",
+					"backdrop": false,
 					"children": [3]
 				},
 				{
 					"name": "weathered_girder_strut_attachment",
 					"origin": [8, 8, 8],
 					"color": 0,
+					"stepParentName": "",
+					"backdrop": false,
 					"children": [
 						{
 							"name": "Brace",
 							"origin": [0, 0, 0],
 							"color": 0,
+							"stepParentName": "",
+							"backdrop": false,
 							"children": [4]
 						}
 					]
