@@ -63,9 +63,11 @@ public class BnbBlockStateGen {
     public static <T extends AlternatingTrussBlock> void alternatingTrussModel(DataGenContext<Block, T> ctx, RegistrateBlockstateProvider prov) {
         prov.getVariantBuilder(ctx.get())
                 .forAllStates(state -> {
-                    final Direction dir = Direction.fromAxisAndDirection(state.getValue(RotatedPillarBlock.AXIS), state.getValue(AlternatingTrussBlock.ALTERNATING) ? Direction.AxisDirection.NEGATIVE : Direction.AxisDirection.POSITIVE);
+                    final Direction dir = Direction.fromAxisAndDirection(state.getValue(RotatedPillarBlock.AXIS), Direction.AxisDirection.POSITIVE);
                     return ConfiguredModel.builder()
-                            .modelFile(prov.models().getExistingFile(ctx.getId()))
+                            .modelFile(prov.models().getExistingFile(
+                                    prov.modLoc(ctx.getId().getPath() + (state.getValue(AlternatingTrussBlock.ALTERNATING) ? "_alternating" : ""))
+                            ))
                             .rotationX(dir == Direction.DOWN ? 180 : dir.getAxis().isHorizontal() ? 90 : 0)
                             .rotationY(dir.getAxis().isVertical() ? 0 : (((int) dir.toYRot()) + DEFAULT_ANGLE_OFFSET) % 360)
                             .build();

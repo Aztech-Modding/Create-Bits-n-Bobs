@@ -2,6 +2,7 @@ package com.kipti.bnb.content.decoration.truss;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -33,4 +34,12 @@ public class AlternatingTrussBlock extends TrussBlock {
         return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
     }
 
+    @Override
+    public BlockState getStateForPlacement(final BlockPlaceContext context) {
+        final BlockState state = super.getStateForPlacement(context);
+        final Direction positiveAxis = Direction.get(Direction.AxisDirection.POSITIVE, state.getValue(AXIS));
+        final BlockState neighborState = context.getLevel().getBlockState(context.getClickedPos().relative(positiveAxis));
+        final boolean isAlternating = neighborState.getBlock() instanceof AlternatingTrussBlock && neighborState.getValue(ALTERNATING);
+        return state.setValue(ALTERNATING, !isAlternating);
+    }
 }

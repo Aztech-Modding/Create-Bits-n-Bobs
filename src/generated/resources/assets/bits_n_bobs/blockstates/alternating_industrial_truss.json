@@ -14,17 +14,17 @@
       "y": 180
     },
     "alternating=true,axis=x": {
-      "model": "bits_n_bobs:block/alternating_industrial_truss",
+      "model": "bits_n_bobs:block/alternating_industrial_truss_alternating",
       "x": 90,
-      "y": 270
+      "y": 90
     },
     "alternating=true,axis=y": {
-      "model": "bits_n_bobs:block/alternating_industrial_truss",
-      "x": 180
+      "model": "bits_n_bobs:block/alternating_industrial_truss_alternating"
     },
     "alternating=true,axis=z": {
-      "model": "bits_n_bobs:block/alternating_industrial_truss",
-      "x": 90
+      "model": "bits_n_bobs:block/alternating_industrial_truss_alternating",
+      "x": 90,
+      "y": 180
     }
   }
 }
