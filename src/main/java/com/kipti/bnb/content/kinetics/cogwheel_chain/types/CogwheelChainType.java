@@ -42,19 +42,21 @@ public class CogwheelChainType {
 
     //Todo: custom render types / just make this not an enum
     public enum ChainRenderInfo {
-        CHAIN(VertexShape.CROSS, 3, 3),
-        ROPE(VertexShape.SQUARE, 3, 3),
-        BELT(VertexShape.SQUARE, 3, 2),
+        CHAIN(VertexShape.CROSS, 3, 3, false),
+        ROPE(VertexShape.SQUARE, 3, 3, false),
+        BELT(VertexShape.SQUARE, 3, 2, true),
         ;
 
         private final VertexShape vertexShape;
         private final int width;
         private final int height;
+        private final boolean consistentInsideOutside;
 
-        ChainRenderInfo(final VertexShape vertexShape, final int width, final int height) {
+        ChainRenderInfo(final VertexShape vertexShape, final int width, final int height, final boolean consistentInsideOutside) {
             this.vertexShape = vertexShape;
             this.width = width;
             this.height = height;
+            this.consistentInsideOutside = consistentInsideOutside;
         }
 
         public VertexShape getVertexShape() {
@@ -71,6 +73,10 @@ public class CogwheelChainType {
 
         public boolean isDefaultDimensions() {
             return width == 3 && height == 3;
+        }
+
+        public boolean usesConsistentInsideOutside() {
+            return consistentInsideOutside;
         }
     }
 

@@ -46,6 +46,7 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
             final CogwheelChainType type = chain.getChainType();
             final float rotationsPerTick = be.getChainRotationFactor() * be.getSpeed() / (60 * 20);
             final float time = be.getLevel() != null ? AnimationTickHolder.getRenderTime(be.getLevel()) : AnimationTickHolder.getRenderTime();
+            final boolean flipInsideOutside = type.getRenderType().usesConsistentInsideOutside() && chain.shouldFlipInsideOutside();
 
             final float offset = rotationsPerTick == 0 ? 0 : (float) (Math.PI * 2 * rotationsPerTick * time);
 
@@ -78,7 +79,8 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
                         lighter,
                         (float) stretchOffset,
                         (float) chainTextureSquish,
-                        type);
+                    type,
+                    flipInsideOutside);
 
                 accumulatedUV += distance;
 
@@ -110,7 +112,8 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
                              final Function<Vector3f, Integer> lighter,
                              final float offset,
                              final float textureSquish,
-                             final CogwheelChainType type) {
+                             final CogwheelChainType type,
+                             final boolean flipInsideOutside) {
         final Vec3 diff = to.subtract(from);
         final double yaw = Mth.RAD_TO_DEG * Mth.atan2(diff.x, diff.z);
         final double pitch = Mth.RAD_TO_DEG * Mth.atan2(diff.y, diff.multiply(1, 0, 1)
@@ -136,7 +139,7 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
                 .closerThan(from.lerp(to, 0.5), SEAM_DIST);
 
         if (close || type.getRenderType() != CogwheelChainType.ChainRenderInfo.CHAIN) //For now there is only slow rendering of diff types TODO implement fast
-            renderChainSlowerButWithoutGaps(ms, buffer, offset, textureSquish, preFrom, from, to, postTo, fromCogwheelAxis, toCogwheelAxis, light1, light2, type);
+            renderChainSlowerButWithoutGaps(ms, buffer, offset, textureSquish, preFrom, from, to, postTo, fromCogwheelAxis, toCogwheelAxis, light1, light2, type, flipInsideOutside);
         else {
             chain.rotateYDegrees((float) yaw);
             chain.rotateXDegrees(90 - (float) pitch);
@@ -162,7 +165,8 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
                                                         final Vec3 toCogwheelAxis,
                                                         final int lightAtSource,
                                                         final int lightAtDest,
-                                                        final CogwheelChainType type) {
+                                                        final CogwheelChainType type,
+                                                        final boolean flipInsideOutside) {
         final CogwheelChainType.ChainRenderInfo chainRenderInfo = type.getRenderType();
 
         // Calculate corners in world space for the segment ends
@@ -183,7 +187,7 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
             if (chainRenderInfo.getVertexShape() == CogwheelChainType.VertexShape.CROSS) {
                 renderCrossShapeFace(ms, vc, poseMatrix, from, destinationPoints, sourcePoints, faceIndex, minV, maxV, lightAtSource);
             } else {
-                renderDefaultShapeFace(ms, vc, poseMatrix, from, destinationPoints, sourcePoints, chainRenderInfo, faceIndex, minV, maxV, lightAtSource);
+                renderDefaultShapeFace(ms, vc, poseMatrix, from, destinationPoints, sourcePoints, chainRenderInfo, faceIndex, minV, maxV, lightAtSource, flipInsideOutside);
             }
         }
 
@@ -214,20 +218,21 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
     private static void renderDefaultShapeFace(final PoseStack ms, final VertexConsumer vc, final Matrix4f poseMatrix, final Vec3 origin,
                                                final List<Vec3> destinationPoints, final List<Vec3> sourcePoints,
                                                final CogwheelChainType.ChainRenderInfo renderInfo,
-                                               final int faceIndex, final float minV, final float maxV, final int light) {
+                                               final int faceIndex, final float minV, final float maxV, final int light, final boolean flipTopBottom) {
         final float h = renderInfo.getHeight() / 16f;
         final float w = renderInfo.getWidth() / 16f;
 
         float minU;
         float maxU;
 
-        if (faceIndex == 0) { // Top
+        final int uvFaceIndex = flipTopBottom ? (faceIndex + 2) % 4 : faceIndex;
+        if (uvFaceIndex == 0) { // Top
             minU = h;
             maxU = h + w;
-        } else if (faceIndex == 1) { // Left
+        } else if (uvFaceIndex == 1) { // Left
             minU = 0;
             maxU = h;
-        } else if (faceIndex == 2) { // Bottom
+        } else if (uvFaceIndex == 2) { // Bottom
             minU = h + w + h;
             maxU = h + w + h + w;
         } else { // Right (faceIndex == 3)
@@ -313,13 +318,14 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
         final Vector3f localAxis2Joml = transform.transform(0f, 0f, 1f, new Vector3f());
         final Vec3 localAxis2 = new Vec3(localAxis2Joml.x, localAxis2Joml.y, localAxis2Joml.z).normalize().scale(chainRenderInfo.getWidth() / 2f);
 
+        final Vec3 finalLocalAxis1Direction = localAxis1Direction;
         return Stream.of(
                         point.add(localAxis1.add(localAxis2).scale(radius)),
                         point.add(localAxis1.subtract(localAxis2).scale(radius)),
                         point.add(localAxis2.scale(-1).subtract(localAxis1).scale(radius)),
                         point.add(localAxis2.subtract(localAxis1).scale(radius))
                 )
-                .map(e -> chainRenderInfo.getHeight() < 3 ? e.add(localAxis1Direction.scale((3f - chainRenderInfo.getHeight()) / (2 * 3 * 16))) : e)
+                .map(e -> chainRenderInfo.getHeight() < 3 ? e.add(finalLocalAxis1Direction.scale((3f - chainRenderInfo.getHeight()) / (2 * 3 * 16))) : e)
                 .toList();
     }
 

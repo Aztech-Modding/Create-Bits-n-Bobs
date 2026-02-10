@@ -31,6 +31,7 @@ public class CogwheelChain {
     private final List<RenderedChainPathNode> renderedNodes;
     private CogwheelChainType type;
     private Item returnedItem;
+    private boolean flipInsideOutside;
 
     public CogwheelChain(final CompoundTag tag) {
         renderedNodes = new ArrayList<>();
@@ -45,6 +46,7 @@ public class CogwheelChain {
         this.renderedNodes = CogwheelChainGeometryBuilder.buildFullChainFromPathNodes(path);
         this.type = type;
         this.returnedItem = returnedItem;
+        updateInsideOutsideFlip();
     }
 
     public @Nullable PathedCogwheelNode getNodeFromControllerOffset(final Vec3i controllerOffset) {
@@ -123,6 +125,21 @@ public class CogwheelChain {
                 returnedItem = foundItem;
             }
         }
+        updateInsideOutsideFlip();
+    }
+
+    private void updateInsideOutsideFlip() {
+        if (!type.getRenderType().usesConsistentInsideOutside()) {
+            flipInsideOutside = false;
+            return;
+        }
+
+        int sideSum = 0;
+        for (final PathedCogwheelNode node : cogwheelNodes) {
+            sideSum += node.side();
+        }
+
+        flipInsideOutside = sideSum < 0;
     }
 
     @Override
@@ -211,5 +228,9 @@ public class CogwheelChain {
 
     public Item getReturnedItem() {
         return returnedItem;
+    }
+
+    public boolean shouldFlipInsideOutside() {
+        return flipInsideOutside;
     }
 }
