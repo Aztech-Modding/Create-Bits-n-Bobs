@@ -2,65 +2,53 @@
   "variants": {
     "empty=false,facing=down": {
       "model": "bits_n_bobs:block/andesite_encased_piston_extension_pole",
-      "uvlock": true,
       "x": 180
     },
     "empty=false,facing=east": {
       "model": "bits_n_bobs:block/andesite_encased_piston_extension_pole",
-      "uvlock": true,
       "x": 90,
       "y": 90
     },
     "empty=false,facing=north": {
       "model": "bits_n_bobs:block/andesite_encased_piston_extension_pole",
-      "uvlock": true,
       "x": 90
     },
     "empty=false,facing=south": {
       "model": "bits_n_bobs:block/andesite_encased_piston_extension_pole",
-      "uvlock": true,
       "x": 90,
       "y": 180
     },
     "empty=false,facing=up": {
-      "model": "bits_n_bobs:block/andesite_encased_piston_extension_pole",
-      "uvlock": true
+      "model": "bits_n_bobs:block/andesite_encased_piston_extension_pole"
     },
     "empty=false,facing=west": {
       "model": "bits_n_bobs:block/andesite_encased_piston_extension_pole",
-      "uvlock": true,
       "x": 90,
       "y": 270
     },
     "empty=true,facing=down": {
       "model": "bits_n_bobs:block/andesite_encased_piston_extension_pole_empty",
-      "uvlock": true,
       "x": 180
     },
     "empty=true,facing=east": {
       "model": "bits_n_bobs:block/andesite_encased_piston_extension_pole_empty",
-      "uvlock": true,
       "x": 90,
       "y": 90
     },
     "empty=true,facing=north": {
       "model": "bits_n_bobs:block/andesite_encased_piston_extension_pole_empty",
-      "uvlock": true,
       "x": 90
     },
     "empty=true,facing=south": {
       "model": "bits_n_bobs:block/andesite_encased_piston_extension_pole_empty",
-      "uvlock": true,
       "x": 90,
       "y": 180
     },
     "empty=true,facing=up": {
-      "model": "bits_n_bobs:block/andesite_encased_piston_extension_pole_empty",
-      "uvlock": true
+      "model": "bits_n_bobs:block/andesite_encased_piston_extension_pole_empty"
     },
     "empty=true,facing=west": {
       "model": "bits_n_bobs:block/andesite_encased_piston_extension_pole_empty",
-      "uvlock": true,
       "x": 90,
       "y": 270
     }

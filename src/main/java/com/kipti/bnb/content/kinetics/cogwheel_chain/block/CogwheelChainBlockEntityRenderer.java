@@ -65,7 +65,6 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
                 final double stretchOffset = offset + accumulatedUV;
 
                 final double distance = node1.getPosition().add(origin).distanceTo(node2.getPosition().add(origin));
-                accumulatedUV += distance;
 
                 renderChain(be,
                         ms,
@@ -80,6 +79,9 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
                         (float) stretchOffset,
                         (float) chainTextureSquish,
                         type);
+
+                accumulatedUV += distance;
+
             }
         }
     }
@@ -158,47 +160,122 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
                                                         final Vec3 postTo,
                                                         final Vec3 fromCogwheelAxis,
                                                         final Vec3 toCogwheelAxis,
-                                                        final int light1,
-                                                        final int light2,
-                                                        CogwheelChainType type) {
-        final CogwheelChainType.ChainRenderInfo chainChainRenderInfo = type.getRenderType();
+                                                        final int lightAtSource,
+                                                        final int lightAtDest,
+                                                        final CogwheelChainType type) {
+        final CogwheelChainType.ChainRenderInfo chainRenderInfo = type.getRenderType();
 
-        final List<Vec3> endPoints = getEndPointsForChainJoint(from, to, postTo, chainChainRenderInfo, toCogwheelAxis);
-        final List<Vec3> fromPoint = getEndPointsForChainJoint(preFrom, from, to, chainChainRenderInfo, fromCogwheelAxis);
+        // Calculate corners in world space for the segment ends
+        final List<Vec3> destinationPoints = getEndPointsForChainJoint(from, to, postTo, chainRenderInfo, toCogwheelAxis);
+        final List<Vec3> sourcePoints = getEndPointsForChainJoint(preFrom, from, to, chainRenderInfo, fromCogwheelAxis);
+
         final float length = (float) from.distanceTo(to);
         final float minV = offset * textureSquish;
         final float maxV = length * textureSquish + minV;
-        final float maxUW = chainChainRenderInfo.getWidth() / 16f;
-        final float maxUH = chainChainRenderInfo.getHeight() / 16f;
 
         ms.pushPose();
-        final VertexConsumer vc = buffer.getBuffer(RenderTypes.chain(type.getRenderTexture()));
-        final Matrix4f matrix4f = ms.last().pose();
-        for (int i = 0; i < 4; i += 1) {
-            if (chainChainRenderInfo.getVertexShape() == CogwheelChainType.VertexShape.CROSS) {
-                final float uO = (i % 2 == 1) ? 0 : 3 / 16f;
-                final float maxU = 3 / 16f;
-                final float minU = 0f;
 
-                addVertex(matrix4f, ms.last(), vc, endPoints.get((i + 2) % 4).subtract(from), minU + uO, minV, light1);
-                addVertex(matrix4f, ms.last(), vc, fromPoint.get((i + 2) % 4).subtract(from), minU + uO, maxV, light1);
-                addVertex(matrix4f, ms.last(), vc, fromPoint.get(i).subtract(from), maxU + uO, maxV, light1);
-                addVertex(matrix4f, ms.last(), vc, endPoints.get(i).subtract(from), maxU + uO, minV, light1);
+        final VertexConsumer vc = buffer.getBuffer(RenderTypes.chain(type.getRenderTexture()));
+        final Matrix4f poseMatrix = ms.last().pose();
+
+        // Iterate over the 4 faces of the chain beam
+        for (int faceIndex = 0; faceIndex < 4; faceIndex += 1) {
+            if (chainRenderInfo.getVertexShape() == CogwheelChainType.VertexShape.CROSS) {
+                renderCrossShapeFace(ms, vc, poseMatrix, from, destinationPoints, sourcePoints, faceIndex, minV, maxV, lightAtSource);
             } else {
-                final float minU = (i % 2 == 0) ? maxUH : 0;
-                final float maxU = minU + ((i % 2 == 0) ? maxUW : maxUH);
-                addVertex(matrix4f, ms.last(), vc, endPoints.get((i + 1) % 4).subtract(from), minU, minV, light1);
-                addVertex(matrix4f, ms.last(), vc, fromPoint.get((i + 1) % 4).subtract(from), minU, maxV, light1);
-                addVertex(matrix4f, ms.last(), vc, fromPoint.get(i).subtract(from), maxU, maxV, light1);
-                addVertex(matrix4f, ms.last(), vc, endPoints.get(i).subtract(from), maxU, minV, light1);
+                renderDefaultShapeFace(ms, vc, poseMatrix, from, destinationPoints, sourcePoints, chainRenderInfo, faceIndex, minV, maxV, lightAtSource);
             }
         }
 
         ms.popPose();
     }
 
+    private static void renderCrossShapeFace(final PoseStack ms, final VertexConsumer vc, final Matrix4f poseMatrix, final Vec3 origin,
+                                             final List<Vec3> destinationPoints, final List<Vec3> sourcePoints,
+                                             final int faceIndex, final float minV, final float maxV, final int light) {
+        final float uOffset = (faceIndex % 2 == 1) ? 0 : 3 / 16f;
+        final float uWidth = 3 / 16f;
+        final float minU = 0f;
+
+        final float uLeft = minU + uOffset;
+        final float uRight = uWidth + uOffset;
+
+        // "Top" corresponds to Destination (Matches original logic where endPoints got minV)
+        // "Bottom" corresponds to Source
+        // Indices preserved from original 'CROSS' logic: (i+2), (i+2), i, i
+        final Vec3 posTL = destinationPoints.get((faceIndex + 2) % 4);
+        final Vec3 posBL = sourcePoints.get((faceIndex + 2) % 4);
+        final Vec3 posBR = sourcePoints.get(faceIndex);
+        final Vec3 posTR = destinationPoints.get(faceIndex);
+
+        renderSubdividedQuad(ms, vc, poseMatrix, origin, posTL, posBL, posBR, posTR, uLeft, uRight, minV, maxV, light);
+    }
+
+    private static void renderDefaultShapeFace(final PoseStack ms, final VertexConsumer vc, final Matrix4f poseMatrix, final Vec3 origin,
+                                               final List<Vec3> destinationPoints, final List<Vec3> sourcePoints,
+                                               final CogwheelChainType.ChainRenderInfo renderInfo,
+                                               final int faceIndex, final float minV, final float maxV, final int light) {
+        final float h = renderInfo.getHeight() / 16f;
+        final float w = renderInfo.getWidth() / 16f;
+
+        float minU;
+        float maxU;
+
+        if (faceIndex == 0) { // Top
+            minU = h;
+            maxU = h + w;
+        } else if (faceIndex == 1) { // Left
+            minU = 0;
+            maxU = h;
+        } else if (faceIndex == 2) { // Bottom
+            minU = h + w + h;
+            maxU = h + w + h + w;
+        } else { // Right (faceIndex == 3)
+            minU = h + w;
+            maxU = h + w + h;
+        }
+
+        // Indices preserved from original 'DEFAULT' logic: (i+1), (i+1), i, i
+        final Vec3 posTL = destinationPoints.get((faceIndex + 1) % 4);
+        final Vec3 posBL = sourcePoints.get((faceIndex + 1) % 4);
+        final Vec3 posBR = sourcePoints.get(faceIndex);
+        final Vec3 posTR = destinationPoints.get(faceIndex);
+
+        renderSubdividedQuad(ms, vc, poseMatrix, origin, posTL, posBL, posBR, posTR, minU, maxU, minV, maxV, light);
+    }
+
+    private static void renderSubdividedQuad(final PoseStack ms, final VertexConsumer vc, final Matrix4f poseMatrix, final Vec3 origin,
+                                             final Vec3 posTL, final Vec3 posBL, final Vec3 posBR, final Vec3 posTR,
+                                             final float uLeft, final float uRight, final float minV, final float maxV, final int light) {
+        // Subdividing the quad prevents AFFINE TEXTURE MAPPING artifacts (shearing/kinks)
+        // when the quad is twisted (non-planar) by drawing smaller, approximate planar strips.
+        final int segmentCount = 4;
+
+        for (int s = 0; s < segmentCount; s++) {
+            final float t1 = (float) s / segmentCount;
+            final float t2 = (float) (s + 1) / segmentCount;
+
+            // Interpolate V coordinates along the chain length
+            final float vStart = Mth.lerp(t1, minV, maxV);
+            final float vEnd = Mth.lerp(t2, minV, maxV);
+
+            // Interpolate vertex positions between Top (Destination) and Bottom (Source)
+            // t=0 is Top/Dest, t=1 is Bottom/Source
+            final Vec3 p1 = posTL.lerp(posBL, t1); // Top-Left interpolated
+            final Vec3 p2 = posTL.lerp(posBL, t2); // Bottom-Left interpolated
+            final Vec3 p3 = posTR.lerp(posBR, t2); // Bottom-Right interpolated
+            final Vec3 p4 = posTR.lerp(posBR, t1); // Top-Right interpolated
+
+            // Render sub-quad relative to 'origin'
+            addVertex(poseMatrix, ms.last(), vc, p1.subtract(origin), uLeft, vStart, light);
+            addVertex(poseMatrix, ms.last(), vc, p2.subtract(origin), uLeft, vEnd, light);
+            addVertex(poseMatrix, ms.last(), vc, p3.subtract(origin), uRight, vEnd, light);
+            addVertex(poseMatrix, ms.last(), vc, p4.subtract(origin), uRight, vStart, light);
+        }
+    }
+
     private static List<Vec3> getEndPointsForChainJoint(final Vec3 before, final Vec3 point, final Vec3 after, final CogwheelChainType.ChainRenderInfo chainRenderInfo, final Vec3 cogwheelAxis) {
-        final float radius = 1.5f / 16f;
+        final float radius = (float) ((chainRenderInfo.getVertexShape() == CogwheelChainType.VertexShape.CROSS ? Math.sqrt(2f) / 2f : 1f) * 1f / 16f);
         final Vec3 dirToBefore = point.subtract(before).normalize();
         final Vec3 dirToAfter = after.subtract(point).normalize();
 
@@ -206,7 +283,7 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
 
         final Matrix3f transform;
 
-        if (chainRenderInfo.isDefaultDimensions()) {
+        if (chainRenderInfo.isDefaultDimensions()) {//TODO: make it just be is "square" dimensions
             transform = new Quaternionf()
                     .rotationTo(0, 1, 0, (float) averagedDir.x, (float) averagedDir.y, (float) averagedDir.z)
                     .get(new Matrix3f());
@@ -232,15 +309,15 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
 
         final Vector3f localAxis1Joml = transform.transform(1f, 0f, 0f, new Vector3f());
         final Vec3 localAxis1Direction = new Vec3(localAxis1Joml.x, localAxis1Joml.y, localAxis1Joml.z).normalize();
-        final Vec3 localAxis1 = localAxis1Direction.scale(chainRenderInfo.getHeight() / 3f);
+        final Vec3 localAxis1 = localAxis1Direction.scale(chainRenderInfo.getHeight() / 2f);
         final Vector3f localAxis2Joml = transform.transform(0f, 0f, 1f, new Vector3f());
-        final Vec3 localAxis2 = new Vec3(localAxis2Joml.x, localAxis2Joml.y, localAxis2Joml.z).normalize().scale(chainRenderInfo.getWidth() / 3f);
+        final Vec3 localAxis2 = new Vec3(localAxis2Joml.x, localAxis2Joml.y, localAxis2Joml.z).normalize().scale(chainRenderInfo.getWidth() / 2f);
 
         return Stream.of(
-                        point.add(localAxis1.add(localAxis2).normalize().scale(radius)),
-                        point.add(localAxis1.subtract(localAxis2).normalize().scale(radius)),
-                        point.add(localAxis2.scale(-1).subtract(localAxis1).normalize().scale(radius)),
-                        point.add(localAxis2.subtract(localAxis1).normalize().scale(radius))
+                        point.add(localAxis1.add(localAxis2).scale(radius)),
+                        point.add(localAxis1.subtract(localAxis2).scale(radius)),
+                        point.add(localAxis2.scale(-1).subtract(localAxis1).scale(radius)),
+                        point.add(localAxis2.subtract(localAxis1).scale(radius))
                 )
                 .map(e -> chainRenderInfo.getHeight() < 3 ? e.add(localAxis1Direction.scale((3f - chainRenderInfo.getHeight()) / (2 * 3 * 16))) : e)
                 .toList();

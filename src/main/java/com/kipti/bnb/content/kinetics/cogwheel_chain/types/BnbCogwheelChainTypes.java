@@ -24,6 +24,7 @@ public class BnbCogwheelChainTypes {
                     .setCogwheelPredicate((block) -> BnbBlocks.LARGE_EMPTY_FLANGED_COGWHEEL.get() == block || BnbBlocks.SMALL_EMPTY_FLANGED_COGWHEEL.get() == block) //TODO: tag
                     .permitsAxisChange(false)
                     .build());
+
     public static final DeferredHolder<CogwheelChainType, CogwheelChainType> ROPE_CHAIN = REGISTRY
             .register("rope", () -> new CogwheelChainType.Builder()
                     .relatedTag(Tags.Items.ROPES)

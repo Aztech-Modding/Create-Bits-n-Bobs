@@ -40,11 +40,11 @@ public class CogwheelChainType {
         SQUARE
     }
 
-    //Todo: custom render types
+    //Todo: custom render types / just make this not an enum
     public enum ChainRenderInfo {
         CHAIN(VertexShape.CROSS, 3, 3),
         ROPE(VertexShape.SQUARE, 3, 3),
-        BELT(VertexShape.SQUARE, 3, 1),
+        BELT(VertexShape.SQUARE, 3, 2),
         ;
 
         private final VertexShape vertexShape;

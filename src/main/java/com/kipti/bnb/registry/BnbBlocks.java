@@ -37,12 +37,12 @@ import com.simibubi.create.api.stress.BlockStressValues;
 import com.simibubi.create.content.contraptions.actors.seat.SeatInteractionBehaviour;
 import com.simibubi.create.content.contraptions.actors.seat.SeatMovementBehaviour;
 import com.simibubi.create.content.contraptions.pulley.PulleyBlock;
-import com.simibubi.create.content.decoration.encasing.EncasableBlock;
-import com.simibubi.create.content.decoration.encasing.EncasedCTBehaviour;
-import com.simibubi.create.content.decoration.encasing.EncasingRegistry;
 import com.simibubi.create.content.decoration.bracket.BracketBlock;
 import com.simibubi.create.content.decoration.bracket.BracketBlockItem;
 import com.simibubi.create.content.decoration.bracket.BracketGenerator;
+import com.simibubi.create.content.decoration.encasing.EncasableBlock;
+import com.simibubi.create.content.decoration.encasing.EncasedCTBehaviour;
+import com.simibubi.create.content.decoration.encasing.EncasingRegistry;
 import com.simibubi.create.foundation.block.DyedBlockList;
 import com.simibubi.create.foundation.data.AssetLookup;
 import com.simibubi.create.foundation.data.BlockStateGen;
@@ -503,7 +503,7 @@ public class BnbBlocks {
                         .withExistingParent(modelName, p.modLoc("block/encased_piston_pole/block" + suffix))
                         .texture("casing", casing.getSurfaceTexture())
                         .texture("opening", casing.getGearboxTexture());
-            }, true))
+            }, false))
             .loot((p, lb) -> p.add(lb, LootTable.lootTable()
                     .withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
                             .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(lb)

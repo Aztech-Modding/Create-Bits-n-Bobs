@@ -47,7 +47,7 @@ public class EncasedPistonExtensionPoleBlock extends PistonExtensionPoleBlock im
         if (state.getValue(EMPTY) && AllBlocks.PISTON_EXTENSION_POLE.isIn(stack)) {
             if (!level.isClientSide) {
                 level.setBlock(pos, state.setValue(EMPTY, false), Block.UPDATE_CLIENTS);
-                stack.shrink(1);
+                if (!player.hasInfiniteMaterials()) stack.shrink(1);
             }
             return ItemInteractionResult.SUCCESS;
         }
