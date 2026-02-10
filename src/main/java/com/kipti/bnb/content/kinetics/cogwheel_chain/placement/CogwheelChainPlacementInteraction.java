@@ -96,7 +96,6 @@ public class CogwheelChainPlacementInteraction {
         }
 
         if (!validBlockTarget) {
-            event.setSwingHand(false);
             return currentBuildingChain != null;
         }
         rightClickForChain(event, level, hitPos, targetedState, heldChainType, chainItemInHand, player);
