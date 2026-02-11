@@ -23,8 +23,8 @@ import com.kipti.bnb.content.kinetics.chain_pulley.ChainPulleyBlock;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.block.CogwheelChainBlock;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.block.ConnectingCogwheelChainBlock;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.block.EmptyFlangedGearBlock;
-import com.kipti.bnb.content.kinetics.encased_blocks.BnbEncasedCogwheelBlock;
-import com.kipti.bnb.content.kinetics.encased_blocks.BnbEncasedShaftBlock;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChainCandidateInfo;
+import com.kipti.bnb.content.kinetics.encased_blocks.*;
 import com.kipti.bnb.content.kinetics.encased_blocks.piston_pole.EncasedPistonExtensionPoleBlock;
 import com.kipti.bnb.content.kinetics.flywheel_bearing.FlywheelBearingBlock;
 import com.kipti.bnb.foundation.BnbBlockStateGen;
@@ -290,7 +290,7 @@ public class BnbBlocks {
             .build()
             .register();
 
-    public static final BlockEntry<ConnectingCogwheelChainBlock> SMALL_SPROCKET_COGWHEEL_CHAIN = REGISTRATE.block("small_cogwheel_chain", ConnectingCogwheelChainBlock::small)
+    public static final BlockEntry<ConnectingCogwheelChainBlock> SMALL_COGWHEEL_CHAIN = REGISTRATE.block("small_cogwheel_chain", ConnectingCogwheelChainBlock::small)
             .initialProperties(SharedProperties::stone)
             .properties(p -> p.sound(SoundType.WOOD)
                     .mapColor(MapColor.DIRT))
@@ -300,7 +300,7 @@ public class BnbBlocks {
             .loot((lt, block) -> lt.dropOther(block, AllBlocks.COGWHEEL.get()))
             .register();
 
-    public static final BlockEntry<ConnectingCogwheelChainBlock> LARGE_SPROCKET_COGWHEEL_CHAIN = REGISTRATE.block("large_cogwheel_chain", ConnectingCogwheelChainBlock::large)
+    public static final BlockEntry<ConnectingCogwheelChainBlock> LARGE_COGWHEEL_CHAIN = REGISTRATE.block("large_cogwheel_chain", ConnectingCogwheelChainBlock::large)
             .initialProperties(SharedProperties::wooden)
             .properties(p -> p.sound(SoundType.WOOD)
                     .mapColor(MapColor.DIRT))
@@ -341,6 +341,7 @@ public class BnbBlocks {
             .item()
             .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/flanged_gear/small_cogwheel")))
             .build()
+            .onRegister(CogwheelChainCandidateInfo.candidate(new CogwheelChainCandidateInfo(false, false, BnbBlocks.SMALL_FLANGED_COGWHEEL_CHAIN)))
             .register();
 
     public static final BlockEntry<EmptyFlangedGearBlock> LARGE_EMPTY_FLANGED_COGWHEEL = REGISTRATE.block("large_flanged_cogwheel", EmptyFlangedGearBlock::large)
@@ -353,6 +354,7 @@ public class BnbBlocks {
             .item()
             .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/flanged_gear/large_cogwheel")))
             .build()
+            .onRegister(CogwheelChainCandidateInfo.candidate(new CogwheelChainCandidateInfo(true, false, BnbBlocks.LARGE_FLANGED_COGWHEEL_CHAIN)))
             .register();
 
     public static <T extends NixieBoardBlockNixie, P> NonNullFunction<BlockBuilder<T, P>, BlockBuilder<T, P>> nixieBoard() {
@@ -454,6 +456,7 @@ public class BnbBlocks {
             .transform(BnbBuilderTransformers.encasedCogwheelWithoutCT("industrial_iron"))
             .transform(EncasingRegistry.addVariantTo(AllBlocks.COGWHEEL))
             .transform(axeOrPickaxe())
+            .onRegister(CogwheelChainCandidateInfo.candidate(new CogwheelChainCandidateInfo(false, false, () -> BnbBlocks.ENCASED_CHAIN_COGWHEEL.get(EncasedBlockList.CasingMaterial.INDUSTRIAL_IRON).get())))
             .register();
 
     public static final BlockEntry<BnbEncasedCogwheelBlock> WEATHERED_IRON_ENCASED_COGWHEEL = REGISTRATE
@@ -462,6 +465,7 @@ public class BnbBlocks {
             .transform(BnbBuilderTransformers.encasedCogwheelWithoutCT("weathered_iron"))
             .transform(EncasingRegistry.addVariantTo(AllBlocks.COGWHEEL))
             .transform(axeOrPickaxe())
+            .onRegister(CogwheelChainCandidateInfo.candidate(new CogwheelChainCandidateInfo(false, false, () -> BnbBlocks.ENCASED_CHAIN_COGWHEEL.get(EncasedBlockList.CasingMaterial.WEATHERED_IRON).get())))
             .register();
 
     public static final BlockEntry<BnbEncasedCogwheelBlock> INDUSTRIAL_IRON_ENCASED_LARGE_COGWHEEL = REGISTRATE
@@ -470,6 +474,7 @@ public class BnbBlocks {
             .transform(BnbBuilderTransformers.encasedLargeCogwheelWithoutCT("industrial_iron"))
             .transform(EncasingRegistry.addVariantTo(AllBlocks.LARGE_COGWHEEL))
             .transform(axeOrPickaxe())
+            .onRegister(CogwheelChainCandidateInfo.candidate(new CogwheelChainCandidateInfo(true, false, () -> BnbBlocks.ENCASED_LARGE_CHAIN_COGWHEEL.get(EncasedBlockList.CasingMaterial.INDUSTRIAL_IRON).get())))
             .register();
 
     public static final BlockEntry<BnbEncasedCogwheelBlock> WEATHERED_IRON_ENCASED_LARGE_COGWHEEL = REGISTRATE
@@ -478,6 +483,7 @@ public class BnbBlocks {
             .transform(BnbBuilderTransformers.encasedLargeCogwheelWithoutCT("weathered_iron"))
             .transform(EncasingRegistry.addVariantTo(AllBlocks.LARGE_COGWHEEL))
             .transform(axeOrPickaxe())
+            .onRegister(CogwheelChainCandidateInfo.candidate(new CogwheelChainCandidateInfo(true, false, () -> BnbBlocks.ENCASED_LARGE_CHAIN_COGWHEEL.get(EncasedBlockList.CasingMaterial.WEATHERED_IRON).get())))
             .register();
 
     // New encasing types
@@ -512,6 +518,50 @@ public class BnbBlocks {
             ))
             .simpleItem()
             .register());
+
+    public static final EncasedBlockList<BnbEncasedConnectingCogwheelChainBlock> ENCASED_CHAIN_COGWHEEL = new EncasedBlockList<>(casing ->
+            REGISTRATE.block(casing.asId("encased_chain_cogwheel"), p -> new BnbEncasedConnectingCogwheelChainBlock(p, false, casing.getMaterial()))
+                    .properties(p -> p.mapColor(MapColor.PODZOL))
+                    .transform(BnbBuilderTransformers.casingMaterialCogwheelBase(casing, BnbBlocks.SMALL_COGWHEEL_CHAIN::get, false))
+                    .transform(EncasingRegistry.addVariantTo(BnbBlocks.SMALL_COGWHEEL_CHAIN))
+                    .register());
+
+    public static final EncasedBlockList<BnbEncasedConnectingCogwheelChainBlock> ENCASED_LARGE_CHAIN_COGWHEEL = new EncasedBlockList<>(casing ->
+            REGISTRATE.block(casing.asId("encased_large_chain_cogwheel"), p -> new BnbEncasedConnectingCogwheelChainBlock(p, true, casing.getMaterial()))
+                    .properties(p -> p.mapColor(MapColor.PODZOL))
+                    .transform(BnbBuilderTransformers.casingMaterialCogwheelBase(casing, BnbBlocks.LARGE_COGWHEEL_CHAIN::get, true))
+                    .transform(EncasingRegistry.addVariantTo(BnbBlocks.LARGE_COGWHEEL_CHAIN))
+                    .register());
+
+    public static final EncasedBlockList<BnbEncasedCogwheelChainBlock> ENCASED_FLANGED_CHAIN_COGWHEEL = new EncasedBlockList<>(casing ->
+            REGISTRATE.block(casing.asId("encased_flanged_chain_cogwheel"), p -> new BnbEncasedCogwheelChainBlock(p, false, casing.getMaterial()))
+                    .properties(p -> p.mapColor(MapColor.PODZOL))
+                    .transform(BnbBuilderTransformers.casingMaterialCogwheelBase(casing, BnbBlocks.SMALL_FLANGED_COGWHEEL_CHAIN::get, false))
+                    .transform(EncasingRegistry.addVariantTo(BnbBlocks.SMALL_FLANGED_COGWHEEL_CHAIN))
+                    .register());
+
+    public static final EncasedBlockList<BnbEncasedCogwheelChainBlock> ENCASED_LARGE_FLANGED_CHAIN_COGWHEEL = new EncasedBlockList<>(casing ->
+            REGISTRATE.block(casing.asId("encased_large_flanged_chain_cogwheel"), p -> new BnbEncasedCogwheelChainBlock(p, true, casing.getMaterial()))
+                    .properties(p -> p.mapColor(MapColor.PODZOL))
+                    .transform(BnbBuilderTransformers.casingMaterialCogwheelBase(casing, BnbBlocks.LARGE_FLANGED_COGWHEEL_CHAIN::get, true))
+                    .transform(EncasingRegistry.addVariantTo(BnbBlocks.LARGE_FLANGED_COGWHEEL_CHAIN))
+                    .register());
+
+    public static final EncasedBlockList<BnbEncasedEmptyFlangedGearBlock> ENCASED_EMPTY_FLANGED_COGWHEEL = new EncasedBlockList<>(casing ->
+            REGISTRATE.block(casing.asId("encased_empty_flanged_cogwheel"), p -> new BnbEncasedEmptyFlangedGearBlock(p, false, casing.getMaterial()))
+                    .properties(p -> p.mapColor(MapColor.PODZOL))
+                    .transform(BnbBuilderTransformers.casingMaterialCogwheelBase(casing, BnbBlocks.SMALL_EMPTY_FLANGED_COGWHEEL::get, false))
+                    .transform(EncasingRegistry.addVariantTo(BnbBlocks.SMALL_EMPTY_FLANGED_COGWHEEL))
+                    .onRegister(CogwheelChainCandidateInfo.candidate(new CogwheelChainCandidateInfo(false, false, () -> ENCASED_FLANGED_CHAIN_COGWHEEL.get(casing).get())))
+                    .register());
+
+    public static final EncasedBlockList<BnbEncasedEmptyFlangedGearBlock> ENCASED_LARGE_EMPTY_FLANGED_COGWHEEL = new EncasedBlockList<>(casing ->
+            REGISTRATE.block(casing.asId("encased_large_empty_flanged_cogwheel"), p -> new BnbEncasedEmptyFlangedGearBlock(p, true, casing.getMaterial()))
+                    .properties(p -> p.mapColor(MapColor.PODZOL))
+                    .transform(BnbBuilderTransformers.casingMaterialCogwheelBase(casing, BnbBlocks.LARGE_EMPTY_FLANGED_COGWHEEL::get, true))
+                    .transform(EncasingRegistry.addVariantTo(BnbBlocks.LARGE_EMPTY_FLANGED_COGWHEEL))
+                    .onRegister(CogwheelChainCandidateInfo.candidate(new CogwheelChainCandidateInfo(true, false, () -> ENCASED_LARGE_FLANGED_CHAIN_COGWHEEL.get(casing).get())))
+                    .register());
 
     public static void register() {
     }

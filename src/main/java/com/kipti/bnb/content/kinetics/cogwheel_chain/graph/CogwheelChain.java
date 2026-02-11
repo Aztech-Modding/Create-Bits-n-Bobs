@@ -76,7 +76,7 @@ public class CogwheelChain {
     }
 
     private boolean isValidChainCogwheel(final BlockState state) {
-        return BnbBlocks.LARGE_SPROCKET_COGWHEEL_CHAIN.is(state.getBlock()) || BnbBlocks.SMALL_SPROCKET_COGWHEEL_CHAIN.is(state.getBlock()) ||
+        return BnbBlocks.LARGE_COGWHEEL_CHAIN.is(state.getBlock()) || BnbBlocks.SMALL_COGWHEEL_CHAIN.is(state.getBlock()) ||
                 BnbBlocks.LARGE_FLANGED_COGWHEEL_CHAIN.is(state.getBlock()) || BnbBlocks.SMALL_FLANGED_COGWHEEL_CHAIN.is(state.getBlock());
     }
 
@@ -167,8 +167,9 @@ public class CogwheelChain {
 
     private void placeChainCogwheelInLevel(final Level level, final PlacingCogwheelNode node, final boolean isController, final int chainsUsed, final BlockPos controllerPos) {
         final BlockState existingState = level.getBlockState(node.pos());
+        final CogwheelChainCandidateInfo info = CogwheelChainCandidateInfo.REGISTRY.get(existingState.getBlock());
 
-        @Nullable final BlockState newState = CogwheelChainBlock.getChainState(existingState, node.isLarge(), node.rotationAxis());
+        @Nullable final BlockState newState = info == null ? null : info.resultingBlock().get().defaultBlockState().setValue(CogWheelBlock.AXIS, node.rotationAxis());
 
         if (newState == null) {
             CreateBitsnBobs.LOGGER.error("Failed to place cogwheel chain at {}, existing block {}, because the chain state could not be resolved", node.pos(), existingState);

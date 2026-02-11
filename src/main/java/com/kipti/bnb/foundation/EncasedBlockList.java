@@ -26,37 +26,44 @@ import java.util.function.Supplier;
 public class EncasedBlockList<T extends Block> implements Iterable<BlockEntry<T>> {
 
     public enum CasingMaterial {
-        ANDESITE(AllBlocks.ANDESITE_CASING, "andesite_casing", "gearbox", AllSpriteShifts.ANDESITE_CASING, true),
-        BRASS(AllBlocks.BRASS_CASING, "brass_casing", "brass_gearbox", AllSpriteShifts.BRASS_CASING, true),
-        INDUSTRIAL_IRON(AllBlocks.INDUSTRIAL_IRON_BLOCK, "industrial_iron_block", "industrial_iron_gearbox"),
-        WEATHERED_IRON(AllBlocks.WEATHERED_IRON_BLOCK, "weathered_iron_block", "weathered_iron_gearbox"),
+        ANDESITE("andesite", AllBlocks.ANDESITE_CASING, "andesite_casing", "gearbox", AllSpriteShifts.ANDESITE_CASING, true),
+        BRASS("brass", AllBlocks.BRASS_CASING, "brass_casing", "brass_gearbox", AllSpriteShifts.BRASS_CASING, true),
+        INDUSTRIAL_IRON("industrial_iron", AllBlocks.INDUSTRIAL_IRON_BLOCK, "industrial_iron_block", "industrial_iron_gearbox"),
+        WEATHERED_IRON("weathered_iron", AllBlocks.WEATHERED_IRON_BLOCK, "weathered_iron_block", "weathered_iron_gearbox"),
         ;
 
+        private final String resourceName;
         private final Supplier<? extends Block> material;
 
         private final ResourceLocation surfaceTexture;
         private final ResourceLocation gearboxTexture;
 
         @Nullable
-        private final CTSpriteShiftEntry connectedTextureShift;
+        public final CTSpriteShiftEntry connectedTextureShift;
 
-        CasingMaterial(final Supplier<? extends Block> material, final String surfaceTexture, final String gearboxTexture) {
-            this(material, surfaceTexture, gearboxTexture, null, false);
+        CasingMaterial(final String resourceName, final Supplier<? extends Block> material, final String surfaceTexture, final String gearboxTexture) {
+            this(resourceName, material, surfaceTexture, gearboxTexture, null, false);
         }
 
-        CasingMaterial(final Supplier<? extends Block> material, final String surfaceTexture, final String gearboxTexture, final @Nullable CTSpriteShiftEntry connectedTextureShift, final boolean isCreateNamespace) {
+        CasingMaterial(final String resourceName, final Supplier<? extends Block> material, final String surfaceTexture, final String gearboxTexture, final @Nullable CTSpriteShiftEntry connectedTextureShift, final boolean isCreateNamespace) {
+            this.resourceName = resourceName;
             this.material = material;
             this.surfaceTexture = isCreateNamespace ? Create.asResource("block/" + surfaceTexture) : CreateBitsnBobs.asResource("block/" + surfaceTexture);
             this.gearboxTexture = isCreateNamespace ? Create.asResource("block/" + gearboxTexture) : CreateBitsnBobs.asResource("block/" + gearboxTexture);
             this.connectedTextureShift = connectedTextureShift;
         }
 
+        public String getResourceName() {
+            return resourceName;
+        }
+
+
         public String asId(final String blockId) {
             return name().toLowerCase() + "_" + blockId;
         }
 
-        public Supplier<? extends Block> getMaterial() {
-            return material;
+        public Supplier<Block> getMaterial() {
+            return () -> (Block) material.get();
         }
 
         public ResourceLocation getSurfaceTexture() {

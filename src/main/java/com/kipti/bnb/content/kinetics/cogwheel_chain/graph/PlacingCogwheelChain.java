@@ -1,10 +1,8 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.graph;
 
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.CogwheelChainType;
-import com.kipti.bnb.registry.BnbBlocks;
 import com.kipti.bnb.registry.BnbConfigs;
 import com.mojang.serialization.Codec;
-import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.kinetics.simpleRelays.CogWheelBlock;
 import net.createmod.catnip.codecs.stream.CatnipStreamCodecBuilders;
 import net.minecraft.core.BlockPos;
@@ -13,6 +11,7 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -73,17 +72,19 @@ public class PlacingCogwheelChain {
         return (int) Math.max(Math.round(factor * length / 5), 1);
     }
 
+
     public static boolean isValidBlockTarget(final BlockState state) {
-        return state.is(AllBlocks.COGWHEEL) || state.is(AllBlocks.LARGE_COGWHEEL) ||
-                state.is(BnbBlocks.SMALL_EMPTY_FLANGED_COGWHEEL) || state.is(BnbBlocks.LARGE_EMPTY_FLANGED_COGWHEEL);
+        return CogwheelChainCandidateInfo.REGISTRY.get(state.getBlock()) != null;
     }
 
     public static boolean isLargeBlockTarget(final BlockState state) {
-        return state.is(AllBlocks.LARGE_COGWHEEL) || state.is(BnbBlocks.LARGE_EMPTY_FLANGED_COGWHEEL);
+        CogwheelChainCandidateInfo info = CogwheelChainCandidateInfo.REGISTRY.get(state.getBlock());
+        return info != null && info.isLarge();
     }
 
     public static boolean hasSmallCogwheelOffset(final BlockState state) {
-        return state.is(AllBlocks.COGWHEEL);
+        CogwheelChainCandidateInfo info = CogwheelChainCandidateInfo.REGISTRY.get(state.getBlock());
+        return info != null && info.hasSmallCogwheelOffset();
     }
 
 

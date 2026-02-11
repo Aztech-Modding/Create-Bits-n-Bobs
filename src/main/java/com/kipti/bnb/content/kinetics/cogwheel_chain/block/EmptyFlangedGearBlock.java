@@ -2,27 +2,43 @@ package com.kipti.bnb.content.kinetics.cogwheel_chain.block;
 
 import com.kipti.bnb.registry.BnbBlockEntities;
 import com.simibubi.create.AllShapes;
+import com.simibubi.create.content.decoration.encasing.EncasableBlock;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.RotatedPillarKineticBlock;
 import com.simibubi.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 
-public class EmptyFlangedGearBlock extends RotatedPillarKineticBlock implements IBE<KineticBlockEntity> {
+public class EmptyFlangedGearBlock extends RotatedPillarKineticBlock implements IBE<KineticBlockEntity>, EncasableBlock {
 
     final private boolean isLarge;
 
     public EmptyFlangedGearBlock(final Properties properties, final boolean large) {
         super(properties);
         this.isLarge = large;
+    }
+
+    @Override
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        ItemInteractionResult result = tryEncase(state, level, pos, stack, player, hand, hitResult);
+        if (result.consumesAction())
+            return result;
+
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
     @Override

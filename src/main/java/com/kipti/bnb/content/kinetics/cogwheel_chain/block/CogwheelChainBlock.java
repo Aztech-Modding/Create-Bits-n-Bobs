@@ -4,6 +4,7 @@ import com.kipti.bnb.registry.BnbBlockEntities;
 import com.kipti.bnb.registry.BnbBlocks;
 import com.simibubi.create.AllShapes;
 import com.simibubi.create.api.schematic.requirement.SpecialBlockItemRequirement;
+import com.simibubi.create.content.decoration.encasing.EncasableBlock;
 import com.simibubi.create.content.kinetics.base.RotatedPillarKineticBlock;
 import com.simibubi.create.content.kinetics.simpleRelays.CogWheelBlock;
 import com.simibubi.create.content.kinetics.simpleRelays.ICogWheel;
@@ -13,7 +14,9 @@ import com.tterrag.registrate.util.entry.BlockEntry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
@@ -25,6 +28,7 @@ import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -38,7 +42,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 public class CogwheelChainBlock extends RotatedPillarKineticBlock
-        implements IBE<CogwheelChainBlockEntity>, SpecialBlockItemRequirement { //TODO : waterlog state
+        implements IBE<CogwheelChainBlockEntity>, SpecialBlockItemRequirement, EncasableBlock { //TODO : waterlog state
     private static final List<CogwheelChainBlock> ALL_CHAIN_BLOCKS = new ArrayList<>();
     private static final Lazy<Map<Block, CogwheelChainBlock>> DEFAULT_CHAIN_BLOCKS_BY_SOURCE = Lazy.of(() -> {
         Map<Block, CogwheelChainBlock> map = new java.util.HashMap<>();
@@ -54,6 +58,15 @@ public class CogwheelChainBlock extends RotatedPillarKineticBlock
         this.isLarge = large;
         this.sourceBlock = sourceBlock;
         ALL_CHAIN_BLOCKS.add(this);
+    }
+
+    @Override
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        ItemInteractionResult result = tryEncase(state, level, pos, stack, player, hand, hitResult);
+        if (result.consumesAction())
+            return result;
+
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
     @Override
