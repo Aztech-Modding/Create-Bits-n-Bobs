@@ -1,7 +1,7 @@
 package com.kipti.bnb.content.decoration.weathered_girder;
 
 import com.kipti.bnb.registry.BnbBlockEntities;
-import com.kipti.bnb.registry.BnbBlocks;
+import com.kipti.bnb.registry.BnbDecoBlocks;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.decoration.girder.GirderBlock;
 import com.simibubi.create.content.decoration.girder.GirderEncasedShaftBlock;
@@ -23,7 +23,7 @@ public class WeatheredGirderEncasedShaftBlock extends GirderEncasedShaftBlock {
 
     @Override
     public BlockState getRotatedBlockState(BlockState originalState, Direction targetedFace) {
-        return BnbBlocks.WEATHERED_METAL_GIRDER.getDefaultState()
+        return BnbDecoBlocks.WEATHERED_METAL_GIRDER.getDefaultState()
                 .setValue(WATERLOGGED, originalState.getValue(WATERLOGGED))
                 .setValue(GirderBlock.X, originalState.getValue(HORIZONTAL_AXIS) == Direction.Axis.Z)
                 .setValue(GirderBlock.Z, originalState.getValue(HORIZONTAL_AXIS) == Direction.Axis.X)
@@ -35,7 +35,7 @@ public class WeatheredGirderEncasedShaftBlock extends GirderEncasedShaftBlock {
     @Override
     public ItemRequirement getRequiredItems(BlockState state, BlockEntity be) {
         return ItemRequirement.of(AllBlocks.SHAFT.getDefaultState(), be)
-                .union(ItemRequirement.of(BnbBlocks.WEATHERED_METAL_GIRDER.getDefaultState(), be));
+                .union(ItemRequirement.of(BnbDecoBlocks.WEATHERED_METAL_GIRDER.getDefaultState(), be));
     }
 
     @Override

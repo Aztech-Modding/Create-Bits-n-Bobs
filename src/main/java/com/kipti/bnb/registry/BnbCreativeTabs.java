@@ -27,7 +27,7 @@ public class BnbCreativeTabs {
             () -> CreativeModeTab.builder()
                     .title(Component.translatable("tab." + CreateBitsnBobs.MOD_ID + ".base"))
                     .withTabsBefore(AllCreativeModeTabs.PALETTES_CREATIVE_TAB.getId())
-                    .icon(BnbItems.ICON_LIGHTBULB::asStack)
+                    .icon(BnbBlocks.SMALL_EMPTY_FLANGED_COGWHEEL::asStack)
                     .displayItems((p, o) -> buildCreativeTabContents(p, o, () -> BnbCreativeTabs.BASE_CREATIVE_TAB)).build());
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> DECO_CREATIVE_TAB = REGISTER.register("bnb_deco",
@@ -38,7 +38,7 @@ public class BnbCreativeTabs {
                     .displayItems((p, o) -> buildCreativeTabContents(p, o, () -> BnbCreativeTabs.DECO_CREATIVE_TAB)).build());
 
     private static boolean matchesBlockFilter(final BlockItem item) {
-        if (BnbBlocks.CHAIRS.contains(item.getBlock()) && !BnbBlocks.CHAIRS.get(DyeColor.RED).is(item.getBlock()))
+        if (BnbDecoBlocks.CHAIRS.contains(item.getBlock()) && !BnbDecoBlocks.CHAIRS.get(DyeColor.RED).is(item.getBlock()))
             return false;
 
         if (item.getBlock() instanceof EncasedBlock)
@@ -48,7 +48,7 @@ public class BnbCreativeTabs {
     }
 
     private static boolean matchesSearchOnlyBlockFilter(final BlockItem item) {
-        if (BnbBlocks.CHAIRS.contains(item.getBlock()) && !BnbBlocks.CHAIRS.get(DyeColor.RED).is(item.getBlock())) {
+        if (BnbDecoBlocks.CHAIRS.contains(item.getBlock()) && !BnbDecoBlocks.CHAIRS.get(DyeColor.RED).is(item.getBlock())) {
             return true;
         }
         return false;

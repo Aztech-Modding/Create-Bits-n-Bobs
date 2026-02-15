@@ -1,10 +1,6 @@
 package com.kipti.bnb.registry;
 
 import com.kipti.bnb.CreateBitsnBobs;
-import com.kipti.bnb.content.decoration.chair.ChairBlock;
-import com.kipti.bnb.content.decoration.girder_strut.GirderStrutBlock;
-import com.kipti.bnb.content.decoration.girder_strut.GirderStrutBlockItem;
-import com.kipti.bnb.content.decoration.girder_strut.GirderStrutModelBuilder;
 import com.kipti.bnb.content.decoration.light.founation.LightBlock;
 import com.kipti.bnb.content.decoration.light.headlamp.HeadlampBlock;
 import com.kipti.bnb.content.decoration.light.headlamp.HeadlampBlockItem;
@@ -15,10 +11,6 @@ import com.kipti.bnb.content.decoration.nixie.large_nixie_tube.LargeNixieTubeBlo
 import com.kipti.bnb.content.decoration.nixie.large_nixie_tube.LargeNixieTubeBlockStateGen;
 import com.kipti.bnb.content.decoration.nixie.nixie_board.NixieBoardBlockNixie;
 import com.kipti.bnb.content.decoration.nixie.nixie_board.NixieBoardBlockStateGen;
-import com.kipti.bnb.content.decoration.weathered_girder.WeatheredConnectedGirderModel;
-import com.kipti.bnb.content.decoration.weathered_girder.WeatheredGirderBlock;
-import com.kipti.bnb.content.decoration.weathered_girder.WeatheredGirderBlockStateGenerator;
-import com.kipti.bnb.content.decoration.weathered_girder.WeatheredGirderEncasedShaftBlock;
 import com.kipti.bnb.content.kinetics.chain_pulley.ChainPulleyBlock;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.block.CogwheelChainBlock;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.block.ConnectingCogwheelChainBlock;
@@ -36,11 +28,8 @@ import com.kipti.bnb.foundation.BnbBlockStateGen;
 import com.kipti.bnb.foundation.BnbBuilderTransformers;
 import com.kipti.bnb.foundation.EncasedBlockList;
 import com.simibubi.create.AllBlocks;
-import com.simibubi.create.AllDisplaySources;
 import com.simibubi.create.AllTags;
 import com.simibubi.create.api.stress.BlockStressValues;
-import com.simibubi.create.content.contraptions.actors.seat.SeatInteractionBehaviour;
-import com.simibubi.create.content.contraptions.actors.seat.SeatMovementBehaviour;
 import com.simibubi.create.content.contraptions.pulley.PulleyBlock;
 import com.simibubi.create.content.decoration.bracket.BracketBlock;
 import com.simibubi.create.content.decoration.bracket.BracketBlockItem;
@@ -53,25 +42,17 @@ import com.simibubi.create.foundation.data.AssetLookup;
 import com.simibubi.create.foundation.data.BlockStateGen;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.data.SharedProperties;
-import com.simibubi.create.foundation.item.ItemDescription;
-import com.simibubi.create.foundation.utility.DyeHelper;
 import com.tterrag.registrate.builders.BlockBuilder;
-import com.tterrag.registrate.providers.RegistrateRecipeProvider;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import com.tterrag.registrate.util.nullness.NonNullFunction;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.Direction;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.data.recipes.RecipeCategory;
-import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.storage.loot.LootPool;
@@ -82,15 +63,86 @@ import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
 
 import static com.kipti.bnb.CreateBitsnBobs.REGISTRATE;
-import static com.kipti.bnb.content.decoration.chair.ChairBlockStateGen.dyedChair;
-import static com.simibubi.create.api.behaviour.display.DisplaySource.displaySource;
 import static com.simibubi.create.api.behaviour.display.DisplayTarget.displayTarget;
-import static com.simibubi.create.api.behaviour.interaction.MovingInteractionBehaviour.interactionBehaviour;
-import static com.simibubi.create.api.behaviour.movement.MovementBehaviour.movementBehaviour;
 import static com.simibubi.create.foundation.data.ModelGen.customItemModel;
-import static com.simibubi.create.foundation.data.TagGen.*;
+import static com.simibubi.create.foundation.data.TagGen.axeOrPickaxe;
+import static com.simibubi.create.foundation.data.TagGen.pickaxeOnly;
 
 public class BnbBlocks {
+
+    public static final BlockEntry<ConnectingCogwheelChainBlock> SMALL_COGWHEEL_CHAIN = REGISTRATE.block("small_cogwheel_chain", ConnectingCogwheelChainBlock::small)
+            .initialProperties(SharedProperties::stone)
+            .properties(p -> p.sound(SoundType.WOOD)
+                    .mapColor(MapColor.DIRT))
+            .transform(axeOrPickaxe())
+            .blockstate((c, p) ->
+                    BlockStateGen.axisBlock(c, p, (s) -> p.models().getExistingFile(CreateBitsnBobs.asResource("block/sprocket/small_cogwheel"))))
+            .loot((lt, block) -> lt.dropOther(block, AllBlocks.COGWHEEL.get()))
+            .onRegister(GenericBlockEntityRenderModels.model(BnbPartialModels.SMALL_SPROCKET_COGWHEEL_BLOCK))
+            .register();
+
+    public static final BlockEntry<ConnectingCogwheelChainBlock> LARGE_COGWHEEL_CHAIN = REGISTRATE.block("large_cogwheel_chain", ConnectingCogwheelChainBlock::large)
+            .initialProperties(SharedProperties::wooden)
+            .properties(p -> p.sound(SoundType.WOOD)
+                    .mapColor(MapColor.DIRT))
+            .transform(axeOrPickaxe())
+            .blockstate((c, p) ->
+                    BlockStateGen.axisBlock(c, p, (s) -> p.models().getExistingFile(CreateBitsnBobs.asResource("block/sprocket/large_cogwheel"))))
+            .loot((lt, block) -> lt.dropOther(block, AllBlocks.LARGE_COGWHEEL.get()))
+            .onRegister(GenericBlockEntityRenderModels.model(BnbPartialModels.LARGE_SPROCKET_COGWHEEL_BLOCK))
+            .register();
+
+    public static final BlockEntry<CogwheelChainBlock> SMALL_FLANGED_COGWHEEL_CHAIN = REGISTRATE.block("small_flanged_cogwheel_chain", CogwheelChainBlock::smallFlanged)
+            .initialProperties(SharedProperties::stone)
+            .properties(p -> p.sound(SoundType.WOOD)
+                    .mapColor(MapColor.DIRT))
+            .transform(axeOrPickaxe())
+            .blockstate((c, p) ->
+                    BlockStateGen.axisBlock(c, p, (s) -> p.models().getExistingFile(CreateBitsnBobs.asResource("block/flanged_gear/small_cogwheel"))))
+            .loot((lt, block) -> lt.dropOther(block, BnbBlocks.SMALL_EMPTY_FLANGED_COGWHEEL.get()))
+            .onRegister(GenericBlockEntityRenderModels.model(BnbPartialModels.SMALL_FLANGED_COGWHEEL_BLOCK))
+            .register();
+
+    public static final BlockEntry<CogwheelChainBlock> LARGE_FLANGED_COGWHEEL_CHAIN = REGISTRATE.block("large_flanged_cogwheel_chain", CogwheelChainBlock::largeFlanged)
+            .initialProperties(SharedProperties::wooden)
+            .properties(p -> p.sound(SoundType.WOOD)
+                    .mapColor(MapColor.DIRT))
+            .transform(axeOrPickaxe())
+            .blockstate((c, p) ->
+                    BlockStateGen.axisBlock(c, p, (s) -> p.models().getExistingFile(CreateBitsnBobs.asResource("block/flanged_gear/large_cogwheel"))))
+            .loot((lt, block) -> lt.dropOther(block, BnbBlocks.LARGE_EMPTY_FLANGED_COGWHEEL.get()))
+            .onRegister(GenericBlockEntityRenderModels.model(BnbPartialModels.LARGE_FLANGED_COGWHEEL_BLOCK))
+            .register();
+
+    public static final BlockEntry<EmptyFlangedGearBlock> SMALL_EMPTY_FLANGED_COGWHEEL = REGISTRATE.block("small_flanged_cogwheel", EmptyFlangedGearBlock::small)
+            .lang("Flanged Cogwheel")
+            .initialProperties(SharedProperties::stone)
+            .properties(p -> p.sound(SoundType.WOOD)
+                    .mapColor(MapColor.DIRT))
+            .transform(axeOrPickaxe())
+            .blockstate((c, p) ->
+                    BlockStateGen.axisBlock(c, p, (s) -> p.models().getExistingFile(CreateBitsnBobs.asResource("block/flanged_gear/small_cogwheel"))))
+            .item()
+            .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/flanged_gear/small_cogwheel")))
+            .build()
+            .onRegister(CogwheelChainCandidateInfo.candidate(new CogwheelChainCandidateInfo(false, false, BnbBlocks.SMALL_FLANGED_COGWHEEL_CHAIN)))
+            .onRegister(GenericBlockEntityRenderModels.model(BnbPartialModels.SMALL_FLANGED_COGWHEEL_BLOCK))
+            .register();
+
+    public static final BlockEntry<EmptyFlangedGearBlock> LARGE_EMPTY_FLANGED_COGWHEEL = REGISTRATE.block("large_flanged_cogwheel", EmptyFlangedGearBlock::large)
+            .initialProperties(SharedProperties::stone)
+            .properties(p -> p.sound(SoundType.WOOD)
+                    .mapColor(MapColor.DIRT))
+            .transform(axeOrPickaxe())
+            .blockstate((c, p) ->
+                    BlockStateGen.axisBlock(c, p, (s) -> p.models().getExistingFile(CreateBitsnBobs.asResource("block/flanged_gear/large_cogwheel"))))
+            .item()
+            .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/flanged_gear/large_cogwheel")))
+            .build()
+            .onRegister(CogwheelChainCandidateInfo.candidate(new CogwheelChainCandidateInfo(true, false, BnbBlocks.LARGE_FLANGED_COGWHEEL_CHAIN)))
+            .onRegister(GenericBlockEntityRenderModels.model(BnbPartialModels.LARGE_FLANGED_COGWHEEL_BLOCK))
+            .register();
+
 
     public static final BlockEntry<ChainPulleyBlock> CHAIN_PULLEY = REGISTRATE.block("chain_pulley", ChainPulleyBlock::new)
             .initialProperties(SharedProperties::stone)
@@ -147,66 +199,6 @@ public class BnbBlocks {
                     )
                     .build()
                     .register();
-
-    public static final BlockEntry<WeatheredGirderBlock> WEATHERED_METAL_GIRDER = REGISTRATE.block("weathered_metal_girder", WeatheredGirderBlock::new)
-            .initialProperties(SharedProperties::softMetal)
-            .properties(p -> p.mapColor(MapColor.COLOR_GRAY)
-                    .sound(SoundType.NETHERITE_BLOCK))
-            .transform(pickaxeOnly())
-            .blockstate(WeatheredGirderBlockStateGenerator::blockState)
-            .onRegister(CreateRegistrate.blockModel(() -> WeatheredConnectedGirderModel::new))
-            .item()
-            .transform(customItemModel())
-            .register();
-
-    public static final BlockEntry<WeatheredGirderEncasedShaftBlock> WEATHERED_METAL_GIRDER_ENCASED_SHAFT =
-            REGISTRATE.block("weathered_metal_girder_encased_shaft", WeatheredGirderEncasedShaftBlock::new)
-                    .initialProperties(SharedProperties::softMetal)
-                    .properties(p -> p.mapColor(MapColor.COLOR_GRAY)
-                            .sound(SoundType.NETHERITE_BLOCK))
-                    .transform(pickaxeOnly())
-                    .blockstate(WeatheredGirderBlockStateGenerator::blockStateWithShaft)
-                    .loot((p, b) -> p.add(b, p.createSingleItemTable(WEATHERED_METAL_GIRDER.get())
-                            .withPool(p.applyExplosionCondition(AllBlocks.SHAFT.get(), LootPool.lootPool()
-                                    .setRolls(ConstantValue.exactly(1.0F))
-                                    .add(LootItem.lootTableItem(AllBlocks.SHAFT.get()))))))
-                    .onRegister(CreateRegistrate.blockModel(() -> WeatheredConnectedGirderModel::new))
-                    .register();
-
-    public static final BlockEntry<GirderStrutBlock> WEATHERED_GIRDER_STRUT = REGISTRATE.block("weathered_girder_strut", GirderStrutBlock.weathered())
-            .initialProperties(SharedProperties::softMetal)
-            .transform(pickaxeOnly())
-            .properties(p -> p.noOcclusion())
-            .blockstate((c, p) -> p.directionalBlock(c.get(),
-                    (state) -> p.models().getExistingFile(CreateBitsnBobs.asResource(
-                            "block/girder_strut/weathered_girder_strut_attachment")
-                    )))
-            .onRegister(CreateRegistrate.blockModel(() -> GirderStrutModelBuilder::new))
-            .onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "block.bits_n_bobs.girder_strut"))
-            .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
-            .item(GirderStrutBlockItem::new)
-            .model((c, p) ->
-                    p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/girder_strut/weathered_girder_item"))
-            )
-            .build()
-            .register();
-
-    public static final BlockEntry<GirderStrutBlock> GIRDER_STRUT = REGISTRATE.block("girder_strut", GirderStrutBlock.normal())
-            .initialProperties(SharedProperties::softMetal)
-            .transform(pickaxeOnly())
-            .properties(p -> p.noOcclusion())
-            .blockstate((c, p) -> p.directionalBlock(c.get(),
-                    (state) -> p.models().getExistingFile(CreateBitsnBobs.asResource(
-                            "block/girder_strut/girder_strut_attachment")
-                    )))
-            .onRegister(CreateRegistrate.blockModel(() -> GirderStrutModelBuilder::new))
-            .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
-            .item(GirderStrutBlockItem::new)
-            .model((c, p) ->
-                    p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/girder_strut/girder_item"))
-            )
-            .build()
-            .register();
 
     public static final BlockEntry<NixieBoardBlockNixie> NIXIE_BOARD = REGISTRATE.block("nixie_board", p -> new NixieBoardBlockNixie(p, null))
             .transform(nixieBoard())
@@ -295,79 +287,6 @@ public class BnbBlocks {
             .build()
             .register();
 
-    public static final BlockEntry<ConnectingCogwheelChainBlock> SMALL_COGWHEEL_CHAIN = REGISTRATE.block("small_cogwheel_chain", ConnectingCogwheelChainBlock::small)
-            .initialProperties(SharedProperties::stone)
-            .properties(p -> p.sound(SoundType.WOOD)
-                    .mapColor(MapColor.DIRT))
-            .transform(axeOrPickaxe())
-            .blockstate((c, p) ->
-                    BlockStateGen.axisBlock(c, p, (s) -> p.models().getExistingFile(CreateBitsnBobs.asResource("block/sprocket/small_cogwheel"))))
-            .loot((lt, block) -> lt.dropOther(block, AllBlocks.COGWHEEL.get()))
-            .onRegister(GenericBlockEntityRenderModels.model(BnbPartialModels.SMALL_SPROCKET_COGWHEEL_BLOCK))
-            .register();
-
-    public static final BlockEntry<ConnectingCogwheelChainBlock> LARGE_COGWHEEL_CHAIN = REGISTRATE.block("large_cogwheel_chain", ConnectingCogwheelChainBlock::large)
-            .initialProperties(SharedProperties::wooden)
-            .properties(p -> p.sound(SoundType.WOOD)
-                    .mapColor(MapColor.DIRT))
-            .transform(axeOrPickaxe())
-            .blockstate((c, p) ->
-                    BlockStateGen.axisBlock(c, p, (s) -> p.models().getExistingFile(CreateBitsnBobs.asResource("block/sprocket/large_cogwheel"))))
-            .loot((lt, block) -> lt.dropOther(block, AllBlocks.LARGE_COGWHEEL.get()))
-            .onRegister(GenericBlockEntityRenderModels.model(BnbPartialModels.LARGE_SPROCKET_COGWHEEL_BLOCK))
-            .register();
-
-    public static final BlockEntry<CogwheelChainBlock> SMALL_FLANGED_COGWHEEL_CHAIN = REGISTRATE.block("small_flanged_cogwheel_chain", CogwheelChainBlock::smallFlanged)
-            .initialProperties(SharedProperties::stone)
-            .properties(p -> p.sound(SoundType.WOOD)
-                    .mapColor(MapColor.DIRT))
-            .transform(axeOrPickaxe())
-            .blockstate((c, p) ->
-                    BlockStateGen.axisBlock(c, p, (s) -> p.models().getExistingFile(CreateBitsnBobs.asResource("block/flanged_gear/small_cogwheel"))))
-            .loot((lt, block) -> lt.dropOther(block, BnbBlocks.SMALL_EMPTY_FLANGED_COGWHEEL.get()))
-            .onRegister(GenericBlockEntityRenderModels.model(BnbPartialModels.SMALL_FLANGED_COGWHEEL_BLOCK))
-            .register();
-
-    public static final BlockEntry<CogwheelChainBlock> LARGE_FLANGED_COGWHEEL_CHAIN = REGISTRATE.block("large_flanged_cogwheel_chain", CogwheelChainBlock::largeFlanged)
-            .initialProperties(SharedProperties::wooden)
-            .properties(p -> p.sound(SoundType.WOOD)
-                    .mapColor(MapColor.DIRT))
-            .transform(axeOrPickaxe())
-            .blockstate((c, p) ->
-                    BlockStateGen.axisBlock(c, p, (s) -> p.models().getExistingFile(CreateBitsnBobs.asResource("block/flanged_gear/large_cogwheel"))))
-            .loot((lt, block) -> lt.dropOther(block, BnbBlocks.LARGE_EMPTY_FLANGED_COGWHEEL.get()))
-            .onRegister(GenericBlockEntityRenderModels.model(BnbPartialModels.LARGE_FLANGED_COGWHEEL_BLOCK))
-            .register();
-
-    public static final BlockEntry<EmptyFlangedGearBlock> SMALL_EMPTY_FLANGED_COGWHEEL = REGISTRATE.block("small_flanged_cogwheel", EmptyFlangedGearBlock::small)
-            .lang("Flanged Cogwheel")
-            .initialProperties(SharedProperties::stone)
-            .properties(p -> p.sound(SoundType.WOOD)
-                    .mapColor(MapColor.DIRT))
-            .transform(axeOrPickaxe())
-            .blockstate((c, p) ->
-                    BlockStateGen.axisBlock(c, p, (s) -> p.models().getExistingFile(CreateBitsnBobs.asResource("block/flanged_gear/small_cogwheel"))))
-            .item()
-            .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/flanged_gear/small_cogwheel")))
-            .build()
-            .onRegister(CogwheelChainCandidateInfo.candidate(new CogwheelChainCandidateInfo(false, false, BnbBlocks.SMALL_FLANGED_COGWHEEL_CHAIN)))
-            .onRegister(GenericBlockEntityRenderModels.model(BnbPartialModels.SMALL_FLANGED_COGWHEEL_BLOCK))
-            .register();
-
-    public static final BlockEntry<EmptyFlangedGearBlock> LARGE_EMPTY_FLANGED_COGWHEEL = REGISTRATE.block("large_flanged_cogwheel", EmptyFlangedGearBlock::large)
-            .initialProperties(SharedProperties::stone)
-            .properties(p -> p.sound(SoundType.WOOD)
-                    .mapColor(MapColor.DIRT))
-            .transform(axeOrPickaxe())
-            .blockstate((c, p) ->
-                    BlockStateGen.axisBlock(c, p, (s) -> p.models().getExistingFile(CreateBitsnBobs.asResource("block/flanged_gear/large_cogwheel"))))
-            .item()
-            .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/flanged_gear/large_cogwheel")))
-            .build()
-            .onRegister(CogwheelChainCandidateInfo.candidate(new CogwheelChainCandidateInfo(true, false, BnbBlocks.LARGE_FLANGED_COGWHEEL_CHAIN)))
-            .onRegister(GenericBlockEntityRenderModels.model(BnbPartialModels.LARGE_FLANGED_COGWHEEL_BLOCK))
-            .register();
-
     public static <T extends NixieBoardBlockNixie, P> NonNullFunction<BlockBuilder<T, P>, BlockBuilder<T, P>> nixieBoard() {
         return b -> b
                 .initialProperties(SharedProperties::softMetal)
@@ -395,44 +314,6 @@ public class BnbBlocks {
                         .forceSolidOn())
                 .addLayer(() -> RenderType::translucent);
     }
-
-    public static final DyedBlockList<ChairBlock> CHAIRS = new DyedBlockList<>(colour -> {
-        String colourName = colour.getSerializedName();
-        SeatMovementBehaviour movementBehaviour = new SeatMovementBehaviour();
-        SeatInteractionBehaviour interactionBehaviour = new SeatInteractionBehaviour();
-        return REGISTRATE.block(colourName + "_chair", p -> new ChairBlock(p, colour))
-                .initialProperties(SharedProperties::wooden)
-                .properties(p -> p.mapColor(colour))
-                .properties(BlockBehaviour.Properties::noOcclusion)
-                .transform(axeOnly())
-                .onRegister(movementBehaviour(movementBehaviour))
-                .onRegister(interactionBehaviour(interactionBehaviour))
-                .transform(displaySource(AllDisplaySources.ENTITY_NAME))
-//            .onRegister(CreateRegistrate.blockModel(() -> ChairModelBuilder::new))
-                .blockstate(dyedChair(colourName))
-                .addLayer(() -> RenderType::cutoutMipped)
-                .recipe((c, p) -> {
-                    ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, c.get())
-                            .requires(DyeHelper.getWoolOfDye(colour))
-                            .requires(ItemTags.WOODEN_STAIRS)
-                            .unlockedBy("has_wool", RegistrateRecipeProvider.has(ItemTags.WOOL))
-                            .save(p.withConditions(BnbFeatureFlag.CHAIRS.getDataCondition()), CreateBitsnBobs.asResource("crafting/" + c.getName()));
-                    ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, c.get())
-                            .requires(colour.getTag())
-                            .requires(BnbTags.BnbItemTags.CHAIRS.tag)
-                            .unlockedBy("has_seat", RegistrateRecipeProvider.has(BnbTags.BnbItemTags.CHAIRS.tag))
-                            .save(p.withConditions((BnbFeatureFlag.CHAIRS.getDataCondition())), CreateBitsnBobs.asResource("crafting/" + c.getName() + "_from_other_chair"));
-                })
-                .onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "block.bits_n_bobs.chair"))
-                .tag(BnbTags.BnbBlockTags.CHAIRS.tag)
-                .item()
-                .model((c, p) ->
-                        p.withExistingParent("item/" + colourName + "_chair", p.modLoc("block/chair/item"))
-                                .texture("2", p.modLoc("block/chair/chair_" + colourName)))
-                .tag(BnbTags.BnbItemTags.CHAIRS.tag)
-                .build()
-                .register();
-    });
 
     //Base encasing extensions
 
@@ -578,7 +459,6 @@ public class BnbBlocks {
                     .transform(EncasingRegistry.addVariantTo(BnbBlocks.LARGE_EMPTY_FLANGED_COGWHEEL))
                     .onRegister(CogwheelChainCandidateInfo.candidate(new CogwheelChainCandidateInfo(true, false, () -> ENCASED_LARGE_FLANGED_CHAIN_COGWHEEL.get(casing).get())))
                     .onRegister(GenericBlockEntityRenderModels.model(BnbPartialModels.ENCASED_LARGE_FLANGED_COGWHEEL_BLOCK))
-
                     .register());
 
     public static void register() {

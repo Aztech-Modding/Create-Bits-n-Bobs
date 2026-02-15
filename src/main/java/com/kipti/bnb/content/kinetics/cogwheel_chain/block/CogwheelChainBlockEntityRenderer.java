@@ -49,7 +49,14 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
 
     @Override
     protected SuperByteBuffer getRotatedModel(final CogwheelChainBlockEntity be, final BlockState state) {
-        return CachedBuffers.partial(Objects.requireNonNull(GenericBlockEntityRenderModels.REGISTRY.get(state.getBlock())), state);
+        return CachedBuffers.partialFacing(
+                Objects.requireNonNull(GenericBlockEntityRenderModels.REGISTRY.get(state.getBlock())),
+                state.getBlock().defaultBlockState(),
+//                Direction.fromAxisAndDirection(getRotationAxisOf(be), Direction.AxisDirection.POSITIVE)
+                Direction.UP
+        );
+
+//        return CachedBuffers.block(KINETIC_BLOCK, state);
     }
 
     @Override

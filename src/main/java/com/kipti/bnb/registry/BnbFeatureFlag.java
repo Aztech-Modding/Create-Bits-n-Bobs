@@ -20,8 +20,8 @@ public enum BnbFeatureFlag {
 
     EXPERIMENTAL_FLYWHEEL_BEARING("Availability of the Flywheel Bearing block. (In development)", false, BnbBlocks.FLYWHEEL_BEARING::get),
 
-    WEATHERED_GIRDER("Availability of the weathered girder block.", BnbBlocks.WEATHERED_METAL_GIRDER::get, BnbBlocks.WEATHERED_GIRDER_STRUT::get),
-    GIRDER_STRUT("Availability of the girder strut blocks.", BnbBlocks.GIRDER_STRUT::get, BnbBlocks.WEATHERED_GIRDER_STRUT::get),
+    WEATHERED_GIRDER("Availability of the weathered girder block.", BnbDecoBlocks.WEATHERED_METAL_GIRDER::get, BnbDecoBlocks.WEATHERED_GIRDER_STRUT::get),
+    GIRDER_STRUT("Availability of the girder strut blocks.", BnbDecoBlocks.GIRDER_STRUT::get, BnbDecoBlocks.WEATHERED_GIRDER_STRUT::get),
 
     NIXIE_BOARD("Availability of Nixie Board block.", BnbBlocks.NIXIE_BOARD::get),
     LARGE_NIXIE_TUBE("Availability of Large Nixie Tube block.", BnbBlocks.LARGE_NIXIE_TUBE::get),
@@ -29,7 +29,7 @@ public enum BnbFeatureFlag {
     LIGHTBULB("Availability of the Lightbulb block.", BnbBlocks.LIGHTBULB::get),
     BRASS_LAMP("Availability of the Brass Lamp block.", BnbBlocks.BRASS_LAMP::get),
     HEADLAMP("Availability of the Headlamp block.", BnbBlocks.HEADLAMP::get),
-    CHAIRS("Availability of the Chair blocks.", createSupplierSet(BnbBlocks.CHAIRS)),
+    CHAIRS("Availability of the Chair blocks.", createSupplierSet(BnbDecoBlocks.CHAIRS)),
 
     TILES("Availability of the tile decoration blocks.", createDecoBlockSupplierSet(BnbPaletteStoneTypes.values())),
 
