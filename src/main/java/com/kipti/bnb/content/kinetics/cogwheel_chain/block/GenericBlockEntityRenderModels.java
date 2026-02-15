@@ -8,7 +8,7 @@ import net.minecraft.world.level.block.Block;
 public class GenericBlockEntityRenderModels {
     public static final SimpleRegistry<Block, PartialModel> REGISTRY = SimpleRegistry.create();
 
-    public static <B extends Block> NonNullConsumer<? super B> model(PartialModel model) {
+    public static <B extends Block> NonNullConsumer<? super B> model(final PartialModel model) {
         return b -> REGISTRY.register(b, model);
     }
 }
