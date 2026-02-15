@@ -42,7 +42,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 public class CogwheelChainBlock extends RotatedPillarKineticBlock
-        implements IBE<CogwheelChainBlockEntity>, SpecialBlockItemRequirement, EncasableBlock { //TODO : waterlog state
+        implements IBE<CogwheelChainBlockEntity>, SpecialBlockItemRequirement, EncasableBlock, ICogwheelChainBlock { //TODO : waterlog state
     private static final List<CogwheelChainBlock> ALL_CHAIN_BLOCKS = new ArrayList<>();
     private static final Lazy<Map<Block, CogwheelChainBlock>> DEFAULT_CHAIN_BLOCKS_BY_SOURCE = Lazy.of(() -> {
         Map<Block, CogwheelChainBlock> map = new java.util.HashMap<>();
@@ -182,4 +182,8 @@ public class CogwheelChainBlock extends RotatedPillarKineticBlock
         return sourceBlock.get().getDefaultState();
     }
 
+    @Override
+    public boolean isLargeCog() {
+        return isLargeChainCog();
+    }
 }

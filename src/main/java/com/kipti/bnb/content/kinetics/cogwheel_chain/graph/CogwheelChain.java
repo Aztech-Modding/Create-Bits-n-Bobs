@@ -3,11 +3,12 @@ package com.kipti.bnb.content.kinetics.cogwheel_chain.graph;
 import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.block.CogwheelChainBlock;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.block.CogwheelChainBlockEntity;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.block.ICogwheelChainBlock;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.BnbCogwheelChainTypes;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.CogwheelChainType;
-import com.kipti.bnb.registry.BnbBlocks;
 import com.kipti.bnb.registry.BnbRegistries;
 import com.simibubi.create.content.kinetics.simpleRelays.CogWheelBlock;
+import com.simibubi.create.foundation.utility.BlockHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
@@ -67,7 +68,7 @@ public class CogwheelChain {
                 return false;
             }
             final Direction.Axis axis = state.getValue(CogWheelBlock.AXIS);
-            final boolean isLarge = state.getBlock() instanceof final CogwheelChainBlock iCogWheel && iCogWheel.isLargeChainCog();
+            final boolean isLarge = state.getBlock() instanceof final ICogwheelChainBlock iCogWheel && iCogWheel.isLargeCog();
             if (axis != node.rotationAxis() || isLarge != node.isLarge()) {
                 return false;
             }
@@ -76,8 +77,7 @@ public class CogwheelChain {
     }
 
     private boolean isValidChainCogwheel(final BlockState state) {
-        return BnbBlocks.LARGE_COGWHEEL_CHAIN.is(state.getBlock()) || BnbBlocks.SMALL_COGWHEEL_CHAIN.is(state.getBlock()) ||
-                BnbBlocks.LARGE_FLANGED_COGWHEEL_CHAIN.is(state.getBlock()) || BnbBlocks.SMALL_FLANGED_COGWHEEL_CHAIN.is(state.getBlock());
+        return state.getBlock() instanceof ICogwheelChainBlock;
     }
 
     public int getChainsRequired() {
@@ -169,7 +169,7 @@ public class CogwheelChain {
         final BlockState existingState = level.getBlockState(node.pos());
         final CogwheelChainCandidateInfo info = CogwheelChainCandidateInfo.REGISTRY.get(existingState.getBlock());
 
-        @Nullable final BlockState newState = info == null ? null : info.resultingBlock().get().defaultBlockState().setValue(CogWheelBlock.AXIS, node.rotationAxis());
+        @Nullable final BlockState newState = info == null ? null : BlockHelper.copyProperties(existingState, info.resultingBlock().get().defaultBlockState());
 
         if (newState == null) {
             CreateBitsnBobs.LOGGER.error("Failed to place cogwheel chain at {}, existing block {}, because the chain state could not be resolved", node.pos(), existingState);

@@ -5,17 +5,28 @@ import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.RenderedChainPathNode
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.CogwheelChainType;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.simibubi.create.AllPartialModels;
+import com.simibubi.create.content.kinetics.base.IRotate;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
+import com.simibubi.create.content.kinetics.simpleRelays.BracketedKineticBlockEntityRenderer;
+import com.simibubi.create.content.kinetics.simpleRelays.encased.EncasedCogwheelBlock;
 import com.simibubi.create.foundation.render.RenderTypes;
 import dev.engine_room.flywheel.lib.transform.PoseTransformStack;
 import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.createmod.catnip.animation.AnimationTickHolder;
+import net.createmod.catnip.data.Iterate;
+import net.createmod.catnip.render.CachedBuffers;
+import net.createmod.catnip.render.SuperByteBuffer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
@@ -23,6 +34,7 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -36,8 +48,35 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
     }
 
     @Override
+    protected SuperByteBuffer getRotatedModel(final CogwheelChainBlockEntity be, final BlockState state) {
+        return CachedBuffers.partial(Objects.requireNonNull(GenericBlockEntityRenderModels.REGISTRY.get(state.getBlock())), state);
+    }
+
+    @Override
     protected void renderSafe(final CogwheelChainBlockEntity be, final float partialTicks, final PoseStack ms, final MultiBufferSource buffer, final int light, final int overlay) {
         super.renderSafe(be, partialTicks, ms, buffer, light, overlay);
+
+        if (be.getBlockState().getBlock() instanceof EncasedCogwheelBlock) {
+            final BlockState blockState = be.getBlockState();
+            final Block block = blockState.getBlock();
+            if (block instanceof final IRotate def) {
+                final Direction.Axis axis = getRotationAxisOf(be);
+                boolean large = false;
+                if (block instanceof final ICogwheelChainBlock chainBlock)
+                    large = chainBlock.isLargeCog();
+
+                final float angle = large ? BracketedKineticBlockEntityRenderer.getAngleForLargeCogShaft(be, axis)
+                        : getAngleForBe(be, be.getBlockPos(), axis);
+
+                for (final Direction d : Iterate.directionsInAxis(getRotationAxisOf(be))) {
+                    if (def.hasShaftTowards(be.getLevel(), be.getBlockPos(), blockState, d)) {
+                        final SuperByteBuffer shaft = CachedBuffers.partialFacing(AllPartialModels.SHAFT_HALF, be.getBlockState(), d);
+                        kineticRotationTransform(shaft, be, axis, angle, light);
+                        shaft.renderInto(ms, buffer.getBuffer(RenderType.solid()));
+                    }
+                }
+            }
+        }
 
         final Function<Vector3f, Integer> lighter = be.createGlobalLighter();
         final CogwheelChain chain = be.getChain();
@@ -79,8 +118,8 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
                         lighter,
                         (float) stretchOffset,
                         (float) chainTextureSquish,
-                    type,
-                    flipInsideOutside);
+                        type,
+                        flipInsideOutside);
 
                 accumulatedUV += distance;
 
@@ -222,8 +261,8 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
         final float h = renderInfo.getHeight() / 16f;
         final float w = renderInfo.getWidth() / 16f;
 
-        float minU;
-        float maxU;
+        final float minU;
+        final float maxU;
 
         final int uvFaceIndex = flipTopBottom ? (faceIndex + 2) % 4 : faceIndex;
         if (uvFaceIndex == 0) { // Top

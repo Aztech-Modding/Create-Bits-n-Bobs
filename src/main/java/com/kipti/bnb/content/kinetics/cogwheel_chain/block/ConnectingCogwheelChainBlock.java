@@ -6,7 +6,7 @@ import com.tterrag.registrate.util.entry.BlockEntry;
 
 import java.util.function.Supplier;
 
-public class ConnectingCogwheelChainBlock extends CogwheelChainBlock implements ICogWheel {
+public class ConnectingCogwheelChainBlock extends CogwheelChainBlock implements ICogWheel, ICogwheelChainBlock {
 
     protected ConnectingCogwheelChainBlock(final boolean large, Properties properties, Supplier<BlockEntry<?>> sourceBlock) {
         super(large, properties, sourceBlock);
