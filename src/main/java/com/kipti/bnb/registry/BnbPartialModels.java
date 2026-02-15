@@ -39,7 +39,9 @@ public class BnbPartialModels {
 
     ROPE_PULLEY_JEI = createBlock("rope_pulley/item"),
 
-    LARGE_STONE_COG_SHAFTLESS = block("large_stone_cog_shaftless");
+    LARGE_STONE_COG_SHAFTLESS = block("large_stone_cog_shaftless"),
+
+    THROTTLE_LEVER_HANDLE = block("throttle_lever/handle");
 
 
     public static final Map<Direction, PartialModel> WEATHERED_METAL_GIRDER_BRACKETS = new EnumMap<>(Direction.class);

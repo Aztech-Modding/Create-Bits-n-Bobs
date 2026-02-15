@@ -12,6 +12,8 @@ import com.kipti.bnb.content.kinetics.cogwheel_chain.block.CogwheelChainBlockEnt
 import com.kipti.bnb.content.kinetics.cogwheel_chain.block.GenericBlockEntityRenderModels;
 import com.kipti.bnb.content.kinetics.flywheel_bearing.FlywheelBearingBlockEntity;
 import com.kipti.bnb.content.kinetics.flywheel_bearing.FlywheelBearingBlockEntityRenderer;
+import com.kipti.bnb.content.kinetics.throttle_lever.ThrottleLeverBlockEntity;
+import com.kipti.bnb.content.kinetics.throttle_lever.ThrottleLeverBlockEntityRenderer;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 import com.simibubi.create.content.kinetics.base.ShaftRenderer;
@@ -98,6 +100,12 @@ public class BnbBlockEntities {
             .validBlocks(BnbBlocks.ENCASED_LARGE_EMPTY_FLANGED_COGWHEEL.toArray())
             .validBlocks(BnbBlocks.ENCASED_EMPTY_FLANGED_COGWHEEL.toArray())
             .renderer(() -> KineticBlockEntityRenderer::new)
+            .register();
+
+    public static final BlockEntityEntry<ThrottleLeverBlockEntity> THROTTLE_LEVER = REGISTRATE
+            .blockEntity("throttle_lever", ThrottleLeverBlockEntity::new)
+            .validBlocks(BnbBlocks.THROTTLE_LEVER)
+            .renderer(() -> ThrottleLeverBlockEntityRenderer::new)
             .register();
 
     public static void register() {

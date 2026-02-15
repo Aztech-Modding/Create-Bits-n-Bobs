@@ -24,6 +24,7 @@ import com.kipti.bnb.content.kinetics.encased_blocks.cogwheel_chain.BnbEncasedCo
 import com.kipti.bnb.content.kinetics.encased_blocks.cogwheel_chain.BnbEncasedEmptyFlangedGearBlock;
 import com.kipti.bnb.content.kinetics.encased_blocks.piston_pole.EncasedPistonExtensionPoleBlock;
 import com.kipti.bnb.content.kinetics.flywheel_bearing.FlywheelBearingBlock;
+import com.kipti.bnb.content.kinetics.throttle_lever.ThrottleLeverBlock;
 import com.kipti.bnb.foundation.BnbBlockStateGen;
 import com.kipti.bnb.foundation.BnbBuilderTransformers;
 import com.kipti.bnb.foundation.EncasedBlockList;
@@ -38,6 +39,7 @@ import com.simibubi.create.content.decoration.encasing.EncasableBlock;
 import com.simibubi.create.content.decoration.encasing.EncasedCTBehaviour;
 import com.simibubi.create.content.decoration.encasing.EncasingRegistry;
 import com.simibubi.create.foundation.block.DyedBlockList;
+import com.simibubi.create.foundation.block.ItemUseOverrides;
 import com.simibubi.create.foundation.data.AssetLookup;
 import com.simibubi.create.foundation.data.BlockStateGen;
 import com.simibubi.create.foundation.data.CreateRegistrate;
@@ -314,6 +316,18 @@ public class BnbBlocks {
                         .forceSolidOn())
                 .addLayer(() -> RenderType::translucent);
     }
+
+    public static final BlockEntry<ThrottleLeverBlock> THROTTLE_LEVER =
+            REGISTRATE.block("throttle_lever", ThrottleLeverBlock::new)
+                    .initialProperties(() -> Blocks.LEVER)
+                    .transform(axeOrPickaxe())
+                    .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
+                    .blockstate((c, p) -> p.directionalBlock(c.get(), AssetLookup.partialBaseModel(c, p)))
+                    .onRegister(ItemUseOverrides::addBlock)
+                    .item()
+                    .transform(customItemModel())
+                    .addLayer(() -> RenderType::cutout)
+                    .register();
 
     //Base encasing extensions
 
