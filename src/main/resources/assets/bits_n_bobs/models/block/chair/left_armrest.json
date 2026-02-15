@@ -7,11 +7,11 @@
 	},
 	"elements": [
 		{
-			"from": [14, 7, 4],
-			"to": [18.995, 12, 15],
-			"rotation": {"angle": 0, "axis": "y", "origin": [16.5, 9.5, 9.5]},
+			"from": [13, 7, 4],
+			"to": [17.995, 12, 15],
+			"rotation": {"angle": -45, "axis": "z", "origin": [15.4975, 9.5, 9.5]},
 			"faces": {
-				"north": {"uv": [3.5, 5, 1, 7.5], "texture": "#2"},
+				"north": {"uv": [13.5, 8.5, 11, 11], "texture": "#2"},
 				"east": {"uv": [8.5, 1.5, 14, 4], "texture": "#2"},
 				"south": {"uv": [12.5, 1.5, 10, 4], "texture": "#2"},
 				"west": {"uv": [14, 1.5, 8.5, 4], "texture": "#2"},
@@ -25,6 +25,8 @@
 			"name": "armrests",
 			"origin": [-0.5, 9.5, 9.5],
 			"color": 0,
+			"stepParentName": "",
+			"backdrop": false,
 			"children": [0]
 		}
 	]
