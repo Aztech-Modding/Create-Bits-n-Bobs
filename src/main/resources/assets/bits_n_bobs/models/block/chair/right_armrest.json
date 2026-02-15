@@ -7,16 +7,16 @@
 	},
 	"elements": [
 		{
-			"from": [-2.995, 7, 4],
-			"to": [2, 12, 15],
-			"rotation": {"angle": 0, "axis": "y", "origin": [-0.5, 9.5, 9.5]},
+			"from": [-1.94573, 6.99823, 4],
+			"to": [3.04927, 11.99823, 15],
+			"rotation": {"angle": -45, "axis": "z", "origin": [0.55177, 9.49823, 9.5]},
 			"faces": {
-				"north": {"uv": [1, 5, 3.5, 7.5], "texture": "#2"},
-				"east": {"uv": [8.5, 1.5, 14, 4], "texture": "#2"},
-				"south": {"uv": [10, 1.5, 12.5, 4], "texture": "#2"},
-				"west": {"uv": [14, 1.5, 8.5, 4], "texture": "#2"},
-				"up": {"uv": [3, 11, 5.5, 5.5], "rotation": 180, "texture": "#2"},
-				"down": {"uv": [6, 11, 8.5, 5.5], "texture": "#2"}
+				"north": {"uv": [11, 8.5, 13.5, 11], "rotation": 180, "texture": "#2"},
+				"east": {"uv": [14, 1.5, 8.5, 4], "rotation": 180, "texture": "#2"},
+				"south": {"uv": [10, 1.5, 12.5, 4], "rotation": 180, "texture": "#2"},
+				"west": {"uv": [8.5, 1.5, 14, 4], "rotation": 180, "texture": "#2"},
+				"up": {"uv": [6, 11, 8.5, 5.5], "rotation": 180, "texture": "#2"},
+				"down": {"uv": [3, 11, 5.5, 5.5], "texture": "#2"}
 			}
 		}
 	],
@@ -25,6 +25,8 @@
 			"name": "armrests",
 			"origin": [-0.5, 9.5, 9.5],
 			"color": 0,
+			"stepParentName": "",
+			"backdrop": false,
 			"children": [0]
 		}
 	]

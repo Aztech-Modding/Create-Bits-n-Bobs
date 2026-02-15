@@ -2,7 +2,7 @@
 	"credit": "Made with Blockbench",
 	"textures": {
 		"0": "bits_n_bobs:block/weathered_girder",
-		"particle": "bits_n_bobs:block/weathered_iron_block"
+		"particle": "bits_n_bobs:block/weathered_industrial_iron_block"
 	},
 	"elements": [
 		{

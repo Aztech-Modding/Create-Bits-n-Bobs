@@ -101,11 +101,12 @@ public class DoubleOrientedBlockModel extends BakedModelWrapper<BakedModel> {
             }
 
 
-            final Direction newNormal = Direction.getNearest(quadNormalJoml.x, quadNormalJoml.y, quadNormalJoml.z).getOpposite();//TODO: from direint
+            final Direction newNormal = Direction.getNearest(quadNormalJoml.x, quadNormalJoml.y, quadNormalJoml.z);//TODO: from direint
             transformedQuads.add(new BakedQuad(transformedVertices,
                     quad.getTintIndex(),
                     newNormal,
                     quad.getSprite(),
+                    quad.isShade(),
                     false
             ));
         }
