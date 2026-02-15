@@ -33,6 +33,7 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
@@ -49,7 +50,13 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
 
     @Override
     protected SuperByteBuffer getRotatedModel(final CogwheelChainBlockEntity be, final BlockState state) {
-        return CachedBuffers.partial(Objects.requireNonNull(GenericBlockEntityRenderModels.REGISTRY.get(state.getBlock())), state);
+        return CachedBuffers.partialFacingVertical(
+                Objects.requireNonNull(GenericBlockEntityRenderModels.REGISTRY.get(state.getBlock())),
+                state.getBlock().defaultBlockState(),
+                Direction.fromAxisAndDirection(getRotationAxisOf(be), Direction.AxisDirection.POSITIVE)
+        );
+
+//        return CachedBuffers.block(KINETIC_BLOCK, state);
     }
 
     @Override
@@ -209,8 +216,12 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
         final CogwheelChainType.ChainRenderInfo chainRenderInfo = type.getRenderType();
 
         // Calculate corners in world space for the segment ends
-        final List<Vec3> destinationPoints = getEndPointsForChainJoint(from, to, postTo, chainRenderInfo, toCogwheelAxis);
+        List<Vec3> destinationPoints = getEndPointsForChainJoint(from, to, postTo, chainRenderInfo, toCogwheelAxis);
         final List<Vec3> sourcePoints = getEndPointsForChainJoint(preFrom, from, to, chainRenderInfo, fromCogwheelAxis);
+
+        //This is my shame, i couldnt find a deterministic way to order the points consistently between joints so here we are,
+        //Matching it in a post process step
+        destinationPoints = getPointsInClosestOrder(destinationPoints, sourcePoints);
 
         final float length = (float) from.distanceTo(to);
         final float minV = offset * textureSquish;
@@ -231,6 +242,58 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
         }
 
         ms.popPose();
+    }
+
+    /**
+     * Ai slop but heres the explanation:
+     * - When you have two sets of 4 points each that are supposed to correspond to each other in pairs, there are 24 possible ways to match them up
+     * - You could just say, "find the nearest point to point connection and connect that way", but that doesent preserve the correct order we are after.
+     * - Therefore, this needs a "ring-preserving" search to ensure we dont loose the orderings (that are necassary for making CROSS rendering shapes work)
+     */
+    private static List<Vec3> getPointsInClosestOrder(final List<Vec3> destinationPoints, final List<Vec3> sourcePoints) {
+        if (destinationPoints.size() != 4 || sourcePoints.size() != 4) {
+            return new ArrayList<>(destinationPoints);
+        }
+
+        double bestScore = Double.POSITIVE_INFINITY;
+        List<Vec3> best = new ArrayList<>(destinationPoints);
+
+        // Only allow cyclic orderings: 4 rotations * (normal/reversed winding) = 8 candidates
+        for (int reversed = 0; reversed <= 1; reversed++) {
+            for (int shift = 0; shift < 4; shift++) {
+                final ArrayList<Vec3> candidate = new ArrayList<>(4);
+                double pointScore = 0.0;
+
+                for (int i = 0; i < 4; i++) {
+                    final int j = (reversed == 0)
+                            ? ((i + shift) & 3)
+                            : ((shift - i + 4) & 3);
+
+                    final Vec3 d = destinationPoints.get(j);
+                    candidate.add(d);
+                    pointScore += sourcePoints.get(i).distanceToSqr(d);
+                }
+
+                // Edge-direction term to discourage "crossed" face mapping
+                double edgeScore = 0.0;
+                for (int i = 0; i < 4; i++) {
+                    final Vec3 sEdge = sourcePoints.get((i + 1) & 3).subtract(sourcePoints.get(i)).normalize();
+                    final Vec3 dEdge = candidate.get((i + 1) & 3).subtract(candidate.get(i)).normalize();
+                    edgeScore += 1.0 - sEdge.dot(dEdge); // 0 is best
+                }
+
+                // Small bias against reversing winding unless clearly better
+                final double windingPenalty = reversed == 1 ? 1e-4 : 0.0;
+                final double score = pointScore + edgeScore * 0.25 + windingPenalty;
+
+                if (score < bestScore) {
+                    bestScore = score;
+                    best = candidate;
+                }
+            }
+        }
+
+        return best;
     }
 
     private static void renderCrossShapeFace(final PoseStack ms, final VertexConsumer vc, final Matrix4f poseMatrix, final Vec3 origin,
@@ -327,7 +390,7 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
 
         final Matrix3f transform;
 
-        if (chainRenderInfo.isDefaultDimensions()) {//TODO: make it just be is "square" dimensions
+        if (chainRenderInfo.getVertexShape() == CogwheelChainType.VertexShape.CROSS) {
             transform = new Quaternionf()
                     .rotationTo(0, 1, 0, (float) averagedDir.x, (float) averagedDir.y, (float) averagedDir.z)
                     .get(new Matrix3f());
@@ -357,15 +420,14 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
         final Vector3f localAxis2Joml = transform.transform(0f, 0f, 1f, new Vector3f());
         final Vec3 localAxis2 = new Vec3(localAxis2Joml.x, localAxis2Joml.y, localAxis2Joml.z).normalize().scale(chainRenderInfo.getWidth() / 2f);
 
-        final Vec3 finalLocalAxis1Direction = localAxis1Direction;
         return Stream.of(
                         point.add(localAxis1.add(localAxis2).scale(radius)),
                         point.add(localAxis1.subtract(localAxis2).scale(radius)),
                         point.add(localAxis2.scale(-1).subtract(localAxis1).scale(radius)),
                         point.add(localAxis2.subtract(localAxis1).scale(radius))
                 )
-                .map(e -> chainRenderInfo.getHeight() < 3 ? e.add(finalLocalAxis1Direction.scale((3f - chainRenderInfo.getHeight()) / (2 * 3 * 16))) : e)
-                .toList();
+                .map(e -> chainRenderInfo.getHeight() < 3 ? e.add(localAxis1Direction.scale((3f - chainRenderInfo.getHeight()) / (2 * 3 * 16))) : e)
+                .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
     }
 
     private static void renderChainFastButWithGaps(final PoseStack ms,

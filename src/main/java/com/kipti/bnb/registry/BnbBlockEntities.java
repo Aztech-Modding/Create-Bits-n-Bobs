@@ -34,7 +34,7 @@ public class BnbBlockEntities {
     public static final BlockEntityEntry<KineticBlockEntity> ENCASED_SHAFT = REGISTRATE
             .blockEntity("encased_shaft", KineticBlockEntity::new)
             .visual(() -> SingleAxisRotatingVisual::shaft, false)
-            .validBlocks(BnbBlocks.WEATHERED_METAL_GIRDER_ENCASED_SHAFT, BnbBlocks.INDUSTRIAL_IRON_ENCASED_SHAFT, BnbBlocks.WEATHERED_IRON_ENCASED_SHAFT)
+            .validBlocks(BnbDecoBlocks.WEATHERED_METAL_GIRDER_ENCASED_SHAFT, BnbBlocks.INDUSTRIAL_IRON_ENCASED_SHAFT, BnbBlocks.WEATHERED_IRON_ENCASED_SHAFT)
             .renderer(() -> ShaftRenderer::new)
             .register();
 
@@ -60,7 +60,7 @@ public class BnbBlockEntities {
             .register();
 
     public static final BlockEntityEntry<GirderStrutBlockEntity> GIRDER_STRUT = REGISTRATE.blockEntity("girder_strut", GirderStrutBlockEntity::new)
-            .validBlocks(BnbBlocks.GIRDER_STRUT, BnbBlocks.WEATHERED_GIRDER_STRUT)
+            .validBlocks(BnbDecoBlocks.GIRDER_STRUT, BnbDecoBlocks.WEATHERED_GIRDER_STRUT)
             .renderer(() -> GirderStrutBlockEntityRenderer::new)
             .register();
 

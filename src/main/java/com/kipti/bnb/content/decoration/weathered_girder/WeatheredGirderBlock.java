@@ -1,6 +1,6 @@
 package com.kipti.bnb.content.decoration.weathered_girder;
 
-import com.kipti.bnb.registry.BnbBlocks;
+import com.kipti.bnb.registry.BnbDecoBlocks;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.content.decoration.girder.GirderBlock;
@@ -26,6 +26,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.NotNull;
 
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED;
 
@@ -33,7 +34,7 @@ public class WeatheredGirderBlock extends GirderBlock {
 
     private static final int placementHelperId = PlacementHelpers.register(new WeatheredGirderPlacementHelper());
 
-    public WeatheredGirderBlock(Properties p_49795_) {
+    public WeatheredGirderBlock(final Properties p_49795_) {
         super(p_49795_);
     }
 
@@ -41,12 +42,9 @@ public class WeatheredGirderBlock extends GirderBlock {
      * Redirecting to weathered girder handling
      */
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        if (player == null)
-            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-
+    protected @NotNull ItemInteractionResult useItemOn(final ItemStack stack, final BlockState state, final Level level, final BlockPos pos, final Player player, final InteractionHand hand, final BlockHitResult hitResult) {
         if (AllBlocks.SHAFT.isIn(stack)) {
-            KineticBlockEntity.switchToBlockState(level, pos, BnbBlocks.WEATHERED_METAL_GIRDER_ENCASED_SHAFT.getDefaultState()
+            KineticBlockEntity.switchToBlockState(level, pos, BnbDecoBlocks.WEATHERED_METAL_GIRDER_ENCASED_SHAFT.getDefaultState()
                     .setValue(WATERLOGGED, state.getValue(WATERLOGGED))
                     .setValue(TOP, state.getValue(TOP))
                     .setValue(BOTTOM, state.getValue(BOTTOM))
@@ -69,7 +67,7 @@ public class WeatheredGirderBlock extends GirderBlock {
             return ItemInteractionResult.FAIL;
         }
 
-        IPlacementHelper helper = PlacementHelpers.get(placementHelperId);
+        final IPlacementHelper helper = PlacementHelpers.get(placementHelperId);
         if (helper.matchesItem(stack))
             return helper.getOffset(player, level, state, pos, hitResult)
                     .placeInWorld(level, (BlockItem) stack.getItem(), player, hand, hitResult);
@@ -77,15 +75,15 @@ public class WeatheredGirderBlock extends GirderBlock {
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
-    public static boolean isConnected(BlockAndTintGetter world, BlockPos pos, BlockState state, Direction side) {
-        Direction.Axis axis = side.getAxis();
+    public static boolean isConnected(final BlockAndTintGetter world, final BlockPos pos, final BlockState state, final Direction side) {
+        final Direction.Axis axis = side.getAxis();
         if (state.getBlock() instanceof WeatheredGirderBlock && !state.getValue(axis == Direction.Axis.X ? X : Z))
             return false;
         if (state.getBlock() instanceof WeatheredGirderEncasedShaftBlock
                 && state.getValue(WeatheredGirderEncasedShaftBlock.HORIZONTAL_AXIS) == axis)
             return false;
-        BlockPos relative = pos.relative(side);
-        BlockState blockState = world.getBlockState(relative);
+        final BlockPos relative = pos.relative(side);
+        final BlockState blockState = world.getBlockState(relative);
         if (blockState.isAir())
             return false;
         if (blockState.getBlock() instanceof NixieTubeBlock && NixieTubeBlock.getFacing(blockState) == side)
@@ -94,7 +92,7 @@ public class WeatheredGirderBlock extends GirderBlock {
             return true;
         if (blockState.getBlock() instanceof PlacardBlock && PlacardBlock.connectedDirection(blockState) == side)
             return true;
-        VoxelShape shape = blockState.getShape(world, relative);
+        final VoxelShape shape = blockState.getShape(world, relative);
         if (shape.isEmpty())
             return false;
         if (Block.isFaceFull(shape, side.getOpposite()) && blockState.isSolid())
