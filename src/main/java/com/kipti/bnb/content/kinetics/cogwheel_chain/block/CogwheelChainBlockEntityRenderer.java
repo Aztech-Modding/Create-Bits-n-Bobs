@@ -390,7 +390,7 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
 
         final Matrix3f transform;
 
-        if (chainRenderInfo.isDefaultDimensions()) {//TODO: make it just be is "square" dimensions
+        if (chainRenderInfo.getVertexShape() == CogwheelChainType.VertexShape.CROSS) {
             transform = new Quaternionf()
                     .rotationTo(0, 1, 0, (float) averagedDir.x, (float) averagedDir.y, (float) averagedDir.z)
                     .get(new Matrix3f());

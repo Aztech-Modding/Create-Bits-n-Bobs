@@ -134,6 +134,9 @@ public class CogwheelChainScenes {
 
         scene.idle(80);
 
+        scene.addKeyframe();
+        scene.idle(5);
+
         scene.addInstruction(new ExpandingOutlineInstruction(PonderPalette.BLUE, new Vec3(5.5f, 1.5, 2.5), new Vec3(0.5f, 1.5, 2.5), 80, 20));
         scene.idle(20);
 
