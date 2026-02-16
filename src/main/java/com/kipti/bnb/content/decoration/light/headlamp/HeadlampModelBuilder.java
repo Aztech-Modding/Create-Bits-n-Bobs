@@ -21,6 +21,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.model.BakedModelWrapper;
 import net.neoforged.neoforge.client.model.data.ModelData;
 import net.neoforged.neoforge.client.model.data.ModelProperty;
+import net.neoforged.neoforge.common.util.TriState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
@@ -48,6 +49,7 @@ public class HeadlampModelBuilder extends BakedModelWrapper<BakedModel> {
         if (world.getBlockEntity(pos) instanceof final HeadlampBlockEntity headlampBlockEntity) {
             final int[] existingPlacements = headlampBlockEntity.getActivePlacements();
             System.arraycopy(existingPlacements, 0, activePlacements, 0, existingPlacements.length);
+            data.setCcAddressingView(headlampBlockEntity.getCCLightAddressingView());
         }
 
         data.setActivePlacements(activePlacements);
@@ -58,13 +60,19 @@ public class HeadlampModelBuilder extends BakedModelWrapper<BakedModel> {
     }
 
     @Override
-    public List<BakedQuad> getQuads(final BlockState state, final Direction side, final RandomSource rand, final ModelData data, final RenderType renderType) {
+    public @NotNull List<BakedQuad> getQuads(final BlockState state, final Direction side, final RandomSource rand, final ModelData data, final RenderType renderType) {
         if (data.has(HEADLAMP_PROPERTY)) {
             final List<BakedQuad> model = new ArrayList<>(super.getQuads(state, side, rand, data, renderType));
             final HeadlampModelData headlampModelData = data.get(HEADLAMP_PROPERTY);
             for (int i = 0; i < HeadlampBlockEntity.HeadlampPlacement.values().length; i++) {
                 final HeadlampBlockEntity.HeadlampPlacement placement = HeadlampBlockEntity.HeadlampPlacement.values()[i];
+
+                assert headlampModelData != null;
+
                 final int placementValue = headlampModelData.getActivePlacements()[i];
+                final TriState ccAddressing = headlampModelData.getCcAddressingView() == null ? TriState.DEFAULT :
+                        headlampModelData.getCcAddressingView().getCCAddressingForIndex(placement);
+
                 if (placementValue != 0) {
                     final PoseStack poseStack = new PoseStack();
                     poseStack.translate(0.5f, 0.5f, 0.5f);
@@ -72,7 +80,9 @@ public class HeadlampModelBuilder extends BakedModelWrapper<BakedModel> {
                     poseStack.translate(-0.5f, -0.5f, -0.5f);
                     poseStack.translate(placement.horizontalAlignment().getOffset(), 0, placement.verticalAlignment().getOffset());
 
-                    model.addAll(transformQuadsForLamp((LightBlock.shouldUseOnLightModel(state) ? BnbPartialModels.HEADLAMP_ON : BnbPartialModels.HEADLAMP_OFF).get()
+                    final boolean shouldDisplayOn = ccAddressing == TriState.DEFAULT ? LightBlock.shouldUseOnLightModel(state) : ccAddressing == TriState.TRUE;
+
+                    model.addAll(transformQuadsForLamp((shouldDisplayOn ? BnbPartialModels.HEADLAMP_ON : BnbPartialModels.HEADLAMP_OFF).get()
                             .getQuads(state, side, rand, data, renderType), poseStack, placementValue));
                 }
             }
@@ -134,6 +144,7 @@ public class HeadlampModelBuilder extends BakedModelWrapper<BakedModel> {
 
     private static class HeadlampModelData {
         int[] activePlacements;
+        @Nullable CCLightAddressing.View ccAddressingView;
 
         public void setActivePlacements(final int[] activePlacements) {
             if (activePlacements.length != 9) {
@@ -142,8 +153,16 @@ public class HeadlampModelBuilder extends BakedModelWrapper<BakedModel> {
             this.activePlacements = activePlacements;
         }
 
+        public void setCcAddressingView(@Nullable CCLightAddressing.View ccAddressingView) {
+            this.ccAddressingView = ccAddressingView;
+        }
+
         public int[] getActivePlacements() {
             return activePlacements;
+        }
+
+        public @Nullable CCLightAddressing.View getCcAddressingView() {
+            return ccAddressingView;
         }
     }
 

@@ -7,13 +7,18 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class HeadlampBlockItem extends BlockItem {
 
-    public HeadlampBlockItem(Block block, Properties properties) {
+    public HeadlampBlockItem(final Block block, final Properties properties) {
         super(block, properties);
     }
 
-    protected boolean placeBlock(BlockPlaceContext context, BlockState state) {
-        BlockState oldState = context.getLevel().getBlockState(context.getClickedPos());
-        boolean defaultResult = super.placeBlock(context, state);
+    @Override //TODO FIX SHIFT-PLACE
+    protected boolean canPlace(final BlockPlaceContext context, final BlockState state) {
+        return super.canPlace(context, state) || context.getLevel().getBlockState(context.getClickedPos()).getBlock() instanceof HeadlampBlock;
+    }
+
+    protected boolean placeBlock(final BlockPlaceContext context, final BlockState state) {
+        final BlockState oldState = context.getLevel().getBlockState(context.getClickedPos());
+        final boolean defaultResult = super.placeBlock(context, state);
         if (oldState.getBlock().equals(state.getBlock()) && oldState.getBlock() instanceof HeadlampBlock) {
             return true;
         }

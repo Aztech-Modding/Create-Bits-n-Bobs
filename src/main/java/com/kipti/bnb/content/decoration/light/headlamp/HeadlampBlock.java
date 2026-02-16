@@ -103,7 +103,7 @@ public class HeadlampBlock extends LightBlock implements IBE<HeadlampBlockEntity
 
     @Override
     public @Nullable BlockState getStateForPlacement(@NotNull final BlockPlaceContext pContext) {
-        AtomicReference<BlockState> stateForPlacement = new AtomicReference<>(super.getStateForPlacement(pContext));
+        final AtomicReference<BlockState> stateForPlacement = new AtomicReference<>(super.getStateForPlacement(pContext));
         if (stateForPlacement.get() == null)
             return null;
 

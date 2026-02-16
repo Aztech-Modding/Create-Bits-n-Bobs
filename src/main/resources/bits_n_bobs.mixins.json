@@ -8,6 +8,7 @@
     "AllBlocksMixin",
     "AllCreatePonderScenesMixin",
     "AllPaletteStoneTypesMixin",
+    "ComputerBehaviourMixin",
     "ContraptionColliderMixin",
     "DynamicComponentMixin",
     "RotationPropagatorMixin",

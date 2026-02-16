@@ -1,16 +1,26 @@
 package com.kipti.bnb.content.decoration.light.headlamp;
 
+import com.kipti.bnb.content.decoration.light.lightbulb.LightbulbBlock;
+import com.kipti.bnb.foundation.BnbLang;
+import com.kipti.bnb.registry.BnbBlockEntities;
 import com.kipti.bnb.registry.BnbBlocks;
 import com.kipti.bnb.registry.BnbShapes;
 import com.simibubi.create.AllShapes;
+import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.api.schematic.requirement.SpecialBlockEntityItemRequirement;
+import com.simibubi.create.compat.Mods;
+import com.simibubi.create.compat.computercraft.AbstractComputerBehaviour;
+import com.simibubi.create.compat.computercraft.ComputerCraftProxy;
 import com.simibubi.create.content.schematics.requirement.ItemRequirement;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
+import dan200.computercraft.api.peripheral.PeripheralCapability;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -19,6 +29,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
@@ -26,17 +37,47 @@ import org.joml.Vector3f;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HeadlampBlockEntity extends SmartBlockEntity implements SpecialBlockEntityItemRequirement {
+public class HeadlampBlockEntity extends SmartBlockEntity implements SpecialBlockEntityItemRequirement, IHaveGoggleInformation {
 
     private final int[] activePlacements = new int[9];
+
+    public AbstractComputerBehaviour computerBehaviour;
+    public @Nullable CCLightAddressing addressing;
 
     public HeadlampBlockEntity(final BlockEntityType<?> type, final BlockPos pos, final BlockState state) {
         super(type, pos, state);
     }
 
+    public static void registerCapabilities(final RegisterCapabilitiesEvent event) {
+        if (Mods.COMPUTERCRAFT.isLoaded()) {
+            event.registerBlockEntity(
+                    PeripheralCapability.get(),
+                    BnbBlockEntities.HEADLAMP.get(),
+                    (be, context) -> be.computerBehaviour.getPeripheralCapability()
+            );
+        }
+    }
+
+    @Override
+    public boolean addToGoggleTooltip(final List<Component> tooltip, final boolean isPlayerSneaking) {
+        if (isPlayerSneaking && addressing != null) {
+            BnbLang.translate("gui.headlamp.controlled_by_computer")
+                    .style(ChatFormatting.GRAY)
+                    .forGoggles(tooltip);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        computerBehaviour.removePeripheral();
+    }
+
     @Override
     public void addBehaviours(final List<BlockEntityBehaviour> behaviours) {
-
+        behaviours.add(computerBehaviour = ComputerCraftProxy.behaviour(this));
     }
 
     public List<HeadlampPlacement> getExistingPlacements() {
@@ -98,8 +139,8 @@ public class HeadlampBlockEntity extends SmartBlockEntity implements SpecialBloc
 
         final int i = dyeColor.ordinal() + 2;
         if (activePlacements[index] == i) {
-            for (int j = 0; j < activePlacements.length; j++) {
-                if (activePlacements[j] != i && activePlacements[j] != 0) {
+            for (final int activePlacement : activePlacements) {
+                if (activePlacement != i && activePlacement != 0) {
                     return;
                 }
             }
@@ -177,6 +218,16 @@ public class HeadlampBlockEntity extends SmartBlockEntity implements SpecialBloc
         if (!tag.contains("activePlacements", 11)) {
             return;
         }
+
+        if (tag.contains("ccAddressing")) {
+            if (addressing == null) {
+                addressing = new CCLightAddressing();
+            }
+            addressing.setMask(tag.getByte("ccAddressing"));
+        } else {
+            this.addressing = null;
+        }
+
         final int[] placements = tag.getIntArray("activePlacements");
         if (placements.length != activePlacements.length) {
             throw new IllegalStateException("Active placements length mismatch: expected " + activePlacements.length + ", got " + placements.length);
@@ -192,6 +243,9 @@ public class HeadlampBlockEntity extends SmartBlockEntity implements SpecialBloc
     protected void write(final CompoundTag tag, final HolderLookup.Provider registries, final boolean clientPacket) {
         super.write(tag, registries, clientPacket);
         tag.putIntArray("activePlacements", activePlacements);
+        if (addressing != null) {
+            tag.putByte("ccAddressing", addressing.getMask());
+        }
     }
 
     /**
@@ -275,6 +329,42 @@ public class HeadlampBlockEntity extends SmartBlockEntity implements SpecialBloc
         }
         sendData();
         return true;
+    }
+
+    public CCLightAddressing getOrCreateAddressing() {
+        if (addressing == null) {
+            addressing = new CCLightAddressing();
+            if (LightbulbBlock.shouldUseOnLightModel(getBlockState())) {
+                addressing.setMask((byte) 0b1111);
+            } else {
+                addressing.setMask((byte) 0);
+            }
+        }
+        return addressing;
+    }
+
+    public @Nullable CCLightAddressing.View getCCLightAddressingView() {
+        if (addressing == null) {
+            return null;
+        }
+        return new CCLightAddressing.View(addressing.getMask());
+    }
+
+    /**
+     * Find a block entity at the current facing direction with a headlamp at the given offset, and return it if found. Otherwise, return null.
+     */
+    public @Nullable HeadlampBlockEntity searchForHeadlampAtOffset(final int x, final int y) {
+        final Direction facing = getBlockState().getValue(HeadlampBlock.FACING);
+        final boolean isVertical = facing.get2DDataValue() == -1;
+        final Direction horizontalAxis = isVertical ? Direction.NORTH : facing.getClockWise();
+        final Direction verticalAxis = isVertical ? Direction.SOUTH : Direction.UP;
+
+        final BlockPos targetPos = getBlockPos().relative(horizontalAxis, x).relative(verticalAxis, y);
+        assert level != null;
+        if (level.getBlockEntity(targetPos) instanceof final HeadlampBlockEntity headlamp) {
+            return headlamp;
+        }
+        return null;
     }
 
     public enum HeadlampAlignment {

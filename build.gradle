@@ -19,7 +19,13 @@ version = mod_version
 group = mod_group_id
 
 repositories {
-    // Add here additional repositories if required by some of the dependencies below.
+    maven { url = "https://maven.squiddev.cc" } // CC: Tweaked
+}
+
+sourceSets.main.java {
+    if (!enable_cc_tweaked.toBoolean()) {
+        exclude "com/simibubi/create/compat/computercraft/implementation/**"
+    }
 }
 
 base {
@@ -102,6 +108,12 @@ dependencies {
     compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${minecraft_version}:${flywheel_version}")
     runtimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${minecraft_version}:${flywheel_version}")
     implementation("com.tterrag.registrate:Registrate:${registrate_version}")
+
+    if (enable_cc_tweaked.toBoolean()) {
+        compileOnly("cc.tweaked:cc-tweaked-$minecraft_version-core-api:$cc_tweaked_version")
+        compileOnly("cc.tweaked:cc-tweaked-$minecraft_version-forge-api:$cc_tweaked_version")
+        runtimeOnly("cc.tweaked:cc-tweaked-$minecraft_version-forge:$cc_tweaked_version")
+    }
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.
