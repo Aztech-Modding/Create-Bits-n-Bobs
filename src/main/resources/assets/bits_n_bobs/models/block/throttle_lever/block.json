@@ -59,15 +59,6 @@
 			}
 		},
 		{
-			"from": [3, 1, 1],
-			"to": [13, 9, 15],
-			"rotation": {"angle": 0, "axis": "y", "origin": [8, 7, 8]},
-			"faces": {
-				"east": {"uv": [0, 4, 7, 8], "texture": "#0"},
-				"west": {"uv": [0, 4, 7, 8], "texture": "#0"}
-			}
-		},
-		{
 			"name": "cube inverted",
 			"from": [13.25, 9.5, 15.725],
 			"to": [2.75, 1, 0.275],
@@ -75,6 +66,15 @@
 			"faces": {
 				"east": {"uv": [0, 4, 7, 0], "texture": "#0"},
 				"west": {"uv": [0, 4, 7, 0], "texture": "#0"}
+			}
+		},
+		{
+			"from": [3, 1, 1],
+			"to": [13, 9, 15],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 7, 8]},
+			"faces": {
+				"east": {"uv": [0, 4, 7, 8], "texture": "#0"},
+				"west": {"uv": [0, 4, 7, 8], "texture": "#0"}
 			}
 		},
 		{
@@ -131,21 +131,33 @@
 			"name": "group",
 			"origin": [8, 6.5, 8],
 			"color": 0,
+			"stepParentName": "",
+			"backdrop": false,
 			"children": [
 				{
 					"name": "group",
 					"origin": [8, 6.5, 8],
 					"color": 0,
+					"stepParentName": "",
+					"backdrop": false,
 					"children": []
 				},
 				{
 					"name": "group",
 					"origin": [8, 4, 8],
 					"color": 0,
+					"stepParentName": "",
+					"backdrop": false,
 					"children": [0, 1, 2, 3]
 				},
-				4,
-				5,
+				{
+					"name": "group",
+					"origin": [8, 7, 8],
+					"color": 0,
+					"stepParentName": "",
+					"backdrop": false,
+					"children": [4, 5]
+				},
 				6
 			]
 		},
