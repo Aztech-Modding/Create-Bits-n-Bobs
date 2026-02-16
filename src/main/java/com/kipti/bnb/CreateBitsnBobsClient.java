@@ -1,6 +1,7 @@
 package com.kipti.bnb;
 
 import com.kipti.bnb.content.decoration.girder_strut.GirderStrutModelManipulator;
+import com.kipti.bnb.content.decoration.light.headlamp.HeadlampRenderCache;
 import com.kipti.bnb.foundation.ponder.BnbPonderPlugin;
 import com.kipti.bnb.registry.BnbConfigs;
 import com.kipti.bnb.registry.BnbPartialModels;
@@ -49,6 +50,7 @@ public class CreateBitsnBobsClient {
 
     public static void invalidateRenderers() {
         GirderStrutModelManipulator.invalidateMeshes();
+        HeadlampRenderCache.clearCaches();
     }
 
     @EventBusSubscriber(Dist.CLIENT)

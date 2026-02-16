@@ -39,7 +39,13 @@ import java.util.List;
 
 public class HeadlampBlockEntity extends SmartBlockEntity implements SpecialBlockEntityItemRequirement, IHaveGoggleInformation {
 
-    private final int[] activePlacements = new int[9];
+    private static final int PLACEMENT_COUNT = 9;
+    private static final int SHAPE_VALUE_BITS = 5;
+    private static final long SHAPE_VALUE_MASK = 0x1FL;
+
+    private final int[] activePlacements = new int[PLACEMENT_COUNT];
+    private VoxelShape cachedShape;
+    private long cachedShapeKey = Long.MIN_VALUE;
 
     public AbstractComputerBehaviour computerBehaviour;
     public @Nullable CCLightAddressing addressing;
@@ -296,11 +302,17 @@ public class HeadlampBlockEntity extends SmartBlockEntity implements SpecialBloc
     }
 
     public VoxelShape getShape(final BlockState state, final BlockGetter level, final BlockPos pos, final CollisionContext context) {
+        final long shapeKey = computeShapeKey(state.getValue(HeadlampBlock.FACING));
+        if (cachedShape != null && cachedShapeKey == shapeKey) {
+            return cachedShape;
+        }
         final AllShapes.Builder builder = new AllShapes.Builder(Shapes.empty());
         final List<HeadlampPlacement> placements = getExistingPlacements();
 
         if (placements.isEmpty()) {
-            return Shapes.block();
+            cachedShape = Shapes.block();
+            cachedShapeKey = shapeKey;
+            return cachedShape;
         }
 
         for (final HeadlampPlacement placement : placements) {
@@ -311,7 +323,17 @@ public class HeadlampBlockEntity extends SmartBlockEntity implements SpecialBloc
                 ));
             }
         }
-        return builder.forDirectional().get(state.getValue(HeadlampBlock.FACING));
+        cachedShape = builder.forDirectional().get(state.getValue(HeadlampBlock.FACING));
+        cachedShapeKey = shapeKey;
+        return cachedShape;
+    }
+
+    private long computeShapeKey(final Direction facing) {
+        long key = 0L;
+        for (int i = 0; i < activePlacements.length; i++) {
+            key |= ((long) activePlacements[i] & SHAPE_VALUE_MASK) << (i * SHAPE_VALUE_BITS);
+        }
+        return key | ((long) facing.ordinal() << (activePlacements.length * SHAPE_VALUE_BITS));
     }
 
     public boolean placeDyeColorIntoFullBlock(final DyeColor dyeColor) {
