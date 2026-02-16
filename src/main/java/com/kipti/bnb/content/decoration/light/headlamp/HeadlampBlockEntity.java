@@ -36,7 +36,6 @@ public class HeadlampBlockEntity extends SmartBlockEntity implements SpecialBloc
 
     @Override
     public void addBehaviours(final List<BlockEntityBehaviour> behaviours) {
-
     }
 
     public List<HeadlampPlacement> getExistingPlacements() {
@@ -275,6 +274,46 @@ public class HeadlampBlockEntity extends SmartBlockEntity implements SpecialBloc
         }
         sendData();
         return true;
+    }
+
+    // computercraft stuff
+
+    // this is the index of each lamp (I think?)
+    // keep in mind that this is the one block and not nearby headlamps.
+    // 0 1 2
+    // 3 4 5
+    // 6 7 8
+
+    // TODO: change this to use CCLightAddressControl or whatever cake decides to calls it.
+    public boolean setColor(int index, String colorName) {
+        if (index < 0 || index >= activePlacements.length) return false;
+
+        if (activePlacements[index] == 0) return false;
+
+        DyeColor dye;
+        try {
+            dye = DyeColor.valueOf(colorName.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+
+        int dyeValue = dye.ordinal() + 2;
+
+        if (activePlacements[index] == dyeValue) return false;
+
+        activePlacements[index] = dyeValue;
+        sendData();
+        return true;
+    }
+
+    public DyeColor getColor(int index) {
+        if (index < 0 || index >= activePlacements.length) return null;
+        if (activePlacements[index] == 0) return null;
+
+        int dyeOrdinal = activePlacements[index] - 2;
+        if (dyeOrdinal < 0 || dyeOrdinal >= DyeColor.values().length) return null;
+
+        return DyeColor.values()[dyeOrdinal];
     }
 
     public enum HeadlampAlignment {
