@@ -350,24 +350,6 @@ public class HeadlampBlockEntity extends SmartBlockEntity implements SpecialBloc
         return new CCLightAddressing.View(addressing.getMask());
     }
 
-    /**
-     * Find a block entity at the current facing direction with a headlamp at the given offset, and return it if found. Otherwise, return null.
-     */
-    public @Nullable HeadlampBlockEntity searchForHeadlampAtOffset(final int x, final int y) {
-        final Direction facing = getBlockState().getValue(HeadlampBlock.FACING);
-        final boolean isVertical = facing.get2DDataValue() == -1;
-        final boolean isDown = facing == Direction.DOWN;
-        final Direction horizontalAxis = isVertical ? Direction.fromAxisAndDirection(Direction.Axis.X, Direction.AxisDirection.NEGATIVE) : facing.getClockWise();
-        final Direction verticalAxis = isVertical ? Direction.fromAxisAndDirection(Direction.Axis.Z, isDown ? Direction.AxisDirection.POSITIVE : Direction.AxisDirection.NEGATIVE) : Direction.UP;
-
-        final BlockPos targetPos = getBlockPos().relative(horizontalAxis, x).relative(verticalAxis, y);
-        assert level != null;
-        if (level.getBlockEntity(targetPos) instanceof final HeadlampBlockEntity headlamp) {
-            return headlamp;
-        }
-        return null;
-    }
-
     public enum HeadlampAlignment {
         RIGHT_OR_BOTTOM(-4),
         MIDDLE(0),
