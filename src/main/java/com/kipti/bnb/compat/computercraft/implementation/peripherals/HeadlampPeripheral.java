@@ -15,23 +15,24 @@ public class HeadlampPeripheral extends SyncedPeripheral<HeadlampBlockEntity> {
         super(blockEntity);
     }
 
-    @LuaFunction()
+    @LuaFunction
     public final void setLamp(final ILuaContext context, final int x, final int y, final boolean onOff) throws LuaException {
         if (x < -32 || x > 33 || y < -32 || y > 33) {
-            throw new IllegalArgumentException("x and y must be between 32 and 33 inclusive");
+            throw new LuaException("x and y must be between 32 and 33 inclusive");
         }
-        if (x < 0 || x > 1 || y < 0 || y > 1) {
-            context.issueMainThreadTask(() -> {
+        context.issueMainThreadTask(() -> {
+            if (x < 0 || x > 1 || y < 0 || y > 1) {
                 final @Nullable HeadlampBlockEntity localBlockEntity = blockEntity.searchForHeadlampAtOffset(x >> 1, y >> 1);
                 if (localBlockEntity == null) {
-                    throw new IllegalArgumentException("No headlamp found at the given offset coordinates " + x + ", " + y);
+                    throw new LuaException("No headlamp found at the given offset coordinates " + x + ", " + y);
                 }
                 performSetLamp(localBlockEntity, x & 1, y & 1, onOff);
-                return new Object[0];
-            });
-            return;
-        }
-        performSetLamp(blockEntity, x, y, onOff);
+                return null;
+            }
+            performSetLamp(blockEntity, x, y, onOff);
+            return null;
+        });
+        return;
     }
 
     private void performSetLamp(final HeadlampBlockEntity blockEntity, int x, int y, boolean onOff) {

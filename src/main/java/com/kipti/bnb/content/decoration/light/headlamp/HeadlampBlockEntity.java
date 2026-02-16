@@ -356,8 +356,9 @@ public class HeadlampBlockEntity extends SmartBlockEntity implements SpecialBloc
     public @Nullable HeadlampBlockEntity searchForHeadlampAtOffset(final int x, final int y) {
         final Direction facing = getBlockState().getValue(HeadlampBlock.FACING);
         final boolean isVertical = facing.get2DDataValue() == -1;
-        final Direction horizontalAxis = isVertical ? Direction.NORTH : facing.getClockWise();
-        final Direction verticalAxis = isVertical ? Direction.SOUTH : Direction.UP;
+        final boolean isDown = facing == Direction.DOWN;
+        final Direction horizontalAxis = isVertical ? Direction.fromAxisAndDirection(Direction.Axis.X, Direction.AxisDirection.NEGATIVE) : facing.getClockWise();
+        final Direction verticalAxis = isVertical ? Direction.fromAxisAndDirection(Direction.Axis.Z, isDown ? Direction.AxisDirection.POSITIVE : Direction.AxisDirection.NEGATIVE) : Direction.UP;
 
         final BlockPos targetPos = getBlockPos().relative(horizontalAxis, x).relative(verticalAxis, y);
         assert level != null;
