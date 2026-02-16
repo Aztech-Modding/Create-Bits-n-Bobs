@@ -322,7 +322,7 @@ public class BnbBlocks {
                     .initialProperties(() -> Blocks.LEVER)
                     .transform(axeOrPickaxe())
                     .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
-                    .blockstate((c, p) -> p.directionalBlock(c.get(), AssetLookup.partialBaseModel(c, p)))
+                    .blockstate((c, p) -> p.directionalBlock(c.get(), (s) -> AssetLookup.partialBaseModel(c, p, s.getValue(ThrottleLeverBlock.HAS_SHAFT) ? "shaft" : "")))
                     .onRegister(ItemUseOverrides::addBlock)
                     .item()
                     .transform(customItemModel())

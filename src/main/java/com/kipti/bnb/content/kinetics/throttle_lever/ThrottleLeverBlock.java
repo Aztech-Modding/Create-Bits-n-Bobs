@@ -37,14 +37,14 @@ public class ThrottleLeverBlock extends DirectionalKineticBlock implements IBE<T
 
     @Override
     public boolean hasShaftTowards(final LevelReader world, final BlockPos pos, final BlockState state, final Direction face) {
-        return state.getValue(HAS_SHAFT) && face == state.getValue(FACING).getOpposite();
+        return face == state.getValue(FACING).getOpposite();
     }
 
     @Override
     protected @NotNull BlockState updateShape(final BlockState state, final @NotNull Direction direction, final @NotNull BlockState neighborState, final @NotNull LevelAccessor level, final @NotNull BlockPos pos, final @NotNull BlockPos neighborPos) {
         return state.setValue(HAS_SHAFT,
                 direction == state.getValue(FACING).getOpposite()
-                        && neighborState instanceof final IRotate rotatingNeighbor
+                        && neighborState.getBlock() instanceof final IRotate rotatingNeighbor
                         && rotatingNeighbor.getRotationAxis(neighborState) == state.getValue(FACING).getAxis()
         );
     }
