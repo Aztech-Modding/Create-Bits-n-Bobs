@@ -62,7 +62,7 @@ public class BnbBlockEntities {
             .register();
 
     public static final BlockEntityEntry<GirderStrutBlockEntity> GIRDER_STRUT = REGISTRATE.blockEntity("girder_strut", GirderStrutBlockEntity::new)
-            .validBlocks(BnbDecoBlocks.GIRDER_STRUT, BnbDecoBlocks.WEATHERED_GIRDER_STRUT)
+            .validBlocks(BnbDecoBlocks.GIRDER_STRUT, BnbDecoBlocks.WEATHERED_GIRDER_STRUT, BnbDecoBlocks.WOODEN_GIRDER_STRUT)
             .renderer(() -> GirderStrutBlockEntityRenderer::new)
             .register();
 

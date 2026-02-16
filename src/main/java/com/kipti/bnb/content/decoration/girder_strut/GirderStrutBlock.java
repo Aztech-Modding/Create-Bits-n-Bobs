@@ -74,6 +74,10 @@ public class GirderStrutBlock extends Block implements IBE<GirderStrutBlockEntit
         return properties -> new GirderStrutBlock(properties, StrutModelType.WEATHERED);
     }
 
+    public static NonNullFunction<Properties, GirderStrutBlock> wooden() {
+        return properties -> new GirderStrutBlock(properties, StrutModelType.WOODEN);
+    }
+
     @Override
     public @NotNull BlockState updateShape(final BlockState state, final @NotNull Direction direction, final @NotNull BlockState neighbourState, final @NotNull LevelAccessor world,
                                            final @NotNull BlockPos pos, final @NotNull BlockPos neighbourPos) {

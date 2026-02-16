@@ -153,6 +153,24 @@ public class BnbDecoBlocks {
             )
             .build()
             .register();
+            
+    public static final BlockEntry<GirderStrutBlock> WOODEN_GIRDER_STRUT = REGISTRATE.block("wooden_girder_strut", GirderStrutBlock.wooden())
+            .initialProperties(SharedProperties::wooden)
+            .transform(axeOnly())
+            .properties(p -> p.noOcclusion()
+                    .sound(SoundType.WOOD))
+            .blockstate((c, p) -> p.directionalBlock(c.get(),
+                    (state) -> p.models().getExistingFile(CreateBitsnBobs.asResource(
+                            "block/girder_strut/wooden_girder_strut_attachment")
+                    )))
+            .onRegister(CreateRegistrate.blockModel(() -> GirderStrutModelBuilder::new))
+            .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
+            .item(GirderStrutBlockItem::new)
+            .model((c, p) ->
+                    p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/girder_strut/wooden_girder_item"))
+            )
+            .build()
+            .register();
 
 
 //    public static final BlockEntry<ColoredFallingBlock> CLINKER = REGISTRATE.block("clinker", (p) -> new ColoredFallingBlock(new ColorRGBA(0xd2d5d6), p))
