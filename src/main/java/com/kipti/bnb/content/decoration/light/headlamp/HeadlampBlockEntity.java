@@ -17,6 +17,8 @@ import com.simibubi.create.content.schematics.requirement.ItemRequirement;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import dan200.computercraft.api.peripheral.PeripheralCapability;
+import dev.engine_room.flywheel.lib.visualization.VisualizationHelper;
+import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -259,8 +261,7 @@ public class HeadlampBlockEntity extends SmartBlockEntity implements SpecialBloc
         }
 
         if (clientPacket) {
-            requestModelDataUpdate();
-            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 16);
+            CatnipServices.PLATFORM.executeOnClientOnly(() -> () -> VisualizationHelper.queueUpdate(this));
         }
     }
 

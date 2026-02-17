@@ -259,7 +259,7 @@ public class BnbBlocks {
             .properties(p -> p
                     .noOcclusion()
                     .lightLevel(LightBlock::getLightLevel)
-                    .emissiveRendering((state, level, pos) -> state.getValue(LightBlock.POWER) > 0)
+                    .emissiveRendering((state, level, pos) -> false)
                     .mapColor(DyeColor.ORANGE)
                     .forceSolidOn())
             .addLayer(() -> RenderType::translucent)

@@ -49,6 +49,11 @@ public class HeadlampBlock extends LightBlock implements IBE<HeadlampBlockEntity
     }
 
     @Override
+    protected boolean propagatesSkylightDown(final BlockState state, final BlockGetter level, final BlockPos pos) {
+        return true;
+    }
+
+    @Override
     public void setPlacedBy(final @NotNull Level level, final @NotNull BlockPos pos, final @NotNull BlockState state, @Nullable final LivingEntity placer, final @NotNull ItemStack stack) {
         super.setPlacedBy(level, pos, state, placer, stack);
         if (placer == null) {

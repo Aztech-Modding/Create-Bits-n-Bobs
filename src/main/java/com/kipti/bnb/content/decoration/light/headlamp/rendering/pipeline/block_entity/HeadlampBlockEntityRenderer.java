@@ -7,6 +7,7 @@ import com.simibubi.create.foundation.blockEntity.renderer.SmartBlockEntityRende
 import dev.engine_room.flywheel.api.visualization.VisualizationManager;
 import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.createmod.catnip.render.SuperByteBuffer;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -65,7 +66,7 @@ public class HeadlampBlockEntityRenderer extends SmartBlockEntityRenderer<Headla
                     .uncenter();
         }
         cached
-                .light(light)
+                .light(LightTexture.FULL_BRIGHT)
                 .renderInto(ms, buffer.getBuffer(RenderType.translucent()));
         ms.popPose();
     }

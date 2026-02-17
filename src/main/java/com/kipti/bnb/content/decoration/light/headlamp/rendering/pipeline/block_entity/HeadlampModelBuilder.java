@@ -5,17 +5,18 @@ import com.kipti.bnb.content.decoration.light.headlamp.HeadlampBlockEntity;
 import com.kipti.bnb.content.decoration.light.headlamp.rendering.HeadlampConstants;
 import com.kipti.bnb.registry.BnbPartialModels;
 import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.simibubi.create.foundation.model.BakedQuadHelper;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.model.data.ModelData;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Vector2i;
+import org.joml.Vector3f;
 
 import java.util.List;
 
@@ -35,7 +36,7 @@ public class HeadlampModelBuilder {
      * contains no rotational or positional data and can be reused across
      * headlamps facing different directions.
      */
-    public static void buildHeadlampGeometry(final VertexConsumer builder, final long renderState) {
+    public static void buildHeadlampGeometry(final BufferBuilder builder, final long renderState) {
         final int onOffBits = (int) (renderState & 0xFL);
         final HeadlampBlockEntity.HeadlampPlacement[] allPlacements = HeadlampBlockEntity.HeadlampPlacement.values();
 
@@ -70,17 +71,13 @@ public class HeadlampModelBuilder {
         }
     }
 
-    /**
-     * Returns whether the light at the given placement should display as on,
-     * based on the precalculated on/off bits from the packed render state.
-     */
     private static boolean getLightOnOffState(final int onOffBits, final HeadlampBlockEntity.HeadlampPlacement placement) {
         final Vector2i coord = CCLightAddressing.getLocalMaskCoordinateForPlacement(placement);
         return CCLightAddressing.getMaskValue((byte) onOffBits, coord);
     }
 
-    private static void emitTransformedQuad(
-            final VertexConsumer builder,
+    public static void emitTransformedQuad(
+            final BufferBuilder builder,
             final BakedQuad quad,
             final Matrix4f transform,
             final @Nullable DyeColor color,
@@ -90,22 +87,32 @@ public class HeadlampModelBuilder {
         final TextureAtlasSprite oldSprite = quad.getSprite();
         final TextureAtlasSprite newSprite = HeadlampRenderCache.getTintedSprite(oldSprite, color);
 
-        final BakedQuad quadToRender = oldSprite.equals(newSprite) ? quad :
-                new BakedQuad(vertices, -1, quad.getDirection(), newSprite, quad.isShade());
+        final Vector3f pos = new Vector3f();
+        final Vector3f normal = new Vector3f();
 
-        // Build a simple translation pose (we only used a translation in the original transform)
-        final PoseStack poseStack = new PoseStack();
-        // extract translation components from the JOML matrix (translation only expected)
-        final float tx = transform.m30();
-        final float ty = transform.m31();
-        final float tz = transform.m32();
-        poseStack.pushPose();
-        poseStack.translate(tx, ty, tz);
-        final PoseStack.Pose pose = poseStack.last();
+        for (int i = 0; i < vertices.length / BakedQuadHelper.VERTEX_STRIDE; i++) {
+            final Vec3 vertex = BakedQuadHelper.getXYZ(vertices, i);
+            final Vec3 vertexNormal = BakedQuadHelper.getNormalXYZ(vertices, i);
+            float uvX = BakedQuadHelper.getU(vertices, i);
+            float uvY = BakedQuadHelper.getV(vertices, i);
 
-        // Use the PoseStack.Pose-based bulk API to emit the quad in one call.
-        builder.putBulkData(pose, quadToRender, 1.0f, 1.0f, 1.0f, 1.0f, isOn ? 0xF000F0 : 0, OverlayTexture.NO_OVERLAY, false);
-        poseStack.popPose();
+            if (!oldSprite.equals(newSprite)) {
+                uvX = (uvX - oldSprite.getU0()) / (oldSprite.getU1() - oldSprite.getU0())
+                        * (newSprite.getU1() - newSprite.getU0()) + newSprite.getU0();
+                uvY = (uvY - oldSprite.getV0()) / (oldSprite.getV1() - oldSprite.getV0())
+                        * (newSprite.getV1() - newSprite.getV0()) + newSprite.getV0();
+            }
+
+            transform.transformPosition((float) vertex.x, (float) vertex.y, (float) vertex.z, pos);
+            transform.transformDirection((float) vertexNormal.x, (float) vertexNormal.y, (float) vertexNormal.z, normal);
+
+            builder.addVertex(pos.x, pos.y, pos.z)
+                    .setColor(1.0f, 1.0f, 1.0f, 1.0f)
+                    .setUv(uvX, uvY)
+                    .setOverlay(OverlayTexture.NO_OVERLAY)
+                    .setLight(0)
+                    .setNormal(normal.x, normal.y, normal.z);
+        }
     }
 
 }

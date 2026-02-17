@@ -20,6 +20,11 @@ public class ShiftTransformedInstance extends TransformedInstance {
     }
 
     public ShiftTransformedInstance setSpriteShift(final SpriteShiftEntry spriteShift) {
+        if (spriteShift == null) {
+            diffU = 0;
+            diffV = 0;
+            return this;
+        }
         diffU = spriteShift.getTarget().getU0() - spriteShift.getOriginal().getU0();
         diffV = spriteShift.getTarget().getV0() - spriteShift.getOriginal().getV0();
         return this;

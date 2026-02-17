@@ -1,9 +1,9 @@
 {
 	"format_version": "1.9.0",
 	"credit": "Made with Blockbench",
-	"render_type": "minecraft:cutout",
 	"textures": {
 		"1": "bits_n_bobs:block/headlight/headlight",
+		"2": "bits_n_bobs:block/headlight/headlight_off",
 		"particle": "bits_n_bobs:block/headlight/headlight_off"
 	},
 	"elements": [
@@ -18,6 +18,17 @@
 				"west": {"uv": [10.5, 7.5, 12, 11.5], "rotation": 90, "texture": "#1"},
 				"up": {"uv": [11.5, 11.5, 15.5, 15.5], "rotation": 180, "texture": "#1"},
 				"down": {"uv": [7.5, 11.5, 11.5, 15.5], "texture": "#1"}
+			}
+		},
+		{
+			"from": [3.75, 5, 3.75],
+			"to": [12.25, 6, 12.25],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 6, 8]},
+			"faces": {
+				"north": {"uv": [1, 8, 0, 16], "rotation": 270, "texture": "#2"},
+				"east": {"uv": [1, 8, 0, 16], "rotation": 270, "texture": "#2"},
+				"south": {"uv": [1, 16, 0, 8], "rotation": 270, "texture": "#2"},
+				"west": {"uv": [0, 8, 1, 16], "rotation": 90, "texture": "#2"}
 			}
 		},
 		{
