@@ -1,0 +1,50 @@
+{
+	"format_version": "1.21.11",
+	"credit": "Made with Blockbench",
+	"parent": "bits_n_bobs:block/girder_strut/cable_girder_item",
+	"elements": [
+		{
+			"from": [7, 7, 0],
+			"to": [9, 9, 16],
+			"rotation": {"angle": 0, "axis": "y", "origin": [7, 0, 0]},
+			"color": 9,
+			"faces": {
+				"north": {"uv": [0, 0, 2, 2], "texture": "#missing"},
+				"east": {"uv": [0, 0, 16, 2], "texture": "#missing"},
+				"south": {"uv": [0, 0, 2, 2], "texture": "#missing"},
+				"west": {"uv": [0, 0, 16, 2], "texture": "#missing"},
+				"up": {"uv": [0, 0, 2, 16], "texture": "#missing"},
+				"down": {"uv": [0, 0, 2, 16], "texture": "#missing"}
+			}
+		}
+	],
+	"display": {
+		"thirdperson_righthand": {
+			"rotation": [75, 45, 0],
+			"translation": [0, 2.5, 0],
+			"scale": [0.375, 0.375, 0.375]
+		},
+		"firstperson_righthand": {
+			"rotation": [0, 45, 0],
+			"scale": [0.4, 0.4, 0.4]
+		},
+		"firstperson_lefthand": {
+			"rotation": [0, 45, 0],
+			"scale": [0.4, 0.4, 0.4]
+		},
+		"ground": {
+			"translation": [0, 3, 0],
+			"scale": [0.25, 0.25, 0.25]
+		},
+		"gui": {
+			"rotation": [30, 45, 0],
+			"scale": [0.625, 0.625, 0.625]
+		},
+		"head": {
+			"translation": [0, 13, 7]
+		},
+		"fixed": {
+			"scale": [0.5, 0.5, 0.5]
+		}
+	}
+}

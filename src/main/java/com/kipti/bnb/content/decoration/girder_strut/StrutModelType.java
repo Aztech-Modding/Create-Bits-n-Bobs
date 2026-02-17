@@ -9,7 +9,8 @@ import net.minecraft.resources.ResourceLocation;
 public enum StrutModelType {
     WEATHERED(BnbPartialModels.WEATHERED_GIRDER_STRUT_SEGMENT, CreateBitsnBobs.asResource("block/weathered_iron_block")),
     NORMAL(BnbPartialModels.GIRDER_STRUT_SEGMENT, CreateBitsnBobs.asResource("block/industrial_iron_block")),
-    WOODEN(BnbPartialModels.WOODEN_GIRDER_STRUT_SEGMENT, CreateBitsnBobs.asResource("block/oak_planks"));
+    WOODEN(BnbPartialModels.WOODEN_GIRDER_STRUT_SEGMENT, CreateBitsnBobs.asResource("block/oak_planks")),
+    CABLE(BnbPartialModels.CABLE_STRUT_SEGMENT, CreateBitsnBobs.asResource("block/industrial_iron_block"));
 
     private final PartialModel segmentPartial;
     private final ResourceLocation capTexture;
