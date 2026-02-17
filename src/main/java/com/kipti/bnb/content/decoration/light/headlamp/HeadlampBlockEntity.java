@@ -1,5 +1,6 @@
 package com.kipti.bnb.content.decoration.light.headlamp;
 
+import com.kipti.bnb.content.decoration.light.founation.LightBlock;
 import com.kipti.bnb.content.decoration.light.lightbulb.LightbulbBlock;
 import com.kipti.bnb.foundation.BnbLang;
 import com.kipti.bnb.registry.BnbBlockEntities;
@@ -40,10 +41,21 @@ import java.util.List;
 public class HeadlampBlockEntity extends SmartBlockEntity implements SpecialBlockEntityItemRequirement, IHaveGoggleInformation {
 
     private static final int PLACEMENT_COUNT = 9;
+    private static final int RENDER_STATE_ON_OFF_BITS = 4;
+    private static final int RENDER_STATE_SLOT_BITS = 5;
     private static final int SHAPE_VALUE_BITS = 5;
     private static final long SHAPE_VALUE_MASK = 0x1FL;
 
-    private final int[] activePlacements = new int[PLACEMENT_COUNT];
+    /**
+     * Each slot stores a value from 0 to 17 (5 bits max):
+     * <ul>
+     *     <li>0 = no headlamp present</li>
+     *     <li>1 = undyed headlamp</li>
+     *     <li>2–17 = dye color (ordinal + 2, matching {@link DyeColor} values)</li>
+     * </ul>
+     * Values must not exceed 5 bits (max 31), though only 0–17 are currently valid.
+     */
+    private final byte[] activePlacements = new byte[PLACEMENT_COUNT];
     private VoxelShape cachedShape;
     private long cachedShapeKey = Long.MIN_VALUE;
 
@@ -143,9 +155,9 @@ public class HeadlampBlockEntity extends SmartBlockEntity implements SpecialBloc
         }
         final int index = placement.ordinal();
 
-        final int i = dyeColor.ordinal() + 2;
+        final byte i = (byte) (dyeColor.ordinal() + 2);
         if (activePlacements[index] == i) {
-            for (final int activePlacement : activePlacements) {
+            for (final byte activePlacement : activePlacements) {
                 if (activePlacement != i && activePlacement != 0) {
                     return;
                 }
@@ -221,9 +233,6 @@ public class HeadlampBlockEntity extends SmartBlockEntity implements SpecialBloc
     @Override
     protected void read(final CompoundTag tag, final HolderLookup.Provider registries, final boolean clientPacket) {
         super.read(tag, registries, clientPacket);
-        if (!tag.contains("activePlacements", 11)) {
-            return;
-        }
 
         if (tag.contains("ccAddressing")) {
             if (addressing == null) {
@@ -234,11 +243,26 @@ public class HeadlampBlockEntity extends SmartBlockEntity implements SpecialBloc
             this.addressing = null;
         }
 
-        final int[] placements = tag.getIntArray("activePlacements");
-        if (placements.length != activePlacements.length) {
-            throw new IllegalStateException("Active placements length mismatch: expected " + activePlacements.length + ", got " + placements.length);
+        // Migration: read from new byte array key first, then fall back to legacy int array key
+        if (tag.contains("headlampPlacements", 7)) {
+            final byte[] placements = tag.getByteArray("headlampPlacements");
+            if (placements.length != activePlacements.length) {
+                throw new IllegalStateException("Active placements length mismatch: expected " + activePlacements.length + ", got " + placements.length);
+            }
+            System.arraycopy(placements, 0, activePlacements, 0, placements.length);
+        } else if (tag.contains("activePlacements", 11)) {
+            // Legacy migration: convert int[] to byte[]
+            final int[] legacyPlacements = tag.getIntArray("activePlacements");
+            if (legacyPlacements.length != activePlacements.length) {
+                throw new IllegalStateException("Active placements length mismatch: expected " + activePlacements.length + ", got " + legacyPlacements.length);
+            }
+            for (int i = 0; i < legacyPlacements.length; i++) {
+                activePlacements[i] = (byte) legacyPlacements[i];
+            }
+        } else {
+            return;
         }
-        System.arraycopy(placements, 0, activePlacements, 0, placements.length);
+
         if (clientPacket) {
             requestModelDataUpdate();
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 16);
@@ -248,7 +272,7 @@ public class HeadlampBlockEntity extends SmartBlockEntity implements SpecialBloc
     @Override
     protected void write(final CompoundTag tag, final HolderLookup.Provider registries, final boolean clientPacket) {
         super.write(tag, registries, clientPacket);
-        tag.putIntArray("activePlacements", activePlacements);
+        tag.putByteArray("headlampPlacements", activePlacements);
         if (addressing != null) {
             tag.putByte("ccAddressing", addressing.getMask());
         }
@@ -297,10 +321,41 @@ public class HeadlampBlockEntity extends SmartBlockEntity implements SpecialBloc
         }
     }
 
-    public int[] getActivePlacements() {
-        final int[] copy = new int[activePlacements.length];
+    public byte[] getActivePlacements() {
+        final byte[] copy = new byte[activePlacements.length];
         System.arraycopy(activePlacements, 0, copy, 0, activePlacements.length);
         return copy;
+    }
+
+    /**
+     * Encodes the full render state of this headlamp block entity as a {@code long}.
+     * <p>
+     * The layout (least-significant bits first) is:
+     * <ul>
+     *     <li>Bits 0–3 (4 bits): on/off state. If CC addressing is present, these are the CC address mask bits.
+     *         Otherwise, all {@code 0b1111} if the light renderer should display "on", or {@code 0b0000} for "off".</li>
+     *     <li>Bits 4–48 (9 slots × 5 bits each): headlamp state per slot.
+     *         0 = none, 1 = undyed, 2–17 = dye color (see {@link #activePlacements}).</li>
+     * </ul>
+     * <p>
+     * Total: 4 + 45 = 49 bits used out of the 64-bit long.
+     *
+     * @return the packed render state as a long
+     */
+    public long getRenderStateAsLong() {
+        final long onOffBits;
+        if (addressing != null) {
+            onOffBits = addressing.getMask() & 0xFL;
+        } else {
+            onOffBits = LightBlock.shouldUseOnLightModel(getBlockState()) ? 0xFL : 0x0L;
+        }
+
+        long state = onOffBits;
+        for (int i = 0; i < PLACEMENT_COUNT; i++) {
+            final long slotValue = activePlacements[i] & SHAPE_VALUE_MASK;
+            state |= slotValue << (RENDER_STATE_ON_OFF_BITS + i * RENDER_STATE_SLOT_BITS);
+        }
+        return state;
     }
 
     public VoxelShape getShape(final BlockState state, final BlockGetter level, final BlockPos pos, final CollisionContext context) {
@@ -340,7 +395,7 @@ public class HeadlampBlockEntity extends SmartBlockEntity implements SpecialBloc
 
     public boolean placeDyeColorIntoFullBlock(final DyeColor dyeColor) {
         boolean placedAny = false;
-        final int toAdd = dyeColor.ordinal() + 2;
+        final byte toAdd = (byte) (dyeColor.ordinal() + 2);
         for (int i = 0; i < HeadlampPlacement.values().length; i++) {
             if (this.activePlacements[i] == 0 || this.activePlacements[i] == toAdd) {
                 continue; // Skip placements without headlamps
@@ -440,7 +495,7 @@ public class HeadlampBlockEntity extends SmartBlockEntity implements SpecialBloc
     @Override
     public ItemRequirement getRequiredItems(final BlockState state) {
         int numberOfHeadlamps = -1;
-        for (final int placement : activePlacements)
+        for (final byte placement : activePlacements)
             if (placement != 0)
                 numberOfHeadlamps++;
 

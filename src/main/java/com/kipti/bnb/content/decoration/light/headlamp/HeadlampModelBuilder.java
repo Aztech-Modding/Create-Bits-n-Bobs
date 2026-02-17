@@ -41,7 +41,7 @@ public class HeadlampModelBuilder extends BakedModelWrapper<BakedModel> {
     public @NotNull ModelData getModelData(final BlockAndTintGetter world, final BlockPos pos, final BlockState state, final ModelData blockEntityData) {
         final HeadlampModelData data = new HeadlampModelData();
 
-        int[] activePlacements = new int[PLACEMENT_COUNT];
+        byte[] activePlacements = new byte[PLACEMENT_COUNT];
 
         if (world.getBlockEntity(pos) instanceof final HeadlampBlockEntity headlampBlockEntity) {
             activePlacements = headlampBlockEntity.getActivePlacements();
@@ -64,7 +64,7 @@ public class HeadlampModelBuilder extends BakedModelWrapper<BakedModel> {
             return model;
             }
             final HeadlampBlockEntity.HeadlampPlacement[] placements = HeadlampBlockEntity.HeadlampPlacement.values();
-            final int[] activePlacements = headlampModelData.getActivePlacements();
+            final byte[] activePlacements = headlampModelData.getActivePlacements();
             final Direction facing = state.getValue(HeadlampBlock.FACING);
             for (int i = 0; i < placements.length; i++) {
             final HeadlampBlockEntity.HeadlampPlacement placement = placements[i];
@@ -144,21 +144,21 @@ public class HeadlampModelBuilder extends BakedModelWrapper<BakedModel> {
     }
 
     private static class HeadlampModelData {
-        int[] activePlacements;
+        byte[] activePlacements;
         @Nullable CCLightAddressing.View ccAddressingView;
 
-        public void setActivePlacements(final int[] activePlacements) {
+        public void setActivePlacements(final byte[] activePlacements) {
             if (activePlacements.length != PLACEMENT_COUNT) {
                 throw new IllegalArgumentException("Active placements array must have length " + PLACEMENT_COUNT);
             }
             this.activePlacements = activePlacements;
         }
 
-        public void setCcAddressingView(@Nullable CCLightAddressing.View ccAddressingView) {
+        public void setCcAddressingView(@Nullable final CCLightAddressing.View ccAddressingView) {
             this.ccAddressingView = ccAddressingView;
         }
 
-        public int[] getActivePlacements() {
+        public byte[] getActivePlacements() {
             return activePlacements;
         }
 

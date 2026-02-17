@@ -1,6 +1,7 @@
 package com.kipti.bnb.foundation;
 
 import com.kipti.bnb.content.decoration.girder_strut.GirderStrutPlacementEffects;
+import com.kipti.bnb.content.decoration.light.headlamp.HeadlampVertexBufferCache;
 import com.kipti.bnb.content.decoration.weathered_girder.WeatheredGirderWrenchBehaviour;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.placement.CogwheelChainPlacementEffect;
 import com.kipti.bnb.foundation.generation.PonderflatGeneratorSettings;
@@ -37,6 +38,7 @@ public class ClientEvents {
     @SubscribeEvent
     public static void onTickPost(final ClientTickEvent.Post event) {
         WeatheredGirderWrenchBehaviour.tick();
+        HeadlampVertexBufferCache.tick();
 
         //Render deferred debug outlines
         synchronized (deferredDebugRenderOutlines) {

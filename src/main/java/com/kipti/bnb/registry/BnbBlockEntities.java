@@ -3,6 +3,7 @@ package com.kipti.bnb.registry;
 import com.kipti.bnb.content.decoration.girder_strut.GirderStrutBlockEntity;
 import com.kipti.bnb.content.decoration.girder_strut.GirderStrutBlockEntityRenderer;
 import com.kipti.bnb.content.decoration.light.headlamp.HeadlampBlockEntity;
+import com.kipti.bnb.content.decoration.light.headlamp.HeadlampBlockEntityRenderer;
 import com.kipti.bnb.content.decoration.nixie.foundation.GenericNixieDisplayBlockEntity;
 import com.kipti.bnb.content.decoration.nixie.foundation.GenericNixieDisplayBoardRenderer;
 import com.kipti.bnb.content.kinetics.chain_pulley.ChainPulleyBlockEntity;
@@ -31,6 +32,7 @@ public class BnbBlockEntities {
 
     public static final BlockEntityEntry<HeadlampBlockEntity> HEADLAMP = REGISTRATE.blockEntity("headlamp", HeadlampBlockEntity::new)
             .validBlock(BnbBlocks.HEADLAMP)
+            .renderer(() -> HeadlampBlockEntityRenderer::new)
             .register();
 
     public static final BlockEntityEntry<KineticBlockEntity> ENCASED_SHAFT = REGISTRATE
