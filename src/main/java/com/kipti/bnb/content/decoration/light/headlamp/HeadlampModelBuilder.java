@@ -18,6 +18,7 @@ import net.neoforged.neoforge.client.model.BakedModelWrapper;
 import net.neoforged.neoforge.client.model.data.ModelData;
 import net.neoforged.neoforge.client.model.data.ModelProperty;
 import net.neoforged.neoforge.common.util.TriState;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
@@ -28,6 +29,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+@ApiStatus.ScheduledForRemoval
 public class HeadlampModelBuilder extends BakedModelWrapper<BakedModel> {
 
     private static final ModelProperty<HeadlampModelData> HEADLAMP_PROPERTY = new ModelProperty<>();
@@ -60,33 +62,33 @@ public class HeadlampModelBuilder extends BakedModelWrapper<BakedModel> {
             final List<BakedQuad> model = new ArrayList<>(super.getQuads(state, side, rand, data, renderType));
             final HeadlampModelData headlampModelData = data.get(HEADLAMP_PROPERTY);
             if (headlampModelData == null) {
-            return model;
+                return model;
             }
             final HeadlampBlockEntity.HeadlampPlacement[] placements = HeadlampBlockEntity.HeadlampPlacement.values();
             final byte[] activePlacements = headlampModelData.getActivePlacements();
             final Direction facing = state.getValue(HeadlampBlock.FACING);
             for (int i = 0; i < placements.length; i++) {
-            final HeadlampBlockEntity.HeadlampPlacement placement = placements[i];
-            final int placementValue = activePlacements[i];
+                final HeadlampBlockEntity.HeadlampPlacement placement = placements[i];
+                final int placementValue = activePlacements[i];
                 final TriState ccAddressing = headlampModelData.getCcAddressingView() == null ? TriState.DEFAULT :
                         headlampModelData.getCcAddressingView().getCCAddressingForIndex(placement);
 
                 if (placementValue != 0) {
                     final boolean shouldDisplayOn = ccAddressing == TriState.DEFAULT ? LightBlock.shouldUseOnLightModel(state) : ccAddressing == TriState.TRUE;
-                final HeadlampRenderCache.QuadCacheKey cacheKey = new HeadlampRenderCache.QuadCacheKey(
-                    facing,
-                    placement.ordinal(),
-                    placementValue,
-                    shouldDisplayOn,
-                    side,
-                    renderType
-                );
-                model.addAll(HeadlampRenderCache.getOrCreateQuads(cacheKey, () -> transformQuadsForLamp(
-                    (shouldDisplayOn ? BnbPartialModels.HEADLAMP_ON : BnbPartialModels.HEADLAMP_OFF).get()
-                        .getQuads(state, side, rand, data, renderType),
-                    HeadlampRenderCache.getTransform(facing, placement),
-                    placementValue
-                )));
+                    final HeadlampRenderCache.QuadCacheKey cacheKey = new HeadlampRenderCache.QuadCacheKey(
+                            facing,
+                            placement.ordinal(),
+                            placementValue,
+                            shouldDisplayOn,
+                            side,
+                            renderType
+                    );
+                    model.addAll(HeadlampRenderCache.getOrCreateQuads(cacheKey, () -> transformQuadsForLamp(
+                            (shouldDisplayOn ? BnbPartialModels.HEADLAMP_ON : BnbPartialModels.HEADLAMP_OFF).get()
+                                    .getQuads(state, side, rand, data, renderType),
+                            HeadlampRenderCache.getTransform(facing, placement),
+                            placementValue
+                    )));
                 }
             }
             return model;
@@ -94,7 +96,7 @@ public class HeadlampModelBuilder extends BakedModelWrapper<BakedModel> {
         return Collections.emptyList();
     }
 
-        private List<BakedQuad> transformQuadsForLamp(final List<BakedQuad> quads, final Matrix4f transform, final int placementValue) {
+    private List<BakedQuad> transformQuadsForLamp(final List<BakedQuad> quads, final Matrix4f transform, final int placementValue) {
         @Nullable final DyeColor color = placementValue == 1 ? null : DyeColor.values()[Math.clamp(placementValue - 2, 0, DyeColor.values().length - 1)];
         final List<BakedQuad> transformedQuads = new ArrayList<>();
         for (final BakedQuad quad : quads) {

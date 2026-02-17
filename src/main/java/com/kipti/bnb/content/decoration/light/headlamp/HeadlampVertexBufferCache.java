@@ -1,10 +1,6 @@
 package com.kipti.bnb.content.decoration.light.headlamp;
 
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.ByteBufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.MeshData;
-import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.*;
 import net.createmod.catnip.render.SuperBufferFactory;
 import net.createmod.catnip.render.SuperByteBuffer;
 import org.jetbrains.annotations.Nullable;
@@ -43,6 +39,9 @@ public final class HeadlampVertexBufferCache {
      * @return the cached buffer, or {@code null} if the builder produced no geometry
      */
     public static @Nullable SuperByteBuffer getOrCreate(final long renderState, final Consumer<BufferBuilder> builder) {
+        //TEMP DEBUG JUST CLEAR CACHE ALWAYS
+        CACHE.entrySet().removeIf(entry -> true);
+
         synchronized (CACHE) {
             final CacheEntry existing = CACHE.get(renderState);
             if (existing != null) {

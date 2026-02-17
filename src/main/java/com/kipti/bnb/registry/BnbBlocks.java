@@ -4,7 +4,6 @@ import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.decoration.light.founation.LightBlock;
 import com.kipti.bnb.content.decoration.light.headlamp.HeadlampBlock;
 import com.kipti.bnb.content.decoration.light.headlamp.HeadlampBlockItem;
-import com.kipti.bnb.content.decoration.light.headlamp.HeadlampModelBuilder;
 import com.kipti.bnb.content.decoration.light.lightbulb.LightbulbBlock;
 import com.kipti.bnb.content.decoration.nixie.foundation.DoubleOrientedBlockModel;
 import com.kipti.bnb.content.decoration.nixie.large_nixie_tube.LargeNixieTubeBlockNixie;
@@ -256,7 +255,7 @@ public class BnbBlocks {
                             "block/headlamp/headlight_block"
                     ))
             ))
-            .onRegister(CreateRegistrate.blockModel(() -> HeadlampModelBuilder::new))
+//            .onRegister(CreateRegistrate.blockModel(() -> HeadlampModelBuilder::new))
             .properties(p -> p
                     .noOcclusion()
                     .lightLevel(LightBlock::getLightLevel)

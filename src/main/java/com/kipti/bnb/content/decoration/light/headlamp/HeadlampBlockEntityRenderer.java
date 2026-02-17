@@ -20,6 +20,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.model.data.ModelData;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
+import org.joml.Vector2i;
 import org.joml.Vector3f;
 
 import java.util.List;
@@ -71,10 +72,13 @@ public class HeadlampBlockEntityRenderer extends SmartBlockEntityRenderer<Headla
             TransformStack.of(ms)
                     .center()
                     .rotateTo(Direction.UP, facing)
+                    .rotateYDegrees(facing.get2DDataValue() != -1 ? facing.get2DDataValue() * -90.0f : 0)
                     .uncenter();
         }
-        cached.light(light)
-                .renderInto(ms, buffer.getBuffer(RenderType.solid()));
+        cached
+                .disableDiffuse()
+                .light(light)
+                .renderInto(ms, buffer.getBuffer(RenderType.translucent()));
         ms.popPose();
     }
 
@@ -112,7 +116,7 @@ public class HeadlampBlockEntityRenderer extends SmartBlockEntityRenderer<Headla
             final List<BakedQuad> sourceQuads = (shouldDisplayOn
                     ? BnbPartialModels.HEADLAMP_ON
                     : BnbPartialModels.HEADLAMP_OFF
-            ).get().getQuads(null, null, RANDOM, ModelData.EMPTY, RenderType.solid());
+            ).get().getQuads(null, null, RANDOM, ModelData.EMPTY, null);
 
             for (final BakedQuad quad : sourceQuads) {
                 emitTransformedQuad(builder, quad, transform, color);
@@ -125,7 +129,7 @@ public class HeadlampBlockEntityRenderer extends SmartBlockEntityRenderer<Headla
      * based on the precalculated on/off bits from the packed render state.
      */
     private static boolean getLightOnOffState(final int onOffBits, final HeadlampBlockEntity.HeadlampPlacement placement) {
-        final var coord = CCLightAddressing.getLocalMaskCoordinateForPlacement(placement);
+        final Vector2i coord = CCLightAddressing.getLocalMaskCoordinateForPlacement(placement);
         return CCLightAddressing.getMaskValue((byte) onOffBits, coord);
     }
 
