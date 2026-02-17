@@ -18,7 +18,6 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.model.data.ModelData;
-import net.neoforged.neoforge.common.util.TriState;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -34,17 +33,6 @@ import java.util.List;
  * appropriate rotation transform at render time.
  */
 public class HeadlampBlockEntityRenderer extends SmartBlockEntityRenderer<HeadlampBlockEntity> {
-
-    private static final int RENDER_STATE_ON_OFF_BITS = 4;
-    private static final int RENDER_STATE_SLOT_BITS = 5;
-    private static final long RENDER_STATE_SLOT_MASK = 0x1FL;
-    private static final int PLACEMENT_COUNT = 9;
-
-    /**
-     * Offset applied to {@link DyeColor#ordinal()} when encoding/decoding dye color in placement values.
-     * Value 0 = none, 1 = undyed, 2+ = {@code DyeColor.ordinal() + DYE_COLOR_OFFSET}.
-     */
-    private static final int DYE_COLOR_OFFSET = 2;
 
     private static final RandomSource RANDOM = RandomSource.createNewThreadLocalInstance();
 
@@ -92,30 +80,23 @@ public class HeadlampBlockEntityRenderer extends SmartBlockEntityRenderer<Headla
 
     /**
      * Builds headlamp geometry facing up into the provided {@link BufferBuilder}.
-     * All state is decoded from the packed {@code renderState} long so the resulting
-     * buffer contains no rotational or positional data and can be reused across
+     * All state is decoded from the packed {@code renderState} long (see
+     * {@link HeadlampBlockEntity#getRenderStateAsLong()}) so the resulting buffer
+     * contains no rotational or positional data and can be reused across
      * headlamps facing different directions.
      */
     private static void buildHeadlampGeometry(final BufferBuilder builder, final long renderState) {
         final int onOffBits = (int) (renderState & 0xFL);
         final HeadlampBlockEntity.HeadlampPlacement[] allPlacements = HeadlampBlockEntity.HeadlampPlacement.values();
 
-        for (int i = 0; i < PLACEMENT_COUNT; i++) {
-            final int placementValue = (int) ((renderState >> (RENDER_STATE_ON_OFF_BITS + i * RENDER_STATE_SLOT_BITS)) & RENDER_STATE_SLOT_MASK);
+        for (int i = 0; i < HeadlampConstants.PLACEMENT_COUNT; i++) {
+            final int placementValue = (int) ((renderState >> (HeadlampConstants.RENDER_STATE_ON_OFF_BITS + i * HeadlampConstants.RENDER_STATE_SLOT_BITS)) & HeadlampConstants.SLOT_VALUE_MASK);
             if (placementValue == 0) {
                 continue;
             }
 
             final HeadlampBlockEntity.HeadlampPlacement placement = allPlacements[i];
-
-            // Determine on/off per-placement using CC addressing bits where applicable
-            final boolean shouldDisplayOn;
-            final TriState ccState = getCCAddressingFromBits(onOffBits, placement);
-            if (ccState != TriState.DEFAULT) {
-                shouldDisplayOn = ccState == TriState.TRUE;
-            } else {
-                shouldDisplayOn = onOffBits == 0xF;
-            }
+            final boolean shouldDisplayOn = getLightOnOffState(onOffBits, placement);
 
             // Position the headlamp within the block, facing up
             final Matrix4f transform = new Matrix4f()
@@ -126,7 +107,7 @@ public class HeadlampBlockEntityRenderer extends SmartBlockEntityRenderer<Headla
                     );
 
             @Nullable final DyeColor color = placementValue == 1 ? null :
-                    DyeColor.values()[Math.clamp(placementValue - DYE_COLOR_OFFSET, 0, DyeColor.values().length - 1)];
+                    DyeColor.values()[Math.clamp(placementValue - HeadlampConstants.DYE_COLOR_OFFSET, 0, DyeColor.values().length - 1)];
 
             final List<BakedQuad> sourceQuads = (shouldDisplayOn
                     ? BnbPartialModels.HEADLAMP_ON
@@ -140,18 +121,12 @@ public class HeadlampBlockEntityRenderer extends SmartBlockEntityRenderer<Headla
     }
 
     /**
-     * Derives the CC addressing tri-state for a placement from the packed on/off bits.
-     * When all 4 bits are uniformly on or off (0b1111 or 0b0000), the result is
-     * {@link TriState#DEFAULT} indicating the light renderer controls the state.
-     * Otherwise, the individual bit for this placement's mask coordinate is checked.
+     * Returns whether the light at the given placement should display as on,
+     * based on the precalculated on/off bits from the packed render state.
      */
-    private static TriState getCCAddressingFromBits(final int onOffBits, final HeadlampBlockEntity.HeadlampPlacement placement) {
-        if (onOffBits == 0xF || onOffBits == 0x0) {
-            return TriState.DEFAULT;
-        }
+    private static boolean getLightOnOffState(final int onOffBits, final HeadlampBlockEntity.HeadlampPlacement placement) {
         final var coord = CCLightAddressing.getLocalMaskCoordinateForPlacement(placement);
-        final boolean value = CCLightAddressing.getMaskValue((byte) onOffBits, coord);
-        return value ? TriState.TRUE : TriState.FALSE;
+        return CCLightAddressing.getMaskValue((byte) onOffBits, coord);
     }
 
     private static void emitTransformedQuad(

@@ -40,12 +40,6 @@ import java.util.List;
 
 public class HeadlampBlockEntity extends SmartBlockEntity implements SpecialBlockEntityItemRequirement, IHaveGoggleInformation {
 
-    private static final int PLACEMENT_COUNT = 9;
-    private static final int RENDER_STATE_ON_OFF_BITS = 4;
-    private static final int RENDER_STATE_SLOT_BITS = 5;
-    private static final int SHAPE_VALUE_BITS = 5;
-    private static final long SHAPE_VALUE_MASK = 0x1FL;
-
     /**
      * Each slot stores a value from 0 to 17:
      * <ul>
@@ -55,7 +49,7 @@ public class HeadlampBlockEntity extends SmartBlockEntity implements SpecialBloc
      * </ul>
      * Values must not exceed 5 bits (max 31) for proper encoding in {@link HeadlampBlockEntity#getRenderStateAsLong()}, though only 0–17 are currently valid.
      */
-    private final byte[] activePlacements = new byte[PLACEMENT_COUNT];
+    private final byte[] activePlacements = new byte[HeadlampConstants.PLACEMENT_COUNT];
     private VoxelShape cachedShape;
     private long cachedShapeKey = Long.MIN_VALUE;
 
@@ -352,9 +346,9 @@ public class HeadlampBlockEntity extends SmartBlockEntity implements SpecialBloc
         }
 
         long state = onOffBits;
-        for (int i = 0; i < PLACEMENT_COUNT; i++) {
-            final long slotValue = activePlacements[i] & SHAPE_VALUE_MASK;
-            state |= slotValue << (RENDER_STATE_ON_OFF_BITS + i * RENDER_STATE_SLOT_BITS);
+        for (int i = 0; i < HeadlampConstants.PLACEMENT_COUNT; i++) {
+            final long slotValue = activePlacements[i] & HeadlampConstants.SLOT_VALUE_MASK;
+            state |= slotValue << (HeadlampConstants.RENDER_STATE_ON_OFF_BITS + i * HeadlampConstants.RENDER_STATE_SLOT_BITS);
         }
         return state;
     }
@@ -389,9 +383,9 @@ public class HeadlampBlockEntity extends SmartBlockEntity implements SpecialBloc
     private long computeShapeKey(final Direction facing) {
         long key = 0L;
         for (int i = 0; i < activePlacements.length; i++) {
-            key |= ((long) activePlacements[i] & SHAPE_VALUE_MASK) << (i * SHAPE_VALUE_BITS);
+            key |= ((long) activePlacements[i] & HeadlampConstants.SLOT_VALUE_MASK) << (i * HeadlampConstants.RENDER_STATE_SLOT_BITS);
         }
-        return key | ((long) facing.ordinal() << (activePlacements.length * SHAPE_VALUE_BITS));
+        return key | ((long) facing.ordinal() << (activePlacements.length * HeadlampConstants.RENDER_STATE_SLOT_BITS));
     }
 
     public boolean placeDyeColorIntoFullBlock(final DyeColor dyeColor) {

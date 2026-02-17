@@ -31,7 +31,6 @@ import java.util.List;
 public class HeadlampModelBuilder extends BakedModelWrapper<BakedModel> {
 
     private static final ModelProperty<HeadlampModelData> HEADLAMP_PROPERTY = new ModelProperty<>();
-    private static final int PLACEMENT_COUNT = 9;
 
     public HeadlampModelBuilder(final BakedModel originalModel) {
         super(originalModel);
@@ -41,7 +40,7 @@ public class HeadlampModelBuilder extends BakedModelWrapper<BakedModel> {
     public @NotNull ModelData getModelData(final BlockAndTintGetter world, final BlockPos pos, final BlockState state, final ModelData blockEntityData) {
         final HeadlampModelData data = new HeadlampModelData();
 
-        byte[] activePlacements = new byte[PLACEMENT_COUNT];
+        byte[] activePlacements = new byte[HeadlampConstants.PLACEMENT_COUNT];
 
         if (world.getBlockEntity(pos) instanceof final HeadlampBlockEntity headlampBlockEntity) {
             activePlacements = headlampBlockEntity.getActivePlacements();
@@ -148,8 +147,8 @@ public class HeadlampModelBuilder extends BakedModelWrapper<BakedModel> {
         @Nullable CCLightAddressing.View ccAddressingView;
 
         public void setActivePlacements(final byte[] activePlacements) {
-            if (activePlacements.length != PLACEMENT_COUNT) {
-                throw new IllegalArgumentException("Active placements array must have length " + PLACEMENT_COUNT);
+            if (activePlacements.length != HeadlampConstants.PLACEMENT_COUNT) {
+                throw new IllegalArgumentException("Active placements array must have length " + HeadlampConstants.PLACEMENT_COUNT);
             }
             this.activePlacements = activePlacements;
         }
