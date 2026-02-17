@@ -6,6 +6,7 @@ import com.kipti.bnb.content.decoration.light.headlamp.rendering.HeadlampConstan
 import com.kipti.bnb.registry.BnbPartialModels;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.simibubi.create.foundation.model.BakedQuadHelper;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -110,7 +111,7 @@ public class HeadlampModelBuilder {
                     .setColor(1.0f, 1.0f, 1.0f, 1.0f)
                     .setUv(uvX, uvY)
                     .setOverlay(OverlayTexture.NO_OVERLAY)
-                    .setLight(0)
+                    .setLight(isOn ? LightTexture.FULL_BRIGHT : 0)
                     .setNormal(normal.x, normal.y, normal.z);
         }
     }

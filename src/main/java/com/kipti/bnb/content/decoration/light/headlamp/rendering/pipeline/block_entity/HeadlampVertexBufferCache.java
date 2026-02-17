@@ -41,7 +41,7 @@ public final class HeadlampVertexBufferCache {
      */
     public static @Nullable SuperByteBuffer getOrCreate(final long renderState, final Consumer<BufferBuilder> builder) {
         //TEMP DEBUG JUST CLEAR CACHE ALWAYS
-//        CACHE.entrySet().removeIf(entry -> true);
+        CACHE.entrySet().removeIf(entry -> true);
 
         synchronized (CACHE) {
             final CacheEntry existing = CACHE.get(renderState);

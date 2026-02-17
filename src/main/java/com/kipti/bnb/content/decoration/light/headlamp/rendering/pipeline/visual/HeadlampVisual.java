@@ -17,6 +17,7 @@ import dev.engine_room.flywheel.lib.model.Models;
 import dev.engine_room.flywheel.lib.model.baked.BakedModelBuilder;
 import dev.engine_room.flywheel.lib.util.RendererReloadCache;
 import dev.engine_room.flywheel.lib.visual.AbstractBlockEntityVisual;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.world.item.DyeColor;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2i;
@@ -29,22 +30,12 @@ public class HeadlampVisual extends AbstractBlockEntityVisual<HeadlampBlockEntit
     private long lastRenderState = Long.MIN_VALUE;
 
     private static final RendererReloadCache<String, Model> MODEL_CACHE = new RendererReloadCache<>(key -> {
-//        Material material = SimpleMaterial.builder()
-//                .transparency(Transparency.ORDER_INDEPENDENT)
-//                .mipmap(false)
-//                .blur(false)
-//                .backfaceCulling(true)
-//                .polygonOffset(true)
-//                .build();
         Material material = SimpleMaterial.builder()
                 .transparency(Transparency.ORDER_INDEPENDENT) // or ADDITIVE
                 .mipmap(false)
                 .blur(false)
                 .backfaceCulling(true)
-//                .diffuse(false)
-                .polygonOffset(true)         // Keeps the overlay bias we added before
-//                .writeMask(WriteMask.COLOR)  // <--- CRITICAL FIX: Disables depth writing
-//                .depthTest(DepthTest.LEQUAL)
+                .polygonOffset(true)
                 .build();
 
         return switch (key) {
@@ -171,10 +162,18 @@ public class HeadlampVisual extends AbstractBlockEntityVisual<HeadlampBlockEntit
                 createTopInstance(visualizationContext, isOn);
                 wasOn = isOn;
                 // Re-apply light to new instance
-                relight(top);
+                relightTop();
             }
             updateTransform(placement);
             updateColor(color, isOn);
+        }
+
+        private void relightTop() {
+            if (wasOn) {
+                top.light(LightTexture.FULL_BRIGHT).setChanged();
+            } else {
+                relight(top);
+            }
         }
 
         private void updateTransform(final HeadlampBlockEntity.HeadlampPlacement placement) {
@@ -209,7 +208,7 @@ public class HeadlampVisual extends AbstractBlockEntityVisual<HeadlampBlockEntit
 
         public void updateLight() {
             relight(base);
-            relight(top);
+            relightTop();
         }
 
         public void collectCrumblingInstances(final Consumer<@Nullable Instance> consumer) {
