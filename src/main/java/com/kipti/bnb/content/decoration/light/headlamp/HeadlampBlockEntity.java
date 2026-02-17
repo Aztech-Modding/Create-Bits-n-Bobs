@@ -1,6 +1,7 @@
 package com.kipti.bnb.content.decoration.light.headlamp;
 
 import com.kipti.bnb.content.decoration.light.founation.LightBlock;
+import com.kipti.bnb.content.decoration.light.headlamp.rendering.HeadlampConstants;
 import com.kipti.bnb.content.decoration.light.lightbulb.LightbulbBlock;
 import com.kipti.bnb.foundation.BnbLang;
 import com.kipti.bnb.registry.BnbBlockEntities;

@@ -8,6 +8,9 @@ import com.simibubi.create.foundation.block.connected.CTType;
 import net.createmod.catnip.render.SpriteShiftEntry;
 import net.createmod.catnip.render.SpriteShifter;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.DyeColor;
+
+import java.util.Map;
 
 public class BnbSpriteShifts {
 
@@ -21,7 +24,21 @@ public class BnbSpriteShifts {
     public static final CTSpriteShiftEntry
             INDUSTRIAL_GRATING = omni("industrial_grating");
 
-    private static CTSpriteShiftEntry omni(String name) {
+    private static Map<DyeColor, SpriteShiftEntry> getHeadlampSpriteShifts(boolean off) {
+        final Map<DyeColor, SpriteShiftEntry> map = new java.util.EnumMap<>(DyeColor.class);
+        for (final DyeColor color : DyeColor.values()) {
+            map.put(color, get(
+                    "block/headlight/headlight" + (off ? "_off" : "_on"),
+                    "block/headlight/headlight" + (off ? "_off" : "_on") + "_" + color.getName()
+            ));
+        }
+        return java.util.Collections.unmodifiableMap(map);
+    }
+
+    public static final Map<DyeColor, SpriteShiftEntry> HEADLAMP_ON_SPRITE_SHIFTS = getHeadlampSpriteShifts(false);
+    public static final Map<DyeColor, SpriteShiftEntry> HEADLAMP_OFF_SPRITE_SHIFTS = getHeadlampSpriteShifts(true);
+
+    private static CTSpriteShiftEntry omni(final String name) {
         return getCT(AllCTTypes.OMNIDIRECTIONAL, name);
     }
 

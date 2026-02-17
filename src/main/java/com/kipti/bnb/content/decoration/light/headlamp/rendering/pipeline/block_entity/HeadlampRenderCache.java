@@ -1,6 +1,7 @@
-package com.kipti.bnb.content.decoration.light.headlamp;
+package com.kipti.bnb.content.decoration.light.headlamp.rendering.pipeline.block_entity;
 
 import com.kipti.bnb.CreateBitsnBobs;
+import com.kipti.bnb.content.decoration.light.headlamp.HeadlampBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;

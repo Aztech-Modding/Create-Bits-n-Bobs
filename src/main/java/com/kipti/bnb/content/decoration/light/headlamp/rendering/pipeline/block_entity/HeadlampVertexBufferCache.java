@@ -1,5 +1,6 @@
-package com.kipti.bnb.content.decoration.light.headlamp;
+package com.kipti.bnb.content.decoration.light.headlamp.rendering.pipeline.block_entity;
 
+import com.kipti.bnb.content.decoration.light.headlamp.HeadlampBlockEntity;
 import com.mojang.blaze3d.vertex.*;
 import net.createmod.catnip.render.SuperBufferFactory;
 import net.createmod.catnip.render.SuperByteBuffer;
@@ -24,7 +25,7 @@ public final class HeadlampVertexBufferCache {
     private static final int MAX_ENTRIES = 64;
     private static final int EXPIRY_TICKS = 20;
 
-    private static final Map<Long, CacheEntry> CACHE = new LinkedHashMap<>(16, 0.75f, true);
+    private static final Map<Long, CacheEntry> CACHE = new LinkedHashMap<>(16, 0.75f, false);
 
     private HeadlampVertexBufferCache() {
     }
