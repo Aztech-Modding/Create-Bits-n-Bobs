@@ -47,13 +47,13 @@ public class HeadlampBlockEntity extends SmartBlockEntity implements SpecialBloc
     private static final long SHAPE_VALUE_MASK = 0x1FL;
 
     /**
-     * Each slot stores a value from 0 to 17 (5 bits max):
+     * Each slot stores a value from 0 to 17:
      * <ul>
      *     <li>0 = no headlamp present</li>
      *     <li>1 = undyed headlamp</li>
      *     <li>2–17 = dye color (ordinal + 2, matching {@link DyeColor} values)</li>
      * </ul>
-     * Values must not exceed 5 bits (max 31), though only 0–17 are currently valid.
+     * Values must not exceed 5 bits (max 31) for proper encoding in {@link HeadlampBlockEntity#getRenderStateAsLong()}, though only 0–17 are currently valid.
      */
     private final byte[] activePlacements = new byte[PLACEMENT_COUNT];
     private VoxelShape cachedShape;
@@ -167,7 +167,7 @@ public class HeadlampBlockEntity extends SmartBlockEntity implements SpecialBloc
             );
             return; // No change in color
         }
-        this.activePlacements[index] = i; // 0 - no color, 1 - no dye, 2 - red, etc.
+        this.activePlacements[index] = i; // 0 - no color, 1 - no dye, 2-17 dye colors
         sendData();
     }
 
@@ -328,7 +328,8 @@ public class HeadlampBlockEntity extends SmartBlockEntity implements SpecialBloc
     }
 
     /**
-     * Encodes the full render state of this headlamp block entity as a {@code long}.
+     * Encodes the full render state for instancing of this headlamp block entity as a {@code long}.
+     * The model may be rotated differently, but must not have any geometric differences between render states.
      * <p>
      * The layout (least-significant bits first) is:
      * <ul>
