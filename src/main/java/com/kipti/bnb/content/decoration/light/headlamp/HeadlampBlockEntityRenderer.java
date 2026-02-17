@@ -76,7 +76,6 @@ public class HeadlampBlockEntityRenderer extends SmartBlockEntityRenderer<Headla
                     .uncenter();
         }
         cached
-                .disableDiffuse()
                 .light(light)
                 .renderInto(ms, buffer.getBuffer(RenderType.translucent()));
         ms.popPose();
@@ -119,7 +118,7 @@ public class HeadlampBlockEntityRenderer extends SmartBlockEntityRenderer<Headla
             ).get().getQuads(null, null, RANDOM, ModelData.EMPTY, null);
 
             for (final BakedQuad quad : sourceQuads) {
-                emitTransformedQuad(builder, quad, transform, color);
+                emitTransformedQuad(builder, quad, transform, color, shouldDisplayOn);
             }
         }
     }
@@ -137,7 +136,8 @@ public class HeadlampBlockEntityRenderer extends SmartBlockEntityRenderer<Headla
             final BufferBuilder builder,
             final BakedQuad quad,
             final Matrix4f transform,
-            final @Nullable DyeColor color
+            final @Nullable DyeColor color,
+            final boolean isOn
     ) {
         final int[] vertices = quad.getVertices();
         final TextureAtlasSprite oldSprite = quad.getSprite();
@@ -166,7 +166,7 @@ public class HeadlampBlockEntityRenderer extends SmartBlockEntityRenderer<Headla
                     .setColor(1.0f, 1.0f, 1.0f, 1.0f)
                     .setUv(uvX, uvY)
                     .setOverlay(OverlayTexture.NO_OVERLAY)
-                    .setLight(0)
+                    .setLight(isOn ? 0xF000F0 : 0)
                     .setNormal(normal.x, normal.y, normal.z);
         }
     }
