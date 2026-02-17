@@ -31,7 +31,7 @@ public class HeadlampVisual extends AbstractBlockEntityVisual<HeadlampBlockEntit
 
     private static final RendererReloadCache<String, Model> MODEL_CACHE = new RendererReloadCache<>(key -> {
         Material material = SimpleMaterial.builder()
-                .transparency(Transparency.TRANSLUCENT) // TRANSLUCENT or ADDITIVE or ORDER_INDEPENDENT all "work" here, but additive kinda looks like shit tiled
+                .transparency(Transparency.ORDER_INDEPENDENT) // TRANSLUCENT or ADDITIVE or ORDER_INDEPENDENT all "work" here, but additive kinda looks like shit tiled
                 .mipmap(false)
                 .blur(false)
                 .backfaceCulling(true)
