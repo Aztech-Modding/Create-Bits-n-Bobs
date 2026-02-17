@@ -4,7 +4,7 @@ import net.neoforged.neoforge.common.util.TriState;
 import org.joml.Vector2i;
 
 public class CCLightAddressing {
-    private byte mask = 1 + 2 + 4 + 8;
+    private volatile byte mask = 1 + 2 + 4 + 8;
 
     /**
      * Mask is the 4 bits that determine which of the 4 lights (by section) are being rendered. The bits are as follows:
