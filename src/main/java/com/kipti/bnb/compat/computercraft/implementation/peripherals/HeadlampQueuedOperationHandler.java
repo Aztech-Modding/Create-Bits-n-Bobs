@@ -38,7 +38,14 @@ public class HeadlampQueuedOperationHandler {
         synchronized (map) {
             final long key = pos.asLong();
             final byte existing = map.get(key);
-            map.put(key, (byte) (existing | change));
+            final int changeMask = change & MASK_BITS;
+            final int changeStates = (change >> STATE_SHIFT) & MASK_BITS;
+            final int existingMask = existing & MASK_BITS;
+            final int existingStates = (existing >> STATE_SHIFT) & MASK_BITS;
+            final int mergedMask = existingMask | changeMask;
+            // For bits that the new change wants to modify, use the new state; keep existing state for the rest
+            final int mergedStates = (existingStates & ~changeMask) | (changeStates & changeMask);
+            map.put(key, (byte) (mergedMask | (mergedStates << STATE_SHIFT)));
         }
     }
 

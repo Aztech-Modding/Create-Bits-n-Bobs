@@ -298,7 +298,9 @@ public class HeadlampBlockEntity extends SmartBlockEntity implements SpecialBloc
     }
 
     public int[] getActivePlacements() {
-        return this.activePlacements;
+        final int[] copy = new int[activePlacements.length];
+        System.arraycopy(activePlacements, 0, copy, 0, activePlacements.length);
+        return copy;
     }
 
     public VoxelShape getShape(final BlockState state, final BlockGetter level, final BlockPos pos, final CollisionContext context) {

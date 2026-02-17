@@ -40,28 +40,16 @@ public final class HeadlampRenderCache {
     }
 
     public static List<BakedQuad> getOrCreateQuads(final QuadCacheKey key, final Supplier<List<BakedQuad>> builder) {
-        List<BakedQuad> cached = QUAD_CACHE.get(key);
-        if (cached != null) {
-            return cached;
-        }
-        final List<BakedQuad> built = List.copyOf(builder.get());
-        QUAD_CACHE.put(key, built);
-        return built;
+        return QUAD_CACHE.computeIfAbsent(key, () -> List.copyOf(builder.get()));
     }
 
     public static Matrix4f getTransform(final Direction facing, final HeadlampBlockEntity.HeadlampPlacement placement) {
         final TransformKey key = new TransformKey(facing, placement.ordinal());
-        Matrix4f cached = TRANSFORM_CACHE.get(key);
-        if (cached != null) {
-            return cached;
-        }
-        final Matrix4f transform = new Matrix4f()
+        return TRANSFORM_CACHE.computeIfAbsent(key, () -> new Matrix4f()
                 .translation(0.5f, 0.5f, 0.5f)
                 .rotate(facing.getRotation())
                 .translate(-0.5f, -0.5f, -0.5f)
-                .translate((float) placement.horizontalAlignment().getOffset(), 0.0f, (float) placement.verticalAlignment().getOffset());
-        TRANSFORM_CACHE.put(key, transform);
-        return transform;
+                .translate((float) placement.horizontalAlignment().getOffset(), 0.0f, (float) placement.verticalAlignment().getOffset()));
     }
 
     public static TextureAtlasSprite getTintedSprite(final TextureAtlasSprite oldSprite, @Nullable final DyeColor color) {
@@ -111,6 +99,16 @@ public final class HeadlampRenderCache {
 
         public synchronized V get(final K key) {
             return map.get(key);
+        }
+
+        public synchronized V computeIfAbsent(final K key, final Supplier<V> valueSupplier) {
+            V value = map.get(key);
+            if (value != null) {
+                return value;
+            }
+            value = Objects.requireNonNull(valueSupplier.get(), "value");
+            map.put(Objects.requireNonNull(key, "key"), value);
+            return value;
         }
 
         public synchronized void put(final K key, final V value) {

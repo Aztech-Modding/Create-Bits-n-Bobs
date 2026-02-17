@@ -41,11 +41,10 @@ public class HeadlampModelBuilder extends BakedModelWrapper<BakedModel> {
     public @NotNull ModelData getModelData(final BlockAndTintGetter world, final BlockPos pos, final BlockState state, final ModelData blockEntityData) {
         final HeadlampModelData data = new HeadlampModelData();
 
-        final int[] activePlacements = new int[PLACEMENT_COUNT];
+        int[] activePlacements = new int[PLACEMENT_COUNT];
 
         if (world.getBlockEntity(pos) instanceof final HeadlampBlockEntity headlampBlockEntity) {
-            final int[] existingPlacements = headlampBlockEntity.getActivePlacements();
-            System.arraycopy(existingPlacements, 0, activePlacements, 0, existingPlacements.length);
+            activePlacements = headlampBlockEntity.getActivePlacements();
             data.setCcAddressingView(headlampBlockEntity.getCCLightAddressingView());
         }
 
