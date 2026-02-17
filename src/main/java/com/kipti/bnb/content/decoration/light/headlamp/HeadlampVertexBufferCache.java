@@ -112,9 +112,14 @@ public final class HeadlampVertexBufferCache {
     }
 
     private static void evictExcessEntries() {
-        while (CACHE.size() > MAX_ENTRIES) {
-            final Long oldest = CACHE.keySet().iterator().next();
-            CACHE.remove(oldest);
+        final int excess = CACHE.size() - MAX_ENTRIES;
+        if (excess <= 0) {
+            return;
+        }
+        final var iterator = CACHE.keySet().iterator();
+        for (int i = 0; i < excess && iterator.hasNext(); i++) {
+            iterator.next();
+            iterator.remove();
         }
     }
 

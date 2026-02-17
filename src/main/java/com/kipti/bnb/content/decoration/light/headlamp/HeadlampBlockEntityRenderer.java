@@ -40,6 +40,12 @@ public class HeadlampBlockEntityRenderer extends SmartBlockEntityRenderer<Headla
     private static final long RENDER_STATE_SLOT_MASK = 0x1FL;
     private static final int PLACEMENT_COUNT = 9;
 
+    /**
+     * Offset applied to {@link DyeColor#ordinal()} when encoding/decoding dye color in placement values.
+     * Value 0 = none, 1 = undyed, 2+ = {@code DyeColor.ordinal() + DYE_COLOR_OFFSET}.
+     */
+    private static final int DYE_COLOR_OFFSET = 2;
+
     private static final RandomSource RANDOM = RandomSource.createNewThreadLocalInstance();
 
     public HeadlampBlockEntityRenderer(final BlockEntityRendererProvider.Context context) {
@@ -120,7 +126,7 @@ public class HeadlampBlockEntityRenderer extends SmartBlockEntityRenderer<Headla
                     );
 
             @Nullable final DyeColor color = placementValue == 1 ? null :
-                    DyeColor.values()[Math.clamp(placementValue - 2, 0, DyeColor.values().length - 1)];
+                    DyeColor.values()[Math.clamp(placementValue - DYE_COLOR_OFFSET, 0, DyeColor.values().length - 1)];
 
             final List<BakedQuad> sourceQuads = (shouldDisplayOn
                     ? BnbPartialModels.HEADLAMP_ON
