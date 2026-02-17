@@ -426,6 +426,12 @@ public class HeadlampBlockEntity extends SmartBlockEntity implements SpecialBloc
         return new CCLightAddressing.View(addressing.getMask());
     }
 
+    public void updateIfInstanceOnClient() {
+        if (level != null && level.isClientSide() && VisualizationHelper.canVisualize(this)) {
+            CatnipServices.PLATFORM.executeOnClientOnly(() -> () -> VisualizationHelper.queueUpdate(this));
+        }
+    }
+
     public enum HeadlampAlignment {
         RIGHT_OR_BOTTOM(-4),
         MIDDLE(0),

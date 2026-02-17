@@ -136,74 +136,85 @@ public class HeadlampVisual extends AbstractBlockEntityVisual<HeadlampBlockEntit
         }
     }
 
+    /**
+     * Holder of the base and both top instances for a single lamp placement, responsible for keeping them in sync and applying transforms/colors as needed.
+     */
     private class LampInstance {
         private final TransformedInstance base;
-        private ShiftTransformedInstance top;
+        private final ShiftTransformedInstance topOn;
+        private final ShiftTransformedInstance topOff;
         private boolean wasOn;
+        private DyeColor currentColor;
 
         public LampInstance(final VisualizationContext ctx, final HeadlampBlockEntity.HeadlampPlacement placement, final boolean isOn, final @Nullable DyeColor color) {
             this.base = ctx.instancerProvider().instancer(BnbInstanceTypes.SHIFT_TRANSFORMED, HeadlampVisual.baseModel()).createInstance();
+
+            this.topOn = ctx.instancerProvider().instancer(BnbInstanceTypes.SHIFT_TRANSFORMED, HeadlampVisual.topModelOn()).createInstance();
+            this.topOff = ctx.instancerProvider().instancer(BnbInstanceTypes.SHIFT_TRANSFORMED, HeadlampVisual.topModelOff()).createInstance();
+
+            this.topOn.light(LightTexture.FULL_BRIGHT).setChanged();
+
             this.wasOn = isOn;
-            createTopInstance(ctx, isOn);
+
+            this.topOn.setVisible(isOn);
+            this.topOff.setVisible(!isOn);
 
             updateTransform(placement);
-            updateColor(color, isOn);
-            updateLight(); // Initialize light
-        }
-
-        private void createTopInstance(final VisualizationContext ctx, final boolean isOn) {
-            final Model model = isOn ? HeadlampVisual.topModelOn() : HeadlampVisual.topModelOff();
-            this.top = ctx.instancerProvider().instancer(BnbInstanceTypes.SHIFT_TRANSFORMED, model).createInstance();
+            updateColor(color);
+            updateLight();
         }
 
         public void update(final HeadlampBlockEntity.HeadlampPlacement placement, final boolean isOn, final @Nullable DyeColor color) {
             if (isOn != wasOn) {
-                top.delete();
-                createTopInstance(visualizationContext, isOn);
+                topOn.setVisible(isOn);
+                topOff.setVisible(!isOn);
                 wasOn = isOn;
-                // Re-apply light to new instance
-                relightTop();
             }
-            updateTransform(placement);
-            updateColor(color, isOn);
+
+            if (currentColor != color)
+                updateColor(color);
         }
 
         private void relightTop() {
-            if (wasOn) {
-                top.light(LightTexture.FULL_BRIGHT).setChanged();
-            } else {
-                relight(top);
-            }
+            relight(topOff);
+//            this.topOn.light(LightTexture.FULL_BRIGHT).setChanged();
         }
 
         private void updateTransform(final HeadlampBlockEntity.HeadlampPlacement placement) {
-            // Calculate base transform
             final float tx = (float) placement.horizontalAlignment().getOffset();
             final float tz = (float) placement.verticalAlignment().getOffset();
 
-            // Set base transform
             base.setIdentityTransform()
                     .translate(getVisualPosition())
-                    .translate(tx, 0, tz);
+                    .translate(tx, 0, tz)
+                    .setChanged();
 
-            // Set top transform
-            top.setIdentityTransform()
+            applyTopTransform(topOn, tx, tz);
+            applyTopTransform(topOff, tx, tz);
+        }
+
+        private void applyTopTransform(ShiftTransformedInstance instance, float tx, float tz) {
+            instance.setIdentityTransform()
                     .translate(getVisualPosition())
                     .translate(tx, 0, tz)
                     .translate(0.5f, 0.5f, 0.5f)
-                    .scale(1f)
-                    .translate(-0.5f, -0.5f, -0.5f);
-
-            top.setChanged();
-            base.setChanged();
+                    .scale(1f) // Scale 1f is default, strictly usually not needed unless resetting
+                    .translate(-0.5f, -0.5f, -0.5f)
+                    .setChanged();
         }
 
-        private void updateColor(final @Nullable DyeColor color, final boolean isOn) {
+        private void updateColor(final @Nullable DyeColor color) {
+            currentColor = color;
+
             if (color != null) {
-                top.setSpriteShift(isOn ? BnbSpriteShifts.HEADLAMP_ON_SPRITE_SHIFTS.get(color) : BnbSpriteShifts.HEADLAMP_OFF_SPRITE_SHIFTS.get(color));
+                topOn.setSpriteShift(BnbSpriteShifts.HEADLAMP_ON_SPRITE_SHIFTS.get(color));
+                topOff.setSpriteShift(BnbSpriteShifts.HEADLAMP_OFF_SPRITE_SHIFTS.get(color));
             } else {
-                top.setSpriteShift(null);
+                topOn.setSpriteShift(null);
+                topOff.setSpriteShift(null);
             }
+            topOn.setChanged();
+            topOff.setChanged();
         }
 
         public void updateLight() {
@@ -213,12 +224,14 @@ public class HeadlampVisual extends AbstractBlockEntityVisual<HeadlampBlockEntit
 
         public void collectCrumblingInstances(final Consumer<@Nullable Instance> consumer) {
             consumer.accept(base);
-            consumer.accept(top);
+            consumer.accept(wasOn ? topOn : topOff);
         }
 
         public void delete() {
             base.delete();
-            top.delete();
+            topOn.delete();
+            topOff.delete();
         }
     }
+
 }
