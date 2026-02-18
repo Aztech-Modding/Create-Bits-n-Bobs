@@ -1,25 +1,27 @@
 package com.kipti.bnb.content.decoration.light.headlamp.rendering.pipeline.visual;
 
 import com.kipti.bnb.content.decoration.light.headlamp.CCLightAddressing;
+import com.kipti.bnb.content.decoration.light.headlamp.HeadlampBlock;
 import com.kipti.bnb.content.decoration.light.headlamp.HeadlampBlockEntity;
 import com.kipti.bnb.content.decoration.light.headlamp.rendering.HeadlampConstants;
 import com.kipti.bnb.registry.BnbInstanceTypes;
+import com.kipti.bnb.registry.BnbMaterials;
 import com.kipti.bnb.registry.BnbPartialModels;
 import com.kipti.bnb.registry.BnbSpriteShifts;
 import dev.engine_room.flywheel.api.instance.Instance;
-import dev.engine_room.flywheel.api.material.Material;
-import dev.engine_room.flywheel.api.material.Transparency;
 import dev.engine_room.flywheel.api.model.Model;
 import dev.engine_room.flywheel.api.visualization.VisualizationContext;
 import dev.engine_room.flywheel.lib.instance.TransformedInstance;
-import dev.engine_room.flywheel.lib.material.SimpleMaterial;
 import dev.engine_room.flywheel.lib.model.Models;
 import dev.engine_room.flywheel.lib.model.baked.BakedModelBuilder;
 import dev.engine_room.flywheel.lib.util.RendererReloadCache;
 import dev.engine_room.flywheel.lib.visual.AbstractBlockEntityVisual;
+import net.createmod.catnip.render.SpriteShiftEntry;
 import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.core.Direction;
 import net.minecraft.world.item.DyeColor;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Quaternionf;
 import org.joml.Vector2i;
 
 import java.util.function.Consumer;
@@ -30,21 +32,10 @@ public class HeadlampVisual extends AbstractBlockEntityVisual<HeadlampBlockEntit
     private long lastRenderState = Long.MIN_VALUE;
 
     private static final RendererReloadCache<String, Model> MODEL_CACHE = new RendererReloadCache<>(key -> {
-        Material material = SimpleMaterial.builder()
-                .transparency(Transparency.ORDER_INDEPENDENT) // TRANSLUCENT or ADDITIVE or ORDER_INDEPENDENT all "work" here, but additive kinda looks like shit tiled
-                .mipmap(false)
-                .blur(false)
-                .backfaceCulling(true)
-                .polygonOffset(true)
-                .build();
-
         return switch (key) {
             case "base" -> Models.partial(BnbPartialModels.HEADLAMP_INSTANCE_BASE);
-            case "on" -> new BakedModelBuilder(BnbPartialModels.HEADLAMP_INSTANCE_ON.get())
-                    .materialFunc((renderType, ao) -> material)
-                    .build();
-            case "off" -> new BakedModelBuilder(BnbPartialModels.HEADLAMP_INSTANCE_OFF.get())
-                    .materialFunc((renderType, ao) -> material)
+            case "top" -> new BakedModelBuilder(BnbPartialModels.HEADLAMP_INSTANCE_OFF.get())
+                    .materialFunc((renderType, ao) -> BnbMaterials.HEADLAMP_MATERIAL)
                     .build();
             default -> throw new IllegalArgumentException(key);
         };
@@ -59,12 +50,8 @@ public class HeadlampVisual extends AbstractBlockEntityVisual<HeadlampBlockEntit
         return MODEL_CACHE.get("base");
     }
 
-    public static Model topModelOn() {
-        return MODEL_CACHE.get("on");
-    }
-
-    public static Model topModelOff() {
-        return MODEL_CACHE.get("off");
+    public static Model topModel() {
+        return MODEL_CACHE.get("top");
     }
 
     @Override
@@ -96,7 +83,7 @@ public class HeadlampVisual extends AbstractBlockEntityVisual<HeadlampBlockEntit
             if (lamps[i] == null) {
                 lamps[i] = new LampInstance(visualizationContext, placement, isOn, color);
             } else {
-                lamps[i].update(placement, isOn, color);
+                lamps[i].update(isOn, color);
             }
         }
 
@@ -137,100 +124,112 @@ public class HeadlampVisual extends AbstractBlockEntityVisual<HeadlampBlockEntit
     }
 
     /**
-     * Holder of the base and both top instances for a single lamp placement, responsible for keeping them in sync and applying transforms/colors as needed.
+     * Holder of the base and single top instance for a single lamp placement.
+     * The top instance always uses the "off" model as its base geometry; sprite shifts
+     * handle switching to on/dyed variants (off→on, off→off-dye, off→on-dye).
      */
     private class LampInstance {
         private final TransformedInstance base;
-        private final ShiftTransformedInstance topOn;
-        private final ShiftTransformedInstance topOff;
+        private final ShiftTransformedInstance top;
         private boolean wasOn;
         private DyeColor currentColor;
 
         public LampInstance(final VisualizationContext ctx, final HeadlampBlockEntity.HeadlampPlacement placement, final boolean isOn, final @Nullable DyeColor color) {
             this.base = ctx.instancerProvider().instancer(BnbInstanceTypes.SHIFT_TRANSFORMED, HeadlampVisual.baseModel()).createInstance();
-
-            this.topOn = ctx.instancerProvider().instancer(BnbInstanceTypes.SHIFT_TRANSFORMED, HeadlampVisual.topModelOn()).createInstance();
-            this.topOff = ctx.instancerProvider().instancer(BnbInstanceTypes.SHIFT_TRANSFORMED, HeadlampVisual.topModelOff()).createInstance();
-
-            this.topOn.light(LightTexture.FULL_BRIGHT).setChanged();
+            this.top = ctx.instancerProvider().instancer(BnbInstanceTypes.SHIFT_TRANSFORMED, HeadlampVisual.topModel()).createInstance();
 
             this.wasOn = isOn;
 
-            this.topOn.setVisible(isOn);
-            this.topOff.setVisible(!isOn);
-
             updateTransform(placement);
-            updateColor(color);
+            updateSpriteShift(isOn, color);
             updateLight();
         }
 
-        public void update(final HeadlampBlockEntity.HeadlampPlacement placement, final boolean isOn, final @Nullable DyeColor color) {
-            if (isOn != wasOn) {
-                topOn.setVisible(isOn);
-                topOff.setVisible(!isOn);
+        public void update(final boolean isOn, final @Nullable DyeColor color) {
+            if (isOn != wasOn || currentColor != color) {
+                updateSpriteShift(isOn, color);
                 wasOn = isOn;
             }
-
-            if (currentColor != color)
-                updateColor(color);
-        }
-
-        private void relightTop() {
-            relight(topOff);
-//            this.topOn.light(LightTexture.FULL_BRIGHT).setChanged();
         }
 
         private void updateTransform(final HeadlampBlockEntity.HeadlampPlacement placement) {
             final float tx = (float) placement.horizontalAlignment().getOffset();
             final float tz = (float) placement.verticalAlignment().getOffset();
+            final Direction facing = blockEntity.getBlockState().getValue(HeadlampBlock.FACING);
 
-            base.setIdentityTransform()
-                    .translate(getVisualPosition())
-                    .translate(tx, 0, tz)
-                    .setChanged();
-
-            applyTopTransform(topOn, tx, tz);
-            applyTopTransform(topOff, tx, tz);
+            applyTransform(base, tx, tz, facing);
+            applyTopTransform(top, tx, tz, facing);
         }
 
-        private void applyTopTransform(ShiftTransformedInstance instance, float tx, float tz) {
+        private void applyTransform(final TransformedInstance instance, final float tx, final float tz, final Direction facing) {
             instance.setIdentityTransform()
-                    .translate(getVisualPosition())
-                    .translate(tx, 0, tz)
-                    .translate(0.5f, 0.5f, 0.5f)
-                    .scale(1f) // Scale 1f is default, strictly usually not needed unless resetting
-                    .translate(-0.5f, -0.5f, -0.5f)
+                    .translate(getVisualPosition());
+            applySurfaceRotation(instance, facing);
+            instance.translate(tx, 0, tz)
                     .setChanged();
         }
 
-        private void updateColor(final @Nullable DyeColor color) {
+        private void applyTopTransform(final ShiftTransformedInstance instance, final float tx, final float tz, final Direction facing) {
+            instance.setIdentityTransform()
+                    .translate(getVisualPosition());
+            applySurfaceRotation(instance, facing);
+            instance.translate(tx, 0, tz)
+                    .setChanged();
+        }
+
+        private void applySurfaceRotation(final TransformedInstance instance, final Direction facing) {
+            if (facing == Direction.UP) {
+                return;
+            }
+            final Quaternionf rotation = facing.getRotation();
+            final Quaternionf upRotation = Direction.UP.getRotation();
+            upRotation.invert();
+            instance.translate(0.5f, 0.5f, 0.5f)
+                    .rotate(upRotation.mul(rotation))
+                    .translate(-0.5f, -0.5f, -0.5f);
+        }
+
+        /**
+         * Sets the appropriate sprite shift on the top instance based on on/off state and color.
+         * All shifts are from the off (undyed) base texture.
+         */
+        private void updateSpriteShift(final boolean isOn, final @Nullable DyeColor color) {
             currentColor = color;
 
+            final SpriteShiftEntry shift;
             if (color != null) {
-                topOn.setSpriteShift(BnbSpriteShifts.HEADLAMP_ON_SPRITE_SHIFTS.get(color));
-                topOff.setSpriteShift(BnbSpriteShifts.HEADLAMP_OFF_SPRITE_SHIFTS.get(color));
+                shift = isOn
+                        ? BnbSpriteShifts.HEADLAMP_ON_SPRITE_SHIFTS.get(color)
+                        : BnbSpriteShifts.HEADLAMP_OFF_SPRITE_SHIFTS.get(color);
+            } else if (isOn) {
+                shift = BnbSpriteShifts.HEADLAMP_ON_UNDYED_SPRITE_SHIFT;
             } else {
-                topOn.setSpriteShift(null);
-                topOff.setSpriteShift(null);
+                shift = null; // off + undyed = base texture, no shift needed
             }
-            topOn.setChanged();
-            topOff.setChanged();
+
+            top.setSpriteShift(shift);
+
+            if (isOn) {
+                top.light(LightTexture.FULL_BRIGHT);
+            }
+            top.setChanged();
         }
 
         public void updateLight() {
             relight(base);
-            relightTop();
+            if (!wasOn) {
+                relight(top);
+            }
         }
 
         public void collectCrumblingInstances(final Consumer<@Nullable Instance> consumer) {
             consumer.accept(base);
-            consumer.accept(wasOn ? topOn : topOff);
+            consumer.accept(top);
         }
 
         public void delete() {
             base.delete();
-            topOn.delete();
-            topOff.delete();
+            top.delete();
         }
     }
 
