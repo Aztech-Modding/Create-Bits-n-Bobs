@@ -20,9 +20,11 @@ public class HeadlampPeripheral extends SyncedPeripheral<HeadlampBlockEntity> {
 
     @LuaFunction
     public final void setLamp(final ILuaContext context, final int x, final int y, final boolean onOff) throws LuaException {
-        final int range = BnbConfigs.server().HEADLAMP_CC_RANGE.get();
-        if (x < -range || x > range || y < -range || y > range) {
-            throw new LuaException("x and y must be between -" + range + " and " + range + " inclusive");
+        final int blockRange = BnbConfigs.server().HEADLAMP_CC_BLOCK_RANGE.get();
+        final int minCoord = 3 - blockRange * 2;
+        final int maxCoord = blockRange * 2;
+        if (x < minCoord || x > maxCoord || y < minCoord || y > maxCoord) {
+            throw new LuaException("x and y must be between " + minCoord + " and " + maxCoord + " inclusive");
         }
         final Level level = blockEntity.getLevel();
         if (level == null || level.isClientSide()) {

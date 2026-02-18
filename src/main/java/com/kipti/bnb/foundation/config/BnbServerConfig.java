@@ -23,10 +23,10 @@ public class BnbServerConfig extends ConfigBase {
             "Multiplier for the number of chains required for a cogwheel chain. Minimum cost is always 1 chain, unless this value is set to 0. Does not affect the number of chains returned by existing chain drives."
     );
 
-    public final ConfigInt HEADLAMP_CC_RANGE = i(
+    public final ConfigInt HEADLAMP_CC_BLOCK_RANGE = i(
             32, 1, 128,
-            "headlampCCRange",
-            "Maximum absolute coordinate range for the CC peripheral setLamp function. Coordinates must be within [-range, range]."
+            "headlampCCBlockRange",
+            "Maximum range in blocks for the CC peripheral setLamp function. Lamp coordinates must be within [3 - blockRange * 2, blockRange * 2]."
     );
 
     @Override
