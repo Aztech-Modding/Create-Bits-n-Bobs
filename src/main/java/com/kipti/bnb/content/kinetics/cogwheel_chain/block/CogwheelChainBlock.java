@@ -10,6 +10,7 @@ import com.simibubi.create.content.kinetics.simpleRelays.CogWheelBlock;
 import com.simibubi.create.content.kinetics.simpleRelays.ICogWheel;
 import com.simibubi.create.content.schematics.requirement.ItemRequirement;
 import com.simibubi.create.foundation.block.IBE;
+import com.simibubi.create.foundation.block.IHaveBigOutline;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -42,7 +43,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 public class CogwheelChainBlock extends RotatedPillarKineticBlock
-        implements IBE<CogwheelChainBlockEntity>, SpecialBlockItemRequirement, EncasableBlock, ICogwheelChainBlock { //TODO : waterlog state
+        implements IBE<CogwheelChainBlockEntity>, SpecialBlockItemRequirement, EncasableBlock, ICogwheelChainBlock, IHaveBigOutline { //TODO : waterlog state
     private static final List<CogwheelChainBlock> ALL_CHAIN_BLOCKS = new ArrayList<>();
     private static final Lazy<Map<Block, CogwheelChainBlock>> DEFAULT_CHAIN_BLOCKS_BY_SOURCE = Lazy.of(() -> {
         Map<Block, CogwheelChainBlock> map = new java.util.HashMap<>();
