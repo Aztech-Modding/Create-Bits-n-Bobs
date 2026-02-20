@@ -9,6 +9,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("null")
@@ -164,44 +165,88 @@ public class CogwheelChainWholeShape extends CogwheelChainShape {
             final Vec3 u1 = uAtVertex[endIndex];
             final Vec3 v1 = vAtVertex[endIndex];
 
-            final Vec3 p0pp = p0.add(u0.scale(r)).add(v0.scale(r));
-            final Vec3 p0pn = p0.add(u0.scale(r)).subtract(v0.scale(r));
-            final Vec3 p0nn = p0.subtract(u0.scale(r)).subtract(v0.scale(r));
-            final Vec3 p0np = p0.subtract(u0.scale(r)).add(v0.scale(r));
+            final List<Vec3> startCorners = getCorners(p0, u0, v0, r);
+            final List<Vec3> endCorners = getPointsInClosestOrder(getCorners(p1, u1, v1, r), startCorners);
 
-            final Vec3 p1pp = p1.add(u1.scale(r)).add(v1.scale(r));
-            final Vec3 p1pn = p1.add(u1.scale(r)).subtract(v1.scale(r));
-            final Vec3 p1nn = p1.subtract(u1.scale(r)).subtract(v1.scale(r));
-            final Vec3 p1np = p1.subtract(u1.scale(r)).add(v1.scale(r));
+            for (int cornerIndex = 0; cornerIndex < 4; cornerIndex++) {
+                line(vb, ms, startCorners.get(cornerIndex), endCorners.get(cornerIndex), color);
+            }
 
-            line(vb, ms, p0pp, p1pp, color);
-            line(vb, ms, p0pn, p1pn, color);
-            line(vb, ms, p0nn, p1nn, color);
-            line(vb, ms, p0np, p1np, color);
+            drawRing(vb, ms,
+                    startCorners.get(0),
+                    startCorners.get(1),
+                    startCorners.get(2),
+                    startCorners.get(3),
+                    color);
         }
 
         if (!closedLoop) {
-            final Vec3 p0 = points.get(0);
-            final Vec3 u0 = uAtVertex[0];
-            final Vec3 v0 = vAtVertex[0];
-            drawRing(vb, ms,
-                    p0.add(u0.scale(r)).add(v0.scale(r)),
-                    p0.add(u0.scale(r)).subtract(v0.scale(r)),
-                    p0.subtract(u0.scale(r)).subtract(v0.scale(r)),
-                    p0.subtract(u0.scale(r)).add(v0.scale(r)),
-                    color);
-
             final int last = points.size() - 1;
             final Vec3 pn = points.get(last);
             final Vec3 un = uAtVertex[last];
             final Vec3 vn = vAtVertex[last];
+            final List<Vec3> endCorners = getCorners(pn, un, vn, r);
             drawRing(vb, ms,
-                    pn.add(un.scale(r)).add(vn.scale(r)),
-                    pn.add(un.scale(r)).subtract(vn.scale(r)),
-                    pn.subtract(un.scale(r)).subtract(vn.scale(r)),
-                    pn.subtract(un.scale(r)).add(vn.scale(r)),
+                    endCorners.get(0),
+                    endCorners.get(1),
+                    endCorners.get(2),
+                    endCorners.get(3),
                     color);
         }
+    }
+
+    private static List<Vec3> getCorners(final Vec3 center, final Vec3 u, final Vec3 v, final float radius) {
+        final Vec3 uScaled = u.scale(radius);
+        final Vec3 vScaled = v.scale(radius);
+        final ArrayList<Vec3> corners = new ArrayList<>(4);
+        corners.add(center.add(uScaled).add(vScaled));
+        corners.add(center.add(uScaled).subtract(vScaled));
+        corners.add(center.subtract(uScaled).subtract(vScaled));
+        corners.add(center.subtract(uScaled).add(vScaled));
+        return corners;
+    }
+
+    private static List<Vec3> getPointsInClosestOrder(final List<Vec3> destinationPoints, final List<Vec3> sourcePoints) {
+        if (destinationPoints.size() != 4 || sourcePoints.size() != 4) {
+            return new ArrayList<>(destinationPoints);
+        }
+
+        double bestScore = Double.POSITIVE_INFINITY;
+        List<Vec3> best = new ArrayList<>(destinationPoints);
+
+        for (int reversed = 0; reversed <= 1; reversed++) {
+            for (int shift = 0; shift < 4; shift++) {
+                final ArrayList<Vec3> candidate = new ArrayList<>(4);
+                double pointScore = 0.0;
+
+                for (int i = 0; i < 4; i++) {
+                    final int j = (reversed == 0)
+                            ? ((i + shift) & 3)
+                            : ((shift - i + 4) & 3);
+
+                    final Vec3 point = destinationPoints.get(j);
+                    candidate.add(point);
+                    pointScore += sourcePoints.get(i).distanceToSqr(point);
+                }
+
+                double edgeScore = 0.0;
+                for (int i = 0; i < 4; i++) {
+                    final Vec3 sourceEdge = sourcePoints.get((i + 1) & 3).subtract(sourcePoints.get(i)).normalize();
+                    final Vec3 destinationEdge = candidate.get((i + 1) & 3).subtract(candidate.get(i)).normalize();
+                    edgeScore += 1.0 - sourceEdge.dot(destinationEdge);
+                }
+
+                final double windingPenalty = reversed == 1 ? 1e-4 : 0.0;
+                final double score = pointScore + edgeScore * 0.25 + windingPenalty;
+
+                if (score < bestScore) {
+                    bestScore = score;
+                    best = candidate;
+                }
+            }
+        }
+
+        return best;
     }
 
     private static void drawRing(final VertexConsumer vb, final PoseStack ms,

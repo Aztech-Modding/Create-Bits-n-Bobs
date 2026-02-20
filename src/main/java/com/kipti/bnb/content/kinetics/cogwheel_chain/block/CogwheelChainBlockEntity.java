@@ -160,6 +160,7 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
         this.chainsToRefund = 0; // Reset after dropping
 
         if (isController) {
+            if (effects) chain.createDestroyEffects(level, getBlockPos());
             chain.destroy(level, worldPosition);
         }
         if (!isController && controllerOffset != null && level != null) {
