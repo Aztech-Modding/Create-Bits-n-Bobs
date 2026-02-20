@@ -197,7 +197,6 @@ public class CogwheelChain {
     }
 
     public void destroy(final Level level, final BlockPos worldPosition) {
-        createDestroyEffects(level, worldPosition);
         for (final PathedCogwheelNode cogwheel : cogwheelNodes) {
             final BlockPos pos = worldPosition.offset(cogwheel.localPos());
             removeChainCogwheelFromLevelIfPresent(level, pos);
@@ -213,7 +212,7 @@ public class CogwheelChain {
         }
     }
 
-    private void createDestroyEffects(final Level level, final BlockPos worldPosition) {
+    public void createDestroyEffects(final Level level, final BlockPos worldPosition) {
         if (!(level instanceof final ServerLevel serverLevel)) {
             return;
         }

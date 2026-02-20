@@ -1,6 +1,6 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.placement;
 
-import com.kipti.bnb.content.kinetics.cogwheel_chain.block.CogwheelChainInteractionHandler;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.shape.CogwheelChainInteractionHandler;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.ChainInteractionFailedException;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.PlacingCogwheelChain;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.CogwheelChainType;

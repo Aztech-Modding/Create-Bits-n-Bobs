@@ -1,5 +1,6 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.block;
 
+import com.kipti.bnb.content.kinetics.cogwheel_chain.shape.CogwheelChainBreakerHelper;
 import com.kipti.bnb.registry.BnbBlockEntities;
 import com.kipti.bnb.registry.BnbBlocks;
 import com.simibubi.create.AllShapes;
@@ -103,7 +104,7 @@ public class CogwheelChainBlock extends RotatedPillarKineticBlock
         final Player player = context.getPlayer();
 
         if (!world.isClientSide()) {
-            CogwheelChainBreakActions.breakChain(world, pos, player);
+            CogwheelChainBreakerHelper.breakChain(world, pos, player);
         }
         return InteractionResult.SUCCESS;
     }

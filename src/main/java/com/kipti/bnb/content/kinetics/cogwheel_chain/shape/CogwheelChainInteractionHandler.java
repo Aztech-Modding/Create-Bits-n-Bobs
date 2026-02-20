@@ -1,10 +1,9 @@
-package com.kipti.bnb.content.kinetics.cogwheel_chain.block;
+package com.kipti.bnb.content.kinetics.cogwheel_chain.shape;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
 
+import com.kipti.bnb.content.kinetics.cogwheel_chain.block.CogwheelChainBlockEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.AllItems;
@@ -58,7 +57,7 @@ public class CogwheelChainInteractionHandler {
             return false;
         }
 
-        if (!(level.getBlockEntity(selectedController) instanceof CogwheelChainBlockEntity chainBE)) {
+        if (!(level.getBlockEntity(selectedController) instanceof final CogwheelChainBlockEntity chainBE)) {
             return false;
         }
 
@@ -165,7 +164,7 @@ public class CogwheelChainInteractionHandler {
 
 
     @SubscribeEvent
-    public static void onRenderWorld(RenderLevelStageEvent event) {
+    public static void onRenderWorld(final RenderLevelStageEvent event) {
         if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_PARTICLES)
             return;
         final SuperRenderTypeBuffer buffer = DefaultSuperRenderTypeBuffer.getInstance();
@@ -182,48 +181,5 @@ public class CogwheelChainInteractionHandler {
         event.setCanceled(true);
     }
 
-    private static class LevelChainShapeStore {
-        private static final long VALIDATE_INTERVAL_TICKS = 10;
-
-        private final Map<BlockPos, List<CogwheelChainShape>> chains = new ConcurrentHashMap<>();
-        private long nextValidationGameTime = Long.MIN_VALUE;
-
-        void put(final BlockPos controllerPos, final List<CogwheelChainShape> shapes) {
-            if (shapes == null || shapes.isEmpty()) {
-                chains.remove(controllerPos);
-                return;
-            }
-            chains.put(controllerPos.immutable(), List.copyOf(shapes));
-        }
-
-        void invalidate(final BlockPos controllerPos) {
-            chains.remove(controllerPos);
-        }
-
-        Iterable<Entry<BlockPos, List<CogwheelChainShape>>> entries() {
-            return chains.entrySet();
-        }
-
-        void validate(final Level level) {
-            final long gameTime = level.getGameTime();
-            if (gameTime < nextValidationGameTime) {
-                return;
-            }
-            nextValidationGameTime = gameTime + VALIDATE_INTERVAL_TICKS;
-
-            chains.entrySet().removeIf(entry -> {
-                final BlockPos pos = entry.getKey();
-                if (!level.isLoaded(pos)) {
-                    return true;
-                }
-
-                if (!(level.getBlockEntity(pos) instanceof CogwheelChainBlockEntity chainBE)) {
-                    return true;
-                }
-
-                return !chainBE.isController() || chainBE.getChain() == null;
-            });
-        }
-    }
 }
 

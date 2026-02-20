@@ -5,6 +5,9 @@ import com.kipti.bnb.content.decoration.girder_strut.IBlockEntityRelighter;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChain;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.PathedCogwheelNode;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.RenderedChainPathNode;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.shape.CogwheelChainInteractionHandler;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.shape.CogwheelChainShape;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.shape.CogwheelChainWholeShape;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.CogwheelChainType;
 import com.simibubi.create.api.schematic.requirement.SpecialBlockEntityItemRequirement;
 import com.simibubi.create.content.kinetics.base.IRotate;
@@ -126,7 +129,12 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
         destroyChain(true);
     }
 
-    public ItemStack destroyChain(final boolean dropItemsInWorld) {
+    public void destroyChain(final boolean dropItemsInWorld) {
+        destroyChain(dropItemsInWorld, false);
+    }
+
+    public ItemStack destroyChain(final boolean dropItemsInWorld, final boolean effects) {
+        if (level == null) return ItemStack.EMPTY;
         invalidateClientChainShapeCache();
 
         //Try drop chains from the current block for convenience
@@ -151,7 +159,7 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
         }
         this.chainsToRefund = 0; // Reset after dropping
 
-        if (isController && chain != null) {
+        if (isController) {
             chain.destroy(level, worldPosition);
         }
         if (!isController && controllerOffset != null && level != null) {
@@ -159,6 +167,7 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
             final BlockEntity be = level.getBlockEntity(controllerPos);
             if (be instanceof final CogwheelChainBlockEntity controllerBE) {
                 assert controllerBE.chain != null;
+                if (effects) controllerBE.chain.createDestroyEffects(level, controllerPos);
                 controllerBE.chain.destroy(level, controllerPos);
             }
         }
@@ -344,7 +353,7 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
             path.add(node.getPosition());
         }
 
-        final List<CogwheelChainShape> shapes = List.of(new CogwheelChainShape.CogwheelChainWholeShape(path, baseRadius));
+        final List<CogwheelChainShape> shapes = List.of(new CogwheelChainWholeShape(path, baseRadius));
         CogwheelChainInteractionHandler.put(level, worldPosition, shapes);
     }
 
