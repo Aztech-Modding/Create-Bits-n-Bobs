@@ -13,6 +13,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -86,19 +87,22 @@ public class CogwheelChainType {
     private final Predicate<Item> relatedItem;
     private final Predicate<Block> cogwheelPredicate;
     private final boolean permitsAxisChange;
+    private final Supplier<Block> breakEffectsBlock;
 
     public CogwheelChainType(final float costFactor,
                              final ChainRenderInfo chainRenderInfo,
                              final ResourceLocation renderTexture,
                              final Predicate<Item> relatedItem,
                              final Predicate<Block> cogwheelPredicate,
-                             final boolean permitsAxisChange) {
+                             final boolean permitsAxisChange,
+                             final Supplier<Block> breakEffectsBlock) {
         this.costFactor = costFactor;
         this.chainRenderInfo = chainRenderInfo;
         this.renderTexture = renderTexture;
         this.relatedItem = relatedItem;
         this.cogwheelPredicate = cogwheelPredicate;
         this.permitsAxisChange = permitsAxisChange;
+        this.breakEffectsBlock = breakEffectsBlock;
     }
 
     public boolean alwaysCostsOneItem() {
@@ -112,6 +116,7 @@ public class CogwheelChainType {
         private Predicate<Item> relatedItem = (item) -> item == Items.CHAIN;
         private Predicate<Block> cogwheelPredicate = (block) -> true;
         private boolean permitsAxisChange = true;
+        private Supplier<Block> breakEffectsBlock = () -> Blocks.CHAIN;
 
         public Builder costFactor(final float costFactor) {
             this.costFactor = costFactor;
@@ -151,8 +156,13 @@ public class CogwheelChainType {
             return this;
         }
 
+        public Builder breakEffectsBlock(final Supplier<Block> breakEffectsBlock) {
+            this.breakEffectsBlock = breakEffectsBlock;
+            return this;
+        }
+
         public CogwheelChainType build() {
-            return new CogwheelChainType(costFactor, chainRenderInfo, renderTexture, relatedItem, cogwheelPredicate, permitsAxisChange);
+            return new CogwheelChainType(costFactor, chainRenderInfo, renderTexture, relatedItem, cogwheelPredicate, permitsAxisChange, breakEffectsBlock);
         }
     }
 
@@ -188,6 +198,10 @@ public class CogwheelChainType {
 
     public boolean permitsAxisChanges() {
         return permitsAxisChange;
+    }
+
+    public Block getBreakEffectsBlock() {
+        return breakEffectsBlock.get();
     }
 
 }

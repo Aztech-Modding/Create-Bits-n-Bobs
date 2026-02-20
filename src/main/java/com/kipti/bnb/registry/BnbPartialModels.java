@@ -19,6 +19,9 @@ public class BnbPartialModels {
     public static final PartialModel
             HEADLAMP_OFF = block("headlamp/headlight"),
             HEADLAMP_ON = block("headlamp/headlight_on"),
+            HEADLAMP_INSTANCE_BASE = block("headlamp/instance/headlight_base"),
+            HEADLAMP_INSTANCE_OFF = block("headlamp/instance/headlight_off"),
+            HEADLAMP_INSTANCE_ON = block("headlamp/instance/headlight_on"),
 
     SMALL_SPROCKET_COGWHEEL_BLOCK = block("sprocket/small_cogwheel"),
             LARGE_SPROCKET_COGWHEEL_BLOCK = block("sprocket/large_cogwheel"),

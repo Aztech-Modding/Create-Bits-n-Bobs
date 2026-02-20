@@ -10,10 +10,10 @@ import com.simibubi.create.content.kinetics.simpleRelays.CogWheelBlock;
 import com.simibubi.create.content.kinetics.simpleRelays.ICogWheel;
 import com.simibubi.create.content.schematics.requirement.ItemRequirement;
 import com.simibubi.create.foundation.block.IBE;
+import com.simibubi.create.foundation.block.IHaveBigOutline;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
@@ -42,7 +42,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 public class CogwheelChainBlock extends RotatedPillarKineticBlock
-        implements IBE<CogwheelChainBlockEntity>, SpecialBlockItemRequirement, EncasableBlock, ICogwheelChainBlock { //TODO : waterlog state
+        implements IBE<CogwheelChainBlockEntity>, SpecialBlockItemRequirement, EncasableBlock, ICogwheelChainBlock, IHaveBigOutline { //TODO : waterlog state
     private static final List<CogwheelChainBlock> ALL_CHAIN_BLOCKS = new ArrayList<>();
     private static final Lazy<Map<Block, CogwheelChainBlock>> DEFAULT_CHAIN_BLOCKS_BY_SOURCE = Lazy.of(() -> {
         Map<Block, CogwheelChainBlock> map = new java.util.HashMap<>();
@@ -102,19 +102,9 @@ public class CogwheelChainBlock extends RotatedPillarKineticBlock
         final BlockPos pos = context.getClickedPos();
         final Player player = context.getPlayer();
 
-        if (!(world instanceof final ServerLevel serverLevel))
-            return InteractionResult.SUCCESS;
-
-        final BlockEntity be = world.getBlockEntity(pos);
-        if (!(be instanceof final CogwheelChainBlockEntity cogwheelChainBE))
-            return InteractionResult.SUCCESS;
-
-        final ItemStack drops = cogwheelChainBE.destroyChain(player == null);
-        if (player != null && !player.hasInfiniteMaterials())
-            player.getInventory().placeItemBackInInventory(drops);
-        state.spawnAfterBreak(serverLevel, pos, ItemStack.EMPTY, true);
-        context.getLevel()
-                .levelEvent(2001, context.getClickedPos(), Block.getId(state));
+        if (!world.isClientSide()) {
+            CogwheelChainBreakActions.breakChain(world, pos, player);
+        }
         return InteractionResult.SUCCESS;
     }
 

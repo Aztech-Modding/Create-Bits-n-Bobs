@@ -1,7 +1,8 @@
 package com.kipti.bnb.compat.computercraft.implementation.peripherals;
 
-import com.kipti.bnb.content.decoration.light.headlamp.HeadlampBlockEntity;
 import com.kipti.bnb.content.decoration.light.headlamp.HeadlampBlock;
+import com.kipti.bnb.content.decoration.light.headlamp.HeadlampBlockEntity;
+import com.kipti.bnb.registry.BnbConfigs;
 import com.simibubi.create.compat.computercraft.implementation.peripherals.SyncedPeripheral;
 import dan200.computercraft.api.lua.ILuaContext;
 import dan200.computercraft.api.lua.LuaException;
@@ -19,8 +20,11 @@ public class HeadlampPeripheral extends SyncedPeripheral<HeadlampBlockEntity> {
 
     @LuaFunction
     public final void setLamp(final ILuaContext context, final int x, final int y, final boolean onOff) throws LuaException {
-        if (x < -32 || x > 33 || y < -32 || y > 33) {
-            throw new LuaException("x and y must be between 32 and 33 inclusive");
+        final int blockRange = BnbConfigs.server().HEADLAMP_CC_BLOCK_RANGE.get();
+        final int minCoord = 3 - blockRange * 2;
+        final int maxCoord = blockRange * 2;
+        if (x < minCoord || x > maxCoord || y < minCoord || y > maxCoord) {
+            throw new LuaException("x and y must be between " + minCoord + " and " + maxCoord + " inclusive");
         }
         final Level level = blockEntity.getLevel();
         if (level == null || level.isClientSide()) {

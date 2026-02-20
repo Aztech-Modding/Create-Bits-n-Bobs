@@ -4,6 +4,8 @@ import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.decoration.girder_strut.IBlockEntityRelighter;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChain;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.PathedCogwheelNode;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.RenderedChainPathNode;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.types.CogwheelChainType;
 import com.simibubi.create.api.schematic.requirement.SpecialBlockEntityItemRequirement;
 import com.simibubi.create.content.kinetics.base.IRotate;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
@@ -20,6 +22,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -46,6 +49,7 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
             if (!chain.checkIntegrity(level, worldPosition)) {
                 destroyChain(true);
             }
+            updateChainShapes();
         } else {
             if (controllerOffset != null && level != null) {
                 final BlockPos controllerPos = worldPosition.offset(controllerOffset);
@@ -78,8 +82,12 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
             } else {
                 chain = new CogwheelChain(compound.getCompound("Chain"));
             }
+            if (level != null && level.isClientSide()) {
+                updateChainShapes();
+            }
         } else {
             chain = null;
+            invalidateClientChainShapeCache();
         }
     }
 
@@ -119,6 +127,8 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
     }
 
     public ItemStack destroyChain(final boolean dropItemsInWorld) {
+        invalidateClientChainShapeCache();
+
         //Try drop chains from the current block for convenience
         int chainsToReturn = chainsToRefund;
         CogwheelChain chain = this.chain;
@@ -158,11 +168,15 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
     public void setController(final Vec3i offset) {
         this.isController = false;
         this.controllerOffset = offset;
+        invalidateClientChainShapeCache();
     }
 
     public void setAsController(final CogwheelChain cogwheelChain) {
         this.isController = true;
         this.chain = cogwheelChain;
+        if (level != null && level.isClientSide()) {
+            updateChainShapes();
+        }
     }
 
     @Override
@@ -267,6 +281,13 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
 
     public void setChain(@Nullable final CogwheelChain chain) {
         this.chain = chain;
+        if (isController && level != null && level.isClientSide()) {
+            if (chain == null) {
+                CogwheelChainInteractionHandler.invalidate(level, worldPosition);
+            } else {
+                updateChainShapes();
+            }
+        }
     }
 
     public @Nullable Vec3i getControllerOffset() {
@@ -301,5 +322,44 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
                 ItemRequirement.ItemUseType.CONSUME,
                 Blocks.CHAIN.asItem().getDefaultInstance().copyWithCount(chain != null ? chain.getChainsRequired() : 0)
         ) : ItemRequirement.NONE;
+    }
+
+    private void updateChainShapes() {
+        if (!isController || chain == null || level == null || !level.isClientSide()) {
+            return;
+        }
+
+        final List<RenderedChainPathNode> nodes = chain.getChainPathNodes();
+        if (nodes.size() < 2) {
+            CogwheelChainInteractionHandler.invalidate(level, worldPosition);
+            return;
+        }
+
+        final CogwheelChainType type = chain.getChainType();
+        final CogwheelChainType.ChainRenderInfo renderInfo = type.getRenderType();
+        final double baseRadius = Math.max(renderInfo.getWidth(), renderInfo.getHeight()) / 32.0;
+
+        final List<Vec3> path = new ArrayList<>();
+        for (final RenderedChainPathNode node : nodes) {
+            path.add(node.getPosition());
+        }
+
+        final List<CogwheelChainShape> shapes = List.of(new CogwheelChainShape.CogwheelChainWholeShape(path, baseRadius));
+        CogwheelChainInteractionHandler.put(level, worldPosition, shapes);
+    }
+
+    private void invalidateClientChainShapeCache() {
+        if (level == null || !level.isClientSide()) {
+            return;
+        }
+
+        if (isController) {
+            CogwheelChainInteractionHandler.invalidate(level, worldPosition);
+            return;
+        }
+
+        if (controllerOffset != null) {
+            CogwheelChainInteractionHandler.invalidate(level, worldPosition.offset(controllerOffset));
+        }
     }
 }

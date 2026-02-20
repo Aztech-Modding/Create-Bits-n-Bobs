@@ -1,11 +1,14 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.placement;
 
+import com.kipti.bnb.content.kinetics.cogwheel_chain.block.CogwheelChainInteractionHandler;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.ChainInteractionFailedException;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.PlacingCogwheelChain;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.CogwheelChainType;
 import com.kipti.bnb.network.packets.from_client.PlaceCogwheelChainPacket;
+import com.kipti.bnb.network.packets.from_client.WrenchCogwheelChainPacket;
 import com.kipti.bnb.registry.BnbFeatureFlag;
 import com.simibubi.create.content.kinetics.simpleRelays.CogWheelBlock;
+import com.simibubi.create.AllItems;
 import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -53,6 +56,10 @@ public class CogwheelChainPlacementInteraction {
         final ClientLevel level = Minecraft.getInstance().level;
         if (player == null || level == null)
             return false;
+
+        if (tryDestroyChainWithWrench(player)) {
+            return true;
+        }
 
         //If it is a chain targeting a cogwheel
         final ItemStack chainItemInHand = getChainItemInHand(player);
@@ -161,6 +168,30 @@ public class CogwheelChainPlacementInteraction {
                 player.displayClientMessage(exception.getComponent(), true);
             }
         }
+    }
+
+    private static boolean tryDestroyChainWithWrench(final LocalPlayer player) {
+        final ItemStack main = player.getMainHandItem();
+        final ItemStack off = player.getOffhandItem();
+
+        if (!player.isShiftKeyDown())
+            return false;
+
+        if (!AllItems.WRENCH.isIn(main) && !AllItems.WRENCH.isIn(off))
+            return false;
+
+        if (CogwheelChainInteractionHandler.selectedController == null)
+            return false;
+
+        final BlockPos controllerPos = CogwheelChainInteractionHandler.selectedController;
+        final float chainPosition = CogwheelChainInteractionHandler.selectedChainPosition;
+
+        final ClientLevel level = Minecraft.getInstance().level;
+        if (level == null || !level.isLoaded(controllerPos))
+            return false;
+
+        CatnipServices.NETWORK.sendToServer(new WrenchCogwheelChainPacket(controllerPos, chainPosition));
+        return true;
     }
 
     public static @Nullable ItemStack getChainItemInHand(final LocalPlayer player) {
