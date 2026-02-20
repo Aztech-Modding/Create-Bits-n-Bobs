@@ -13,13 +13,19 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.sounds.SoundSource;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -191,6 +197,7 @@ public class CogwheelChain {
     }
 
     public void destroy(final Level level, final BlockPos worldPosition) {
+        createDestroyEffects(level, worldPosition);
         for (final PathedCogwheelNode cogwheel : cogwheelNodes) {
             final BlockPos pos = worldPosition.offset(cogwheel.localPos());
             removeChainCogwheelFromLevelIfPresent(level, pos);
@@ -203,6 +210,59 @@ public class CogwheelChain {
         if (be instanceof CogwheelChainBlockEntity && (state.getBlock() instanceof final CogwheelChainBlock cogwheelChainBlock)) {
             level.setBlockAndUpdate(pos, cogwheelChainBlock.getSourceBlockState()
                     .setValue(CogwheelChainBlock.AXIS, state.getValue(CogwheelChainBlock.AXIS)));
+        }
+    }
+
+    private void createDestroyEffects(final Level level, final BlockPos worldPosition) {
+        if (!(level instanceof final ServerLevel serverLevel)) {
+            return;
+        }
+
+        if (renderedNodes.size() < 2) {
+            return;
+        }
+
+        final BlockState particleState = type.getBreakEffectsBlock().defaultBlockState();
+        final BlockParticleOption particle = new BlockParticleOption(ParticleTypes.BLOCK, particleState);
+        final Vec3 origin = Vec3.atLowerCornerOf(worldPosition);
+
+        final SoundType soundType = particleState.getSoundType();
+        serverLevel.playSound(
+            null,
+            worldPosition,
+            soundType.getBreakSound(),
+            SoundSource.BLOCKS,
+            (soundType.getVolume() + 1.0F) / (cogwheelNodes.size() * 3f),
+            soundType.getPitch() * 0.8F
+        );
+
+        final int size = renderedNodes.size();
+        for (int i = 0; i < size; i++) {
+            final Vec3 a = renderedNodes.get(i).getPosition().add(origin);
+            final Vec3 b = renderedNodes.get((i + 1) % size).getPosition().add(origin);
+            final Vec3 segment = b.subtract(a);
+            final double distance = segment.length();
+            if (distance < 1e-6) {
+                continue;
+            }
+
+            final int samples = Math.max(2, (int) Math.ceil(distance * 1.5));
+            for (int sample = 0; sample <= samples; sample++) {
+                final double t = sample / (double) samples;
+                final Vec3 p = a.lerp(b, t);
+
+                serverLevel.sendParticles(
+                        particle,
+                        p.x,
+                        p.y,
+                        p.z,
+                        1,
+                        0.03,
+                        0.03,
+                        0.03,
+                        0.01
+                );
+            }
         }
     }
 

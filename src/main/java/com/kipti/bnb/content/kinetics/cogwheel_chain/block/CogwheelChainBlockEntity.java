@@ -87,6 +87,7 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
             }
         } else {
             chain = null;
+            invalidateClientChainShapeCache();
         }
     }
 
@@ -126,6 +127,8 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
     }
 
     public ItemStack destroyChain(final boolean dropItemsInWorld) {
+        invalidateClientChainShapeCache();
+
         //Try drop chains from the current block for convenience
         int chainsToReturn = chainsToRefund;
         CogwheelChain chain = this.chain;
@@ -165,6 +168,7 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
     public void setController(final Vec3i offset) {
         this.isController = false;
         this.controllerOffset = offset;
+        invalidateClientChainShapeCache();
     }
 
     public void setAsController(final CogwheelChain cogwheelChain) {
@@ -278,7 +282,11 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
     public void setChain(@Nullable final CogwheelChain chain) {
         this.chain = chain;
         if (isController && level != null && level.isClientSide()) {
-            updateChainShapes();
+            if (chain == null) {
+                CogwheelChainInteractionHandler.invalidate(level, worldPosition);
+            } else {
+                updateChainShapes();
+            }
         }
     }
 
@@ -329,26 +337,29 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
 
         final CogwheelChainType type = chain.getChainType();
         final CogwheelChainType.ChainRenderInfo renderInfo = type.getRenderType();
-        final double radius = Math.max(renderInfo.getWidth(), renderInfo.getHeight()) / 16.0 * 0.6;
+        final double baseRadius = Math.max(renderInfo.getWidth(), renderInfo.getHeight()) / 32.0;
 
-        final List<CogwheelChainShape> shapes = new ArrayList<>();
-        float accumulated = 0.0f;
-
-        for (int i = 0; i < nodes.size(); i++) {
-            final RenderedChainPathNode nodeA = nodes.get(i);
-            final RenderedChainPathNode nodeB = nodes.get((i + 1) % nodes.size());
-
-            final Vec3 a = nodeA.getPosition();
-            final Vec3 b = nodeB.getPosition();
-            final double segmentLength = a.distanceTo(b);
-            if (segmentLength <= 0.0) {
-                continue;
-            }
-
-            shapes.add(new CogwheelChainShape.CogwheelChainSegmentShape(a, b, accumulated, radius));
-            accumulated += (float) segmentLength;
+        final List<Vec3> path = new ArrayList<>();
+        for (final RenderedChainPathNode node : nodes) {
+            path.add(node.getPosition());
         }
 
+        final List<CogwheelChainShape> shapes = List.of(new CogwheelChainShape.CogwheelChainWholeShape(path, baseRadius));
         CogwheelChainInteractionHandler.put(level, worldPosition, shapes);
+    }
+
+    private void invalidateClientChainShapeCache() {
+        if (level == null || !level.isClientSide()) {
+            return;
+        }
+
+        if (isController) {
+            CogwheelChainInteractionHandler.invalidate(level, worldPosition);
+            return;
+        }
+
+        if (controllerOffset != null) {
+            CogwheelChainInteractionHandler.invalidate(level, worldPosition.offset(controllerOffset));
+        }
     }
 }

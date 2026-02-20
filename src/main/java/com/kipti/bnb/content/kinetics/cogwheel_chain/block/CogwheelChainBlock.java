@@ -14,7 +14,6 @@ import com.simibubi.create.foundation.block.IHaveBigOutline;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
@@ -103,19 +102,9 @@ public class CogwheelChainBlock extends RotatedPillarKineticBlock
         final BlockPos pos = context.getClickedPos();
         final Player player = context.getPlayer();
 
-        if (!(world instanceof final ServerLevel serverLevel))
-            return InteractionResult.SUCCESS;
-
-        final BlockEntity be = world.getBlockEntity(pos);
-        if (!(be instanceof final CogwheelChainBlockEntity cogwheelChainBE))
-            return InteractionResult.SUCCESS;
-
-        final ItemStack drops = cogwheelChainBE.destroyChain(player == null);
-        if (player != null && !player.hasInfiniteMaterials())
-            player.getInventory().placeItemBackInInventory(drops);
-        state.spawnAfterBreak(serverLevel, pos, ItemStack.EMPTY, true);
-        context.getLevel()
-                .levelEvent(2001, context.getClickedPos(), Block.getId(state));
+        if (!world.isClientSide()) {
+            CogwheelChainBreakActions.breakChain(world, pos, player);
+        }
         return InteractionResult.SUCCESS;
     }
 
