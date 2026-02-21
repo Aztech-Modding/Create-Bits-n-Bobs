@@ -30,11 +30,9 @@ import org.jetbrains.annotations.Nullable;
 
 public class LightBlock extends DirectionalBlock implements IWrenchable {
 
-    public final MapCodec<LightBlock> CODEC;
-
     public static final IntegerProperty POWER = BlockStateProperties.POWER;
     public static final BooleanProperty FORCED_ON = BooleanProperty.create("forced_on");
-
+    public final MapCodec<LightBlock> CODEC;
     private final VoxelShaper shaper;
 
     private final boolean forcePlaceUpwards;
@@ -51,30 +49,16 @@ public class LightBlock extends DirectionalBlock implements IWrenchable {
         this.forcePlaceUpwards = forcePlaceUpwards;
     }
 
-    @Override
-    protected InteractionResult useWithoutItem(final BlockState state, final Level level, final BlockPos pos, final Player player, final BlockHitResult hitResult) {
-        final ItemStack heldItem = player.getMainHandItem();
-        if (!heldItem.isEmpty())
-            return InteractionResult.PASS;
-        if (level.isClientSide)
-            return InteractionResult.SUCCESS;
-        level.setBlock(pos, state.cycle(FORCED_ON), 3);
-        level.playSound(null, pos, SoundEvents.LEVER_CLICK, SoundSource.BLOCKS, 0.3F, state.getValue(FORCED_ON) ? 0.6F : 0.5F);
-        return InteractionResult.SUCCESS;
-    }
-
     public static boolean shouldUseOnLightModel(final BlockState state) {
         return state.getValue(LightBlock.POWER) > 6 || state.getValue(LightBlock.FORCED_ON);
     }
 
-    public static int getLightLevel(final BlockState state) {
-        return state.getValue(LightBlock.FORCED_ON) ? 15 : state.getValue(LightBlock.POWER);
+    public static boolean isEmissive(final BlockState state, final BlockGetter blockGetter, final BlockPos pos) {
+        return state.getValue(POWER) > 0 || state.getValue(FORCED_ON);
     }
 
-    @Override
-    protected void createBlockStateDefinition(final StateDefinition.@NotNull Builder<Block, BlockState> builder) {
-        super.createBlockStateDefinition(builder);
-        builder.add(POWER, FACING, FORCED_ON);
+    public static int getLightLevel(final BlockState state) {
+        return state.getValue(LightBlock.FORCED_ON) ? 15 : state.getValue(LightBlock.POWER);
     }
 
     @Override
@@ -89,8 +73,9 @@ public class LightBlock extends DirectionalBlock implements IWrenchable {
     }
 
     @Override
-    protected @NotNull VoxelShape getShape(final BlockState state, @NotNull final BlockGetter level, @NotNull final BlockPos pos, @NotNull final CollisionContext context) {
-        return shaper.get(state.getValue(FACING));
+    protected void createBlockStateDefinition(final StateDefinition.@NotNull Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
+        builder.add(POWER, FACING, FORCED_ON);
     }
 
     @Override
@@ -111,6 +96,23 @@ public class LightBlock extends DirectionalBlock implements IWrenchable {
                 }
             }
         }
+    }
+
+    @Override
+    protected InteractionResult useWithoutItem(final BlockState state, final Level level, final BlockPos pos, final Player player, final BlockHitResult hitResult) {
+        final ItemStack heldItem = player.getMainHandItem();
+        if (!heldItem.isEmpty())
+            return InteractionResult.PASS;
+        if (level.isClientSide)
+            return InteractionResult.SUCCESS;
+        level.setBlock(pos, state.cycle(FORCED_ON), 3);
+        level.playSound(null, pos, SoundEvents.LEVER_CLICK, SoundSource.BLOCKS, 0.3F, state.getValue(FORCED_ON) ? 0.6F : 0.5F);
+        return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    protected @NotNull VoxelShape getShape(final BlockState state, @NotNull final BlockGetter level, @NotNull final BlockPos pos, @NotNull final CollisionContext context) {
+        return shaper.get(state.getValue(FACING));
     }
 
     @Override
