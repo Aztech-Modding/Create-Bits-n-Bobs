@@ -128,7 +128,6 @@
   "block.bits_n_bobs.veridium_tile_wall": "Muro de baldosas de veridio",
   "block.bits_n_bobs.veridium_tiles": "Baldosas de veridio",
   "block.bits_n_bobs.weathered_girder_strut": "Puntal de viga erosionada",
-  "block.bits_n_bobs.weathered_girder_strut.tooltip.summary": "Un tipo de viga usado para salvar una distancia *entre dos puntos de anclaje*.",
   "block.bits_n_bobs.weathered_metal_girder": "Viga de metal erosionada",
   "block.bits_n_bobs.weathered_metal_girder_encased_shaft": "Eje revestido de viga de metal erosionada",
   "block.bits_n_bobs.white_chair": "Silla blanca",

@@ -7,17 +7,19 @@ import com.kipti.bnb.content.kinetics.cogwheel_chain.block.ICogwheelChainBlock;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.BnbCogwheelChainTypes;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.CogwheelChainType;
 import com.kipti.bnb.registry.BnbRegistries;
+import com.simibubi.create.content.contraptions.StructureTransform;
 import com.simibubi.create.content.kinetics.simpleRelays.CogWheelBlock;
 import com.simibubi.create.foundation.utility.BlockHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -25,7 +27,6 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.sounds.SoundSource;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -34,8 +35,8 @@ import java.util.Objects;
 
 public class CogwheelChain {
 
-    private final List<PathedCogwheelNode> cogwheelNodes;
-    private final List<RenderedChainPathNode> renderedNodes;
+    private List<PathedCogwheelNode> cogwheelNodes;
+    private List<RenderedChainPathNode> renderedNodes;
     private CogwheelChainType type;
     private Item returnedItem;
     private boolean flipInsideOutside;
@@ -46,6 +47,47 @@ public class CogwheelChain {
         type = BnbCogwheelChainTypes.CHAIN.get();
         returnedItem = Items.CHAIN;
         read(tag);
+    }
+
+    public void read(final CompoundTag tag) {
+        cogwheelNodes.clear();
+        final int cogWheelPosCount = tag.getInt("cogwheel_pos_count");
+        for (int i = 0; i < cogWheelPosCount; i++) {
+            final CompoundTag posTag = tag.getCompound("cogwheel_pos_" + i);
+            final PathedCogwheelNode pos = PathedCogwheelNode.read(posTag);
+            cogwheelNodes.add(pos);
+        }
+        renderedNodes.clear();
+        renderedNodes.addAll(CogwheelChainGeometryBuilder.buildFullChainFromPathNodes(cogwheelNodes));
+        if (tag.contains("chain_type")) {
+            final ResourceLocation typeId = ResourceLocation.parse(tag.getString("chain_type"));
+            final CogwheelChainType foundType = BnbRegistries.COGWHEEL_CHAIN_TYPES.get(typeId);
+            if (foundType != null) {
+                type = foundType;
+            }
+        }
+        if (tag.contains("returned_item")) {
+            final ResourceLocation itemId = ResourceLocation.parse(tag.getString("returned_item"));
+            final Item foundItem = BuiltInRegistries.ITEM.get(itemId);
+            if (foundItem != Items.AIR) {
+                returnedItem = foundItem;
+            }
+        }
+        updateInsideOutsideFlip();
+    }
+
+    private void updateInsideOutsideFlip() {
+        if (!type.getRenderType().usesConsistentInsideOutside()) {
+            flipInsideOutside = false;
+            return;
+        }
+
+        int sideSum = 0;
+        for (final PathedCogwheelNode node : cogwheelNodes) {
+            sideSum += node.side();
+        }
+
+        flipInsideOutside = sideSum < 0;
     }
 
     public CogwheelChain(final List<PathedCogwheelNode> path, final CogwheelChainType type, final Item returnedItem) {
@@ -107,45 +149,9 @@ public class CogwheelChain {
         tag.putString("returned_item", BuiltInRegistries.ITEM.getKey(returnedItem).toString());
     }
 
-    public void read(final CompoundTag tag) {
-        cogwheelNodes.clear();
-        final int cogWheelPosCount = tag.getInt("cogwheel_pos_count");
-        for (int i = 0; i < cogWheelPosCount; i++) {
-            final CompoundTag posTag = tag.getCompound("cogwheel_pos_" + i);
-            final PathedCogwheelNode pos = PathedCogwheelNode.read(posTag);
-            cogwheelNodes.add(pos);
-        }
-        renderedNodes.clear();
-        renderedNodes.addAll(CogwheelChainGeometryBuilder.buildFullChainFromPathNodes(cogwheelNodes));
-        if (tag.contains("chain_type")) {
-            final ResourceLocation typeId = ResourceLocation.parse(tag.getString("chain_type"));
-            final CogwheelChainType foundType = BnbRegistries.COGWHEEL_CHAIN_TYPES.get(typeId);
-            if (foundType != null) {
-                type = foundType;
-            }
-        }
-        if (tag.contains("returned_item")) {
-            final ResourceLocation itemId = ResourceLocation.parse(tag.getString("returned_item"));
-            final Item foundItem = BuiltInRegistries.ITEM.get(itemId);
-            if (foundItem != Items.AIR) {
-                returnedItem = foundItem;
-            }
-        }
-        updateInsideOutsideFlip();
-    }
-
-    private void updateInsideOutsideFlip() {
-        if (!type.getRenderType().usesConsistentInsideOutside()) {
-            flipInsideOutside = false;
-            return;
-        }
-
-        int sideSum = 0;
-        for (final PathedCogwheelNode node : cogwheelNodes) {
-            sideSum += node.side();
-        }
-
-        flipInsideOutside = sideSum < 0;
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(renderedNodes);
     }
 
     @Override
@@ -153,11 +159,6 @@ public class CogwheelChain {
         if (o == null || getClass() != o.getClass()) return false;
         final CogwheelChain that = (CogwheelChain) o;
         return Objects.equals(renderedNodes, that.renderedNodes);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(renderedNodes);
     }
 
     public void placeInLevel(final Level level, final PlacingCogwheelChain source) {
@@ -227,12 +228,12 @@ public class CogwheelChain {
 
         final SoundType soundType = particleState.getSoundType();
         serverLevel.playSound(
-            null,
-            worldPosition,
-            soundType.getBreakSound(),
-            SoundSource.BLOCKS,
-            (soundType.getVolume() + 1.0F) / (cogwheelNodes.size() * 3f),
-            soundType.getPitch() * 0.8F
+                null,
+                worldPosition,
+                soundType.getBreakSound(),
+                SoundSource.BLOCKS,
+                (soundType.getVolume() + 1.0F) / (cogwheelNodes.size() * 3f),
+                soundType.getPitch() * 0.8F
         );
 
         final int size = renderedNodes.size();
@@ -292,5 +293,14 @@ public class CogwheelChain {
 
     public boolean shouldFlipInsideOutside() {
         return flipInsideOutside;
+    }
+
+    public void transform(final BlockEntity blockEntity, final StructureTransform transform) {
+        final List<PathedCogwheelNode> newNodes = new ArrayList<>();
+        for (final PathedCogwheelNode node : cogwheelNodes) {
+            newNodes.add(node.transform(transform));
+        }
+        cogwheelNodes = newNodes;
+        renderedNodes = CogwheelChainGeometryBuilder.buildFullChainFromPathNodes(cogwheelNodes);
     }
 }

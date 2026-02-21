@@ -1,5 +1,6 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.graph;
 
+import com.simibubi.create.content.contraptions.StructureTransform;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -68,5 +69,17 @@ public record PathedCogwheelNode(int side, boolean isLarge, Direction.Axis rotat
 
     public double dist(final PathedCogwheelNode other) {
         return center().distanceTo(other.center());
+    }
+
+    public PathedCogwheelNode transform(final StructureTransform transform) {
+        final BlockPos transformedPos = transform.applyWithoutOffset(localPos);
+        final Direction transformedAxisResult = transform.rotateFacing(Direction.fromAxisAndDirection(rotationAxis, Direction.AxisDirection.POSITIVE));
+        return new PathedCogwheelNode(
+                (transformedAxisResult.getAxisDirection() == Direction.AxisDirection.POSITIVE ? 1 : -1) * side,
+                isLarge,
+                transformedAxisResult.getAxis(),
+                transformedPos,
+                offsetForSmallCogwheel
+        );
     }
 }

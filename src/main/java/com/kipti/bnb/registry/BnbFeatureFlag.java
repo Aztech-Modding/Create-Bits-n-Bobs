@@ -13,12 +13,13 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public enum BnbFeatureFlag {
-    COGWHEEL_CHAIN_DRIVES("Ability for the player to create chain drives using create's cogwheels."),
+    COGWHEEL_CHAIN_DRIVES("Ability for the player to create chain drives using create's cogwheels specifically."),
     FLANGED_CHAIN_DRIVES("Ability for the player to create chain drives using the flanged gear cogwheels.", BnbBlocks.LARGE_EMPTY_FLANGED_COGWHEEL::get, BnbBlocks.SMALL_EMPTY_FLANGED_COGWHEEL::get),
 
     CHAIN_PULLEY("Availability of the Chain Pulley block.", BnbBlocks.CHAIN_PULLEY::get),
 
     EXPERIMENTAL_FLYWHEEL_BEARING("Availability of the Flywheel Bearing block. (In development)", false, BnbBlocks.FLYWHEEL_BEARING::get),
+    EXPERIMENTAL_WOODEN_STRUT("Availability of the Wooden Strut block. (In development)", false, BnbBlocks.WOODEN_GIRDER_STRUT::get),
 
     WEATHERED_GIRDER("Availability of the weathered girder block.", BnbDecoBlocks.WEATHERED_METAL_GIRDER::get, BnbDecoBlocks.WEATHERED_GIRDER_STRUT::get),
     GIRDER_STRUT("Availability of the girder strut blocks.", BnbDecoBlocks.GIRDER_STRUT::get, BnbDecoBlocks.WEATHERED_GIRDER_STRUT::get),

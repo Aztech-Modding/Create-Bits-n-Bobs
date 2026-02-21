@@ -28,30 +28,19 @@ import java.util.function.Consumer;
 
 public class HeadlampVisual extends AbstractBlockEntityVisual<HeadlampBlockEntity> {
 
+    private static final RendererReloadCache<String, Model> MODEL_CACHE = new RendererReloadCache<>(key -> switch (key) {
+        case "base" -> Models.partial(BnbPartialModels.HEADLAMP_INSTANCE_BASE);
+        case "top" -> new BakedModelBuilder(BnbPartialModels.HEADLAMP_INSTANCE_OFF.get())
+                .materialFunc((renderType, ao) -> BnbMaterials.HEADLAMP_NO_DIFFUSE_MATERIAL)
+                .build();
+        default -> throw new IllegalArgumentException(key);
+    });
     private final LampInstance[] lamps = new LampInstance[HeadlampConstants.PLACEMENT_COUNT];
     private long lastRenderState = Long.MIN_VALUE;
-
-    private static final RendererReloadCache<String, Model> MODEL_CACHE = new RendererReloadCache<>(key -> {
-        return switch (key) {
-            case "base" -> Models.partial(BnbPartialModels.HEADLAMP_INSTANCE_BASE);
-            case "top" -> new BakedModelBuilder(BnbPartialModels.HEADLAMP_INSTANCE_OFF.get())
-                    .materialFunc((renderType, ao) -> BnbMaterials.HEADLAMP_MATERIAL)
-                    .build();
-            default -> throw new IllegalArgumentException(key);
-        };
-    });
 
     public HeadlampVisual(final VisualizationContext ctx, final HeadlampBlockEntity blockEntity, final float partialTick) {
         super(ctx, blockEntity, partialTick);
         update(partialTick);
-    }
-
-    public static Model baseModel() {
-        return MODEL_CACHE.get("base");
-    }
-
-    public static Model topModel() {
-        return MODEL_CACHE.get("top");
     }
 
     @Override
@@ -96,6 +85,24 @@ public class HeadlampVisual extends AbstractBlockEntityVisual<HeadlampBlockEntit
     }
 
     @Override
+    protected void _delete() {
+        for (int i = 0; i < lamps.length; i++) {
+            if (lamps[i] != null) {
+                lamps[i].delete();
+                lamps[i] = null;
+            }
+        }
+    }
+
+    public static Model baseModel() {
+        return MODEL_CACHE.get("base");
+    }
+
+    public static Model topModel() {
+        return MODEL_CACHE.get("top");
+    }
+
+    @Override
     public void updateLight(final float partialTick) {
         for (final LampInstance lamp : lamps) {
             if (lamp != null) {
@@ -109,16 +116,6 @@ public class HeadlampVisual extends AbstractBlockEntityVisual<HeadlampBlockEntit
         for (final LampInstance lamp : lamps) {
             if (lamp != null) {
                 lamp.collectCrumblingInstances(consumer);
-            }
-        }
-    }
-
-    @Override
-    protected void _delete() {
-        for (int i = 0; i < lamps.length; i++) {
-            if (lamps[i] != null) {
-                lamps[i].delete();
-                lamps[i] = null;
             }
         }
     }
@@ -145,13 +142,6 @@ public class HeadlampVisual extends AbstractBlockEntityVisual<HeadlampBlockEntit
             updateLight();
         }
 
-        public void update(final boolean isOn, final @Nullable DyeColor color) {
-            if (isOn != wasOn || currentColor != color) {
-                updateSpriteShift(isOn, color);
-                wasOn = isOn;
-            }
-        }
-
         private void updateTransform(final HeadlampBlockEntity.HeadlampPlacement placement) {
             final float tx = (float) placement.horizontalAlignment().getOffset();
             final float tz = (float) placement.verticalAlignment().getOffset();
@@ -159,34 +149,6 @@ public class HeadlampVisual extends AbstractBlockEntityVisual<HeadlampBlockEntit
 
             applyTransform(base, tx, tz, facing);
             applyTopTransform(top, tx, tz, facing);
-        }
-
-        private void applyTransform(final TransformedInstance instance, final float tx, final float tz, final Direction facing) {
-            instance.setIdentityTransform()
-                    .translate(getVisualPosition());
-            applySurfaceRotation(instance, facing);
-            instance.translate(tx, 0, tz)
-                    .setChanged();
-        }
-
-        private void applyTopTransform(final ShiftTransformedInstance instance, final float tx, final float tz, final Direction facing) {
-            instance.setIdentityTransform()
-                    .translate(getVisualPosition());
-            applySurfaceRotation(instance, facing);
-            instance.translate(tx, 0, tz)
-                    .setChanged();
-        }
-
-        private void applySurfaceRotation(final TransformedInstance instance, final Direction facing) {
-            if (facing == Direction.UP) {
-                return;
-            }
-            final Quaternionf rotation = facing.getRotation();
-            final Quaternionf upRotation = Direction.UP.getRotation();
-            upRotation.invert();
-            instance.translate(0.5f, 0.5f, 0.5f)
-                    .rotate(upRotation.mul(rotation))
-                    .translate(-0.5f, -0.5f, -0.5f);
         }
 
         /**
@@ -219,6 +181,41 @@ public class HeadlampVisual extends AbstractBlockEntityVisual<HeadlampBlockEntit
             relight(base);
             if (!wasOn) {
                 relight(top);
+            }
+        }
+
+        private void applyTransform(final TransformedInstance instance, final float tx, final float tz, final Direction facing) {
+            instance.setIdentityTransform()
+                    .translate(getVisualPosition());
+            applySurfaceRotation(instance, facing);
+            instance.translate(tx, 0, tz)
+                    .setChanged();
+        }
+
+        private void applyTopTransform(final ShiftTransformedInstance instance, final float tx, final float tz, final Direction facing) {
+            instance.setIdentityTransform()
+                    .translate(getVisualPosition());
+            applySurfaceRotation(instance, facing);
+            instance.translate(tx, 0, tz)
+                    .setChanged();
+        }
+
+        private void applySurfaceRotation(final TransformedInstance instance, final Direction facing) {
+            if (facing == Direction.UP) {
+                return;
+            }
+            final Quaternionf rotation = facing.getRotation();
+            final Quaternionf upRotation = Direction.UP.getRotation();
+            upRotation.invert();
+            instance.translate(0.5f, 0.5f, 0.5f)
+                    .rotate(upRotation.mul(rotation))
+                    .translate(-0.5f, -0.5f, -0.5f);
+        }
+
+        public void update(final boolean isOn, final @Nullable DyeColor color) {
+            if (isOn != wasOn || currentColor != color) {
+                updateSpriteShift(isOn, color);
+                wasOn = isOn;
             }
         }
 

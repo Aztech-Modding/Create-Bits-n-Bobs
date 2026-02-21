@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class GirderStrutBlockItem extends BlockItem {
 
-    private static final double MAX_ANGLE_DEGREES = 75.0;
+    private static final double MAX_ANGLE_DEGREES = 90;
     private static final double MIN_DOT_THRESHOLD = Math.cos(Math.toRadians(MAX_ANGLE_DEGREES));
 
     public GirderStrutBlockItem(final Block block, final Properties properties) {

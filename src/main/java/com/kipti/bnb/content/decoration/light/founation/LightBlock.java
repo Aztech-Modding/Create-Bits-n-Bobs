@@ -53,7 +53,7 @@ public class LightBlock extends DirectionalBlock implements IWrenchable {
         return state.getValue(LightBlock.POWER) > 6 || state.getValue(LightBlock.FORCED_ON);
     }
 
-    public static boolean isEmissive(final BlockState state, final BlockGetter blockGetter, final BlockPos pos) {
+    public static boolean isEmissive(final BlockState state, @Nullable final BlockGetter blockGetter, @Nullable final BlockPos pos) {
         return state.getValue(POWER) > 0 || state.getValue(FORCED_ON);
     }
 

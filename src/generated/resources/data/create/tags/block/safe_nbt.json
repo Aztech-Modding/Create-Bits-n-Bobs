@@ -5,6 +5,8 @@
     "bits_n_bobs:headlamp",
     "bits_n_bobs:throttle_lever",
     "bits_n_bobs:weathered_girder_strut",
-    "bits_n_bobs:girder_strut"
+    "bits_n_bobs:girder_strut",
+    "bits_n_bobs:wooden_girder_strut",
+    "bits_n_bobs:cable_girder_strut"
   ]
 }

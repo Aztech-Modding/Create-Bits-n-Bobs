@@ -49,11 +49,6 @@ public class HeadlampBlock extends LightBlock implements IBE<HeadlampBlockEntity
     }
 
     @Override
-    protected boolean propagatesSkylightDown(final BlockState state, final BlockGetter level, final BlockPos pos) {
-        return true;
-    }
-
-    @Override
     public void setPlacedBy(final @NotNull Level level, final @NotNull BlockPos pos, final @NotNull BlockState state, @Nullable final LivingEntity placer, final @NotNull ItemStack stack) {
         super.setPlacedBy(level, pos, state, placer, stack);
         if (placer == null) {
@@ -76,34 +71,9 @@ public class HeadlampBlock extends LightBlock implements IBE<HeadlampBlockEntity
         return location;
     }
 
-    private Vec3 getPlayerLocationInBlockExact(final BlockPos pos, final Level level, @NotNull final LivingEntity placer) {
-        final double range = placer.getAttributeValue(Attributes.BLOCK_INTERACTION_RANGE) + 1;
-        final HitResult hitResult = placer.pick(range, 1, false);
-        final Vec3 location = hitResult.getLocation();
-        final Vec3 direction = placer.getLookAngle();
-
-        final BlockHitResult clip = level.getBlockState(pos).getShape(level, pos).clip(location, direction.scale(2), pos);
-        if (clip == null) {
-            return location;
-        }
-        return clip.getLocation();
-
-    }
-
     @Override
-    public boolean canBeReplaced(final @NotNull BlockState state, final BlockPlaceContext useContext) {
-        if (useContext.isSecondaryUseActive())
-            return false;
-        final ItemStack stack = useContext.getItemInHand();
-        if (stack.getItem() instanceof final BlockItem blockItem && blockItem.getBlock() != this)
-            return super.canBeReplaced(state, useContext);
-        final Vec3 location = useContext.getClickLocation();
-
-        final BlockPos pos = useContext.getClickedPos();
-        if (useContext.getLevel().getBlockEntity(pos) instanceof final HeadlampBlockEntity headlampBlockEntity) {
-            return headlampBlockEntity.canPlaceHeadlampIntoBlock(location.subtract(pos.getCenter()), state.getValue(FACING));
-        }
-        return super.canBeReplaced(state, useContext);
+    public boolean hasDynamicShape() {
+        return true;
     }
 
     @Override
@@ -137,6 +107,54 @@ public class HeadlampBlock extends LightBlock implements IBE<HeadlampBlockEntity
     }
 
     @Override
+    protected @NotNull VoxelShape getShape(final BlockState state, @NotNull final BlockGetter level, @NotNull final BlockPos pos, @NotNull final CollisionContext context) {
+        return level.getBlockEntity(pos) instanceof final HeadlampBlockEntity headlampBlockEntity ?
+                headlampBlockEntity.getShape(state, level, pos, context) :
+                Shapes.block();
+    }
+
+    @Override
+    public boolean onDestroyedByPlayer(final @NotNull BlockState state, final @NotNull Level level, final @NotNull BlockPos pos, final @NotNull Player player, final boolean willHarvest, final @NotNull FluidState fluid) {
+        final Vec3 location = getPlayerLocationInBlockExact(pos, level, player);
+        if (!player.isCrouching() && level.getBlockEntity(pos) instanceof final HeadlampBlockEntity headlampBlockEntity &&
+                headlampBlockEntity.removeNearestHeadlamp(location.subtract(pos.getCenter()), state.getValue(FACING))) {
+            if (!level.isClientSide && !player.isCreative()) {
+                HeadlampBlock.popResource(level, pos, BnbBlocks.HEADLAMP.asStack());
+            }
+            return false;
+        }
+        return super.onDestroyedByPlayer(state, level, pos, player, willHarvest, fluid);
+    }
+
+    private Vec3 getPlayerLocationInBlockExact(final BlockPos pos, final Level level, @NotNull final LivingEntity placer) {
+        final double range = placer.getAttributeValue(Attributes.BLOCK_INTERACTION_RANGE) + 1;
+        final HitResult hitResult = placer.pick(range, 1, false);
+        final Vec3 location = hitResult.getLocation();
+        final Vec3 direction = placer.getLookAngle();
+
+        final BlockHitResult clip = level.getBlockState(pos).getShape(level, pos).clip(location, direction.scale(2), pos);
+        if (clip == null) {
+            return location;
+        }
+        return clip.getLocation();
+
+    }
+
+    @Override
+    protected void onRemove(final BlockState state, final @NotNull Level level, final @NotNull BlockPos pos, final BlockState newState, final boolean movedByPiston) {
+        if (newState.is(state.getBlock())) {
+            super.onRemove(state, level, pos, newState, movedByPiston);
+            return; // Block is being replaced by the same block, do nothing
+        }
+        if (level.getBlockEntity(pos) instanceof final HeadlampBlockEntity headlampBlockEntity) {
+            final ItemStack additionalResources = BnbBlocks.HEADLAMP.asStack().copyWithCount(Math.clamp(headlampBlockEntity.getExistingPlacements().size() - 1, 0, 3));
+            if (!additionalResources.isEmpty())
+                HeadlampBlock.popResource(level, pos, additionalResources);
+        }
+        super.onRemove(state, level, pos, newState, movedByPiston);
+    }
+
+    @Override
     protected @NotNull ItemInteractionResult useItemOn(final ItemStack stack, final @NotNull BlockState state, final @NotNull Level level, final @NotNull BlockPos pos, final @NotNull Player player, final @NotNull InteractionHand hand, final @NotNull BlockHitResult hitResult) {
         if (stack.getItem() instanceof final DyeItem dyeItem) {
             if (level.getBlockEntity(pos) instanceof final HeadlampBlockEntity headlampBlockEntity) {
@@ -152,32 +170,36 @@ public class HeadlampBlock extends LightBlock implements IBE<HeadlampBlockEntity
         return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
     }
 
-
     @Override
-    public boolean onDestroyedByPlayer(final @NotNull BlockState state, final @NotNull Level level, final @NotNull BlockPos pos, final @NotNull Player player, final boolean willHarvest, final @NotNull FluidState fluid) {
-        final Vec3 location = getPlayerLocationInBlockExact(pos, level, player);
-        if (!player.isCrouching() && level.getBlockEntity(pos) instanceof final HeadlampBlockEntity headlampBlockEntity &&
-                headlampBlockEntity.removeNearestHeadlamp(location.subtract(pos.getCenter()), state.getValue(FACING))) {
-            if (!level.isClientSide && !player.isCreative()) {
-                HeadlampBlock.popResource(level, pos, BnbBlocks.HEADLAMP.asStack());
-            }
-            return false;
-        }
-        return super.onDestroyedByPlayer(state, level, pos, player, willHarvest, fluid);
+    protected @NotNull BlockState rotate(final @NotNull BlockState state, final @NotNull Rotation rotation) {
+        return super.rotate(state, rotation)
+                .setValue(FACING, rotation.rotate(state.getValue(FACING)));
     }
 
     @Override
-    protected void onRemove(final BlockState state, final @NotNull Level level, final @NotNull BlockPos pos, final BlockState newState, final boolean movedByPiston) {
-        if (newState.is(state.getBlock())) {
-            super.onRemove(state, level, pos, newState, movedByPiston);
-            return; // Block is being replaced by the same block, do nothing
+    public boolean canBeReplaced(final @NotNull BlockState state, final BlockPlaceContext useContext) {
+        if (useContext.isSecondaryUseActive())
+            return false;
+        final ItemStack stack = useContext.getItemInHand();
+        if (stack.getItem() instanceof final BlockItem blockItem && blockItem.getBlock() != this)
+            return super.canBeReplaced(state, useContext);
+        final Vec3 location = useContext.getClickLocation();
+
+        final BlockPos pos = useContext.getClickedPos();
+        if (useContext.getLevel().getBlockEntity(pos) instanceof final HeadlampBlockEntity headlampBlockEntity) {
+            return headlampBlockEntity.canPlaceHeadlampIntoBlock(location.subtract(pos.getCenter()), state.getValue(FACING));
         }
-        if (level.getBlockEntity(pos) instanceof final HeadlampBlockEntity headlampBlockEntity) {
-            final ItemStack additionalResources = BnbBlocks.HEADLAMP.asStack().copyWithCount(Math.clamp(headlampBlockEntity.getExistingPlacements().size() - 1, 0, 3));
-            if (!additionalResources.isEmpty())
-                HeadlampBlock.popResource(level, pos, additionalResources);
-        }
-        super.onRemove(state, level, pos, newState, movedByPiston);
+        return super.canBeReplaced(state, useContext);
+    }
+
+    @Override
+    protected @NotNull VoxelShape getVisualShape(final @NotNull BlockState state, final @NotNull BlockGetter level, final @NotNull BlockPos pos, final @NotNull CollisionContext context) {
+        return super.getVisualShape(state, level, pos, context);
+    }
+
+    @Override
+    protected boolean propagatesSkylightDown(final BlockState state, final BlockGetter level, final BlockPos pos) {
+        return true;
     }
 
     @Override
@@ -214,24 +236,6 @@ public class HeadlampBlock extends LightBlock implements IBE<HeadlampBlockEntity
     }
 
     @Override
-    protected @NotNull VoxelShape getShape(final BlockState state, @NotNull final BlockGetter level, @NotNull final BlockPos pos, @NotNull final CollisionContext context) {
-        return level.getBlockEntity(pos) instanceof final HeadlampBlockEntity headlampBlockEntity ?
-                headlampBlockEntity.getShape(state, level, pos, context) :
-                Shapes.block();
-    }
-
-    @Override
-    protected @NotNull BlockState rotate(final @NotNull BlockState state, final @NotNull Rotation rotation) {
-        return super.rotate(state, rotation)
-                .setValue(FACING, rotation.rotate(state.getValue(FACING)));
-    }
-
-    @Override
-    public boolean hasDynamicShape() {
-        return true;
-    }
-
-    @Override
     public Class<HeadlampBlockEntity> getBlockEntityClass() {
         return HeadlampBlockEntity.class;
     }
@@ -241,8 +245,4 @@ public class HeadlampBlock extends LightBlock implements IBE<HeadlampBlockEntity
         return BnbBlockEntities.HEADLAMP.get();
     }
 
-    @Override
-    protected @NotNull VoxelShape getVisualShape(final @NotNull BlockState state, final @NotNull BlockGetter level, final @NotNull BlockPos pos, final @NotNull CollisionContext context) {
-        return super.getVisualShape(state, level, pos, context);
-    }
 }

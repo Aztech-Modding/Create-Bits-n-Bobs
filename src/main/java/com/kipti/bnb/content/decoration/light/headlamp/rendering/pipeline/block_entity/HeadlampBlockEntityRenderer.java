@@ -1,5 +1,6 @@
 package com.kipti.bnb.content.decoration.light.headlamp.rendering.pipeline.block_entity;
 
+import com.kipti.bnb.content.decoration.light.founation.LightBlock;
 import com.kipti.bnb.content.decoration.light.headlamp.HeadlampBlock;
 import com.kipti.bnb.content.decoration.light.headlamp.HeadlampBlockEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -7,10 +8,12 @@ import com.simibubi.create.foundation.blockEntity.renderer.SmartBlockEntityRende
 import dev.engine_room.flywheel.api.visualization.VisualizationManager;
 import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.createmod.catnip.render.SuperByteBuffer;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.state.BlockState;
 
 import static com.kipti.bnb.content.decoration.light.headlamp.rendering.pipeline.block_entity.HeadlampModelBuilder.buildHeadlampGeometry;
 
@@ -64,8 +67,9 @@ public class HeadlampBlockEntityRenderer extends SmartBlockEntityRenderer<Headla
                     .rotateYDegrees(facing.get2DDataValue() != -1 ? facing.get2DDataValue() * -90.0f : 0)
                     .uncenter();
         }
+        BlockState state = blockEntity.getBlockState();
         cached
-                .light(light)
+                .light(LightBlock.isEmissive(state, null, null) ? LightTexture.FULL_BLOCK : light)
                 .disableDiffuse()
                 .renderInto(ms, buffer.getBuffer(RenderType.translucent()));
         ms.popPose();

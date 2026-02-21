@@ -134,7 +134,7 @@ public class ChainPulleyBlockEntity extends PulleyBlockEntity {
                                 .isEmpty());
                         level.setBlock(magnetPos, BnbBlocks.CHAIN_PULLEY_MAGNET.getDefaultState()
                                         .setValue(BlockStateProperties.WATERLOGGED,
-                                                Boolean.valueOf(ifluidstate.getType() == Fluids.WATER)),
+                                                ifluidstate.getType() == Fluids.WATER),
                                 66);
                     }
                 }

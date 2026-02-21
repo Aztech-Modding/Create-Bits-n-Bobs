@@ -13,12 +13,14 @@ import net.neoforged.neoforge.client.model.BakedModelWrapper;
 import net.neoforged.neoforge.client.model.data.ModelData;
 import net.neoforged.neoforge.client.model.data.ModelProperty;
 import net.neoforged.neoforge.common.util.TriState;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@ApiStatus.ScheduledForRemoval
 public class GirderStrutModelBuilder extends BakedModelWrapper<BakedModel> {
 
     private static final ModelProperty<GirderStrutModelData> GIRDER_PROPERTY = new ModelProperty<>();
@@ -29,15 +31,18 @@ public class GirderStrutModelBuilder extends BakedModelWrapper<BakedModel> {
     }
 
     @Override
-    public @NotNull ModelData getModelData(BlockAndTintGetter level, BlockPos pos, BlockState state, ModelData blockEntityData) {
-        if (!(level.getBlockEntity(pos) instanceof GirderStrutBlockEntity blockEntity)) {
-            return ModelData.EMPTY;
-        }
-        blockEntity.connectionRenderBufferCache = null; // Invalidate cache on model data request
-//        GirderStrutModelData data = GirderStrutModelData.collect(level, pos, state, blockEntity);
-        return ModelData.builder()
-//            .with(GIRDER_PROPERTY, data)
-                .build();
+    public boolean useAmbientOcclusion() {
+        return false;
+    }
+
+    @Override
+    public TriState useAmbientOcclusion(BlockState state, ModelData data, RenderType renderType) {
+        return TriState.FALSE;
+    }
+
+    @Override
+    public boolean usesBlockLight() {
+        return true;
     }
 
     @Override
@@ -63,18 +68,15 @@ public class GirderStrutModelBuilder extends BakedModelWrapper<BakedModel> {
     }
 
     @Override
-    public TriState useAmbientOcclusion(BlockState state, ModelData data, RenderType renderType) {
-        return TriState.FALSE;
-    }
-
-    @Override
-    public boolean useAmbientOcclusion() {
-        return false;
-    }
-
-    @Override
-    public boolean usesBlockLight() {
-        return true;
+    public @NotNull ModelData getModelData(BlockAndTintGetter level, BlockPos pos, BlockState state, ModelData blockEntityData) {
+        if (!(level.getBlockEntity(pos) instanceof GirderStrutBlockEntity blockEntity)) {
+            return ModelData.EMPTY;
+        }
+        blockEntity.connectionRenderBufferCache = null; // Invalidate cache on model data request
+//        GirderStrutModelData data = GirderStrutModelData.collect(level, pos, state, blockEntity);
+        return ModelData.builder()
+//            .with(GIRDER_PROPERTY, data)
+                .build();
     }
 
     static final class GirderStrutModelData {
@@ -84,14 +86,6 @@ public class GirderStrutModelBuilder extends BakedModelWrapper<BakedModel> {
         private GirderStrutModelData(List<GirderConnection> connections, BlockPos pos) {
             this.connections = connections;
             this.pos = pos;
-        }
-
-        public BlockPos getPos() {
-            return pos;
-        }
-
-        List<GirderConnection> connections() {
-            return connections;
         }
 
         static GirderStrutModelData collect(BlockAndTintGetter level, BlockPos pos, BlockState state, GirderStrutBlockEntity blockEntity) {
@@ -137,6 +131,14 @@ public class GirderStrutModelBuilder extends BakedModelWrapper<BakedModel> {
             }
 
             return new GirderStrutModelData(Collections.unmodifiableList(connections), pos);
+        }
+
+        public BlockPos getPos() {
+            return pos;
+        }
+
+        List<GirderConnection> connections() {
+            return connections;
         }
     }
 

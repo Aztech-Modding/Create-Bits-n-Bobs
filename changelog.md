@@ -137,6 +137,17 @@
     - Fixed lightbulb texture
     - Fix girder strut placement in water, and added sound
     - Fix text atlas having C and D swapped
+# 1.21.1-0.0.42
+- Changes:
+    - Fixed LODs activating when a chain is part of a sublevel or ship in VS / sable
+# 1.21.1-0.0.43
+- Changes:
+    - Proper polish translations, thank you Imperator Pablo
+    - Smoother looking tile slab and tile stair textures thank you to IcaroJam
+# 1.21.1-0.0.44
+- Changes:
+    - Fixed girder struts in schematics
+    - Fixed coghweel chain drives in schematics
 # 1.21.1-1.0.0
 - Changes:
     - Belts can be right-clicked with glow ink sacs to make them glow

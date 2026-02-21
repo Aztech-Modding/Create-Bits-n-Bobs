@@ -106,9 +106,12 @@ public class DoubleOrientedBlockModel extends BakedModelWrapper<BakedModel> {
                     quad.getTintIndex(),
                     newNormal,
                     quad.getSprite(),
-                    quad.isShade(),
-                    false
+                    quad.isShade()
             ));
+            //TODO to check if
+//            quad.isShade(),
+//                    false
+            // was needed
         }
         return transformedQuads;
     }
