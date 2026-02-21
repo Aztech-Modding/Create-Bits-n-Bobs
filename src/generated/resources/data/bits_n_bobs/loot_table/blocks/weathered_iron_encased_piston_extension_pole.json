@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "block": "bits_n_bobs:weathered_iron_encased_piston_extension_pole",
+          "condition": "minecraft:block_state_property",
+          "properties": {
+            "empty": "false"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "create:piston_extension_pole"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "bits_n_bobs:blocks/weathered_iron_encased_piston_extension_pole"
+}

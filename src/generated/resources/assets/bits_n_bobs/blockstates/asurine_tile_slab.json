@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "bits_n_bobs:block/asurine_tile_slab"
+    },
+    "type=double": {
+      "model": "bits_n_bobs:block/asurine_tiles"
+    },
+    "type=top": {
+      "model": "bits_n_bobs:block/asurine_tile_slab_top"
+    }
+  }
+}

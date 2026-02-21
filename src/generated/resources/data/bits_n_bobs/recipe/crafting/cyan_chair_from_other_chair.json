@@ -1,0 +1,22 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "bits_n_bobs:feature_enabled",
+      "feature": "chairs"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "ingredients": [
+    {
+      "tag": "c:dyes/cyan"
+    },
+    {
+      "tag": "bits_n_bobs:chairs"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "bits_n_bobs:cyan_chair"
+  }
+}

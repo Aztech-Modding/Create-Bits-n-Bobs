@@ -1,0 +1,22 @@
+{
+  "remove": [
+    "create:industrial_iron_block"
+  ],
+  "values": [
+    {
+      "id": "#create:brittle",
+      "required": false
+    },
+    {
+      "id": "#create:wrench_pickup",
+      "required": false
+    },
+    "#minecraft:logs_that_burn",
+    "#minecraft:planks",
+    "#minecraft:wooden_buttons",
+    "#minecraft:wooden_doors",
+    "#minecraft:wooden_fences",
+    "#minecraft:wooden_slabs",
+    "#minecraft:wooden_stairs"
+  ]
+}
