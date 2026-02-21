@@ -1,9 +1,9 @@
 package com.kipti.bnb.content.decoration.light.headlamp;
 
 import com.kipti.bnb.content.decoration.light.founation.LightBlock;
-import com.kipti.bnb.registry.BnbBlockEntities;
-import com.kipti.bnb.registry.BnbBlocks;
-import com.kipti.bnb.registry.BnbShapes;
+import com.kipti.bnb.registry.content.blockentities.BnbBlockEntitiesBootstrap;
+import com.kipti.bnb.registry.content.blocks.BnbBlocksBootstrap;
+import com.kipti.bnb.registry.client.BnbShapes;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;
@@ -119,7 +119,7 @@ public class HeadlampBlock extends LightBlock implements IBE<HeadlampBlockEntity
         if (!player.isCrouching() && level.getBlockEntity(pos) instanceof final HeadlampBlockEntity headlampBlockEntity &&
                 headlampBlockEntity.removeNearestHeadlamp(location.subtract(pos.getCenter()), state.getValue(FACING))) {
             if (!level.isClientSide && !player.isCreative()) {
-                HeadlampBlock.popResource(level, pos, BnbBlocks.HEADLAMP.asStack());
+                HeadlampBlock.popResource(level, pos, BnbBlocksBootstrap.HEADLAMP.asStack());
             }
             return false;
         }
@@ -147,7 +147,7 @@ public class HeadlampBlock extends LightBlock implements IBE<HeadlampBlockEntity
             return; // Block is being replaced by the same block, do nothing
         }
         if (level.getBlockEntity(pos) instanceof final HeadlampBlockEntity headlampBlockEntity) {
-            final ItemStack additionalResources = BnbBlocks.HEADLAMP.asStack().copyWithCount(Math.clamp(headlampBlockEntity.getExistingPlacements().size() - 1, 0, 3));
+            final ItemStack additionalResources = BnbBlocksBootstrap.HEADLAMP.asStack().copyWithCount(Math.clamp(headlampBlockEntity.getExistingPlacements().size() - 1, 0, 3));
             if (!additionalResources.isEmpty())
                 HeadlampBlock.popResource(level, pos, additionalResources);
         }
@@ -242,7 +242,8 @@ public class HeadlampBlock extends LightBlock implements IBE<HeadlampBlockEntity
 
     @Override
     public BlockEntityType<? extends HeadlampBlockEntity> getBlockEntityType() {
-        return BnbBlockEntities.HEADLAMP.get();
+        return BnbBlockEntitiesBootstrap.HEADLAMP.get();
     }
 
 }
+

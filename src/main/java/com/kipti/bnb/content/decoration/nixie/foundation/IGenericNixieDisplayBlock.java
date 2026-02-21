@@ -7,3 +7,4 @@ public interface IGenericNixieDisplayBlock {
     List<GenericNixieDisplayBlockEntity.ConfigurableDisplayOptions> getPossibleDisplayOptions();
 
 }
+

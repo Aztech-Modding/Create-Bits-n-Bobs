@@ -114,3 +114,4 @@ public class GirderStrutBlockEntity extends SmartBlockEntity implements IBlockEn
         connections.addAll(newConnections);
     }
 }
+

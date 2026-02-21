@@ -144,3 +144,4 @@ public class GirderStrutBlockEntityRenderer extends SmartBlockEntityRenderer<Gir
     }
 
 }
+

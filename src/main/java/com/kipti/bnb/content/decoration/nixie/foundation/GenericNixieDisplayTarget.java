@@ -63,3 +63,4 @@ public class GenericNixieDisplayTarget extends DisplayTarget {
         return resultBounds[0];
     }
 }
+

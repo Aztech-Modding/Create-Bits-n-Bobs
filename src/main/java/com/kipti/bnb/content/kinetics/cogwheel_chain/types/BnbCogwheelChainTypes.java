@@ -1,8 +1,8 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.types;
 
 import com.kipti.bnb.CreateBitsnBobs;
-import com.kipti.bnb.registry.BnbBlocks;
-import com.kipti.bnb.registry.BnbRegistries;
+import com.kipti.bnb.registry.content.blocks.BnbBlocksBootstrap;
+import com.kipti.bnb.registry.core.BnbRegistries;
 import com.simibubi.create.AllItems;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.common.Tags;
@@ -25,7 +25,7 @@ public class BnbCogwheelChainTypes {
                     .renderType(CogwheelChainType.ChainRenderInfo.BELT)
                     .renderTexture(CreateBitsnBobs.asResource("textures/block/chain_belt.png"))
                     .breakEffectsBlock(() -> Blocks.CHAIN)
-                    .setCogwheelPredicate((block) -> BnbBlocks.LARGE_EMPTY_FLANGED_COGWHEEL.get() == block || BnbBlocks.SMALL_EMPTY_FLANGED_COGWHEEL.get() == block) //TODO: tag
+                    .setCogwheelPredicate((block) -> BnbBlocksBootstrap.LARGE_EMPTY_FLANGED_COGWHEEL.get() == block || BnbBlocksBootstrap.SMALL_EMPTY_FLANGED_COGWHEEL.get() == block) //TODO: tag
                     .permitsAxisChange(false)
                     .build());
 
@@ -35,7 +35,7 @@ public class BnbCogwheelChainTypes {
                     .renderType(CogwheelChainType.ChainRenderInfo.ROPE)
                     .renderTexture(CreateBitsnBobs.asResource("textures/block/chain_rope.png"))
                     .breakEffectsBlock(() -> Blocks.CHAIN)
-                    .setCogwheelPredicate((block) -> BnbBlocks.LARGE_EMPTY_FLANGED_COGWHEEL.get() == block || BnbBlocks.SMALL_EMPTY_FLANGED_COGWHEEL.get() == block) //TODO: tag
+                    .setCogwheelPredicate((block) -> BnbBlocksBootstrap.LARGE_EMPTY_FLANGED_COGWHEEL.get() == block || BnbBlocksBootstrap.SMALL_EMPTY_FLANGED_COGWHEEL.get() == block) //TODO: tag
                     .build());
 
 
@@ -44,3 +44,4 @@ public class BnbCogwheelChainTypes {
     }
 
 }
+

@@ -25,3 +25,4 @@ public class ConnectingCogwheelChainBlock extends CogwheelChainBlock implements 
         return isLargeChainCog();
     }
 }
+

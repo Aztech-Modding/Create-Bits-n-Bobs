@@ -45,3 +45,4 @@ public class AlternatingTrussBlock extends RotatedPillarBlock {
         return state.setValue(ALTERNATING, !isAlternating);
     }
 }
+

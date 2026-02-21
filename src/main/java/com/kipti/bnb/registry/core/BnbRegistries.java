@@ -1,4 +1,4 @@
-package com.kipti.bnb.registry;
+package com.kipti.bnb.registry.core;
 
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.CogwheelChainType;
 import net.minecraft.core.Registry;
@@ -20,3 +20,4 @@ public class BnbRegistries {
     }
 
 }
+

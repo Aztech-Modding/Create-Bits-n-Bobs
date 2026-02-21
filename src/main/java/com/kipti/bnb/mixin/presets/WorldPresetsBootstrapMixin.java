@@ -2,7 +2,7 @@ package com.kipti.bnb.mixin.presets;
 
 import com.kipti.bnb.foundation.generation.PonderflatGeneratorSettings;
 import com.kipti.bnb.foundation.generation.PonderflatLevelSource;
-import com.kipti.bnb.registry.BnbWorldPresets;
+import com.kipti.bnb.registry.worldgen.BnbWorldPresets;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.resources.ResourceKey;
@@ -38,3 +38,4 @@ public abstract class WorldPresetsBootstrapMixin {
     }
 
 }
+

@@ -23,3 +23,4 @@ public class GratingPanelCTBehaviour extends SimpleCTBehaviour {
     }
 
 }
+

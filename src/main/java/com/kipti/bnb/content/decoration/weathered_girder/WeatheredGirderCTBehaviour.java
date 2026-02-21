@@ -1,6 +1,6 @@
 package com.kipti.bnb.content.decoration.weathered_girder;
 
-import com.kipti.bnb.registry.BnbSpriteShifts;
+import com.kipti.bnb.registry.client.BnbSpriteShifts;
 import com.simibubi.create.content.decoration.girder.GirderBlock;
 import com.simibubi.create.foundation.block.connected.CTSpriteShiftEntry;
 import com.simibubi.create.foundation.block.connected.ConnectedTextureBehaviour;
@@ -32,3 +32,4 @@ public class WeatheredGirderCTBehaviour extends ConnectedTextureBehaviour.Base {
     }
 
 }
+

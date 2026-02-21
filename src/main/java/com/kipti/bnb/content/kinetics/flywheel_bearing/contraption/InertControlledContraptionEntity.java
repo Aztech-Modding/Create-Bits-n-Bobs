@@ -1,6 +1,6 @@
 package com.kipti.bnb.content.kinetics.flywheel_bearing.contraption;
 
-import com.kipti.bnb.registry.BnbEntityTypes;
+import com.kipti.bnb.registry.content.entities.BnbEntityTypes;
 import com.simibubi.create.api.behaviour.movement.MovementBehaviour;
 import com.simibubi.create.content.contraptions.Contraption;
 import com.simibubi.create.content.contraptions.ControlledContraptionEntity;
@@ -33,3 +33,4 @@ public class InertControlledContraptionEntity extends ControlledContraptionEntit
     }
 
 }
+

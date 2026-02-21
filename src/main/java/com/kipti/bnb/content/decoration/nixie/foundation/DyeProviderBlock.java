@@ -5,3 +5,4 @@ import net.minecraft.world.item.DyeColor;
 public interface DyeProviderBlock {
     DyeColor getDyeColor();
 }
+

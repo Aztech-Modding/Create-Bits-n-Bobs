@@ -6,7 +6,7 @@ import com.kipti.bnb.content.kinetics.cogwheel_chain.block.CogwheelChainBlockEnt
 import com.kipti.bnb.content.kinetics.cogwheel_chain.block.ICogwheelChainBlock;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.BnbCogwheelChainTypes;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.CogwheelChainType;
-import com.kipti.bnb.registry.BnbRegistries;
+import com.kipti.bnb.registry.core.BnbRegistries;
 import com.simibubi.create.content.contraptions.StructureTransform;
 import com.simibubi.create.content.kinetics.simpleRelays.CogWheelBlock;
 import com.simibubi.create.foundation.utility.BlockHelper;
@@ -304,3 +304,4 @@ public class CogwheelChain {
         renderedNodes = CogwheelChainGeometryBuilder.buildFullChainFromPathNodes(cogwheelNodes);
     }
 }
+

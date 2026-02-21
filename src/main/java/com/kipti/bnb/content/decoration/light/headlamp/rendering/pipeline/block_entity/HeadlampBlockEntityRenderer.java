@@ -76,3 +76,4 @@ public class HeadlampBlockEntityRenderer extends SmartBlockEntityRenderer<Headla
     }
 
 }
+

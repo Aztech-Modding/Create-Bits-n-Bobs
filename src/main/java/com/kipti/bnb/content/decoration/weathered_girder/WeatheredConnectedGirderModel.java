@@ -1,6 +1,6 @@
 package com.kipti.bnb.content.decoration.weathered_girder;
 
-import com.kipti.bnb.registry.BnbPartialModels;
+import com.kipti.bnb.registry.client.BnbPartialModels;
 import com.simibubi.create.foundation.block.connected.CTModel;
 import net.createmod.catnip.data.Iterate;
 import net.minecraft.client.renderer.RenderType;
@@ -72,4 +72,5 @@ public class WeatheredConnectedGirderModel extends CTModel {
     }
 
 }
+
 

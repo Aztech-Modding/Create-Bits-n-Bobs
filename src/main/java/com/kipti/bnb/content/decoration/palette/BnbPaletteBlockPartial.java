@@ -2,7 +2,7 @@ package com.kipti.bnb.content.decoration.palette;
 
 import com.google.common.collect.ImmutableMap;
 import com.kipti.bnb.CreateBitsnBobs;
-import com.kipti.bnb.registry.BnbPaletteStoneTypes;
+import com.kipti.bnb.registry.worldgen.BnbPaletteStoneTypes;
 import com.simibubi.create.Create;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.tterrag.registrate.builders.BlockBuilder;
@@ -568,4 +568,5 @@ public abstract class BnbPaletteBlockPartial<B extends Block> {
         }
     }
 }
+
 

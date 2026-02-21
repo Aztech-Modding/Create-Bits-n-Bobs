@@ -1,6 +1,6 @@
 package com.kipti.bnb.content.decoration.weathered_girder;
 
-import com.kipti.bnb.registry.BnbDecoBlocks;
+import com.kipti.bnb.registry.content.blocks.deco.BnbDecorativeBlocks;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.content.decoration.girder.GirderBlock;
 import net.createmod.catnip.data.Iterate;
@@ -48,7 +48,7 @@ public class WeatheredGirderWrenchBehaviour {
         if (player.isShiftKeyDown())
             return;
 
-        if (!BnbDecoBlocks.WEATHERED_METAL_GIRDER.has(world.getBlockState(pos)))
+        if (!BnbDecorativeBlocks.WEATHERED_METAL_GIRDER.has(world.getBlockState(pos)))
             return;
 
         if (!AllItems.WRENCH.isIn(heldItem))
@@ -122,7 +122,7 @@ public class WeatheredGirderWrenchBehaviour {
     public static List<Pair<Direction, WeatheredGirderWrenchBehaviour.Action>> getValidDirections(final BlockGetter level, final BlockPos pos) {
         final BlockState blockState = level.getBlockState(pos);
 
-        if (!BnbDecoBlocks.WEATHERED_METAL_GIRDER.has(blockState))
+        if (!BnbDecorativeBlocks.WEATHERED_METAL_GIRDER.has(blockState))
             return Collections.emptyList();
 
         return Arrays.stream(Iterate.directions)
@@ -135,7 +135,7 @@ public class WeatheredGirderWrenchBehaviour {
                     // up and down
                     if (direction.getAxis() == Direction.Axis.Y) {
                         // no other girder in target dir
-                        if (!BnbDecoBlocks.WEATHERED_METAL_GIRDER.has(other)) {
+                        if (!BnbDecorativeBlocks.WEATHERED_METAL_GIRDER.has(other)) {
                             if (!blockState.getValue(GirderBlock.X) ^ !blockState.getValue(GirderBlock.Z))
                                 consumer.accept(Pair.of(direction, WeatheredGirderWrenchBehaviour.Action.SINGLE));
                             return;
@@ -152,7 +152,7 @@ public class WeatheredGirderWrenchBehaviour {
                         return;
                     }
 
-//					if (BnbBlocks.WEATHERED_METAL_GIRDER.has(other))
+//					if (BnbBlocksBootstrap.WEATHERED_METAL_GIRDER.has(other))
 //						consumer.accept(Pair.of(direction, Action.HORIZONTAL));
 
                 })
@@ -175,14 +175,14 @@ public class WeatheredGirderWrenchBehaviour {
 
         if (dir == Direction.UP) {
             level.setBlock(pos, postProcess(state.cycle(GirderBlock.TOP)), 2 | 16);
-            if (dirPair.getSecond() == WeatheredGirderWrenchBehaviour.Action.PAIR && BnbDecoBlocks.WEATHERED_METAL_GIRDER.has(other))
+            if (dirPair.getSecond() == WeatheredGirderWrenchBehaviour.Action.PAIR && BnbDecorativeBlocks.WEATHERED_METAL_GIRDER.has(other))
                 level.setBlock(otherPos, postProcess(other.cycle(GirderBlock.BOTTOM)), 2 | 16);
             return true;
         }
 
         if (dir == Direction.DOWN) {
             level.setBlock(pos, postProcess(state.cycle(GirderBlock.BOTTOM)), 2 | 16);
-            if (dirPair.getSecond() == WeatheredGirderWrenchBehaviour.Action.PAIR && BnbDecoBlocks.WEATHERED_METAL_GIRDER.has(other))
+            if (dirPair.getSecond() == WeatheredGirderWrenchBehaviour.Action.PAIR && BnbDecorativeBlocks.WEATHERED_METAL_GIRDER.has(other))
                 level.setBlock(otherPos, postProcess(other.cycle(GirderBlock.TOP)), 2 | 16);
             return true;
         }
@@ -209,3 +209,4 @@ public class WeatheredGirderWrenchBehaviour {
         SINGLE, PAIR, HORIZONTAL
     }
 }
+

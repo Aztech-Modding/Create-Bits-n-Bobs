@@ -1,4 +1,4 @@
-package com.kipti.bnb.registry;
+package com.kipti.bnb.registry.worldgen;
 
 import com.kipti.bnb.content.decoration.palette.BnbPaletteBlockPattern;
 import com.kipti.bnb.content.decoration.palette.BnbPalettesVariantEntry;
@@ -10,6 +10,7 @@ import com.tterrag.registrate.builders.BlockBuilder;
 import com.tterrag.registrate.util.nullness.NonNullFunction;
 import com.tterrag.registrate.util.nullness.NonNullSupplier;
 import com.tterrag.registrate.util.nullness.NonNullUnaryOperator;
+import com.kipti.bnb.registry.datagen.BnbCreativeTabs;
 import net.createmod.catnip.lang.Lang;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.tags.TagKey;
@@ -87,3 +88,4 @@ public enum BnbPaletteStoneTypes {
     }
 
 }
+

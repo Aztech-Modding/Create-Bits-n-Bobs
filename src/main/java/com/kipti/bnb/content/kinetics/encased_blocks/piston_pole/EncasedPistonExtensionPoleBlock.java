@@ -85,3 +85,4 @@ public class EncasedPistonExtensionPoleBlock extends PistonExtensionPoleBlock im
     }
 
 }
+

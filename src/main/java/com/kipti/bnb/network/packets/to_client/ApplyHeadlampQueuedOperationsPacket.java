@@ -42,3 +42,4 @@ public record ApplyHeadlampQueuedOperationsPacket(
         return BnbPackets.APPLY_HEADLAMP_QUEUED_OPERATIONS;
     }
 }
+

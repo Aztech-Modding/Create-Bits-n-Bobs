@@ -1,7 +1,7 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.graph;
 
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.CogwheelChainType;
-import com.kipti.bnb.registry.BnbConfigs;
+import com.kipti.bnb.registry.core.BnbConfigs;
 import com.mojang.serialization.Codec;
 import com.simibubi.create.content.kinetics.simpleRelays.CogWheelBlock;
 import net.createmod.catnip.codecs.stream.CatnipStreamCodecBuilders;
@@ -314,3 +314,4 @@ public class PlacingCogwheelChain {
     }
 
 }
+

@@ -3,7 +3,7 @@ package com.kipti.bnb.content.decoration.light.headlamp.rendering.pipeline.block
 import com.kipti.bnb.content.decoration.light.headlamp.CCLightAddressing;
 import com.kipti.bnb.content.decoration.light.headlamp.HeadlampBlockEntity;
 import com.kipti.bnb.content.decoration.light.headlamp.rendering.HeadlampConstants;
-import com.kipti.bnb.registry.BnbPartialModels;
+import com.kipti.bnb.registry.client.BnbPartialModels;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.simibubi.create.foundation.model.BakedQuadHelper;
 import net.minecraft.client.renderer.LightTexture;

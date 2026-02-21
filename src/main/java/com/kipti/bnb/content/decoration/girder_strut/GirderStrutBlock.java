@@ -1,7 +1,7 @@
 package com.kipti.bnb.content.decoration.girder_strut;
 
-import com.kipti.bnb.registry.BnbBlockEntities;
-import com.kipti.bnb.registry.BnbShapes;
+import com.kipti.bnb.registry.content.blockentities.BnbBlockEntitiesBootstrap;
+import com.kipti.bnb.registry.client.BnbShapes;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;
 import com.tterrag.registrate.util.nullness.NonNullFunction;
@@ -175,7 +175,7 @@ public class GirderStrutBlock extends Block implements IBE<GirderStrutBlockEntit
 
     @Override
     public BlockEntityType<? extends GirderStrutBlockEntity> getBlockEntityType() {
-        return BnbBlockEntities.GIRDER_STRUT.get();
+        return BnbBlockEntitiesBootstrap.GIRDER_STRUT.get();
     }
 
     public StrutModelType getModelType() {
@@ -186,3 +186,4 @@ public class GirderStrutBlock extends Block implements IBE<GirderStrutBlockEntit
         this.modelType = modelType;
     }
 }
+

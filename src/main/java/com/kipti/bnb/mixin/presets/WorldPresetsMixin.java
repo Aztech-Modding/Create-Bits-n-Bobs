@@ -1,7 +1,7 @@
 package com.kipti.bnb.mixin.presets;
 
 import com.kipti.bnb.foundation.generation.PonderflatLevelSource;
-import com.kipti.bnb.registry.BnbWorldPresets;
+import com.kipti.bnb.registry.worldgen.BnbWorldPresets;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.presets.WorldPresets;
 import org.spongepowered.asm.mixin.Mixin;
@@ -24,3 +24,4 @@ public class WorldPresetsMixin {
     }
 
 }
+

@@ -1,6 +1,6 @@
 package com.kipti.bnb.content.kinetics.chain_pulley;
 
-import com.kipti.bnb.registry.BnbBlocks;
+import com.kipti.bnb.registry.content.blocks.BnbBlocksBootstrap;
 import com.simibubi.create.content.contraptions.AssemblyException;
 import com.simibubi.create.content.contraptions.ContraptionCollider;
 import com.simibubi.create.content.contraptions.ControlledContraptionEntity;
@@ -41,7 +41,7 @@ public class ChainPulleyBlockEntity extends PulleyBlockEntity {
         while (i <= maxLength) {
             final BlockPos ropePos = worldPosition.below(i);
             final BlockState ropeState = level.getBlockState(ropePos);
-            if (!BnbBlocks.CHAIN_ROPE.has(ropeState) && !BnbBlocks.CHAIN_PULLEY_MAGNET.has(ropeState)) {
+            if (!BnbBlocksBootstrap.CHAIN_ROPE.has(ropeState) && !BnbBlocksBootstrap.CHAIN_PULLEY_MAGNET.has(ropeState)) {
                 break;
             }
             ++i;
@@ -132,7 +132,7 @@ public class ChainPulleyBlockEntity extends PulleyBlockEntity {
                         level.destroyBlock(magnetPos, level.getBlockState(magnetPos)
                                 .getCollisionShape(level, magnetPos)
                                 .isEmpty());
-                        level.setBlock(magnetPos, BnbBlocks.CHAIN_PULLEY_MAGNET.getDefaultState()
+                        level.setBlock(magnetPos, BnbBlocksBootstrap.CHAIN_PULLEY_MAGNET.getDefaultState()
                                         .setValue(BlockStateProperties.WATERLOGGED,
                                                 ifluidstate.getType() == Fluids.WATER),
                                 66);
@@ -157,7 +157,7 @@ public class ChainPulleyBlockEntity extends PulleyBlockEntity {
                             continue;
                         }
 
-                        level.setBlock(worldPosition.below(i), BnbBlocks.CHAIN_ROPE.getDefaultState()
+                        level.setBlock(worldPosition.below(i), BnbBlocksBootstrap.CHAIN_ROPE.getDefaultState()
                                 .setValue(BlockStateProperties.WATERLOGGED, waterlog[i]), 66);
                     }
                 }
@@ -179,3 +179,4 @@ public class ChainPulleyBlockEntity extends PulleyBlockEntity {
     }
 
 }
+

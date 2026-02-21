@@ -4,7 +4,7 @@ import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.kinetics.flywheel_bearing.contraption.InertControlledContraptionEntity;
 import com.kipti.bnb.content.kinetics.flywheel_bearing.mechanics.FlywheelMovementMechanics;
 import com.kipti.bnb.mixin_accessor.FlywheelAccessibleKineticNetwork;
-import com.kipti.bnb.registry.BnbConfigs;
+import com.kipti.bnb.registry.core.BnbConfigs;
 import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.content.contraptions.*;
 import com.simibubi.create.content.contraptions.bearing.BearingBlock;
@@ -509,3 +509,4 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
     }
 
 }
+

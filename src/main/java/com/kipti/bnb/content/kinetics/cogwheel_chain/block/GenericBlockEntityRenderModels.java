@@ -12,3 +12,4 @@ public class GenericBlockEntityRenderModels {
         return b -> REGISTRY.register(b, model);
     }
 }
+

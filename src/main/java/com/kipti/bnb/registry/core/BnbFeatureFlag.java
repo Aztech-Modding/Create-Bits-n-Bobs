@@ -1,6 +1,9 @@
-package com.kipti.bnb.registry;
+package com.kipti.bnb.registry.core;
 
 import com.kipti.bnb.foundation.config.conditions.BnbFeatureEnabledCondition;
+import com.kipti.bnb.registry.content.blocks.BnbBlocksBootstrap;
+import com.kipti.bnb.registry.content.blocks.deco.BnbDecorativeBlocks;
+import com.kipti.bnb.registry.worldgen.BnbPaletteStoneTypes;
 import com.simibubi.create.foundation.block.DyedBlockList;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -14,23 +17,23 @@ import java.util.function.Supplier;
 
 public enum BnbFeatureFlag {
     COGWHEEL_CHAIN_DRIVES("Ability for the player to create chain drives using create's cogwheels specifically."),
-    FLANGED_CHAIN_DRIVES("Ability for the player to create chain drives using the flanged gear cogwheels.", BnbBlocks.LARGE_EMPTY_FLANGED_COGWHEEL::get, BnbBlocks.SMALL_EMPTY_FLANGED_COGWHEEL::get),
+    FLANGED_CHAIN_DRIVES("Ability for the player to create chain drives using the flanged gear cogwheels.", BnbBlocksBootstrap.LARGE_EMPTY_FLANGED_COGWHEEL::get, BnbBlocksBootstrap.SMALL_EMPTY_FLANGED_COGWHEEL::get),
 
-    CHAIN_PULLEY("Availability of the Chain Pulley block.", BnbBlocks.CHAIN_PULLEY::get),
+    CHAIN_PULLEY("Availability of the Chain Pulley block.", BnbBlocksBootstrap.CHAIN_PULLEY::get),
 
-    EXPERIMENTAL_FLYWHEEL_BEARING("Availability of the Flywheel Bearing block. (In development)", false, BnbBlocks.FLYWHEEL_BEARING::get),
-    EXPERIMENTAL_WOODEN_STRUT("Availability of the Wooden Strut block. (In development)", false, BnbBlocks.WOODEN_GIRDER_STRUT::get),
+    EXPERIMENTAL_FLYWHEEL_BEARING("Availability of the Flywheel Bearing block. (In development)", false, BnbBlocksBootstrap.FLYWHEEL_BEARING::get),
+    EXPERIMENTAL_WOODEN_STRUT("Availability of the Wooden Strut block. (In development)", false, BnbBlocksBootstrap.WOODEN_GIRDER_STRUT::get),
 
-    WEATHERED_GIRDER("Availability of the weathered girder block.", BnbDecoBlocks.WEATHERED_METAL_GIRDER::get, BnbDecoBlocks.WEATHERED_GIRDER_STRUT::get),
-    GIRDER_STRUT("Availability of the girder strut blocks.", BnbDecoBlocks.GIRDER_STRUT::get, BnbDecoBlocks.WEATHERED_GIRDER_STRUT::get),
+    WEATHERED_GIRDER("Availability of the weathered girder block.", BnbDecorativeBlocks.WEATHERED_METAL_GIRDER::get, BnbDecorativeBlocks.WEATHERED_GIRDER_STRUT::get),
+    GIRDER_STRUT("Availability of the girder strut blocks.", BnbDecorativeBlocks.GIRDER_STRUT::get, BnbDecorativeBlocks.WEATHERED_GIRDER_STRUT::get),
 
-    NIXIE_BOARD("Availability of Nixie Board block.", BnbBlocks.NIXIE_BOARD::get),
-    LARGE_NIXIE_TUBE("Availability of Large Nixie Tube block.", BnbBlocks.LARGE_NIXIE_TUBE::get),
+    NIXIE_BOARD("Availability of Nixie Board block.", BnbBlocksBootstrap.NIXIE_BOARD::get),
+    LARGE_NIXIE_TUBE("Availability of Large Nixie Tube block.", BnbBlocksBootstrap.LARGE_NIXIE_TUBE::get),
 
-    LIGHTBULB("Availability of the Lightbulb block.", BnbBlocks.LIGHTBULB::get),
-    BRASS_LAMP("Availability of the Brass Lamp block.", BnbBlocks.BRASS_LAMP::get),
-    HEADLAMP("Availability of the Headlamp block.", BnbBlocks.HEADLAMP::get),
-    CHAIRS("Availability of the Chair blocks.", createSupplierSet(BnbDecoBlocks.CHAIRS)),
+    LIGHTBULB("Availability of the Lightbulb block.", BnbBlocksBootstrap.LIGHTBULB::get),
+    BRASS_LAMP("Availability of the Brass Lamp block.", BnbBlocksBootstrap.BRASS_LAMP::get),
+    HEADLAMP("Availability of the Headlamp block.", BnbBlocksBootstrap.HEADLAMP::get),
+    CHAIRS("Availability of the Chair blocks.", createSupplierSet(BnbDecorativeBlocks.CHAIRS)),
 
     TILES("Availability of the tile decoration blocks.", createDecoBlockSupplierSet(BnbPaletteStoneTypes.values())),
 
@@ -147,3 +150,4 @@ public enum BnbFeatureFlag {
     }
 
 }
+

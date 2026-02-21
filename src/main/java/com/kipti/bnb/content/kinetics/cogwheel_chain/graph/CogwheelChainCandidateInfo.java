@@ -1,7 +1,7 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.graph;
 
 import com.kipti.bnb.foundation.EncasedBlockList;
-import com.kipti.bnb.registry.BnbBlocks;
+import com.kipti.bnb.registry.content.blocks.BnbBlocksBootstrap;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.api.registry.SimpleRegistry;
 import com.tterrag.registrate.util.nullness.NonNullConsumer;
@@ -17,19 +17,19 @@ public record CogwheelChainCandidateInfo(boolean isLarge, boolean hasSmallCogwhe
     static {
         REGISTRY.registerProvider((b) -> {
             if (b == AllBlocks.COGWHEEL.get()) {
-                return new CogwheelChainCandidateInfo(false, true, BnbBlocks.SMALL_COGWHEEL_CHAIN);
+                return new CogwheelChainCandidateInfo(false, true, BnbBlocksBootstrap.SMALL_COGWHEEL_CHAIN);
             } else if (b == AllBlocks.LARGE_COGWHEEL.get()) {
-                return new CogwheelChainCandidateInfo(true, false, BnbBlocks.LARGE_COGWHEEL_CHAIN);
+                return new CogwheelChainCandidateInfo(true, false, BnbBlocksBootstrap.LARGE_COGWHEEL_CHAIN);
             }
 
             if (b == AllBlocks.ANDESITE_ENCASED_COGWHEEL.get()) {
-                return new CogwheelChainCandidateInfo(false, false, BnbBlocks.ENCASED_CHAIN_COGWHEEL.get(EncasedBlockList.CasingMaterial.ANDESITE));
+                return new CogwheelChainCandidateInfo(false, false, BnbBlocksBootstrap.ENCASED_CHAIN_COGWHEEL.get(EncasedBlockList.CasingMaterial.ANDESITE));
             } else if (b == AllBlocks.BRASS_ENCASED_COGWHEEL.get()) {
-                return new CogwheelChainCandidateInfo(false, false, BnbBlocks.ENCASED_CHAIN_COGWHEEL.get(EncasedBlockList.CasingMaterial.BRASS));
+                return new CogwheelChainCandidateInfo(false, false, BnbBlocksBootstrap.ENCASED_CHAIN_COGWHEEL.get(EncasedBlockList.CasingMaterial.BRASS));
             } else if (b == AllBlocks.ANDESITE_ENCASED_LARGE_COGWHEEL.get()) {
-                return new CogwheelChainCandidateInfo(true, false, BnbBlocks.ENCASED_LARGE_CHAIN_COGWHEEL.get(EncasedBlockList.CasingMaterial.ANDESITE));
+                return new CogwheelChainCandidateInfo(true, false, BnbBlocksBootstrap.ENCASED_LARGE_CHAIN_COGWHEEL.get(EncasedBlockList.CasingMaterial.ANDESITE));
             } else if (b == AllBlocks.BRASS_ENCASED_LARGE_COGWHEEL.get()) {
-                return new CogwheelChainCandidateInfo(true, false, BnbBlocks.ENCASED_LARGE_CHAIN_COGWHEEL.get(EncasedBlockList.CasingMaterial.BRASS));
+                return new CogwheelChainCandidateInfo(true, false, BnbBlocksBootstrap.ENCASED_LARGE_CHAIN_COGWHEEL.get(EncasedBlockList.CasingMaterial.BRASS));
             }
             return null;
         });
@@ -42,3 +42,4 @@ public record CogwheelChainCandidateInfo(boolean isLarge, boolean hasSmallCogwhe
         return b -> REGISTRY.register(b, info);
     }
 }
+

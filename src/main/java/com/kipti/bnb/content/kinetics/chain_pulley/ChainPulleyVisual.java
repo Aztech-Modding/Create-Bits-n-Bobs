@@ -1,7 +1,7 @@
 package com.kipti.bnb.content.kinetics.chain_pulley;
 
-import com.kipti.bnb.registry.BnbPartialModels;
-import com.kipti.bnb.registry.BnbSpriteShifts;
+import com.kipti.bnb.registry.client.BnbPartialModels;
+import com.kipti.bnb.registry.client.BnbSpriteShifts;
 import com.simibubi.create.content.contraptions.pulley.PulleyRenderer;
 import com.simibubi.create.content.kinetics.base.ShaftVisual;
 import com.simibubi.create.content.processing.burner.ScrollInstance;
@@ -221,3 +221,4 @@ public class ChainPulleyVisual extends ShaftVisual<ChainPulleyBlockEntity> imple
     }
 
 }
+

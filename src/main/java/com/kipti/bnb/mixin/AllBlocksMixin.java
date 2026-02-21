@@ -1,6 +1,6 @@
 package com.kipti.bnb.mixin;
 
-import com.kipti.bnb.registry.BnbCreateBlockEdits;
+import com.kipti.bnb.registry.compat.BnbCreateBlockEdits;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.simibubi.create.AllBlocks;
@@ -28,3 +28,4 @@ public class AllBlocksMixin {
     }
 
 }
+

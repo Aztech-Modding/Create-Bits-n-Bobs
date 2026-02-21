@@ -1,4 +1,4 @@
-package com.kipti.bnb.registry;
+package com.kipti.bnb.registry.datagen;
 
 import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.foundation.config.conditions.BnbFeatureEnabledCondition;
@@ -26,3 +26,4 @@ public class BnbDataConditions {
     }
 
 }
+

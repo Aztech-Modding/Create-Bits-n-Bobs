@@ -1,4 +1,4 @@
-package com.kipti.bnb.registry;
+package com.kipti.bnb.registry.core;
 
 import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.PlacingCogwheelChain;
@@ -43,3 +43,4 @@ public class BnbDataComponents {
     }
 
 }
+

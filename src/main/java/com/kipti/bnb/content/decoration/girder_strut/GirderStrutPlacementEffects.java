@@ -1,6 +1,6 @@
 package com.kipti.bnb.content.decoration.girder_strut;
 
-import com.kipti.bnb.registry.BnbDataComponents;
+import com.kipti.bnb.registry.core.BnbDataComponents;
 import net.createmod.catnip.outliner.Outliner;
 import net.createmod.catnip.theme.Color;
 import net.minecraft.client.Minecraft;
@@ -120,3 +120,4 @@ public class GirderStrutPlacementEffects {
     }
 
 }
+

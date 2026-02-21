@@ -49,3 +49,4 @@ public enum ConfigurableDisplayOptionTransform {
         return this.width > 1 || this.lines > 1;
     }
 }
+

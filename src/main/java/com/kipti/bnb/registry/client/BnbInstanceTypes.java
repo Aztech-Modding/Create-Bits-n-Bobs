@@ -1,4 +1,4 @@
-package com.kipti.bnb.registry;
+package com.kipti.bnb.registry.client;
 
 import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.decoration.light.headlamp.rendering.pipeline.visual.ShiftTransformedInstance;
@@ -39,3 +39,4 @@ public class BnbInstanceTypes {
     }
 
 }
+

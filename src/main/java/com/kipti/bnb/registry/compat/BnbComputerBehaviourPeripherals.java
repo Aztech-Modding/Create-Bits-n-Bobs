@@ -1,4 +1,4 @@
-package com.kipti.bnb.registry;
+package com.kipti.bnb.registry.compat;
 
 import com.kipti.bnb.compat.computercraft.implementation.peripherals.HeadlampPeripheral;
 import com.kipti.bnb.content.decoration.light.headlamp.HeadlampBlockEntity;
@@ -73,3 +73,4 @@ public class BnbComputerBehaviourPeripherals {
     }
 
 }
+

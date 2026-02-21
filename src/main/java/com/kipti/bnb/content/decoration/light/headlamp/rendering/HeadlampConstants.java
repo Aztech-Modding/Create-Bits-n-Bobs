@@ -44,3 +44,4 @@ public final class HeadlampConstants {
      */
     public static final int DYE_COLOR_OFFSET = 2;
 }
+

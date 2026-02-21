@@ -1,4 +1,4 @@
-package com.kipti.bnb.registry;
+package com.kipti.bnb.registry.content.blocks.deco;
 
 import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.decoration.chair.ChairBlock;
@@ -14,6 +14,10 @@ import com.kipti.bnb.content.decoration.weathered_girder.WeatheredGirderBlock;
 import com.kipti.bnb.content.decoration.weathered_girder.WeatheredGirderBlockStateGenerator;
 import com.kipti.bnb.content.decoration.weathered_girder.WeatheredGirderEncasedShaftBlock;
 import com.kipti.bnb.foundation.BnbBlockStateGen;
+import com.kipti.bnb.registry.datagen.BnbCreativeTabs;
+import com.kipti.bnb.registry.core.BnbFeatureFlag;
+import com.kipti.bnb.registry.client.BnbSpriteShifts;
+import com.kipti.bnb.registry.core.BnbTags;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllDisplaySources;
 import com.simibubi.create.AllTags;
@@ -50,7 +54,7 @@ import static com.simibubi.create.foundation.data.ModelGen.customItemModel;
 import static com.simibubi.create.foundation.data.TagGen.axeOnly;
 import static com.simibubi.create.foundation.data.TagGen.pickaxeOnly;
 
-public class BnbDecoBlocks {
+public class BnbDecorativeBlocks {
 
     static {
         CreateBitsnBobs.REGISTRATE.setCreativeTab(BnbCreativeTabs.DECO_CREATIVE_TAB);
@@ -254,3 +258,5 @@ public class BnbDecoBlocks {
     }
 
 }
+
+

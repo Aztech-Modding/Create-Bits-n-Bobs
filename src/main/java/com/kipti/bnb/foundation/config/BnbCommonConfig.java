@@ -1,7 +1,7 @@
 package com.kipti.bnb.foundation.config;
 
 import com.google.common.collect.ImmutableMap;
-import com.kipti.bnb.registry.BnbFeatureFlag;
+import com.kipti.bnb.registry.core.BnbFeatureFlag;
 import net.createmod.catnip.config.ConfigBase;
 import org.jetbrains.annotations.NotNull;
 
@@ -62,3 +62,4 @@ public class BnbCommonConfig extends ConfigBase {
         return "common";
     }
 }
+

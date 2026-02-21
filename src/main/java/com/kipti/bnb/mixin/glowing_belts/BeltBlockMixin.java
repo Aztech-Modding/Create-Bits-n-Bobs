@@ -1,6 +1,6 @@
 package com.kipti.bnb.mixin.glowing_belts;
 
-import com.kipti.bnb.registry.BnbCreateBlockEdits;
+import com.kipti.bnb.registry.compat.BnbCreateBlockEdits;
 import com.simibubi.create.content.kinetics.base.HorizontalKineticBlock;
 import com.simibubi.create.content.kinetics.belt.BeltBlock;
 import com.simibubi.create.content.kinetics.belt.BeltBlockEntity;
@@ -96,3 +96,4 @@ public class BeltBlockMixin extends HorizontalKineticBlock implements IBE<BeltBl
     }
 
 }
+

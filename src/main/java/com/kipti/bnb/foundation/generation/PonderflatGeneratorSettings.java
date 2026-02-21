@@ -121,3 +121,4 @@ public class PonderflatGeneratorSettings {
         return ((Math.floorDiv(x, cellSize) + y + Math.floorDiv(z, cellSize)) % 2 == 0) ? blockLight.defaultBlockState() : blockDark.defaultBlockState();
     }
 }
+

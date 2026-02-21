@@ -1,9 +1,9 @@
 package com.kipti.bnb.content.decoration.nixie.nixie_board;
 
 import com.kipti.bnb.content.decoration.nixie.foundation.*;
-import com.kipti.bnb.registry.BnbBlockEntities;
-import com.kipti.bnb.registry.BnbBlocks;
-import com.kipti.bnb.registry.BnbShapes;
+import com.kipti.bnb.registry.content.blockentities.BnbBlockEntitiesBootstrap;
+import com.kipti.bnb.registry.content.blocks.BnbBlocksBootstrap;
+import com.kipti.bnb.registry.client.BnbShapes;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;
 import net.createmod.catnip.placement.IPlacementHelper;
@@ -55,7 +55,7 @@ public class NixieBoardBlockNixie extends GenericNixieDisplayBlock implements IB
 
     @Override
     public @NotNull ItemStack getCloneItemStack(final @NotNull BlockState state, final @NotNull HitResult target, final @NotNull LevelReader level, final @NotNull BlockPos pos, final @NotNull Player player) {
-        return BnbBlocks.NIXIE_BOARD.asItem().getDefaultInstance();
+        return BnbBlocksBootstrap.NIXIE_BOARD.asItem().getDefaultInstance();
     }
 
     @Override
@@ -123,7 +123,7 @@ public class NixieBoardBlockNixie extends GenericNixieDisplayBlock implements IB
 
     @Override
     public BlockEntityType<? extends GenericNixieDisplayBlockEntity> getBlockEntityType() {
-        return BnbBlockEntities.GENERIC_NIXIE_DISPLAY.get();
+        return BnbBlockEntitiesBootstrap.GENERIC_NIXIE_DISPLAY.get();
     }
 
     public DyeColor getDyeColor() {
@@ -139,7 +139,7 @@ public class NixieBoardBlockNixie extends GenericNixieDisplayBlock implements IB
     private static class PlacementHelper implements IPlacementHelper {
         @Override
         public Predicate<ItemStack> getItemPredicate() {
-            return BnbBlocks.NIXIE_BOARD::isIn;
+            return BnbBlocksBootstrap.NIXIE_BOARD::isIn;
         }
 
         @Override
@@ -176,3 +176,4 @@ public class NixieBoardBlockNixie extends GenericNixieDisplayBlock implements IB
                 .setValue(TOP, GenericNixieDisplayBlockEntity.areStatesComprableForConnection(state, world.getBlockState(position.relative(below.getOpposite()))));
     }
 }
+

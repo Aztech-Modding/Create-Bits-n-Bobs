@@ -1,4 +1,4 @@
-package com.kipti.bnb.registry;
+package com.kipti.bnb.registry.client;
 
 import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.decoration.nixie.foundation.GenericNixieDisplayTarget;
@@ -15,3 +15,4 @@ public class BnbDisplayTargets {
         return CreateBitsnBobs.REGISTRATE.displayTarget(name, supplier).register();
     }
 }
+

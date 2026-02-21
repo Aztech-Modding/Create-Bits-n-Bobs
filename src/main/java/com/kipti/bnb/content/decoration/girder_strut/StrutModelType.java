@@ -1,7 +1,7 @@
 package com.kipti.bnb.content.decoration.girder_strut;
 
 import com.kipti.bnb.CreateBitsnBobs;
-import com.kipti.bnb.registry.BnbPartialModels;
+import com.kipti.bnb.registry.client.BnbPartialModels;
 import com.simibubi.create.Create;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.minecraft.resources.ResourceLocation;
@@ -29,3 +29,4 @@ public enum StrutModelType {
     }
 
 }
+

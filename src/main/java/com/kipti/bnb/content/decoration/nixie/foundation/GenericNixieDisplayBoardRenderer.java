@@ -4,7 +4,7 @@ import com.kipti.bnb.content.decoration.nixie.large_nixie_tube.LargeNixieTubeBlo
 import com.kipti.bnb.content.decoration.nixie.nixie_board.NixieBoardBlockNixie;
 import com.kipti.bnb.mixin_accessor.FontAccess;
 import com.kipti.bnb.mixin_accessor.ReverseRenderableBakedGlyph;
-import com.kipti.bnb.registry.BnbBlocks;
+import com.kipti.bnb.registry.content.blocks.BnbBlocksBootstrap;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
@@ -43,8 +43,8 @@ public class GenericNixieDisplayBoardRenderer extends SmartBlockEntityRenderer<G
             return; // No font set available, nothing to render
         }
 
-        //TODO remove these so many BnbBlocks.NIXIE_BOARD.is(be.getBlockState().getBlock()) || BnbBlocks.DYED_NIXIE_BOARD.contains(be.getBlockState().getBlock())
-        final boolean isNixieBoard = BnbBlocks.NIXIE_BOARD.is(be.getBlockState().getBlock()) || BnbBlocks.DYED_NIXIE_BOARD.contains(be.getBlockState().getBlock());
+        //TODO remove these so many BnbBlocksBootstrap.NIXIE_BOARD.is(be.getBlockState().getBlock()) || BnbBlocksBootstrap.DYED_NIXIE_BOARD.contains(be.getBlockState().getBlock())
+        final boolean isNixieBoard = BnbBlocksBootstrap.NIXIE_BOARD.is(be.getBlockState().getBlock()) || BnbBlocksBootstrap.DYED_NIXIE_BOARD.contains(be.getBlockState().getBlock());
         final float scale = isNixieBoard ? 1f / 16f : 1f / 20f;
         final float offset = isNixieBoard ? 0 : 1f / 8f;
 
@@ -218,3 +218,4 @@ public class GenericNixieDisplayBoardRenderer extends SmartBlockEntityRenderer<G
         }
     }
 }
+

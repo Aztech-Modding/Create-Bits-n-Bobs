@@ -1,6 +1,6 @@
 package com.kipti.bnb.content.kinetics.throttle_lever;
 
-import com.kipti.bnb.registry.BnbPartialModels;
+import com.kipti.bnb.registry.client.BnbPartialModels;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 import dev.engine_room.flywheel.lib.transform.TransformStack;
@@ -44,3 +44,4 @@ public class ThrottleLeverBlockEntityRenderer extends SmartBlockEntityRenderer<T
         ms.popPose();
     }
 }
+

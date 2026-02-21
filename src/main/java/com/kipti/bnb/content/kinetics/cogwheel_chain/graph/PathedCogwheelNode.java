@@ -83,3 +83,4 @@ public record PathedCogwheelNode(int side, boolean isLarge, Direction.Axis rotat
         );
     }
 }
+

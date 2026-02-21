@@ -2,7 +2,7 @@ package com.kipti.bnb.content.kinetics.encased_blocks.cogwheel_chain;
 
 import com.kipti.bnb.content.kinetics.cogwheel_chain.block.ICogwheelChainBlock;
 import com.kipti.bnb.content.kinetics.encased_blocks.BnbEncasedCogwheelBlock;
-import com.kipti.bnb.registry.BnbBlockEntities;
+import com.kipti.bnb.registry.content.blockentities.BnbBlockEntitiesBootstrap;
 import com.simibubi.create.content.kinetics.simpleRelays.SimpleKineticBlockEntity;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -16,6 +16,7 @@ public class BnbEncasedCogwheelChainBlock extends BnbEncasedCogwheelBlock implem
 
     @Override
     public BlockEntityType<? extends SimpleKineticBlockEntity> getBlockEntityType() {
-        return BnbBlockEntities.COGWHEEL_CHAIN.get();
+        return BnbBlockEntitiesBootstrap.COGWHEEL_CHAIN.get();
     }
 }
+

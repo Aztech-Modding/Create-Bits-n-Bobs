@@ -3,7 +3,7 @@ package com.kipti.bnb.content.decoration.nixie.foundation;
 import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.decoration.nixie.nixie_board.NixieBoardBlockNixie;
 import com.kipti.bnb.mixin_accessor.DynamicComponentMigrator;
-import com.kipti.bnb.registry.BnbBlocks;
+import com.kipti.bnb.registry.content.blocks.BnbBlocksBootstrap;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.utility.DynamicComponent;
@@ -136,10 +136,10 @@ public class GenericNixieDisplayBlockEntity extends SmartBlockEntity {
             return false;
         }
 
-        final boolean stateOneIsBoard = BnbBlocks.NIXIE_BOARD.is(state1.getBlock()) || BnbBlocks.DYED_NIXIE_BOARD.contains(state1.getBlock());
-        final boolean stateTwoIsBoard = BnbBlocks.NIXIE_BOARD.is(state2.getBlock()) || BnbBlocks.DYED_NIXIE_BOARD.contains(state2.getBlock());
-        final boolean stateOneIsTube = BnbBlocks.LARGE_NIXIE_TUBE.is(state1.getBlock()) || BnbBlocks.DYED_LARGE_NIXIE_TUBE.contains(state1.getBlock());
-        final boolean stateTwoIsTube = BnbBlocks.LARGE_NIXIE_TUBE.is(state2.getBlock()) || BnbBlocks.DYED_LARGE_NIXIE_TUBE.contains(state2.getBlock());
+        final boolean stateOneIsBoard = BnbBlocksBootstrap.NIXIE_BOARD.is(state1.getBlock()) || BnbBlocksBootstrap.DYED_NIXIE_BOARD.contains(state1.getBlock());
+        final boolean stateTwoIsBoard = BnbBlocksBootstrap.NIXIE_BOARD.is(state2.getBlock()) || BnbBlocksBootstrap.DYED_NIXIE_BOARD.contains(state2.getBlock());
+        final boolean stateOneIsTube = BnbBlocksBootstrap.LARGE_NIXIE_TUBE.is(state1.getBlock()) || BnbBlocksBootstrap.DYED_LARGE_NIXIE_TUBE.contains(state1.getBlock());
+        final boolean stateTwoIsTube = BnbBlocksBootstrap.LARGE_NIXIE_TUBE.is(state2.getBlock()) || BnbBlocksBootstrap.DYED_LARGE_NIXIE_TUBE.contains(state2.getBlock());
 
         if (!(stateOneIsBoard && stateTwoIsBoard) && !(stateOneIsTube && stateTwoIsTube)) return false;
         if (state1.getValue(GenericNixieDisplayBlock.FACING) != state2.getValue(GenericNixieDisplayBlock.FACING)) {
@@ -354,3 +354,4 @@ public class GenericNixieDisplayBlockEntity extends SmartBlockEntity {
     }
 
 }
+

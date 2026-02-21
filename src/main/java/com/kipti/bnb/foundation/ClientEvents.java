@@ -7,7 +7,7 @@ import com.kipti.bnb.content.kinetics.cogwheel_chain.placement.CogwheelChainPlac
 import com.kipti.bnb.foundation.generation.PonderflatGeneratorSettings;
 import com.kipti.bnb.foundation.generation.PonderflatLevelSource;
 import com.kipti.bnb.foundation.generation.editor.PonderflatEditor;
-import com.kipti.bnb.registry.BnbWorldPresets;
+import com.kipti.bnb.registry.worldgen.BnbWorldPresets;
 import net.createmod.catnip.data.Pair;
 import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.client.Minecraft;
@@ -105,3 +105,4 @@ public class ClientEvents {
     }
 
 }
+

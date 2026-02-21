@@ -1,6 +1,6 @@
 package com.kipti.bnb.content.decoration.girder_strut;
 
-import com.kipti.bnb.registry.BnbDataComponents;
+import com.kipti.bnb.registry.core.BnbDataComponents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -361,3 +361,4 @@ public class GirderStrutBlockItem extends BlockItem {
     }
 
 }
+

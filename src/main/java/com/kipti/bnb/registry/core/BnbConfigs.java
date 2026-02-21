@@ -1,4 +1,4 @@
-package com.kipti.bnb.registry;
+package com.kipti.bnb.registry.core;
 
 import com.kipti.bnb.foundation.config.BnbCommonConfig;
 import com.kipti.bnb.foundation.config.BnbServerConfig;
@@ -83,3 +83,4 @@ public class BnbConfigs {
     }
 
 }
+

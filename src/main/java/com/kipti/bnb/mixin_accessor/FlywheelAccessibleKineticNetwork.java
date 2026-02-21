@@ -9,3 +9,4 @@ public interface FlywheelAccessibleKineticNetwork {
     void bits_n_bobs$updateFlywheelStresses();
 
 }
+

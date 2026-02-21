@@ -10,3 +10,4 @@ public record RenderedChainPathNode(BlockPos relativePos, Vec3 nodeOffset, Vec3 
     }
 
 }
+

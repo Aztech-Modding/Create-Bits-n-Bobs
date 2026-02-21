@@ -4,10 +4,10 @@ import com.kipti.bnb.content.decoration.light.headlamp.CCLightAddressing;
 import com.kipti.bnb.content.decoration.light.headlamp.HeadlampBlock;
 import com.kipti.bnb.content.decoration.light.headlamp.HeadlampBlockEntity;
 import com.kipti.bnb.content.decoration.light.headlamp.rendering.HeadlampConstants;
-import com.kipti.bnb.registry.BnbInstanceTypes;
-import com.kipti.bnb.registry.BnbMaterials;
-import com.kipti.bnb.registry.BnbPartialModels;
-import com.kipti.bnb.registry.BnbSpriteShifts;
+import com.kipti.bnb.registry.client.BnbInstanceTypes;
+import com.kipti.bnb.registry.core.BnbMaterials;
+import com.kipti.bnb.registry.client.BnbPartialModels;
+import com.kipti.bnb.registry.client.BnbSpriteShifts;
 import dev.engine_room.flywheel.api.instance.Instance;
 import dev.engine_room.flywheel.api.model.Model;
 import dev.engine_room.flywheel.api.visualization.VisualizationContext;
@@ -231,3 +231,4 @@ public class HeadlampVisual extends AbstractBlockEntityVisual<HeadlampBlockEntit
     }
 
 }
+

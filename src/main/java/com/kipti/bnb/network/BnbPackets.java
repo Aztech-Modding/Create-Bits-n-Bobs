@@ -46,3 +46,4 @@ public enum BnbPackets implements BasePacketPayload.PacketTypeProvider {
         packetRegistry.registerAllPackets();
     }
 }
+

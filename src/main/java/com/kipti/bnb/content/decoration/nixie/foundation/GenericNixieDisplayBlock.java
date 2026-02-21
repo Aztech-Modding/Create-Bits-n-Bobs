@@ -2,7 +2,7 @@ package com.kipti.bnb.content.decoration.nixie.foundation;
 
 import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.decoration.nixie.nixie_board.NixieBoardBlockNixie;
-import com.kipti.bnb.registry.BnbBlocks;
+import com.kipti.bnb.registry.content.blocks.BnbBlocksBootstrap;
 import com.mojang.serialization.MapCodec;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.equipment.clipboard.ClipboardEntry;
@@ -171,21 +171,21 @@ public class GenericNixieDisplayBlock extends DirectionalBlock implements IWrenc
 
     private static BlockState withColor(final BlockState state, final DyeColor color) {
         if (isLargeNixieTube(state.getBlock())) {
-            final Block block = color == null ? BnbBlocks.LARGE_NIXIE_TUBE.get() : BnbBlocks.DYED_LARGE_NIXIE_TUBE.get(color).get();
+            final Block block = color == null ? BnbBlocksBootstrap.LARGE_NIXIE_TUBE.get() : BnbBlocksBootstrap.DYED_LARGE_NIXIE_TUBE.get(color).get();
             return BlockHelper.copyProperties(state, block.defaultBlockState());
         } else if (isNixieBoard(state.getBlock())) {
-            final Block block = color == null ? BnbBlocks.NIXIE_BOARD.get() : BnbBlocks.DYED_NIXIE_BOARD.get(color).get();
+            final Block block = color == null ? BnbBlocksBootstrap.NIXIE_BOARD.get() : BnbBlocksBootstrap.DYED_NIXIE_BOARD.get(color).get();
             return BlockHelper.copyProperties(state, block.defaultBlockState());
         }
         return state;
     }
 
     public static boolean isLargeNixieTube(final Block block) {
-        return BnbBlocks.DYED_LARGE_NIXIE_TUBE.contains(block) || BnbBlocks.LARGE_NIXIE_TUBE.is(block);
+        return BnbBlocksBootstrap.DYED_LARGE_NIXIE_TUBE.contains(block) || BnbBlocksBootstrap.LARGE_NIXIE_TUBE.is(block);
     }
 
     public static boolean isNixieBoard(final Block block) {
-        return BnbBlocks.DYED_NIXIE_BOARD.contains(block) || BnbBlocks.NIXIE_BOARD.is(block);
+        return BnbBlocksBootstrap.DYED_NIXIE_BOARD.contains(block) || BnbBlocksBootstrap.NIXIE_BOARD.is(block);
     }
 
     private int getLineForPlacement(final BlockState state, final BlockPos blockPos, final BlockHitResult hitResult, final Level level) {
@@ -216,3 +216,4 @@ public class GenericNixieDisplayBlock extends DirectionalBlock implements IWrenc
     }
 
 }
+

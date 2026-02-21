@@ -1,6 +1,6 @@
 package com.kipti.bnb.content.kinetics.flywheel_bearing;
 
-import com.kipti.bnb.registry.BnbPartialModels;
+import com.kipti.bnb.registry.client.BnbPartialModels;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
@@ -38,3 +38,4 @@ public class FlywheelBearingBlockEntityRenderer extends KineticBlockEntityRender
         return CachedBuffers.partialFacingVertical(BnbPartialModels.LARGE_STONE_COG_SHAFTLESS, state, state.getValue(FlywheelBearingBlock.FACING));
     }
 }
+

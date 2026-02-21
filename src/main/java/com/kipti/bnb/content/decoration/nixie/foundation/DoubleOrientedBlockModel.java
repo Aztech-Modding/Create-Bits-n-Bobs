@@ -131,3 +131,4 @@ public class DoubleOrientedBlockModel extends BakedModelWrapper<BakedModel> {
     }
 
 }
+

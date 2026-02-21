@@ -1,4 +1,4 @@
-package com.kipti.bnb.registry;
+package com.kipti.bnb.registry.content.entities;
 
 import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.kinetics.flywheel_bearing.contraption.InertControlledContraptionEntity;
@@ -56,3 +56,4 @@ public class BnbEntityTypes {
     }
 
 }
+

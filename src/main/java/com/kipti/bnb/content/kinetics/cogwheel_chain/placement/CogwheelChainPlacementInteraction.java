@@ -6,7 +6,7 @@ import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.PlacingCogwheelChain;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.CogwheelChainType;
 import com.kipti.bnb.network.packets.from_client.PlaceCogwheelChainPacket;
 import com.kipti.bnb.network.packets.from_client.WrenchCogwheelChainPacket;
-import com.kipti.bnb.registry.BnbFeatureFlag;
+import com.kipti.bnb.registry.core.BnbFeatureFlag;
 import com.simibubi.create.content.kinetics.simpleRelays.CogWheelBlock;
 import com.simibubi.create.AllItems;
 import net.createmod.catnip.platform.CatnipServices;
@@ -210,3 +210,4 @@ public class CogwheelChainPlacementInteraction {
     }
 
 }
+

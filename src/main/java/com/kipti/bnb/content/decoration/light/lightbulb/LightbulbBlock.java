@@ -1,7 +1,7 @@
 package com.kipti.bnb.content.decoration.light.lightbulb;
 
 import com.kipti.bnb.content.decoration.light.founation.LightBlock;
-import com.kipti.bnb.registry.BnbShapes;
+import com.kipti.bnb.registry.client.BnbShapes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.context.UseOnContext;
@@ -40,3 +40,4 @@ public class LightbulbBlock extends LightBlock {
         builder.add(CAGE);
     }
 }
+

@@ -1,4 +1,4 @@
-package com.kipti.bnb.registry;
+package com.kipti.bnb.registry.datagen;
 
 import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.ChainInteractionFailedException;
@@ -79,3 +79,4 @@ public class BnbLangEntries {
     }
 
 }
+

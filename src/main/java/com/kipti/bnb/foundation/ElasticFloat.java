@@ -41,3 +41,4 @@ public class ElasticFloat {
         return previous + (current - previous) * pt;
     }
 }
+

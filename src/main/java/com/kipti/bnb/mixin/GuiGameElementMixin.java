@@ -1,6 +1,6 @@
 package com.kipti.bnb.mixin;
 
-import com.kipti.bnb.registry.BnbPartialModels;
+import com.kipti.bnb.registry.client.BnbPartialModels;
 import com.simibubi.create.AllBlocks;
 import net.createmod.catnip.gui.element.GuiGameElement;
 import net.minecraft.world.level.block.state.BlockState;
@@ -23,3 +23,4 @@ public class GuiGameElementMixin {
     }
 
 }
+

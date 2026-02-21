@@ -2,7 +2,19 @@ package com.kipti.bnb;
 
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.BnbCogwheelChainTypes;
 import com.kipti.bnb.network.BnbPackets;
-import com.kipti.bnb.registry.*;
+import com.kipti.bnb.registry.client.BnbPartialModels;
+import com.kipti.bnb.registry.compat.BnbCreateStresses;
+import com.kipti.bnb.registry.content.blockentities.BnbBlockEntitiesBootstrap;
+import com.kipti.bnb.registry.content.blocks.BnbBlocksBootstrap;
+import com.kipti.bnb.registry.content.blocks.deco.BnbDecorativeBlocks;
+import com.kipti.bnb.registry.content.entities.BnbEntityTypes;
+import com.kipti.bnb.registry.content.items.BnbItems;
+import com.kipti.bnb.registry.core.BnbConfigs;
+import com.kipti.bnb.registry.core.BnbDataComponents;
+import com.kipti.bnb.registry.core.BnbTags;
+import com.kipti.bnb.registry.datagen.BnbCreativeTabs;
+import com.kipti.bnb.registry.datagen.BnbDataConditions;
+import com.kipti.bnb.registry.datagen.BnbLangEntries;
 import com.mojang.logging.LogUtils;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.item.ItemDescription;
@@ -50,13 +62,13 @@ public class CreateBitsnBobs {
         BnbDataConditions.register(modEventBus);
 
         BnbItems.register();
-        BnbBlocks.register();
+        BnbBlocksBootstrap.register();
         BnbEntityTypes.register();
-        BnbBlockEntities.register();
+        BnbBlockEntitiesBootstrap.register();
         BnbTags.register();
         BnbPackets.register();
-        ;
-        BnbDecoBlocks.register();
+
+        BnbDecorativeBlocks.register();
 
         BnbCreateStresses.registerRedirects();
 

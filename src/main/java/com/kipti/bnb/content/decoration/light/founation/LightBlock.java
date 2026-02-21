@@ -129,3 +129,4 @@ public class LightBlock extends DirectionalBlock implements IWrenchable {
     }
 
 }
+

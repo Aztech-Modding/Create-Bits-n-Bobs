@@ -1,6 +1,6 @@
 package com.kipti.bnb.mixin;
 
-import com.kipti.bnb.registry.BnbComputerBehaviourPeripherals;
+import com.kipti.bnb.registry.compat.BnbComputerBehaviourPeripherals;
 import com.simibubi.create.compat.computercraft.implementation.ComputerBehaviour;
 import com.simibubi.create.compat.computercraft.implementation.peripherals.SyncedPeripheral;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
@@ -23,3 +23,4 @@ public class ComputerBehaviourMixin {
     }
 
 }
+

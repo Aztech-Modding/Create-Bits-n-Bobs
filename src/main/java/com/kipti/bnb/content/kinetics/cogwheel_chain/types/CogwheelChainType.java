@@ -1,7 +1,7 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.types;
 
-import com.kipti.bnb.registry.BnbRegistries;
-import com.kipti.bnb.registry.BnbResourceKeys;
+import com.kipti.bnb.registry.core.BnbRegistries;
+import com.kipti.bnb.registry.core.BnbResourceKeys;
 import com.simibubi.create.api.registry.SimpleRegistry;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -205,3 +205,4 @@ public class CogwheelChainType {
     }
 
 }
+

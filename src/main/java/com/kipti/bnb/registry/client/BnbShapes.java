@@ -1,4 +1,4 @@
-package com.kipti.bnb.registry;
+package com.kipti.bnb.registry.client;
 
 import com.simibubi.create.AllShapes;
 import net.createmod.catnip.math.VoxelShaper;
@@ -63,3 +63,4 @@ public class BnbShapes {
     }
 
 }
+

@@ -1,4 +1,4 @@
-package com.kipti.bnb.registry;
+package com.kipti.bnb.registry.core;
 
 import dev.engine_room.flywheel.api.material.DepthTest;
 import dev.engine_room.flywheel.api.material.Material;
@@ -24,3 +24,4 @@ public class BnbMaterials {
             .build();
 
 }
+

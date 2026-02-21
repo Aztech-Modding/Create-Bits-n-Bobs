@@ -1,9 +1,9 @@
 package com.kipti.bnb.content.decoration.nixie.large_nixie_tube;
 
 import com.kipti.bnb.content.decoration.nixie.foundation.*;
-import com.kipti.bnb.registry.BnbBlockEntities;
-import com.kipti.bnb.registry.BnbBlocks;
-import com.kipti.bnb.registry.BnbShapes;
+import com.kipti.bnb.registry.content.blockentities.BnbBlockEntitiesBootstrap;
+import com.kipti.bnb.registry.content.blocks.BnbBlocksBootstrap;
+import com.kipti.bnb.registry.client.BnbShapes;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;
 import net.createmod.catnip.placement.IPlacementHelper;
@@ -45,7 +45,7 @@ public class LargeNixieTubeBlockNixie extends GenericNixieDisplayBlock implement
 
     @Override
     public @NotNull ItemStack getCloneItemStack(final @NotNull BlockState state, final @NotNull HitResult target, final @NotNull LevelReader level, final @NotNull BlockPos pos, final @NotNull Player player) {
-        return BnbBlocks.LARGE_NIXIE_TUBE.asItem().getDefaultInstance();
+        return BnbBlocksBootstrap.LARGE_NIXIE_TUBE.asItem().getDefaultInstance();
     }
 
     @Override
@@ -77,7 +77,7 @@ public class LargeNixieTubeBlockNixie extends GenericNixieDisplayBlock implement
 
     @Override
     public BlockEntityType<? extends GenericNixieDisplayBlockEntity> getBlockEntityType() {
-        return BnbBlockEntities.GENERIC_NIXIE_DISPLAY.get();
+        return BnbBlockEntitiesBootstrap.GENERIC_NIXIE_DISPLAY.get();
     }
 
     public DyeColor getDyeColor() {
@@ -92,7 +92,7 @@ public class LargeNixieTubeBlockNixie extends GenericNixieDisplayBlock implement
     private static class PlacementHelper implements IPlacementHelper {
         @Override
         public Predicate<ItemStack> getItemPredicate() {
-            return BnbBlocks.LARGE_NIXIE_TUBE::isIn;
+            return BnbBlocksBootstrap.LARGE_NIXIE_TUBE::isIn;
         }
 
         @Override
@@ -116,3 +116,4 @@ public class LargeNixieTubeBlockNixie extends GenericNixieDisplayBlock implement
     }
 
 }
+

@@ -2,7 +2,7 @@ package com.kipti.bnb.mixin.flywheel_bearing;
 
 import com.kipti.bnb.content.kinetics.flywheel_bearing.FlywheelBearingBlockEntity;
 import com.kipti.bnb.mixin_accessor.FlywheelAccessibleKineticNetwork;
-import com.kipti.bnb.registry.BnbConfigs;
+import com.kipti.bnb.registry.core.BnbConfigs;
 import com.simibubi.create.content.kinetics.KineticNetwork;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -190,3 +190,4 @@ public abstract class KineticNetworkMixin implements FlywheelAccessibleKineticNe
 
 
 }
+

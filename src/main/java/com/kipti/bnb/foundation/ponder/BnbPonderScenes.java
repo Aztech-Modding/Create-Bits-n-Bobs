@@ -1,7 +1,7 @@
 package com.kipti.bnb.foundation.ponder;
 
 import com.kipti.bnb.foundation.ponder.scenes.CogwheelChainScenes;
-import com.kipti.bnb.registry.BnbBlocks;
+import com.kipti.bnb.registry.content.blocks.BnbBlocksBootstrap;
 import com.simibubi.create.AllBlocks;
 import com.tterrag.registrate.util.entry.ItemProviderEntry;
 import com.tterrag.registrate.util.entry.RegistryEntry;
@@ -19,9 +19,10 @@ public class BnbPonderScenes {
         helper.addStoryBoard(BuiltInRegistries.ITEM.getKey(Items.CHAIN), "chain_cog/axis_change", CogwheelChainScenes::changingAxisCogwheelChain);
 //        helper.addStoryBoard(BuiltInRegistries.ITEM.getKey(Items.CHAIN), "chain_cog/pathing_behaviour", CogwheelChainScenes::cogwheelChainPathingBehaviour);
 
-        HELPER.forComponents(AllBlocks.COGWHEEL, AllBlocks.LARGE_COGWHEEL, BnbBlocks.SMALL_EMPTY_FLANGED_COGWHEEL, BnbBlocks.LARGE_EMPTY_FLANGED_COGWHEEL)
+        HELPER.forComponents(AllBlocks.COGWHEEL, AllBlocks.LARGE_COGWHEEL, BnbBlocksBootstrap.SMALL_EMPTY_FLANGED_COGWHEEL, BnbBlocksBootstrap.LARGE_EMPTY_FLANGED_COGWHEEL)
                 .addStoryBoard("chain_cog/flat", CogwheelChainScenes::flatCogwheelChain)
                 .addStoryBoard("chain_cog/axis_change", CogwheelChainScenes::changingAxisCogwheelChain);
 //                .addStoryBoard("chain_cog/pathing_behaviour", CogwheelChainScenes::cogwheelChainPathingBehaviour);
     }
 }
+

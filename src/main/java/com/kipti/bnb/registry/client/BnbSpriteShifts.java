@@ -1,4 +1,4 @@
-package com.kipti.bnb.registry;
+package com.kipti.bnb.registry.client;
 
 import com.kipti.bnb.CreateBitsnBobs;
 import com.simibubi.create.foundation.block.connected.AllCTTypes;
@@ -73,3 +73,4 @@ public class BnbSpriteShifts {
     }
 
 }
+

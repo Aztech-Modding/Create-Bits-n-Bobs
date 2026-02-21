@@ -1,8 +1,8 @@
 package com.kipti.bnb.content.kinetics.flywheel_bearing.mechanics;
 
 import com.kipti.bnb.content.kinetics.flywheel_bearing.FlywheelBearingBlockEntity;
-import com.kipti.bnb.registry.BnbConfigs;
-import com.kipti.bnb.registry.BnbTags;
+import com.kipti.bnb.registry.core.BnbConfigs;
+import com.kipti.bnb.registry.core.BnbTags;
 import com.simibubi.create.content.contraptions.bearing.BearingContraption;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -215,3 +215,4 @@ public class FlywheelMovementMechanics {
     }
 
 }
+

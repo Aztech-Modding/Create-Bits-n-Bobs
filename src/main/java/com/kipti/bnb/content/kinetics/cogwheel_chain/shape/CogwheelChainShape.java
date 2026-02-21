@@ -23,3 +23,4 @@ public abstract class CogwheelChainShape {
     public abstract Vec3 getVec(BlockPos anchor, float position);
 
 }
+

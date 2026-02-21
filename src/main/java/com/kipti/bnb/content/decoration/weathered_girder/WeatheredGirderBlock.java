@@ -1,6 +1,6 @@
 package com.kipti.bnb.content.decoration.weathered_girder;
 
-import com.kipti.bnb.registry.BnbDecoBlocks;
+import com.kipti.bnb.registry.content.blocks.deco.BnbDecorativeBlocks;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.content.decoration.girder.GirderBlock;
@@ -44,7 +44,7 @@ public class WeatheredGirderBlock extends GirderBlock {
     @Override
     protected @NotNull ItemInteractionResult useItemOn(final ItemStack stack, final BlockState state, final Level level, final BlockPos pos, final Player player, final InteractionHand hand, final BlockHitResult hitResult) {
         if (AllBlocks.SHAFT.isIn(stack)) {
-            KineticBlockEntity.switchToBlockState(level, pos, BnbDecoBlocks.WEATHERED_METAL_GIRDER_ENCASED_SHAFT.getDefaultState()
+            KineticBlockEntity.switchToBlockState(level, pos, BnbDecorativeBlocks.WEATHERED_METAL_GIRDER_ENCASED_SHAFT.getDefaultState()
                     .setValue(WATERLOGGED, state.getValue(WATERLOGGED))
                     .setValue(TOP, state.getValue(TOP))
                     .setValue(BOTTOM, state.getValue(BOTTOM))
@@ -101,3 +101,4 @@ public class WeatheredGirderBlock extends GirderBlock {
     }
 
 }
+

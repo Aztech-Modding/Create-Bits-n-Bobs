@@ -44,3 +44,4 @@ public record PlacingCogwheelNode(BlockPos pos, Direction.Axis rotationAxis, boo
     }
 
 }
+

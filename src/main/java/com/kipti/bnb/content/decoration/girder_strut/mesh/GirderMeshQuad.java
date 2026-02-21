@@ -250,3 +250,4 @@ public final class GirderMeshQuad {
     public record Segment(GirderVertex start, GirderVertex end) {
     }
 }
+

@@ -1,6 +1,11 @@
-package com.kipti.bnb.registry;
+package com.kipti.bnb.registry.datagen;
 
 import com.kipti.bnb.CreateBitsnBobs;
+import com.kipti.bnb.registry.content.blocks.BnbBlocksBootstrap;
+import com.kipti.bnb.registry.worldgen.BnbPaletteStoneTypes;
+import com.kipti.bnb.registry.content.blocks.deco.BnbDecorativeBlocks;
+import com.kipti.bnb.registry.core.BnbFeatureFlag;
+import com.kipti.bnb.registry.content.items.BnbItems;
 import com.simibubi.create.AllCreativeModeTabs;
 import com.simibubi.create.content.decoration.encasing.EncasedBlock;
 import com.simibubi.create.foundation.data.CreateRegistrate;
@@ -27,7 +32,7 @@ public class BnbCreativeTabs {
             () -> CreativeModeTab.builder()
                     .title(Component.translatable("tab." + CreateBitsnBobs.MOD_ID + ".base"))
                     .withTabsBefore(AllCreativeModeTabs.PALETTES_CREATIVE_TAB.getId())
-                    .icon(BnbBlocks.SMALL_EMPTY_FLANGED_COGWHEEL::asStack)
+                    .icon(BnbBlocksBootstrap.SMALL_EMPTY_FLANGED_COGWHEEL::asStack)
                     .displayItems((p, o) -> buildCreativeTabContents(p, o, () -> BnbCreativeTabs.BASE_CREATIVE_TAB)).build());
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> DECO_CREATIVE_TAB = REGISTER.register("bnb_deco",
@@ -38,7 +43,7 @@ public class BnbCreativeTabs {
                     .displayItems((p, o) -> buildCreativeTabContents(p, o, () -> BnbCreativeTabs.DECO_CREATIVE_TAB)).build());
 
     private static boolean matchesBlockFilter(final BlockItem item) {
-        if (BnbDecoBlocks.CHAIRS.contains(item.getBlock()) && !BnbDecoBlocks.CHAIRS.get(DyeColor.RED).is(item.getBlock()))
+        if (BnbDecorativeBlocks.CHAIRS.contains(item.getBlock()) && !BnbDecorativeBlocks.CHAIRS.get(DyeColor.RED).is(item.getBlock()))
             return false;
 
         if (item.getBlock() instanceof EncasedBlock)
@@ -48,7 +53,7 @@ public class BnbCreativeTabs {
     }
 
     private static boolean matchesSearchOnlyBlockFilter(final BlockItem item) {
-        if (BnbDecoBlocks.CHAIRS.contains(item.getBlock()) && !BnbDecoBlocks.CHAIRS.get(DyeColor.RED).is(item.getBlock())) {
+        if (BnbDecorativeBlocks.CHAIRS.contains(item.getBlock()) && !BnbDecorativeBlocks.CHAIRS.get(DyeColor.RED).is(item.getBlock())) {
             return true;
         }
         return false;
@@ -85,3 +90,4 @@ public class BnbCreativeTabs {
     }
 
 }
+

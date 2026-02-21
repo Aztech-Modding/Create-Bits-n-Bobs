@@ -1,4 +1,4 @@
-package com.kipti.bnb.registry;
+package com.kipti.bnb.registry.compat;
 
 import com.simibubi.create.content.kinetics.belt.BeltBlock;
 import com.simibubi.create.foundation.data.CreateRegistrate;
@@ -35,3 +35,4 @@ public class BnbCreateBlockEdits {
     }
 
 }
+

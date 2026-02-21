@@ -1,4 +1,4 @@
-package com.kipti.bnb.registry;
+package com.kipti.bnb.registry.client;
 
 import com.kipti.bnb.CreateBitsnBobs;
 import com.simibubi.create.Create;
@@ -71,3 +71,4 @@ public class BnbPartialModels {
     public static void register() {
     }
 }
+

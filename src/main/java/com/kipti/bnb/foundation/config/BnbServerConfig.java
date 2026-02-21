@@ -35,3 +35,4 @@ public class BnbServerConfig extends ConfigBase {
     }
 
 }
+

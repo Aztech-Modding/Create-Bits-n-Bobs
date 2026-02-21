@@ -32,3 +32,4 @@ public class PistonExtensionPoleBlockMixin extends WrenchableDirectionalBlock im
     }
 
 }
+

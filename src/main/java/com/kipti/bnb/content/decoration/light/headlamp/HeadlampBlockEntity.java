@@ -4,9 +4,9 @@ import com.kipti.bnb.content.decoration.light.founation.LightBlock;
 import com.kipti.bnb.content.decoration.light.headlamp.rendering.HeadlampConstants;
 import com.kipti.bnb.content.decoration.light.lightbulb.LightbulbBlock;
 import com.kipti.bnb.foundation.BnbLang;
-import com.kipti.bnb.registry.BnbBlockEntities;
-import com.kipti.bnb.registry.BnbBlocks;
-import com.kipti.bnb.registry.BnbShapes;
+import com.kipti.bnb.registry.content.blockentities.BnbBlockEntitiesBootstrap;
+import com.kipti.bnb.registry.content.blocks.BnbBlocksBootstrap;
+import com.kipti.bnb.registry.client.BnbShapes;
 import com.simibubi.create.AllShapes;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.api.schematic.requirement.SpecialBlockEntityItemRequirement;
@@ -67,7 +67,7 @@ public class HeadlampBlockEntity extends SmartBlockEntity implements SpecialBloc
         if (Mods.COMPUTERCRAFT.isLoaded()) {
             event.registerBlockEntity(
                     PeripheralCapability.get(),
-                    BnbBlockEntities.HEADLAMP.get(),
+                    BnbBlockEntitiesBootstrap.HEADLAMP.get(),
                     (be, context) -> be.computerBehaviour.getPeripheralCapability()
             );
         }
@@ -508,7 +508,8 @@ public class HeadlampBlockEntity extends SmartBlockEntity implements SpecialBloc
 
         return new ItemRequirement(
                 ItemRequirement.ItemUseType.CONSUME,
-                BnbBlocks.HEADLAMP.asItem().getDefaultInstance().copyWithCount(numberOfHeadlamps)
+                BnbBlocksBootstrap.HEADLAMP.asItem().getDefaultInstance().copyWithCount(numberOfHeadlamps)
         );
     }
 }
+

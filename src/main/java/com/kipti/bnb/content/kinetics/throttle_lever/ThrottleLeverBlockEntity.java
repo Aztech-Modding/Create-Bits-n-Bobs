@@ -37,3 +37,4 @@ public class ThrottleLeverBlockEntity extends GeneratingKineticBlockEntity {
         return currentPower.getCurrentValue(pt);
     }
 }
+

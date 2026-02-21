@@ -1,7 +1,7 @@
 package com.kipti.bnb.mixin;
 
 import com.kipti.bnb.CreateBitsnBobs;
-import com.kipti.bnb.registry.BnbPaletteStoneTypes;
+import com.kipti.bnb.registry.worldgen.BnbPaletteStoneTypes;
 import com.simibubi.create.content.decoration.palettes.AllPaletteStoneTypes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -15,5 +15,5 @@ public class AllPaletteStoneTypesMixin {
         BnbPaletteStoneTypes.register(CreateBitsnBobs.REGISTRATE);
     }
 
-
 }
+

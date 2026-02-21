@@ -23,3 +23,4 @@ public class GratingBlock extends Block implements IWrenchable {
         return adjacentState.getBlock() instanceof GratingBlock && !(adjacentState.getBlock() instanceof GratingPanelBlock) || super.skipRendering(state, adjacentState, direction);
     }
 }
+

@@ -1,4 +1,4 @@
-package com.kipti.bnb.registry;
+package com.kipti.bnb.registry.core;
 
 import com.kipti.bnb.CreateBitsnBobs;
 import com.simibubi.create.AllBlocks;
@@ -102,3 +102,4 @@ public class BnbTags {
         BnbBlockTags.register();
     }
 }
+

@@ -4,7 +4,7 @@ import com.kipti.bnb.content.decoration.girder_strut.cap.GirderCapAccumulator;
 import com.kipti.bnb.content.decoration.girder_strut.geometry.GirderGeometry;
 import com.kipti.bnb.content.decoration.girder_strut.mesh.GirderMeshQuad;
 import com.kipti.bnb.content.decoration.girder_strut.mesh.GirderSegmentMesh;
-import com.kipti.bnb.registry.BnbDecoBlocks;
+import com.kipti.bnb.registry.content.blocks.deco.BnbDecorativeBlocks;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -79,7 +79,7 @@ public class GirderStrutModelManipulator {
             final List<BakedQuad> bakedQuads = new ArrayList<>();
             final RandomSource random = RandomSource.create();
             bakedQuads.addAll(bakedModel.getQuads(
-                    BnbDecoBlocks.GIRDER_STRUT.get().defaultBlockState(), //No affect on the quads, so ignore modelType
+                    BnbDecorativeBlocks.GIRDER_STRUT.get().defaultBlockState(), //No affect on the quads, so ignore modelType
                     null,
                     random,
                     ModelData.EMPTY,
@@ -99,3 +99,4 @@ public class GirderStrutModelManipulator {
     }
 
 }
+

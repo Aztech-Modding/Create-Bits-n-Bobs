@@ -1,6 +1,6 @@
 package com.kipti.bnb.content.kinetics.throttle_lever;
 
-import com.kipti.bnb.registry.BnbBlockEntities;
+import com.kipti.bnb.registry.content.blockentities.BnbBlockEntitiesBootstrap;
 import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
 import com.simibubi.create.content.kinetics.base.IRotate;
 import com.simibubi.create.foundation.block.IBE;
@@ -56,6 +56,7 @@ public class ThrottleLeverBlock extends DirectionalKineticBlock implements IBE<T
 
     @Override
     public BlockEntityType<? extends ThrottleLeverBlockEntity> getBlockEntityType() {
-        return BnbBlockEntities.THROTTLE_LEVER.get();
+        return BnbBlockEntitiesBootstrap.THROTTLE_LEVER.get();
     }
 }
+

@@ -112,3 +112,4 @@ public class GratingPanelBlock extends GratingBlock {
         return adjacentState.getBlock() instanceof GratingPanelBlock && (adjacentState.getValue(FACING) == state.getValue(FACING)) || super.skipRendering(state, adjacentState, direction);
     }
 }
+
