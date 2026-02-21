@@ -1,0 +1,27 @@
+package com.kipti.bnb.foundation.ponder.create;
+
+import com.kipti.bnb.registry.BnbBlocks;
+import com.simibubi.create.infrastructure.ponder.AllCreatePonderTags;
+import com.simibubi.create.infrastructure.ponder.scenes.PulleyScenes;
+import com.simibubi.create.infrastructure.ponder.scenes.RedstoneScenes;
+import com.tterrag.registrate.util.entry.ItemProviderEntry;
+import com.tterrag.registrate.util.entry.RegistryEntry;
+import net.createmod.ponder.api.registration.PonderSceneRegistrationHelper;
+import net.minecraft.resources.ResourceLocation;
+
+public class BnbCreatePonderScenes {
+
+    public static void register(final PonderSceneRegistrationHelper<ResourceLocation> helper) {
+        final PonderSceneRegistrationHelper<ItemProviderEntry<?, ?>> HELPER = helper.withKeyFunction(RegistryEntry::getId);
+
+        HELPER.forComponents(BnbBlocks.NIXIE_BOARD, BnbBlocks.LARGE_NIXIE_TUBE)
+                .addStoryBoard("nixie_tube", RedstoneScenes::nixieTube);
+
+        HELPER.forComponents(BnbBlocks.CHAIN_PULLEY)
+                .addStoryBoard("rope_pulley/anchor", PulleyScenes::movement, AllCreatePonderTags.KINETIC_APPLIANCES, AllCreatePonderTags.MOVEMENT_ANCHOR)
+                .addStoryBoard("rope_pulley/modes", PulleyScenes::movementModes)
+                .addStoryBoard("rope_pulley/multi_rope", PulleyScenes::multiRope)
+                .addStoryBoard("rope_pulley/attachment", PulleyScenes::attachment);
+    }
+
+}

@@ -15,6 +15,10 @@ out
 *.iml
 .idea
 
+# But keep code styles and inspection profiles
+!.idea/codeStyles/
+!.idea/inspectionProfiles/
+
 # gradle
 build
 .gradle
@@ -26,3 +30,6 @@ runs
 run-data
 
 repo
+bad_apple_stress_test/videoplayback.mp4
+bad_apple_stress_test/node_modules/
+bad_apple_stress_test/output/

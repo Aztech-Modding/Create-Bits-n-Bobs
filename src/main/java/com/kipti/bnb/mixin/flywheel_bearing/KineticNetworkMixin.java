@@ -1,6 +1,6 @@
 package com.kipti.bnb.mixin.flywheel_bearing;
 
-import com.kipti.bnb.content.flywheel_bearing.FlywheelBearingBlockEntity;
+import com.kipti.bnb.content.kinetics.flywheel_bearing.FlywheelBearingBlockEntity;
 import com.kipti.bnb.mixin_accessor.FlywheelAccessibleKineticNetwork;
 import com.kipti.bnb.registry.BnbConfigs;
 import com.simibubi.create.content.kinetics.KineticNetwork;

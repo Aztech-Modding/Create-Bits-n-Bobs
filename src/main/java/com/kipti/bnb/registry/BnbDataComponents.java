@@ -1,7 +1,7 @@
 package com.kipti.bnb.registry;
 
 import com.kipti.bnb.CreateBitsnBobs;
-import com.kipti.bnb.content.cogwheel_chain.graph.PlacingCogwheelChain;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.PlacingCogwheelChain;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponentType;

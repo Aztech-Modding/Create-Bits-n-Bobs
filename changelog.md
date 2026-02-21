@@ -94,57 +94,61 @@
   - Ru_Ru tweaks / fixes, thank you @VladisCrafter and @WatermelonGuy
 # 1.21.1-0.0.32
 - Changes:
-  - Girder struts can be appropriately wrenched to break them
+    - Girder struts can be appropriately wrenched to break them
 # 1.21.1-0.0.33jolly
 - Changes:
-  - Ru_Ru translation update, thank you @VladisCrafter and @WatermelonGuy
-  - Turkish localization update, thank you @erdemarikaneskici
-  - Fixed chain drives placed from schematics resulting in corrupted blocks, this will retroactively fix broken blocks
+    - Ru_Ru translation update, thank you @VladisCrafter and @WatermelonGuy
+    - Turkish localization update, thank you @erdemarikaneskici
+    - Fixed chain drives placed from schematics resulting in corrupted blocks, this will retroactively fix broken blocks
 # 1.21.1-0.0.34
 - Changes:
-  - Fixed a corrupted state with the chair blocks
-  - Nudged the chair armrest arms to be slightly inset to avoid z-fighting with certain blocks
+    - Fixed a corrupted state with the chair blocks
+    - Nudged the chair armrest arms to be slightly inset to avoid z-fighting with certain blocks
 # 1.21.1-0.0.35
 - Changes:
-  - Proper dist for mixins
-  - Flipped 9 number texture in the atlas for nixie tubes and boards
+    - Proper dist for mixins
+    - Flipped 9 number texture in the atlas for nixie tubes and boards
 # 1.21.1-0.0.36
 - Changes:
-  - Girder strut memory leak fix
+    - Girder strut memory leak fix
 # 1.21.1-0.0.37
 - Changes:
-  - Chain drive middle click
-  - Reverted asset changes
+    - Chain drive middle click
+    - Reverted asset changes
 # 1.21.1-0.0.38
 - Changes:
-  - Portuguese and Brazilian localization, thank you to @Aquila_Limonida
+    - Portuguese and Brazilian localization, thank you to @Aquila_Limonida
 # 1.21.1-0.0.39
 - Changes:
-  - Added link to crowdin translations
-  - Nixie tubes properly render the back of the text for international (unicode) characters
-  - Item tooltips for the lights now notes they can be toggled on
-  - Added reviewed machine translations for popular languages that are missing native translations
-  - Fixed a crash with girder struts and cogwheel chain drives related to VS plotyards and large distances
-  - Corrected UVS of tile slabs and tile stairs
+    - Added link to crowdin translations
+    - Nixie tubes properly render the back of the text for international (unicode) characters
+    - Item tooltips for the lights now notes they can be toggled on
+    - Added reviewed machine translations for popular languages that are missing native translations
+    - Fixed a crash with girder struts and cogwheel chain drives related to VS plotyards and large distances
+    - Corrected UVS of tile slabs and tile stairs
 # 1.21.1-0.0.40
 - Changes:
-  - Added resource reload detection for girder struts. Ideally should prevent wrong textures appearing on the model
+    - Added resource reload detection for girder struts. Ideally should prevent wrong textures appearing on the model
 # 1.21.1-0.0.41
 - Changes (Credit to astral for locking in):
-  - Fix chair corner states
-  - Properly fix girder strut texture reloads
-  - Added placement helper for nixie board and large nixie tube
-  - Fixed lightbulb texture
-  - Fix girder strut placement in water, and added sound
-  - Fix text atlas having C and D swapped
+    - Fix chair corner states
+    - Properly fix girder strut texture reloads
+    - Added placement helper for nixie board and large nixie tube
+    - Fixed lightbulb texture
+    - Fix girder strut placement in water, and added sound
+    - Fix text atlas having C and D swapped
 # 1.21.1-0.0.42
 - Changes:
-  - Fixed LODs activating when a chain is part of a sublevel or ship in VS / sable
+    - Fixed LODs activating when a chain is part of a sublevel or ship in VS / sable
 # 1.21.1-0.0.43
 - Changes:
-  - Proper polish translations, thank you Imperator Pablo
-  - Smoother looking tile slab and tile stair textures thank you to IcaroJam
+    - Proper polish translations, thank you Imperator Pablo
+    - Smoother looking tile slab and tile stair textures thank you to IcaroJam
 # 1.21.1-0.0.44
 - Changes:
-  - Fixed girder struts in schematics
-  - Fixed coghweel chain drives in schematics
+    - Fixed girder struts in schematics
+    - Fixed coghweel chain drives in schematics
+# 1.21.1-1.0.0
+- Changes:
+    - Belts can be right-clicked with glow ink sacs to make them glow
+    - TODO: all the other ones

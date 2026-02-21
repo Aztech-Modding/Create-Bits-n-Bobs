@@ -1,7 +1,7 @@
 package com.kipti.bnb.registry;
 
-import com.kipti.bnb.content.palette.BnbPaletteBlockPattern;
-import com.kipti.bnb.content.palette.BnbPalettesVariantEntry;
+import com.kipti.bnb.content.decoration.palette.BnbPaletteBlockPattern;
+import com.kipti.bnb.content.decoration.palette.BnbPalettesVariantEntry;
 import com.simibubi.create.AllTags;
 import com.simibubi.create.Create;
 import com.simibubi.create.content.decoration.palettes.AllPaletteStoneTypes;
@@ -21,7 +21,7 @@ import net.minecraft.world.level.material.MapColor;
 
 import java.util.function.Function;
 
-import static com.kipti.bnb.content.palette.BnbPaletteBlockPattern.ADDITIONS_TO_BASE;
+import static com.kipti.bnb.content.decoration.palette.BnbPaletteBlockPattern.ADDITIONS_TO_BASE;
 
 public enum BnbPaletteStoneTypes {
 
@@ -43,29 +43,28 @@ public enum BnbPaletteStoneTypes {
 
     ;
 
-    private Function<CreateRegistrate, NonNullSupplier<Block>> factory;
+    private final Function<CreateRegistrate, NonNullSupplier<Block>> factory;
     private BnbPalettesVariantEntry variants;
 
     public NonNullSupplier<Block> baseBlock;
-    public NonNullFunction<BlockBuilder<? extends Block, CreateRegistrate>, BlockBuilder<? extends Block, CreateRegistrate>> modifyProperties;
-    public BnbPaletteBlockPattern[] variantTypes;
+    public final NonNullFunction<BlockBuilder<? extends Block, CreateRegistrate>, BlockBuilder<? extends Block, CreateRegistrate>> modifyProperties;
+    public final BnbPaletteBlockPattern[] variantTypes;
     public TagKey<Item> materialTag;
 
-    BnbPaletteStoneTypes(BnbPaletteBlockPattern[] variantTypes,
-                         Function<CreateRegistrate, NonNullSupplier<Block>> baseBlockSupplier) {
+    BnbPaletteStoneTypes(final BnbPaletteBlockPattern[] variantTypes,
+                         final Function<CreateRegistrate, NonNullSupplier<Block>> baseBlockSupplier) {
         this.factory = baseBlockSupplier;
         this.variantTypes = variantTypes;
         modifyProperties = b -> b.initialProperties(baseBlock);
     }
 
-    BnbPaletteStoneTypes(BnbPaletteBlockPattern[] variantTypes,
-                         Function<CreateRegistrate, NonNullSupplier<Block>> baseBlockSupplier,
-                         NonNullUnaryOperator<BlockBehaviour.Properties> modifyProperties) {
+    BnbPaletteStoneTypes(final BnbPaletteBlockPattern[] variantTypes,
+                         final Function<CreateRegistrate, NonNullSupplier<Block>> baseBlockSupplier,
+                         final NonNullUnaryOperator<BlockBehaviour.Properties> modifyProperties) {
         this.factory = baseBlockSupplier;
         this.variantTypes = variantTypes;
         this.modifyProperties = b -> b.properties(modifyProperties);
     }
-
 
     public NonNullSupplier<Block> getBaseBlock() {
         return baseBlock;
@@ -76,6 +75,7 @@ public enum BnbPaletteStoneTypes {
     }
 
     public static void register(final CreateRegistrate registrate) {
+        registrate.setCreativeTab(BnbCreativeTabs.DECO_CREATIVE_TAB);
         for (final BnbPaletteStoneTypes paletteStoneVariants : values()) {
             paletteStoneVariants.baseBlock = paletteStoneVariants.factory.apply(registrate);
             final String id = Lang.asId(paletteStoneVariants.name());
@@ -83,6 +83,7 @@ public enum BnbPaletteStoneTypes {
                     AllTags.optionalTag(BuiltInRegistries.ITEM, Create.asResource("stone_types/" + id));
             paletteStoneVariants.variants = new BnbPalettesVariantEntry(id, paletteStoneVariants);
         }
+        registrate.setCreativeTab(BnbCreativeTabs.BASE_CREATIVE_TAB);
     }
 
 }

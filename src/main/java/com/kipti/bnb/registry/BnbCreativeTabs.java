@@ -2,6 +2,7 @@ package com.kipti.bnb.registry;
 
 import com.kipti.bnb.CreateBitsnBobs;
 import com.simibubi.create.AllCreativeModeTabs;
+import com.simibubi.create.content.decoration.encasing.EncasedBlock;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.tterrag.registrate.util.entry.RegistryEntry;
 import net.minecraft.core.registries.Registries;
@@ -26,7 +27,7 @@ public class BnbCreativeTabs {
             () -> CreativeModeTab.builder()
                     .title(Component.translatable("tab." + CreateBitsnBobs.MOD_ID + ".base"))
                     .withTabsBefore(AllCreativeModeTabs.PALETTES_CREATIVE_TAB.getId())
-                    .icon(BnbItems.ICON_LIGHTBULB::asStack)
+                    .icon(BnbBlocks.SMALL_EMPTY_FLANGED_COGWHEEL::asStack)
                     .displayItems((p, o) -> buildCreativeTabContents(p, o, () -> BnbCreativeTabs.BASE_CREATIVE_TAB)).build());
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> DECO_CREATIVE_TAB = REGISTER.register("bnb_deco",
@@ -37,14 +38,17 @@ public class BnbCreativeTabs {
                     .displayItems((p, o) -> buildCreativeTabContents(p, o, () -> BnbCreativeTabs.DECO_CREATIVE_TAB)).build());
 
     private static boolean matchesBlockFilter(final BlockItem item) {
-        if (BnbBlocks.CHAIRS.contains(item.getBlock()) && !BnbBlocks.CHAIRS.get(DyeColor.RED).is(item.getBlock())) {
+        if (BnbDecoBlocks.CHAIRS.contains(item.getBlock()) && !BnbDecoBlocks.CHAIRS.get(DyeColor.RED).is(item.getBlock()))
             return false;
-        }
+
+        if (item.getBlock() instanceof EncasedBlock)
+            return false;
+
         return true;
     }
 
     private static boolean matchesSearchOnlyBlockFilter(final BlockItem item) {
-        if (BnbBlocks.CHAIRS.contains(item.getBlock()) && !BnbBlocks.CHAIRS.get(DyeColor.RED).is(item.getBlock())) {
+        if (BnbDecoBlocks.CHAIRS.contains(item.getBlock()) && !BnbDecoBlocks.CHAIRS.get(DyeColor.RED).is(item.getBlock())) {
             return true;
         }
         return false;
@@ -57,7 +61,7 @@ public class BnbCreativeTabs {
 
     private static void buildCreativeTabContents(final CreativeModeTab.ItemDisplayParameters parameters, final CreativeModeTab.Output output, final Supplier<DeferredHolder<CreativeModeTab, CreativeModeTab>> tabToGet) {
         for (final RegistryEntry<Item, Item> item : CreateBitsnBobs.REGISTRATE.getAll(Registries.ITEM)) {
-            if (!(CreateRegistrate.isInCreativeTab(item, tabToGet.get()) && item.get() instanceof final BlockItem blockItem) || !BnbFeatureFlag.isEnabled(blockItem))
+            if (!CreateRegistrate.isInCreativeTab(item, tabToGet.get()) || !(item.get() instanceof final BlockItem blockItem) || !BnbFeatureFlag.isEnabled(blockItem))
                 continue;
 
             if (matchesSearchOnlyBlockFilter(blockItem))
@@ -65,6 +69,7 @@ public class BnbCreativeTabs {
             else if (matchesBlockFilter(blockItem))
                 output.accept(item.get());
         }
+
         for (final RegistryEntry<Item, Item> item : CreateBitsnBobs.REGISTRATE.getAll(Registries.ITEM)) {
             if (!CreateRegistrate.isInCreativeTab(item, tabToGet.get()) || (item.get() instanceof BlockItem))
                 continue;
@@ -75,7 +80,8 @@ public class BnbCreativeTabs {
     }
 
     private static boolean matchesItemFilter(final Item item) {
-        return !BnbItems.ICON_LIGHTBULB.is(item);
+        //Ignore testing / fake items
+        return !BnbItems.ICON_LIGHTBULB.is(item) && !BnbItems.TEST_ROPE.is(item);
     }
 
 }

@@ -19,11 +19,18 @@ public class BnbPartialModels {
     public static final PartialModel
             HEADLAMP_OFF = block("headlamp/headlight"),
             HEADLAMP_ON = block("headlamp/headlight_on"),
+            HEADLAMP_INSTANCE_BASE = block("headlamp/instance/headlight_base"),
+            HEADLAMP_INSTANCE_OFF = block("headlamp/instance/headlight_off"),
+            HEADLAMP_INSTANCE_ON = block("headlamp/instance/headlight_on"),
 
     SMALL_SPROCKET_COGWHEEL_BLOCK = block("sprocket/small_cogwheel"),
             LARGE_SPROCKET_COGWHEEL_BLOCK = block("sprocket/large_cogwheel"),
             SMALL_FLANGED_COGWHEEL_BLOCK = block("flanged_gear/small_cogwheel"),
             LARGE_FLANGED_COGWHEEL_BLOCK = block("flanged_gear/large_cogwheel"),
+            ENCASED_SPROCKET_COGWHEEL_BLOCK = block("sprocket/encased_cogwheel"),
+            ENCASED_LARGE_SPROCKET_COGWHEEL_BLOCK = block("sprocket/encased_large_cogwheel"),
+            ENCASED_FLANGED_COGWHEEL_BLOCK = block("flanged_gear/encased_cogwheel"),
+            ENCASED_LARGE_FLANGED_COGWHEEL_BLOCK = block("flanged_gear/encased_large_cogwheel"),
 
 
     CHAIN_ROPE_COIL = block("chain_pulley/chain_coil"), CHAIN_ROPE_HALF = block("chain_pulley/chain_rope_half"),
@@ -35,7 +42,9 @@ public class BnbPartialModels {
 
     ROPE_PULLEY_JEI = createBlock("rope_pulley/item"),
 
-    LARGE_STONE_COG_SHAFTLESS = block("large_stone_cog_shaftless");
+    LARGE_STONE_COG_SHAFTLESS = block("large_stone_cog_shaftless"),
+
+    THROTTLE_LEVER_HANDLE = block("throttle_lever/handle");
 
 
     public static final Map<Direction, PartialModel> WEATHERED_METAL_GIRDER_BRACKETS = new EnumMap<>(Direction.class);
@@ -49,6 +58,7 @@ public class BnbPartialModels {
     public static final PartialModel GIRDER_STRUT_SEGMENT = block("girder_strut/girder");
     public static final PartialModel WEATHERED_GIRDER_STRUT_SEGMENT = block("girder_strut/weathered_girder");
     public static final PartialModel WOODEN_GIRDER_STRUT_SEGMENT = block("girder_strut/wooden_girder");
+    public static final PartialModel CABLE_STRUT_SEGMENT = block("girder_strut/cable");
 
     private static PartialModel block(String path) {
         return PartialModel.of(CreateBitsnBobs.asResource("block/" + path));

@@ -1,0 +1,387 @@
+package com.kipti.bnb.content.kinetics.cogwheel_chain.block;
+
+import com.kipti.bnb.CreateBitsnBobs;
+import com.kipti.bnb.content.decoration.girder_strut.IBlockEntityRelighter;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChain;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.PathedCogwheelNode;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.RenderedChainPathNode;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.shape.CogwheelChainInteractionHandler;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.shape.CogwheelChainShape;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.shape.CogwheelChainWholeShape;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.types.CogwheelChainType;
+import com.simibubi.create.api.contraption.transformable.TransformableBlockEntity;
+import com.simibubi.create.api.schematic.requirement.SpecialBlockEntityItemRequirement;
+import com.simibubi.create.content.contraptions.StructureTransform;
+import com.simibubi.create.content.kinetics.base.IRotate;
+import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
+import com.simibubi.create.content.kinetics.simpleRelays.SimpleKineticBlockEntity;
+import com.simibubi.create.content.schematics.requirement.ItemRequirement;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.Vec3i;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implements IBlockEntityRelighter, SpecialBlockEntityItemRequirement, TransformableBlockEntity {
+
+    private boolean isController = false;
+    @Nullable
+    private CogwheelChain chain = null;
+    @Nullable
+    private Vec3i controllerOffset = null;
+    private int chainsToRefund = 0;
+
+    public CogwheelChainBlockEntity(final BlockEntityType<?> type, final BlockPos pos, final BlockState state) {
+        super(type, pos, state);
+        setLazyTickRate(5);
+    }
+
+    @Override
+    public void lazyTick() {
+        super.lazyTick();
+        if (isController && chain != null) {
+            if (!chain.checkIntegrity(level, worldPosition)) {
+                destroyChain(true);
+            }
+            updateChainShapes();
+        } else {
+            if (controllerOffset != null && level != null) {
+                final BlockPos controllerPos = worldPosition.offset(controllerOffset);
+                final BlockEntity be = level.getBlockEntity(controllerPos);
+                if (!(be instanceof CogwheelChainBlockEntity)) {
+                    CogwheelChain.removeChainCogwheelFromLevelIfPresent(level, getBlockPos());
+                }
+            }
+        }
+    }
+
+    @Override
+    public void writeSafe(final CompoundTag tag, final HolderLookup.Provider registries) {
+        super.writeSafe(tag, registries);
+        writeConnectionInfo(tag);
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        destroyChain(true);
+    }
+
+    @Override
+    public ItemRequirement getRequiredItems(final BlockState state) {
+        return isController ? new ItemRequirement(
+                ItemRequirement.ItemUseType.CONSUME,
+                Blocks.CHAIN.asItem().getDefaultInstance().copyWithCount(chain != null ? chain.getChainsRequired() : 0)
+        ) : ItemRequirement.NONE;
+    }
+
+    public void destroyChain(final boolean dropItemsInWorld) {
+        destroyChain(dropItemsInWorld, false);
+    }
+
+    private void updateChainShapes() {
+        if (!isController || chain == null || level == null || !level.isClientSide()) {
+            return;
+        }
+
+        final List<RenderedChainPathNode> nodes = chain.getChainPathNodes();
+        if (nodes.size() < 2) {
+            CogwheelChainInteractionHandler.invalidate(level, worldPosition);
+            return;
+        }
+
+        final CogwheelChainType type = chain.getChainType();
+        final CogwheelChainType.ChainRenderInfo renderInfo = type.getRenderType();
+        final double baseRadius = Math.max(renderInfo.getWidth(), renderInfo.getHeight()) / 32.0;
+
+        final List<Vec3> path = new ArrayList<>();
+        for (final RenderedChainPathNode node : nodes) {
+            path.add(node.getPosition());
+        }
+
+        final List<CogwheelChainShape> shapes = List.of(new CogwheelChainWholeShape(path, baseRadius));
+        CogwheelChainInteractionHandler.put(level, worldPosition, shapes);
+    }
+
+    public ItemStack destroyChain(final boolean dropItemsInWorld, final boolean effects) {
+        if (level == null) return ItemStack.EMPTY;
+        invalidateClientChainShapeCache();
+
+        //Try drop chains from the current block for convenience
+        int chainsToReturn = chainsToRefund;
+        CogwheelChain chain = this.chain;
+        if (!isController && controllerOffset != null && level != null) {
+            final BlockPos controllerPos = worldPosition.offset(controllerOffset);
+            final BlockEntity be = level.getBlockEntity(controllerPos);
+            if (be instanceof final CogwheelChainBlockEntity controllerBE) {
+                chainsToReturn = controllerBE.chainsToRefund;
+                controllerBE.chainsToRefund = 0;
+                chain = controllerBE.chain;
+            }
+        }
+        if (chain == null) {
+            CreateBitsnBobs.LOGGER.warn("Failed to destroy chain with missing chain data at {}", worldPosition);
+            return ItemStack.EMPTY;
+        }
+        final ItemStack drops = chain.getReturnedItem().getDefaultInstance().copyWithCount(chainsToReturn);
+        if (dropItemsInWorld) {
+            Block.popResource(level, worldPosition, drops);
+        }
+        this.chainsToRefund = 0; // Reset after dropping
+
+        if (isController) {
+            if (effects) chain.createDestroyEffects(level, getBlockPos());
+            chain.destroy(level, worldPosition);
+        }
+        if (!isController && controllerOffset != null && level != null) {
+            final BlockPos controllerPos = worldPosition.offset(controllerOffset);
+            final BlockEntity be = level.getBlockEntity(controllerPos);
+            if (be instanceof final CogwheelChainBlockEntity controllerBE) {
+                assert controllerBE.chain != null;
+                if (effects) controllerBE.chain.createDestroyEffects(level, controllerPos);
+                controllerBE.chain.destroy(level, controllerPos);
+            }
+        }
+        return drops;
+    }
+
+    private void invalidateClientChainShapeCache() {
+        if (level == null || !level.isClientSide()) {
+            return;
+        }
+
+        if (isController) {
+            CogwheelChainInteractionHandler.invalidate(level, worldPosition);
+            return;
+        }
+
+        if (controllerOffset != null) {
+            CogwheelChainInteractionHandler.invalidate(level, worldPosition.offset(controllerOffset));
+        }
+    }
+
+    @Override
+    protected void write(final CompoundTag compound, final HolderLookup.Provider registries, final boolean clientPacket) {
+        super.write(compound, registries, clientPacket);
+        writeConnectionInfo(compound);
+    }
+
+    @Override
+    protected void read(final CompoundTag compound, final HolderLookup.Provider registries, final boolean clientPacket) {
+        super.read(compound, registries, clientPacket);
+        isController = compound.getBoolean("IsController");
+        if (compound.contains("ControllerOffsetX")) {
+            controllerOffset = new Vec3i(
+                    compound.getInt("ControllerOffsetX"),
+                    compound.getInt("ControllerOffsetY"),
+                    compound.getInt("ControllerOffsetZ")
+            );
+        } else {
+            controllerOffset = null;
+        }
+
+        if (isController) {
+            chainsToRefund = compound.getInt("ChainsToRefund");
+            if (chain != null && compound.contains("Chain")) {
+                chain.read(compound.getCompound("Chain"));
+            } else {
+                chain = new CogwheelChain(compound.getCompound("Chain"));
+            }
+            if (level != null && level.isClientSide()) {
+                updateChainShapes();
+            }
+        } else {
+            chain = null;
+            invalidateClientChainShapeCache();
+        }
+    }
+
+    @Override
+    public float propagateRotationTo(final KineticBlockEntity target, final BlockState stateFrom, final BlockState stateTo, final BlockPos diff, final boolean connectedViaAxes, final boolean connectedViaCogs) {
+        if (connectedViaAxes && Math.abs(diff.get(getBlockState().getValue(CogwheelChainBlock.AXIS))) == 1)
+            return 0;
+
+        //Else, check if this is the same chain structure.
+        if (target instanceof final CogwheelChainBlockEntity chainTarget) {
+            final boolean isControlledBySame = this.isController &&
+                    chainTarget.controllerOffset != null &&
+                    chainTarget.controllerOffset.equals(this.getBlockPos().subtract(target.getBlockPos())) ||
+
+                    chainTarget.isController &&
+                            this.controllerOffset != null &&
+                            this.controllerOffset.equals(target.getBlockPos().subtract(this.getBlockPos())) ||
+
+                    chainTarget.controllerOffset != null &&
+                            this.controllerOffset != null &&
+                            this.controllerOffset.offset(this.getBlockPos()).equals(chainTarget.controllerOffset.offset(target.getBlockPos()));
+
+            if (isControlledBySame) {
+                final float currentSide = this.getChainRotationFactor();
+                final float otherSide = chainTarget.getChainRotationFactor();
+                return currentSide / otherSide;
+            }
+        }
+        return 0;
+    }
+
+    public float getChainRotationFactor() {
+        if (isController) {
+            if (chain == null) return 0;
+
+            final PathedCogwheelNode controllerNode = chain.getNodeFromControllerOffset(new Vec3i(0, 0, 0));
+            if (controllerNode == null) return 0;
+
+            return controllerNode.sideFactor();
+        }
+
+        if (level == null || controllerOffset == null) return 0;
+
+        final BlockPos controllerPos = worldPosition.offset(controllerOffset);
+        final BlockEntity be = level.getBlockEntity(controllerPos);
+        if (be instanceof final CogwheelChainBlockEntity controllerBE) {
+
+            final CogwheelChain controllerChain = controllerBE.chain;
+            if (controllerChain == null) return 0;
+
+            final PathedCogwheelNode nodeInChain = controllerChain.getNodeFromControllerOffset(controllerOffset);
+            return nodeInChain == null ? 0 : nodeInChain.sideFactor();
+        }
+        return 0;
+    }
+
+    private void writeConnectionInfo(final CompoundTag compound) {
+        compound.putBoolean("IsController", isController);
+
+        if (controllerOffset != null) {
+            compound.putInt("ControllerOffsetX", controllerOffset.getX());
+            compound.putInt("ControllerOffsetY", controllerOffset.getY());
+            compound.putInt("ControllerOffsetZ", controllerOffset.getZ());
+        }
+
+        if (isController && chain != null) {
+            final CompoundTag chainTag = new CompoundTag();
+            chain.write(chainTag);
+            compound.put("Chain", chainTag);
+            compound.putInt("ChainsToRefund", chainsToRefund);
+        }
+    }
+
+    public void setAsController(final CogwheelChain cogwheelChain) {
+        this.isController = true;
+        this.chain = cogwheelChain;
+        if (level != null && level.isClientSide()) {
+            updateChainShapes();
+        }
+    }
+
+    @Override
+    protected AABB createRenderBoundingBox() {
+        return super.createRenderBoundingBox().inflate(64);
+    }
+
+    @Override
+    public List<BlockPos> addPropagationLocations(final IRotate block, final BlockState state, final List<BlockPos> neighbours) {
+        final List<BlockPos> toPropagate = new ArrayList<>(super.addPropagationLocations(block, state, neighbours));
+
+        if (isController && chain != null) {
+            addPropogationLocationsFromController(toPropagate, getBlockPos());
+        } else {
+            //Test putting child to child connections
+            if (controllerOffset != null && level != null) {
+                final BlockPos controllerPos = worldPosition.offset(controllerOffset);
+                final BlockEntity be = level.getBlockEntity(controllerPos);
+                if (be instanceof final CogwheelChainBlockEntity controllerBE) {
+                    controllerBE.addPropogationLocationsFromController(toPropagate, getBlockPos());
+                }
+            }
+        }
+
+        return toPropagate;
+    }
+
+    private void addPropogationLocationsFromController(final List<BlockPos> toPropagate, final BlockPos exclude) {
+        if (chain == null) return;
+        for (final PathedCogwheelNode cogwheelNode : chain.getChainPathCogwheelNodes()) {
+            final BlockPos cogwheelPos = worldPosition.offset(cogwheelNode.localPos());
+            if (!toPropagate.contains(cogwheelPos) && !cogwheelPos.equals(exclude)) {
+                toPropagate.add(cogwheelPos);
+            }
+        }
+    }
+
+    public boolean isController() {
+        return isController;
+    }
+
+    public void setController(final Vec3i offset) {
+        this.isController = false;
+        this.controllerOffset = offset;
+        invalidateClientChainShapeCache();
+    }
+
+    public void setController(final boolean controller) {
+        isController = controller;
+    }
+
+    public @Nullable CogwheelChain getChain() {
+        return chain;
+    }
+
+    public void setChain(@Nullable final CogwheelChain chain) {
+        this.chain = chain;
+        if (isController && level != null && level.isClientSide()) {
+            if (chain == null) {
+                CogwheelChainInteractionHandler.invalidate(level, worldPosition);
+            } else {
+                updateChainShapes();
+            }
+        }
+    }
+
+    public @Nullable Vec3i getControllerOffset() {
+        return controllerOffset;
+    }
+
+    public void setControllerOffset(@Nullable final Vec3i controllerOffset) {
+        this.controllerOffset = controllerOffset;
+    }
+
+    public void setChainsUsed(final int chainsUsed) {
+        this.chainsToRefund = chainsUsed;
+    }
+
+    public void clearStoredChains() {
+        if (isController) {
+            this.chainsToRefund = 0;
+        } else {
+            if (controllerOffset != null && level != null) {
+                final BlockPos controllerPos = worldPosition.offset(controllerOffset);
+                final BlockEntity be = level.getBlockEntity(controllerPos);
+                if (be instanceof final CogwheelChainBlockEntity controllerBE) {
+                    controllerBE.chainsToRefund = 0;
+                }
+            }
+        }
+    }
+
+    @Override
+    public void transform(final BlockEntity blockEntity, final StructureTransform transform) {
+        if (chain != null)
+            chain.transform(blockEntity, transform);
+        if (controllerOffset != null) {
+            final Vec3i transformedOffset = transform.applyWithoutOffset(new BlockPos(controllerOffset));
+            setController(transformedOffset);
+        }
+    }
+}

@@ -1,7 +1,7 @@
 package com.kipti.bnb.registry;
 
 import com.kipti.bnb.CreateBitsnBobs;
-import com.kipti.bnb.content.cogwheel_chain.graph.ChainInteractionFailedException;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.ChainInteractionFailedException;
 
 public class BnbLangEntries {
 
@@ -52,6 +52,8 @@ public class BnbLangEntries {
                 "block.bits_n_bobs.chair.tooltip.summary", "Sit yourself down and enjoy the ride! Will anchor a player onto a moving _contraption_. Even _fancier than a seat_ for static furniture too! Comes in a variety of colours. Will form _corners_ and _flat backs_ when placed against other chairs and blocks accordingly",
                 "block.bits_n_bobs.chair.tooltip.condition1", "Right click on Chair",
                 "block.bits_n_bobs.chair.tooltip.behaviour1", "Sits the player on the _Chair_. Press L-shift to leave the _Chair_.",
+
+                "block.bits_n_bobs.weathered_metal_bracket.tooltip.summary", "_Decorate_ your _Shafts, Cogwheels_ and _Pipes_ with an old and rusty bit of reinforcement.",
 
                 //Flywheel Bearing Tooltip
                 "tooltip.bits_n_bobs.flywheel_bearing.flywheel_stats", "Flywheel Stats:",

@@ -1,5 +1,6 @@
 package com.kipti.bnb;
 
+import com.kipti.bnb.content.kinetics.cogwheel_chain.types.BnbCogwheelChainTypes;
 import com.kipti.bnb.network.BnbPackets;
 import com.kipti.bnb.registry.*;
 import com.mojang.logging.LogUtils;
@@ -37,28 +38,30 @@ public class CreateBitsnBobs {
 
     public CreateBitsnBobs(final IEventBus modEventBus, final ModContainer modContainer) {
         modEventBus.addListener(CreateBitsnBobsData::gatherData);
-        ModLoadingContext modLoadingContext = ModLoadingContext.get();
+        final ModLoadingContext modLoadingContext = ModLoadingContext.get();
 
         REGISTRATE.registerEventListeners(modEventBus);
 
         REGISTRATE.setCreativeTab(BnbCreativeTabs.BASE_CREATIVE_TAB);
 
+        BnbCreativeTabs.register(modEventBus);
+        BnbDataComponents.register(modEventBus);
+        BnbCogwheelChainTypes.register(modEventBus);
+        BnbDataConditions.register(modEventBus);
+
         BnbItems.register();
         BnbBlocks.register();
         BnbEntityTypes.register();
-        BnbCreativeTabs.register(modEventBus);
         BnbBlockEntities.register();
         BnbTags.register();
         BnbPackets.register();
-        BnbDataComponents.register(modEventBus);
+        ;
         BnbDecoBlocks.register();
 
-        BnbCreateStresses.register();
+        BnbCreateStresses.registerRedirects();
 
         BnbLangEntries.register();
         BnbTags.registerDataGenerators();
-
-        BnbDataConditions.register(modEventBus);
 
         modEventBus.addListener(CreateBitsnBobs::commonSetup);
 

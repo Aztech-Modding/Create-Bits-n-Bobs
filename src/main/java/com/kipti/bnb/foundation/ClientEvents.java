@@ -1,17 +1,29 @@
 package com.kipti.bnb.foundation;
 
-import com.kipti.bnb.content.cogwheel_chain.item.CogwheelChainPlacementEffect;
-import com.kipti.bnb.content.girder_strut.GirderStrutPlacementEffects;
-import com.kipti.bnb.content.weathered_girder.WeatheredGirderWrenchBehaviour;
+import com.kipti.bnb.content.decoration.girder_strut.GirderStrutPlacementEffects;
+import com.kipti.bnb.content.decoration.light.headlamp.rendering.pipeline.block_entity.HeadlampVertexBufferCache;
+import com.kipti.bnb.content.decoration.weathered_girder.WeatheredGirderWrenchBehaviour;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.placement.CogwheelChainPlacementEffect;
+import com.kipti.bnb.foundation.generation.PonderflatGeneratorSettings;
+import com.kipti.bnb.foundation.generation.PonderflatLevelSource;
+import com.kipti.bnb.foundation.generation.editor.PonderflatEditor;
+import com.kipti.bnb.registry.BnbWorldPresets;
 import net.createmod.catnip.data.Pair;
 import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.worldselection.WorldCreationContext;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.RegisterPresetEditorsEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 
 import java.util.ArrayList;
@@ -26,6 +38,7 @@ public class ClientEvents {
     @SubscribeEvent
     public static void onTickPost(final ClientTickEvent.Post event) {
         WeatheredGirderWrenchBehaviour.tick();
+        HeadlampVertexBufferCache.tick();
 
         //Render deferred debug outlines
         synchronized (deferredDebugRenderOutlines) {
@@ -72,6 +85,23 @@ public class ClientEvents {
 //            context.getToolTip().add(1, Component.translatable("tooltip.bits_n_bobs.new_ponder_notification")
 //                    .withColor(FontHelper.Palette.STANDARD_CREATE.primary().getColor().getValue()));
 //        }
+    }
+
+    @SubscribeEvent
+    public static void registerPresetEditors(final RegisterPresetEditorsEvent event) {
+        event.register(BnbWorldPresets.PONDER, (lastScreen, context) -> new PonderflatEditor(
+                        lastScreen, context,
+                        p_267859_ -> lastScreen.getUiState().updateDimensions(ponderflatWorldConfigurator(p_267859_))
+                )
+        );
+    }
+
+    private static WorldCreationContext.DimensionsUpdater ponderflatWorldConfigurator(final PonderflatGeneratorSettings settings) {
+        return (p_255454_, p_255455_) -> {
+            final Holder.Reference<Biome> voidBiome = p_255454_.registryOrThrow(Registries.BIOME).getHolderOrThrow(Biomes.THE_VOID);
+            final ChunkGenerator chunkgenerator = new PonderflatLevelSource(voidBiome, settings);
+            return p_255455_.replaceOverworldGenerator(p_255454_, chunkgenerator);
+        };
     }
 
 }

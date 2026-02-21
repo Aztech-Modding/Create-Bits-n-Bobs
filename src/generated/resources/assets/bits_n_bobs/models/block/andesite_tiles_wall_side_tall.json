@@ -1,7 +1,0 @@
-{
-  "parent": "bits_n_bobs:block/tile_wall/template_wall_side_tall",
-  "textures": {
-    "wall": "bits_n_bobs:block/palettes/stone_types/tiles/andesite_cut_tiles",
-    "wall_flipped": "bits_n_bobs:block/palettes/stone_types/tiles_flipped/andesite_cut_tiles_flipped"
-  }
-}
