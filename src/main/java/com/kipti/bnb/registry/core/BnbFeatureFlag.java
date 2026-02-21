@@ -1,7 +1,7 @@
 package com.kipti.bnb.registry.core;
 
 import com.kipti.bnb.foundation.config.conditions.BnbFeatureEnabledCondition;
-import com.kipti.bnb.registry.content.blocks.BnbBlocksBootstrap;
+import com.kipti.bnb.registry.content.BnbBlocksBootstrap;
 import com.kipti.bnb.registry.content.blocks.deco.BnbDecorativeBlocks;
 import com.kipti.bnb.registry.worldgen.BnbPaletteStoneTypes;
 import com.simibubi.create.foundation.block.DyedBlockList;

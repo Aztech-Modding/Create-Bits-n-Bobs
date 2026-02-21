@@ -3,7 +3,7 @@ package com.kipti.bnb.content.decoration.nixie.foundation;
 import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.decoration.nixie.nixie_board.NixieBoardBlockNixie;
 import com.kipti.bnb.mixin_accessor.DynamicComponentMigrator;
-import com.kipti.bnb.registry.content.blocks.BnbBlocksBootstrap;
+import com.kipti.bnb.registry.content.BnbBlocksBootstrap;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.utility.DynamicComponent;

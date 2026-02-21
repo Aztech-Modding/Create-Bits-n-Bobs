@@ -1,7 +1,7 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.graph;
 
 import com.kipti.bnb.foundation.EncasedBlockList;
-import com.kipti.bnb.registry.content.blocks.BnbBlocksBootstrap;
+import com.kipti.bnb.registry.content.BnbBlocksBootstrap;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.api.registry.SimpleRegistry;
 import com.tterrag.registrate.util.nullness.NonNullConsumer;

@@ -1,6 +1,6 @@
 package com.kipti.bnb.foundation.ponder.create;
 
-import com.kipti.bnb.registry.content.blocks.BnbBlocksBootstrap;
+import com.kipti.bnb.registry.content.BnbBlocksBootstrap;
 import com.simibubi.create.infrastructure.ponder.AllCreatePonderTags;
 import com.simibubi.create.infrastructure.ponder.scenes.PulleyScenes;
 import com.simibubi.create.infrastructure.ponder.scenes.RedstoneScenes;

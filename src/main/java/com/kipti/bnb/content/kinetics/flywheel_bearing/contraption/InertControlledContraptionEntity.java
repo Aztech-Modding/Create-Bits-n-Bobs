@@ -1,6 +1,6 @@
 package com.kipti.bnb.content.kinetics.flywheel_bearing.contraption;
 
-import com.kipti.bnb.registry.content.entities.BnbEntityTypes;
+import com.kipti.bnb.registry.content.BnbEntityTypes;
 import com.simibubi.create.api.behaviour.movement.MovementBehaviour;
 import com.simibubi.create.content.contraptions.Contraption;
 import com.simibubi.create.content.contraptions.ControlledContraptionEntity;

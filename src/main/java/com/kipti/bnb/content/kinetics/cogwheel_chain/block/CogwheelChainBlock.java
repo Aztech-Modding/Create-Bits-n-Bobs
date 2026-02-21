@@ -1,8 +1,8 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.block;
 
 import com.kipti.bnb.content.kinetics.cogwheel_chain.shape.CogwheelChainBreakerHelper;
-import com.kipti.bnb.registry.content.blockentities.BnbBlockEntitiesBootstrap;
-import com.kipti.bnb.registry.content.blocks.BnbBlocksBootstrap;
+import com.kipti.bnb.registry.content.BnbBlockEntitiesBootstrap;
+import com.kipti.bnb.registry.content.BnbBlocksBootstrap;
 import com.simibubi.create.AllShapes;
 import com.simibubi.create.api.schematic.requirement.SpecialBlockItemRequirement;
 import com.simibubi.create.content.decoration.encasing.EncasableBlock;

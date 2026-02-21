@@ -1,4 +1,4 @@
-package com.kipti.bnb.registry.content.blockentities;
+package com.kipti.bnb.registry.content;
 
 import com.kipti.bnb.content.decoration.girder_strut.GirderStrutBlockEntity;
 import com.kipti.bnb.content.decoration.girder_strut.GirderStrutBlockEntityRenderer;
@@ -16,7 +16,6 @@ import com.kipti.bnb.content.kinetics.flywheel_bearing.FlywheelBearingBlockEntit
 import com.kipti.bnb.content.kinetics.flywheel_bearing.FlywheelBearingBlockEntityRenderer;
 import com.kipti.bnb.content.kinetics.throttle_lever.ThrottleLeverBlockEntity;
 import com.kipti.bnb.content.kinetics.throttle_lever.ThrottleLeverBlockEntityRenderer;
-import com.kipti.bnb.registry.content.blocks.BnbBlocksBootstrap;
 import com.kipti.bnb.registry.content.blocks.deco.BnbDecorativeBlocks;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;

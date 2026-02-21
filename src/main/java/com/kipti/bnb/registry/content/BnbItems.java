@@ -1,4 +1,4 @@
-package com.kipti.bnb.registry.content.items;
+package com.kipti.bnb.registry.content;
 
 import com.kipti.bnb.CreateBitsnBobs;
 import com.tterrag.registrate.util.entry.ItemEntry;

@@ -1,6 +1,6 @@
 package com.kipti.bnb.content.kinetics.flywheel_bearing;
 
-import com.kipti.bnb.registry.content.blockentities.BnbBlockEntitiesBootstrap;
+import com.kipti.bnb.registry.content.BnbBlockEntitiesBootstrap;
 import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
 import com.simibubi.create.content.kinetics.simpleRelays.ICogWheel;
 import com.simibubi.create.foundation.block.IBE;

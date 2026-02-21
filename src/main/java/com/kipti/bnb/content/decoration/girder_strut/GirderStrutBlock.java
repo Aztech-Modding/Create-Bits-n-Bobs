@@ -1,6 +1,6 @@
 package com.kipti.bnb.content.decoration.girder_strut;
 
-import com.kipti.bnb.registry.content.blockentities.BnbBlockEntitiesBootstrap;
+import com.kipti.bnb.registry.content.BnbBlockEntitiesBootstrap;
 import com.kipti.bnb.registry.client.BnbShapes;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;

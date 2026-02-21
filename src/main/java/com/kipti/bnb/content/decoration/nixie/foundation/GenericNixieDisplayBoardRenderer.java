@@ -4,7 +4,7 @@ import com.kipti.bnb.content.decoration.nixie.large_nixie_tube.LargeNixieTubeBlo
 import com.kipti.bnb.content.decoration.nixie.nixie_board.NixieBoardBlockNixie;
 import com.kipti.bnb.mixin_accessor.FontAccess;
 import com.kipti.bnb.mixin_accessor.ReverseRenderableBakedGlyph;
-import com.kipti.bnb.registry.content.blocks.BnbBlocksBootstrap;
+import com.kipti.bnb.registry.content.BnbBlocksBootstrap;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.foundation.blockEntity.renderer.SmartBlockEntityRenderer;

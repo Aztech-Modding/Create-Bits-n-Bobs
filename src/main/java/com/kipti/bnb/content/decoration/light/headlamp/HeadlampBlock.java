@@ -1,8 +1,8 @@
 package com.kipti.bnb.content.decoration.light.headlamp;
 
 import com.kipti.bnb.content.decoration.light.founation.LightBlock;
-import com.kipti.bnb.registry.content.blockentities.BnbBlockEntitiesBootstrap;
-import com.kipti.bnb.registry.content.blocks.BnbBlocksBootstrap;
+import com.kipti.bnb.registry.content.BnbBlockEntitiesBootstrap;
+import com.kipti.bnb.registry.content.BnbBlocksBootstrap;
 import com.kipti.bnb.registry.client.BnbShapes;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;

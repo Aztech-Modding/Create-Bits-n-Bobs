@@ -2,7 +2,7 @@ package com.kipti.bnb.content.decoration.nixie.foundation;
 
 import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.decoration.nixie.nixie_board.NixieBoardBlockNixie;
-import com.kipti.bnb.registry.content.blocks.BnbBlocksBootstrap;
+import com.kipti.bnb.registry.content.BnbBlocksBootstrap;
 import com.mojang.serialization.MapCodec;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.equipment.clipboard.ClipboardEntry;

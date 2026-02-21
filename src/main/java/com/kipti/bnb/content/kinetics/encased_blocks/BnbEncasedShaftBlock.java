@@ -1,6 +1,6 @@
 package com.kipti.bnb.content.kinetics.encased_blocks;
 
-import com.kipti.bnb.registry.content.blockentities.BnbBlockEntitiesBootstrap;
+import com.kipti.bnb.registry.content.BnbBlockEntitiesBootstrap;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.simpleRelays.encased.EncasedShaftBlock;
 import net.minecraft.world.level.block.Block;

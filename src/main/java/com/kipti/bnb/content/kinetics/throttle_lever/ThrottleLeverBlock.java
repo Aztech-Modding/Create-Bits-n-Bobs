@@ -1,6 +1,6 @@
 package com.kipti.bnb.content.kinetics.throttle_lever;
 
-import com.kipti.bnb.registry.content.blockentities.BnbBlockEntitiesBootstrap;
+import com.kipti.bnb.registry.content.BnbBlockEntitiesBootstrap;
 import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
 import com.simibubi.create.content.kinetics.base.IRotate;
 import com.simibubi.create.foundation.block.IBE;

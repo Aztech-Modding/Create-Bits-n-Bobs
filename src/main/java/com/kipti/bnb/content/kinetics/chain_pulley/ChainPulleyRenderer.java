@@ -1,6 +1,6 @@
 package com.kipti.bnb.content.kinetics.chain_pulley;
 
-import com.kipti.bnb.registry.content.blocks.BnbBlocksBootstrap;
+import com.kipti.bnb.registry.content.BnbBlocksBootstrap;
 import com.kipti.bnb.registry.client.BnbPartialModels;
 import com.kipti.bnb.registry.client.BnbSpriteShifts;
 import com.mojang.blaze3d.vertex.PoseStack;

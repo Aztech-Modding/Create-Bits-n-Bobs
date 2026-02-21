@@ -1,4 +1,4 @@
-package com.kipti.bnb.registry.content.blocks;
+package com.kipti.bnb.registry.content;
 
 import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.decoration.girder_strut.GirderStrutBlock;
@@ -31,10 +31,8 @@ import com.kipti.bnb.foundation.BnbBlockStateGen;
 import com.kipti.bnb.foundation.BnbBuilderTransformers;
 import com.kipti.bnb.foundation.EncasedBlockList;
 import com.kipti.bnb.registry.client.BnbDisplayTargets;
-import com.kipti.bnb.registry.core.BnbFeatureFlag;
 import com.kipti.bnb.registry.client.BnbPartialModels;
 import com.kipti.bnb.registry.client.BnbShapes;
-import com.kipti.bnb.registry.core.BnbTags;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllTags;
 import com.simibubi.create.api.stress.BlockStressValues;
@@ -152,7 +150,8 @@ public class BnbBlocksBootstrap {
                             p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/flywheel_bearing/item"))
                     )
                     .build()
-                    .register();    public static final BlockEntry<CogwheelChainBlock> SMALL_FLANGED_COGWHEEL_CHAIN = REGISTRATE.block("small_flanged_cogwheel_chain", CogwheelChainBlock::smallFlanged)
+                    .register();
+    public static final BlockEntry<CogwheelChainBlock> SMALL_FLANGED_COGWHEEL_CHAIN = REGISTRATE.block("small_flanged_cogwheel_chain", CogwheelChainBlock::smallFlanged)
             .initialProperties(SharedProperties::stone)
             .properties(p -> p.sound(SoundType.WOOD)
                     .mapColor(MapColor.DIRT))
@@ -205,7 +204,8 @@ public class BnbBlocksBootstrap {
         return REGISTRATE.block(colourName + "_nixie_board", p -> new NixieBoardBlockNixie(p, colour))
                 .transform(nixieBoard())
                 .register();
-    });    public static final BlockEntry<CogwheelChainBlock> LARGE_FLANGED_COGWHEEL_CHAIN = REGISTRATE.block("large_flanged_cogwheel_chain", CogwheelChainBlock::largeFlanged)
+    });
+    public static final BlockEntry<CogwheelChainBlock> LARGE_FLANGED_COGWHEEL_CHAIN = REGISTRATE.block("large_flanged_cogwheel_chain", CogwheelChainBlock::largeFlanged)
             .initialProperties(SharedProperties::wooden)
             .properties(p -> p.sound(SoundType.WOOD)
                     .mapColor(MapColor.DIRT))
@@ -264,7 +264,8 @@ public class BnbBlocksBootstrap {
             .item(HeadlampBlockItem::new)
             .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/headlamp/headlight")))
             .build()
-            .register();    public static final BlockEntry<EmptyFlangedGearBlock> SMALL_EMPTY_FLANGED_COGWHEEL = REGISTRATE.block("small_flanged_cogwheel", EmptyFlangedGearBlock::small)
+            .register();
+    public static final BlockEntry<EmptyFlangedGearBlock> SMALL_EMPTY_FLANGED_COGWHEEL = REGISTRATE.block("small_flanged_cogwheel", EmptyFlangedGearBlock::small)
             .lang("Flanged Cogwheel")
             .initialProperties(SharedProperties::stone)
             .properties(p -> p.sound(SoundType.WOOD)
@@ -321,7 +322,8 @@ public class BnbBlocksBootstrap {
             .transform(BnbBuilderTransformers.encasedShaftWithoutCT("industrial_iron"))
             .transform(EncasingRegistry.addVariantTo(AllBlocks.SHAFT))
             .transform(axeOrPickaxe())
-            .register();    public static final BlockEntry<EmptyFlangedGearBlock> LARGE_EMPTY_FLANGED_COGWHEEL = REGISTRATE.block("large_flanged_cogwheel", EmptyFlangedGearBlock::large)
+            .register();
+    public static final BlockEntry<EmptyFlangedGearBlock> LARGE_EMPTY_FLANGED_COGWHEEL = REGISTRATE.block("large_flanged_cogwheel", EmptyFlangedGearBlock::large)
             .initialProperties(SharedProperties::stone)
             .properties(p -> p.sound(SoundType.WOOD)
                     .mapColor(MapColor.DIRT))
@@ -449,12 +451,6 @@ public class BnbBlocksBootstrap {
 
     public static void register() {
     }
-
-
-
-
-
-
 
 
     public static final EncasedBlockList<BnbEncasedCogwheelChainBlock> ENCASED_FLANGED_CHAIN_COGWHEEL = new EncasedBlockList<>(casing ->

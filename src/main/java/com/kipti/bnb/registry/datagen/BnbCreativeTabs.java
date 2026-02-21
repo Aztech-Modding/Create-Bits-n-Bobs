@@ -1,11 +1,11 @@
 package com.kipti.bnb.registry.datagen;
 
 import com.kipti.bnb.CreateBitsnBobs;
-import com.kipti.bnb.registry.content.blocks.BnbBlocksBootstrap;
+import com.kipti.bnb.registry.content.BnbBlocksBootstrap;
 import com.kipti.bnb.registry.worldgen.BnbPaletteStoneTypes;
 import com.kipti.bnb.registry.content.blocks.deco.BnbDecorativeBlocks;
 import com.kipti.bnb.registry.core.BnbFeatureFlag;
-import com.kipti.bnb.registry.content.items.BnbItems;
+import com.kipti.bnb.registry.content.BnbItems;
 import com.simibubi.create.AllCreativeModeTabs;
 import com.simibubi.create.content.decoration.encasing.EncasedBlock;
 import com.simibubi.create.foundation.data.CreateRegistrate;

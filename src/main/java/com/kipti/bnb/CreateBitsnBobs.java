@@ -2,13 +2,12 @@ package com.kipti.bnb;
 
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.BnbCogwheelChainTypes;
 import com.kipti.bnb.network.BnbPackets;
-import com.kipti.bnb.registry.client.BnbPartialModels;
 import com.kipti.bnb.registry.compat.BnbCreateStresses;
-import com.kipti.bnb.registry.content.blockentities.BnbBlockEntitiesBootstrap;
-import com.kipti.bnb.registry.content.blocks.BnbBlocksBootstrap;
+import com.kipti.bnb.registry.content.BnbBlockEntitiesBootstrap;
+import com.kipti.bnb.registry.content.BnbBlocksBootstrap;
 import com.kipti.bnb.registry.content.blocks.deco.BnbDecorativeBlocks;
-import com.kipti.bnb.registry.content.entities.BnbEntityTypes;
-import com.kipti.bnb.registry.content.items.BnbItems;
+import com.kipti.bnb.registry.content.BnbEntityTypes;
+import com.kipti.bnb.registry.content.BnbItems;
 import com.kipti.bnb.registry.core.BnbConfigs;
 import com.kipti.bnb.registry.core.BnbDataComponents;
 import com.kipti.bnb.registry.core.BnbTags;

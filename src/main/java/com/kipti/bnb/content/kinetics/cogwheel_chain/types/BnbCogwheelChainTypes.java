@@ -1,7 +1,7 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.types;
 
 import com.kipti.bnb.CreateBitsnBobs;
-import com.kipti.bnb.registry.content.blocks.BnbBlocksBootstrap;
+import com.kipti.bnb.registry.content.BnbBlocksBootstrap;
 import com.kipti.bnb.registry.core.BnbRegistries;
 import com.simibubi.create.AllItems;
 import net.neoforged.bus.api.IEventBus;

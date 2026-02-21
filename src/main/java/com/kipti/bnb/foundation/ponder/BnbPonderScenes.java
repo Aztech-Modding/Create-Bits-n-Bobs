@@ -1,7 +1,7 @@
 package com.kipti.bnb.foundation.ponder;
 
 import com.kipti.bnb.foundation.ponder.scenes.CogwheelChainScenes;
-import com.kipti.bnb.registry.content.blocks.BnbBlocksBootstrap;
+import com.kipti.bnb.registry.content.BnbBlocksBootstrap;
 import com.simibubi.create.AllBlocks;
 import com.tterrag.registrate.util.entry.ItemProviderEntry;
 import com.tterrag.registrate.util.entry.RegistryEntry;

@@ -1,4 +1,4 @@
-package com.kipti.bnb.registry.content.entities;
+package com.kipti.bnb.registry.content;
 
 import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.kinetics.flywheel_bearing.contraption.InertControlledContraptionEntity;

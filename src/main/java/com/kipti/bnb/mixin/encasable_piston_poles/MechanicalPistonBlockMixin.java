@@ -1,6 +1,6 @@
 package com.kipti.bnb.mixin.encasable_piston_poles;
 
-import com.kipti.bnb.registry.content.blocks.BnbBlocksBootstrap;
+import com.kipti.bnb.registry.content.BnbBlocksBootstrap;
 import com.simibubi.create.content.contraptions.piston.MechanicalPistonBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
