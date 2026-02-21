@@ -6,6 +6,7 @@ import com.kipti.bnb.registry.content.blocks.BnbTrinketBlocks;
 import com.kipti.bnb.registry.content.blocks.deco.BnbDecorativeBlocks;
 import com.kipti.bnb.registry.worldgen.BnbPaletteStoneTypes;
 import com.simibubi.create.foundation.block.DyedBlockList;
+import com.tterrag.registrate.util.entry.BlockEntry;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -28,8 +29,8 @@ public enum BnbFeatureFlag {
     WEATHERED_GIRDER("Availability of the weathered girder block.", BnbDecorativeBlocks.WEATHERED_METAL_GIRDER::get, BnbDecorativeBlocks.WEATHERED_GIRDER_STRUT::get),
     GIRDER_STRUT("Availability of the girder strut blocks.", BnbDecorativeBlocks.GIRDER_STRUT::get, BnbDecorativeBlocks.WEATHERED_GIRDER_STRUT::get),
 
-    NIXIE_BOARD("Availability of Nixie Board block.", BnbTrinketBlocks.NIXIE_BOARD::get),
-    LARGE_NIXIE_TUBE("Availability of Large Nixie Tube block.", BnbTrinketBlocks.LARGE_NIXIE_TUBE::get),
+    NIXIE_BOARD("Availability of Nixie Board block.", createSupplierSet(BnbTrinketBlocks.NIXIE_BOARD, BnbTrinketBlocks.DYED_NIXIE_BOARD)),
+    LARGE_NIXIE_TUBE("Availability of Large Nixie Tube block.", createSupplierSet(BnbTrinketBlocks.LARGE_NIXIE_TUBE, BnbTrinketBlocks.DYED_LARGE_NIXIE_TUBE)),
 
     LIGHTBULB("Availability of the Lightbulb block.", BnbTrinketBlocks.LIGHTBULB::get),
     BRASS_LAMP("Availability of the Brass Lamp block.", BnbTrinketBlocks.BRASS_LAMP::get),
@@ -63,6 +64,18 @@ public enum BnbFeatureFlag {
         return (Supplier<Block>[]) Arrays.stream(dyedBlockList.toArray())
                 .map(chairEntry -> ((Supplier<Block>) chairEntry::get))
                 .toArray(Supplier[]::new);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Lazy<Supplier<Block>[]> createSupplierSet(final BlockEntry<? extends Block> baseBlock, final DyedBlockList<? extends Block> dyedBlockList) {
+        return Lazy.of(() -> {
+            final List<Supplier<Block>> blocks = new ArrayList<>();
+            blocks.add((Supplier<Block>) baseBlock::get);
+            blocks.addAll(Arrays.stream(dyedBlockList.toArray())
+                    .map(dyedEntry -> (Supplier<Block>) dyedEntry::get)
+                    .toList());
+            return blocks.toArray(Supplier[]::new);
+        });
     }
 
     private final String description;
