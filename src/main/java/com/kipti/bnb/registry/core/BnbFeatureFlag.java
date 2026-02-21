@@ -34,7 +34,7 @@ public enum BnbFeatureFlag {
     LIGHTBULB("Availability of the Lightbulb block.", BnbTrinketBlocks.LIGHTBULB::get),
     BRASS_LAMP("Availability of the Brass Lamp block.", BnbTrinketBlocks.BRASS_LAMP::get),
     HEADLAMP("Availability of the Headlamp block.", BnbTrinketBlocks.HEADLAMP::get),
-    CHAIRS("Availability of the Chair blocks.", createSupplierSet(BnbDecorativeBlocks.CHAIRS)),
+    CHAIRS("Availability of the Chair blocks.", createSupplierSet(BnbTrinketBlocks.CHAIRS)),
 
     TILES("Availability of the tile decoration blocks.", createDecoBlockSupplierSet(BnbPaletteStoneTypes.values())),
 
