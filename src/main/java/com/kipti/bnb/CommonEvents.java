@@ -1,6 +1,6 @@
 package com.kipti.bnb;
 
-import com.kipti.bnb.content.decoration.light.headlamp.HeadlampBlockEntity;
+import com.kipti.bnb.content.trinkets.light.headlamp.HeadlampBlockEntity;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;

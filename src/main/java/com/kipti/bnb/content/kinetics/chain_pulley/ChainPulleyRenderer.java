@@ -1,8 +1,8 @@
 package com.kipti.bnb.content.kinetics.chain_pulley;
 
-import com.kipti.bnb.registry.content.BnbBlocksBootstrap;
 import com.kipti.bnb.registry.client.BnbPartialModels;
 import com.kipti.bnb.registry.client.BnbSpriteShifts;
+import com.kipti.bnb.registry.content.blocks.BnbKineticBlocks;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
@@ -92,7 +92,7 @@ public class ChainPulleyRenderer extends AbstractPulleyRenderer<ChainPulleyBlock
 
     @Override
     protected SuperByteBuffer renderRope(final ChainPulleyBlockEntity be) {
-        return CachedBuffers.block(BnbBlocksBootstrap.CHAIN_ROPE.getDefaultState());
+        return CachedBuffers.block(BnbKineticBlocks.CHAIN_ROPE.getDefaultState());
     }
 
     @Override

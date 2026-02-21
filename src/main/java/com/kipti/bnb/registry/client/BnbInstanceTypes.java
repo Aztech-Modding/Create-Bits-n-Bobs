@@ -1,7 +1,7 @@
 package com.kipti.bnb.registry.client;
 
 import com.kipti.bnb.CreateBitsnBobs;
-import com.kipti.bnb.content.decoration.light.headlamp.rendering.pipeline.visual.ShiftTransformedInstance;
+import com.kipti.bnb.content.trinkets.light.headlamp.rendering.pipeline.visual.ShiftTransformedInstance;
 import dev.engine_room.flywheel.api.instance.InstanceType;
 import dev.engine_room.flywheel.api.layout.FloatRepr;
 import dev.engine_room.flywheel.api.layout.IntegerRepr;

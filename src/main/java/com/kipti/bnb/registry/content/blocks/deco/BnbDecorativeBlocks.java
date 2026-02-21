@@ -1,7 +1,6 @@
 package com.kipti.bnb.registry.content.blocks.deco;
 
 import com.kipti.bnb.CreateBitsnBobs;
-import com.kipti.bnb.content.decoration.chair.ChairBlock;
 import com.kipti.bnb.content.decoration.girder_strut.GirderStrutBlock;
 import com.kipti.bnb.content.decoration.girder_strut.GirderStrutBlockItem;
 import com.kipti.bnb.content.decoration.girder_strut.GirderStrutModelBuilder;
@@ -13,11 +12,12 @@ import com.kipti.bnb.content.decoration.weathered_girder.WeatheredConnectedGirde
 import com.kipti.bnb.content.decoration.weathered_girder.WeatheredGirderBlock;
 import com.kipti.bnb.content.decoration.weathered_girder.WeatheredGirderBlockStateGenerator;
 import com.kipti.bnb.content.decoration.weathered_girder.WeatheredGirderEncasedShaftBlock;
+import com.kipti.bnb.content.trinkets.chair.ChairBlock;
 import com.kipti.bnb.foundation.BnbBlockStateGen;
-import com.kipti.bnb.registry.datagen.BnbCreativeTabs;
-import com.kipti.bnb.registry.core.BnbFeatureFlag;
 import com.kipti.bnb.registry.client.BnbSpriteShifts;
+import com.kipti.bnb.registry.core.BnbFeatureFlag;
 import com.kipti.bnb.registry.core.BnbTags;
+import com.kipti.bnb.registry.datagen.BnbCreativeTabs;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllDisplaySources;
 import com.simibubi.create.AllTags;
@@ -45,7 +45,7 @@ import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 
 import static com.kipti.bnb.CreateBitsnBobs.REGISTRATE;
-import static com.kipti.bnb.content.decoration.chair.ChairBlockStateGen.dyedChair;
+import static com.kipti.bnb.content.trinkets.chair.ChairBlockStateGen.dyedChair;
 import static com.simibubi.create.api.behaviour.display.DisplaySource.displaySource;
 import static com.simibubi.create.api.behaviour.interaction.MovingInteractionBehaviour.interactionBehaviour;
 import static com.simibubi.create.api.behaviour.movement.MovementBehaviour.movementBehaviour;
@@ -157,7 +157,7 @@ public class BnbDecorativeBlocks {
             )
             .build()
             .register();
-            
+
     public static final BlockEntry<GirderStrutBlock> WOODEN_GIRDER_STRUT = REGISTRATE.block("wooden_girder_strut", GirderStrutBlock.wooden())
             .initialProperties(SharedProperties::wooden)
             .transform(axeOnly())
@@ -175,7 +175,7 @@ public class BnbDecorativeBlocks {
             )
             .build()
             .register();
-            
+
     public static final BlockEntry<GirderStrutBlock> CABLE_GIRDER_STRUT = REGISTRATE.block("cable_girder_strut", GirderStrutBlock.cable())
             .initialProperties(SharedProperties::softMetal)
             .transform(pickaxeOnly())

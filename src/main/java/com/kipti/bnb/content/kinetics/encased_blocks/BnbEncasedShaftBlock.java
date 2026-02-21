@@ -1,6 +1,6 @@
 package com.kipti.bnb.content.kinetics.encased_blocks;
 
-import com.kipti.bnb.registry.content.BnbBlockEntitiesBootstrap;
+import com.kipti.bnb.registry.content.BnbBlockEntities;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.simpleRelays.encased.EncasedShaftBlock;
 import net.minecraft.world.level.block.Block;
@@ -16,7 +16,7 @@ public class BnbEncasedShaftBlock extends EncasedShaftBlock {
 
     @Override
     public BlockEntityType<? extends KineticBlockEntity> getBlockEntityType() {
-        return BnbBlockEntitiesBootstrap.ENCASED_SHAFT.get();
+        return BnbBlockEntities.ENCASED_SHAFT.get();
     }
 }
 

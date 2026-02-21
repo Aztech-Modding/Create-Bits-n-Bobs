@@ -1,13 +1,13 @@
 package com.kipti.bnb;
 
 import com.kipti.bnb.content.decoration.girder_strut.GirderStrutModelManipulator;
-import com.kipti.bnb.content.decoration.light.headlamp.rendering.pipeline.block_entity.HeadlampRenderCache;
-import com.kipti.bnb.content.decoration.light.headlamp.rendering.pipeline.block_entity.HeadlampVertexBufferCache;
+import com.kipti.bnb.content.trinkets.light.headlamp.rendering.pipeline.block_entity.HeadlampRenderCache;
+import com.kipti.bnb.content.trinkets.light.headlamp.rendering.pipeline.block_entity.HeadlampVertexBufferCache;
 import com.kipti.bnb.foundation.ponder.BnbPonderPlugin;
-import com.kipti.bnb.registry.core.BnbConfigs;
 import com.kipti.bnb.registry.client.BnbInstanceTypes;
 import com.kipti.bnb.registry.client.BnbPartialModels;
 import com.kipti.bnb.registry.client.BnbSpriteShifts;
+import com.kipti.bnb.registry.core.BnbConfigs;
 import net.createmod.catnip.config.ui.BaseConfigScreen;
 import net.createmod.ponder.foundation.PonderIndex;
 import net.neoforged.api.distmarker.Dist;

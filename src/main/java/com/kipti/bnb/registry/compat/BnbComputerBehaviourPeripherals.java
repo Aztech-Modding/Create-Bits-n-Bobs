@@ -1,7 +1,7 @@
 package com.kipti.bnb.registry.compat;
 
 import com.kipti.bnb.compat.computercraft.implementation.peripherals.HeadlampPeripheral;
-import com.kipti.bnb.content.decoration.light.headlamp.HeadlampBlockEntity;
+import com.kipti.bnb.content.trinkets.light.headlamp.HeadlampBlockEntity;
 import com.simibubi.create.compat.computercraft.implementation.peripherals.SyncedPeripheral;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import org.jetbrains.annotations.Nullable;

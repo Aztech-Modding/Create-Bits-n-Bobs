@@ -1,6 +1,6 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.block;
 
-import com.kipti.bnb.registry.content.BnbBlockEntitiesBootstrap;
+import com.kipti.bnb.registry.content.BnbBlockEntities;
 import com.simibubi.create.AllShapes;
 import com.simibubi.create.content.decoration.encasing.EncasableBlock;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
@@ -77,7 +77,7 @@ public class EmptyFlangedGearBlock extends RotatedPillarKineticBlock implements 
 
     @Override
     public BlockEntityType<? extends KineticBlockEntity> getBlockEntityType() {
-        return BnbBlockEntitiesBootstrap.EMPTY_FLANGED_COGWHEEL.get();
+        return BnbBlockEntities.EMPTY_FLANGED_COGWHEEL.get();
     }
 
 }

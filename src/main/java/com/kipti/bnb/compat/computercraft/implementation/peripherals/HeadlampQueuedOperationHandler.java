@@ -1,7 +1,7 @@
 package com.kipti.bnb.compat.computercraft.implementation.peripherals;
 
-import com.kipti.bnb.content.decoration.light.headlamp.CCLightAddressing;
-import com.kipti.bnb.content.decoration.light.headlamp.HeadlampBlockEntity;
+import com.kipti.bnb.content.trinkets.light.headlamp.CCLightAddressing;
+import com.kipti.bnb.content.trinkets.light.headlamp.HeadlampBlockEntity;
 import com.kipti.bnb.foundation.caching.LevelSafeStorage;
 import com.kipti.bnb.foundation.caching.LevelSimpleCache;
 import com.kipti.bnb.foundation.caching.SimpleCache;

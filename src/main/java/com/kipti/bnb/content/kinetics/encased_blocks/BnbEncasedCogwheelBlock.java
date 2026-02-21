@@ -1,6 +1,6 @@
 package com.kipti.bnb.content.kinetics.encased_blocks;
 
-import com.kipti.bnb.registry.content.BnbBlockEntitiesBootstrap;
+import com.kipti.bnb.registry.content.BnbBlockEntities;
 import com.simibubi.create.content.kinetics.simpleRelays.SimpleKineticBlockEntity;
 import com.simibubi.create.content.kinetics.simpleRelays.encased.EncasedCogwheelBlock;
 import net.minecraft.world.level.block.Block;
@@ -16,7 +16,7 @@ public class BnbEncasedCogwheelBlock extends EncasedCogwheelBlock {
 
     @Override
     public BlockEntityType<? extends SimpleKineticBlockEntity> getBlockEntityType() {
-        return isLarge ? BnbBlockEntitiesBootstrap.ENCASED_LARGE_COGWHEEL.get() : BnbBlockEntitiesBootstrap.ENCASED_COGWHEEL.get();
+        return isLarge ? BnbBlockEntities.ENCASED_LARGE_COGWHEEL.get() : BnbBlockEntities.ENCASED_COGWHEEL.get();
     }
 
 }

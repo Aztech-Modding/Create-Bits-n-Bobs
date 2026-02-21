@@ -1,11 +1,11 @@
 package com.kipti.bnb.registry.datagen;
 
 import com.kipti.bnb.CreateBitsnBobs;
-import com.kipti.bnb.registry.content.BnbBlocksBootstrap;
-import com.kipti.bnb.registry.worldgen.BnbPaletteStoneTypes;
+import com.kipti.bnb.registry.content.BnbItems;
+import com.kipti.bnb.registry.content.blocks.BnbKineticBlocks;
 import com.kipti.bnb.registry.content.blocks.deco.BnbDecorativeBlocks;
 import com.kipti.bnb.registry.core.BnbFeatureFlag;
-import com.kipti.bnb.registry.content.BnbItems;
+import com.kipti.bnb.registry.worldgen.BnbPaletteStoneTypes;
 import com.simibubi.create.AllCreativeModeTabs;
 import com.simibubi.create.content.decoration.encasing.EncasedBlock;
 import com.simibubi.create.foundation.data.CreateRegistrate;
@@ -32,7 +32,7 @@ public class BnbCreativeTabs {
             () -> CreativeModeTab.builder()
                     .title(Component.translatable("tab." + CreateBitsnBobs.MOD_ID + ".base"))
                     .withTabsBefore(AllCreativeModeTabs.PALETTES_CREATIVE_TAB.getId())
-                    .icon(BnbBlocksBootstrap.SMALL_EMPTY_FLANGED_COGWHEEL::asStack)
+                    .icon(BnbKineticBlocks.SMALL_EMPTY_FLANGED_COGWHEEL::asStack)
                     .displayItems((p, o) -> buildCreativeTabContents(p, o, () -> BnbCreativeTabs.BASE_CREATIVE_TAB)).build());
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> DECO_CREATIVE_TAB = REGISTER.register("bnb_deco",
@@ -46,17 +46,11 @@ public class BnbCreativeTabs {
         if (BnbDecorativeBlocks.CHAIRS.contains(item.getBlock()) && !BnbDecorativeBlocks.CHAIRS.get(DyeColor.RED).is(item.getBlock()))
             return false;
 
-        if (item.getBlock() instanceof EncasedBlock)
-            return false;
-
-        return true;
+        return !(item.getBlock() instanceof EncasedBlock);
     }
 
     private static boolean matchesSearchOnlyBlockFilter(final BlockItem item) {
-        if (BnbDecorativeBlocks.CHAIRS.contains(item.getBlock()) && !BnbDecorativeBlocks.CHAIRS.get(DyeColor.RED).is(item.getBlock())) {
-            return true;
-        }
-        return false;
+        return BnbDecorativeBlocks.CHAIRS.contains(item.getBlock()) && !BnbDecorativeBlocks.CHAIRS.get(DyeColor.RED).is(item.getBlock());
     }
 
     @ApiStatus.Internal

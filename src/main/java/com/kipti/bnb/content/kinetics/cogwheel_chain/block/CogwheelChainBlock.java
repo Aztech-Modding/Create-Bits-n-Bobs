@@ -1,8 +1,9 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.block;
 
 import com.kipti.bnb.content.kinetics.cogwheel_chain.shape.CogwheelChainBreakerHelper;
-import com.kipti.bnb.registry.content.BnbBlockEntitiesBootstrap;
-import com.kipti.bnb.registry.content.BnbBlocksBootstrap;
+import com.kipti.bnb.registry.content.BnbBlockEntities;
+import com.kipti.bnb.registry.content.blocks.BnbChainBlocks;
+import com.kipti.bnb.registry.content.blocks.BnbKineticBlocks;
 import com.simibubi.create.AllShapes;
 import com.simibubi.create.api.schematic.requirement.SpecialBlockItemRequirement;
 import com.simibubi.create.content.decoration.encasing.EncasableBlock;
@@ -90,11 +91,11 @@ public class CogwheelChainBlock extends RotatedPillarKineticBlock
     private final Supplier<BlockEntry<?>> sourceBlock;
 
     public static CogwheelChainBlock smallFlanged(final Properties properties) {
-        return new CogwheelChainBlock(false, properties, () -> BnbBlocksBootstrap.SMALL_EMPTY_FLANGED_COGWHEEL);
+        return new CogwheelChainBlock(false, properties, () -> BnbKineticBlocks.SMALL_EMPTY_FLANGED_COGWHEEL);
     }
 
     public static CogwheelChainBlock largeFlanged(final Properties properties) {
-        return new CogwheelChainBlock(true, properties, () -> BnbBlocksBootstrap.LARGE_EMPTY_FLANGED_COGWHEEL);
+        return new CogwheelChainBlock(true, properties, () -> BnbKineticBlocks.LARGE_EMPTY_FLANGED_COGWHEEL);
     }
 
     @Override
@@ -142,7 +143,7 @@ public class CogwheelChainBlock extends RotatedPillarKineticBlock
 
     @Override
     public BlockEntityType<? extends CogwheelChainBlockEntity> getBlockEntityType() {
-        return BnbBlockEntitiesBootstrap.COGWHEEL_CHAIN.get();
+        return BnbBlockEntities.COGWHEEL_CHAIN.get();
     }
 
     @Override
@@ -156,7 +157,7 @@ public class CogwheelChainBlock extends RotatedPillarKineticBlock
     }
 
     public final float getGeometryChainShift() {
-        return BnbBlocksBootstrap.SMALL_FLANGED_COGWHEEL_CHAIN.is(this) ? 1f / 8f : 0f;
+        return BnbChainBlocks.SMALL_FLANGED_COGWHEEL_CHAIN.is(this) ? 1f / 8f : 0f;
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.kipti.bnb.content.decoration.weathered_girder;
 
-import com.kipti.bnb.registry.content.BnbBlockEntitiesBootstrap;
+import com.kipti.bnb.registry.content.BnbBlockEntities;
 import com.kipti.bnb.registry.content.blocks.deco.BnbDecorativeBlocks;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.decoration.girder.GirderBlock;
@@ -40,7 +40,7 @@ public class WeatheredGirderEncasedShaftBlock extends GirderEncasedShaftBlock {
 
     @Override
     public BlockEntityType<? extends KineticBlockEntity> getBlockEntityType() {
-        return BnbBlockEntitiesBootstrap.ENCASED_SHAFT.get();
+        return BnbBlockEntities.ENCASED_SHAFT.get();
     }
 }
 

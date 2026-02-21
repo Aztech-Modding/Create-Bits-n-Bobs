@@ -1,7 +1,7 @@
 package com.kipti.bnb.compat.computercraft.implementation.peripherals;
 
-import com.kipti.bnb.content.decoration.light.headlamp.HeadlampBlock;
-import com.kipti.bnb.content.decoration.light.headlamp.HeadlampBlockEntity;
+import com.kipti.bnb.content.trinkets.light.headlamp.HeadlampBlock;
+import com.kipti.bnb.content.trinkets.light.headlamp.HeadlampBlockEntity;
 import com.kipti.bnb.registry.core.BnbConfigs;
 import com.simibubi.create.compat.computercraft.implementation.peripherals.SyncedPeripheral;
 import dan200.computercraft.api.lua.ILuaContext;

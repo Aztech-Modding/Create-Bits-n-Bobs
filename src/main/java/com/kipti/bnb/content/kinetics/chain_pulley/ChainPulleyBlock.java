@@ -1,6 +1,6 @@
 package com.kipti.bnb.content.kinetics.chain_pulley;
 
-import com.kipti.bnb.registry.content.BnbBlockEntitiesBootstrap;
+import com.kipti.bnb.registry.content.BnbBlockEntities;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.contraptions.pulley.PulleyBlock;
 import com.simibubi.create.content.contraptions.pulley.PulleyBlockEntity;
@@ -18,7 +18,7 @@ public class ChainPulleyBlock extends PulleyBlock implements IWrenchable {
 
     @Override
     public BlockEntityType<? extends PulleyBlockEntity> getBlockEntityType() {
-        return BnbBlockEntitiesBootstrap.CHAIN_ROPE_PULLEY.get();
+        return BnbBlockEntities.CHAIN_ROPE_PULLEY.get();
     }
 
     @Override
