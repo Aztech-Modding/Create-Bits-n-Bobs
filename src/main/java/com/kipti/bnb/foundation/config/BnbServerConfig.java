@@ -29,6 +29,12 @@ public class BnbServerConfig extends ConfigBase {
             "Maximum range in blocks for the CC peripheral setLamp function. Lamp coordinates must be within [3 - blockRange * 2, blockRange * 2]."
     );
 
+    public final ConfigInt MAX_CHAIN_COGWHEEL_RANGE = i(
+            32, 1, 128,
+            "maxChainCogwheelRange",
+            "May lead to unexpected behaviors."
+    );
+
     @Override
     public @NotNull String getName() {
         return "server";

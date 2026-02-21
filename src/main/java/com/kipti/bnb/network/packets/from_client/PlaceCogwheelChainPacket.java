@@ -3,6 +3,7 @@ package com.kipti.bnb.network.packets.from_client;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.*;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.CogwheelChainType;
 import com.kipti.bnb.network.BnbPackets;
+import com.kipti.bnb.registry.BnbConfigs;
 import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorBlockEntity;
 import net.createmod.catnip.net.base.ServerboundPacketPayload;
 import net.minecraft.core.Holder;
@@ -38,7 +39,7 @@ public record PlaceCogwheelChainPacket(
     @Override
     public void handle(ServerPlayer player) {
         //Server side validation of the chain
-        if (worldSpacePartialChain.maxBounds() > PlacingCogwheelChain.MAX_CHAIN_BOUNDS)
+        if (worldSpacePartialChain.maxBounds() > BnbConfigs.server().MAX_CHAIN_COGWHEEL_RANGE.get())
             return;
 
         if (worldSpacePartialChain.checkMissingNodesInLevel(player.level(), chainType))
