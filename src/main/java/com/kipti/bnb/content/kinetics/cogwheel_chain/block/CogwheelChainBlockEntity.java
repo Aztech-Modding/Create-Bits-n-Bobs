@@ -9,7 +9,6 @@ import com.kipti.bnb.content.kinetics.cogwheel_chain.shape.CogwheelChainInteract
 import com.kipti.bnb.content.kinetics.cogwheel_chain.shape.CogwheelChainShape;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.shape.CogwheelChainWholeShape;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.CogwheelChainType;
-import com.kipti.bnb.registry.BnbConfigs;
 import com.simibubi.create.api.contraption.transformable.TransformableBlockEntity;
 import com.simibubi.create.api.schematic.requirement.SpecialBlockEntityItemRequirement;
 import com.simibubi.create.content.contraptions.StructureTransform;
@@ -104,7 +103,7 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
 
         final CogwheelChainType type = chain.getChainType();
         final CogwheelChainType.ChainRenderInfo renderInfo = type.getRenderType();
-        final double baseRadius = (double) Math.max(renderInfo.getWidth(), renderInfo.getHeight()) / BnbConfigs.server().HEADLAMP_CC_BLOCK_RANGE.get();;
+        final double baseRadius = Math.max(renderInfo.getWidth(), renderInfo.getHeight()) / 32.0;
 
         final List<Vec3> path = new ArrayList<>();
         for (final RenderedChainPathNode node : nodes) {

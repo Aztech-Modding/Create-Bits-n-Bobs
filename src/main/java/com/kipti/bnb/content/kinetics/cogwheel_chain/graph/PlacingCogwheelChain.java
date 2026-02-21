@@ -32,6 +32,7 @@ public class PlacingCogwheelChain {
             chain -> chain.visitedNodes,
             PlacingCogwheelChain::new
     );
+    public static final Integer MAX_CHAIN_BOUNDS = 32;//TODO config
 
     private List<PlacingCogwheelNode> visitedNodes;
 
@@ -251,7 +252,7 @@ public class PlacingCogwheelChain {
         final List<PlacingCogwheelNode> nodesWithCandidate = new ArrayList<>(visitedNodes);
         nodesWithCandidate.add(candidate);
         final int newMaxBounds = getMaxBoundsOfNodes(nodesWithCandidate);
-        return newMaxBounds > BnbConfigs.server().MAX_CHAIN_COGWHEEL_RANGE.get();
+        return newMaxBounds > MAX_CHAIN_BOUNDS;
     }
 
     private int getMaxBoundsOfNodes(final List<PlacingCogwheelNode> nodes) {

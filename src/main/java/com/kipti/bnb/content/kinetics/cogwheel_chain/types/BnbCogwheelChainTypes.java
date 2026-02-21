@@ -38,15 +38,6 @@ public class BnbCogwheelChainTypes {
                     .setCogwheelPredicate((block) -> BnbBlocks.LARGE_EMPTY_FLANGED_COGWHEEL.get() == block || BnbBlocks.SMALL_EMPTY_FLANGED_COGWHEEL.get() == block) //TODO: tag
                     .build());
 
-    public static final DeferredHolder<CogwheelChainType, CogwheelChainType> INTESTINE_CHAIN = REGISTRY
-            .register("intestine", () -> new CogwheelChainType.Builder()
-                    .relatedTag(Tags.Items.ROPES)
-                    .renderType(CogwheelChainType.ChainRenderInfo.ROPE)
-                    .renderTexture(CreateBitsnBobs.asResource("textures/block/chain_intestine.png"))
-                    .breakEffectsBlock(() -> Blocks.CHAIN)
-                    .setCogwheelPredicate((block) -> BnbBlocks.LARGE_EMPTY_FLANGED_COGWHEEL.get() == block || BnbBlocks.SMALL_EMPTY_FLANGED_COGWHEEL.get() == block) //TODO: tag
-                    .build());
-
 
     public static void register(final IEventBus bus) {
         REGISTRY.register(bus);
