@@ -1,23 +1,22 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.shape;
 
-import com.kipti.bnb.content.kinetics.cogwheel_chain.block.CogwheelChainBlockEntity;
+import com.cake.azimuth.behaviour.SuperBlockEntityBehaviour;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.behaviour.CogwheelChainBehaviour;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.Nullable;
 
 public class CogwheelChainBreakerHelper {
 
     public static void breakChain(final Level level, final BlockPos pos, @Nullable final Player player) {
-        final BlockEntity be = level.getBlockEntity(pos);
-        if (!(be instanceof final CogwheelChainBlockEntity chainBE)) {
+        final CogwheelChainBehaviour behaviour = SuperBlockEntityBehaviour.get(level, pos, CogwheelChainBehaviour.TYPE);
+        if (behaviour == null)
             return;
-        }
 
         final boolean infinite = player != null && player.hasInfiniteMaterials();
-        final ItemStack drops = chainBE.destroyChain(player == null, true);
+        final ItemStack drops = behaviour.destroyChain(player == null, true);
 
         if (player != null && !infinite && !drops.isEmpty()) {
             player.getInventory().placeItemBackInInventory(drops);

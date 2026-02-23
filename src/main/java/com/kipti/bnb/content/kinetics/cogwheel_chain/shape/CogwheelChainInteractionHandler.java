@@ -1,9 +1,7 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.shape;
 
-import java.util.List;
-import java.util.Map.Entry;
-
-import com.kipti.bnb.content.kinetics.cogwheel_chain.block.CogwheelChainBlockEntity;
+import com.cake.azimuth.behaviour.SuperBlockEntityBehaviour;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.behaviour.CogwheelChainBehaviour;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.AllItems;
@@ -17,15 +15,18 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RenderHighlightEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+
+import java.util.List;
+import java.util.Map.Entry;
 
 /**
  * Client-side selection and outline handling for cogwheel chains.
@@ -48,20 +49,18 @@ public class CogwheelChainInteractionHandler {
         selectedBakedPosition = null;
     }
 
-    private static boolean hasValidSelection(final Level level) {
+    private static boolean invalidSelection(final Level level) {
         if (selectedController == null || selectedShape == null) {
-            return false;
+            return true;
         }
 
         if (!level.isLoaded(selectedController)) {
-            return false;
+            return true;
         }
 
-        if (!(level.getBlockEntity(selectedController) instanceof final CogwheelChainBlockEntity chainBE)) {
-            return false;
-        }
-
-        return chainBE.isController() && chainBE.getChain() != null;
+        return SuperBlockEntityBehaviour.getOptional(level, selectedController, CogwheelChainBehaviour.TYPE)
+                .map(CogwheelChainBehaviour::isController)
+                .orElse(false);
     }
 
     public static void put(final net.minecraft.world.level.Level level,
@@ -111,7 +110,7 @@ public class CogwheelChainInteractionHandler {
 
             final BlockPos controllerPos = entry.getKey();
             final Vec3 controllerBase = Vec3.atLowerCornerOf(controllerPos);
-            final CogwheelChainShape shape = chainShapes.get(0);
+            final CogwheelChainShape shape = chainShapes.getFirst();
 
             final Vec3 localFrom = origin.subtract(controllerBase);
             final Vec3 localTo = target.subtract(controllerBase);
@@ -145,7 +144,7 @@ public class CogwheelChainInteractionHandler {
 
     public static void drawCustomBlockSelection(final PoseStack ms, final MultiBufferSource buffer, final Vec3 camera) {
         final Minecraft mc = Minecraft.getInstance();
-        if (mc.level == null || !hasValidSelection(mc.level)) {
+        if (mc.level == null || invalidSelection(mc.level)) {
             clearSelection();
             return;
         }
@@ -174,7 +173,7 @@ public class CogwheelChainInteractionHandler {
     @SubscribeEvent
     public static void hideVanillaBlockSelection(final RenderHighlightEvent.Block event) {
         final Minecraft mc = Minecraft.getInstance();
-        if (mc.level == null || !hasValidSelection(mc.level)) {
+        if (mc.level == null || invalidSelection(mc.level)) {
             clearSelection();
             return;
         }

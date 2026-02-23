@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -48,7 +49,18 @@ public interface IBlockEntityRelighter {
         };
     }
 
-    private List<BlockPos> getClosePositions(float x, float y, float z) {
+    static Function<Vector3f, Integer> createGlobalLighter(BlockEntity be) {
+        return (position) -> {
+            if (be.getLevel() == null) return GirderGeometry.DEFAULT_LIGHT;
+            List<BlockPos> positions = getClosePositions(position.x, position.y, position.z);
+            return positions
+                    .stream()
+                    .map(p -> LevelRenderer.getLightColor(be.getLevel(), p))
+                    .reduce(0, IBlockEntityRelighter::maximizeLight);
+        };
+    }
+
+    private static List<BlockPos> getClosePositions(float x, float y, float z) {
         float fx = x - Math.round(x);
         float fy = y - Math.round(y);
         float fz = z - Math.round(z);

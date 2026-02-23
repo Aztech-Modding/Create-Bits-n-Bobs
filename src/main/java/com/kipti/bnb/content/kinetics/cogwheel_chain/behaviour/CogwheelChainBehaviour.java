@@ -1,10 +1,9 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.behaviour;
 
 import com.cake.azimuth.behaviour.SuperBlockEntityBehaviour;
-import com.cake.azimuth.behaviour.extensions.ItemRequirementBlockEntityBehaviourExtension;
-import com.cake.azimuth.behaviour.extensions.KineticBlockEntityBehaviourExtension;
-import com.cake.azimuth.behaviour.extensions.RenderedBlockEntityBehaviourExtension;
-import com.cake.azimuth.behaviour.render.BlockEntityBehaviourRenderer;
+import com.cake.azimuth.behaviour.extensions.ItemRequirementBehaviourExtension;
+import com.cake.azimuth.behaviour.extensions.KineticBehaviourExtension;
+import com.cake.azimuth.behaviour.extensions.RenderedBehaviourExtension;
 import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.block.CogwheelChainBlock;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.block.CogwheelChainBlockEntity;
@@ -36,11 +35,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
-public class CogwheelChainComponentBehaviour extends SuperBlockEntityBehaviour implements RenderedBlockEntityBehaviourExtension<KineticBlockEntity>, KineticBlockEntityBehaviourExtension, ItemRequirementBlockEntityBehaviourExtension {
+public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements RenderedBehaviourExtension, KineticBehaviourExtension, ItemRequirementBehaviourExtension {
 
-    public static final BehaviourType<CogwheelChainComponentBehaviour> TYPE = new BehaviourType<>();
+    public static final BehaviourType<CogwheelChainBehaviour> TYPE = new BehaviourType<>();
 
     /**
      * The controller is responsible for storing the chain data and doing integrity checks. It will also handle rendering the chain shapes.
@@ -56,7 +54,7 @@ public class CogwheelChainComponentBehaviour extends SuperBlockEntityBehaviour i
 
     private int chainsToRefund = 0;
 
-    public CogwheelChainComponentBehaviour(SmartBlockEntity be) {
+    public CogwheelChainBehaviour(SmartBlockEntity be) {
         super(be);
         setLazyTickRate(5);
     }
@@ -128,8 +126,8 @@ public class CogwheelChainComponentBehaviour extends SuperBlockEntityBehaviour i
         CogwheelChainInteractionHandler.put(getLevel(), getPos(), shapes);
     }
 
-    public void destroyChain(final boolean dropItemsInWorld, final boolean effects) {
-        if (getLevel() == null) return;
+    public ItemStack destroyChain(final boolean dropItemsInWorld, final boolean effects) {
+        if (getLevel() == null) return ItemStack.EMPTY;
         invalidateClientChainShapeCache();
 
         //Try drop chains from the current block for convenience
@@ -141,7 +139,7 @@ public class CogwheelChainComponentBehaviour extends SuperBlockEntityBehaviour i
             final BlockPos controllerPos = getPos().offset(controllerOffset);
             final BlockEntity be = getLevel().getBlockEntity(controllerPos);
 
-            if (this.getComplimentaryBehaviour(controllerPos).orElse(null) instanceof final CogwheelChainComponentBehaviour controllerBE) {
+            if (this.getComplementaryBehaviour(controllerPos) instanceof final CogwheelChainBehaviour controllerBE) {
                 chainsToReturn = controllerBE.chainsToRefund;
                 controllerBE.chainsToRefund = 0;
                 hasChainData = true;
@@ -150,7 +148,7 @@ public class CogwheelChainComponentBehaviour extends SuperBlockEntityBehaviour i
         }
         if (!hasChainData) {
             CreateBitsnBobs.LOGGER.warn("Failed to destroy chain with missing chain data at {}", getPos());
-            return;
+            return ItemStack.EMPTY;
         }
         final ItemStack drops = chainSource == null ? ItemStack.EMPTY : chainSource.getReturnedItem().getDefaultInstance().copyWithCount(chainsToReturn);
         if (dropItemsInWorld) {
@@ -159,19 +157,20 @@ public class CogwheelChainComponentBehaviour extends SuperBlockEntityBehaviour i
         this.chainsToRefund = 0; // Reset after dropping
 
         if (isController()) {
-            if (this.controlledChain == null) return;
+            if (this.controlledChain == null) return ItemStack.EMPTY;
             if (effects) this.controlledChain.createDestroyEffects(getLevel(), getPos());
             this.controlledChain.destroy(getLevel(), getPos());
         }
         if (!isController() && controllerOffset != null && getLevel() != null) {
             final BlockPos controllerPos = getPos().offset(controllerOffset);
-            this.<CogwheelChainComponentBehaviour>getComplimentaryBehaviour(controllerPos)
+            this.<CogwheelChainBehaviour>getComplementaryBehaviourOptional(controllerPos)
                     .ifPresent(controller -> {
                         if (controller.controlledChain == null) return;
                         if (effects) controller.controlledChain.createDestroyEffects(getLevel(), controllerPos);
                         controller.controlledChain.destroy(getLevel(), controllerPos);
                     });
         }
+        return drops;
     }
 
     private void invalidateClientChainShapeCache() {
@@ -230,7 +229,7 @@ public class CogwheelChainComponentBehaviour extends SuperBlockEntityBehaviour i
             return 0;
 
         //Else, check if this is the same chain structure.
-        return this.<CogwheelChainComponentBehaviour>getComplimentaryBehaviour(target)
+        return this.<CogwheelChainBehaviour>getComplementaryBehaviourOptional(target)
                 .map((otherBehaviour) -> {
                     final boolean isControlledBySame =
                             (this.controlledChain != null &&
@@ -265,7 +264,7 @@ public class CogwheelChainComponentBehaviour extends SuperBlockEntityBehaviour i
         if (getLevel() == null || controllerOffset == null) return 0;
 
         final BlockPos controllerPos = getPos().offset(controllerOffset);
-        return this.<CogwheelChainComponentBehaviour>getComplimentaryBehaviour(controllerPos)
+        return this.<CogwheelChainBehaviour>getComplementaryBehaviourOptional(controllerPos)
                 .map(controller -> {
                     if (controller.controlledChain == null) return 0f;
 
@@ -293,19 +292,21 @@ public class CogwheelChainComponentBehaviour extends SuperBlockEntityBehaviour i
         this.controlledChain = cogwheelChain;
         if (isClientLevel()) {
             updateChainShapes();
+        } else {
+
         }
     }
 
     @Override
     public List<BlockPos> addExtraPropagationLocations(final IRotate block, final BlockState state, final List<BlockPos> neighbours) {
-        List<BlockPos> toPropagate = new ArrayList<>(KineticBlockEntityBehaviourExtension.super.addExtraPropagationLocations(block, state, neighbours));
+        List<BlockPos> toPropagate = new ArrayList<>(KineticBehaviourExtension.super.addExtraPropagationLocations(block, state, neighbours));
         if (controlledChain != null) {
             addPropagationLocationsFromControllerExcept(toPropagate, getPos());
         } else {
             //Test putting child to child connections
             if (controllerOffset != null && getLevel() != null) {
                 final BlockPos controllerPos = getPos().offset(controllerOffset);
-                this.<CogwheelChainComponentBehaviour>getComplimentaryBehaviour(controllerPos)
+                this.<CogwheelChainBehaviour>getComplementaryBehaviourOptional(controllerPos)
                         .ifPresent(controller -> controller.addPropagationLocationsFromControllerExcept(toPropagate, getPos()));
             }
         }
@@ -366,7 +367,7 @@ public class CogwheelChainComponentBehaviour extends SuperBlockEntityBehaviour i
         } else {
             if (controllerOffset != null && getLevel() != null) {
                 final BlockPos controllerPos = getPos().offset(controllerOffset);
-                this.<CogwheelChainComponentBehaviour>getComplimentaryBehaviour(controllerPos)
+                this.<CogwheelChainBehaviour>getComplementaryBehaviourOptional(controllerPos)
                         .ifPresent(controller -> controller.chainsToRefund = 0);
             }
         }
@@ -387,12 +388,12 @@ public class CogwheelChainComponentBehaviour extends SuperBlockEntityBehaviour i
     }
 
     @Override
-    public BehaviourType<CogwheelChainComponentBehaviour> getType() {
+    public BehaviourType<CogwheelChainBehaviour> getType() {
         return TYPE;
     }
 
     @Override
-    public Supplier<Supplier<BlockEntityBehaviourRenderer<KineticBlockEntity>>> getRenderer() {
+    public BehaviourRenderSupplier getRenderer() {
         return BnbBlockEntityBehaviourRenderers.COGWHEEL_CHAIN;
     }
 }

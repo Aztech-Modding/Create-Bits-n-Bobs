@@ -1,7 +1,7 @@
 package com.kipti.bnb.mixin.azimuth;
 
 import com.cake.azimuth.behaviour.CachedBehaviourExtensionAccess;
-import com.cake.azimuth.behaviour.extensions.KineticBlockEntityBehaviourExtension;
+import com.cake.azimuth.behaviour.extensions.KineticBehaviourExtension;
 import com.simibubi.create.content.kinetics.base.IRotate;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -18,12 +18,13 @@ import java.util.List;
 public class KineticBlockEntityMixin {
 
     @Unique
-    private final CachedBehaviourExtensionAccess<KineticBlockEntityBehaviourExtension> azimuth$kineticBehaviourCacheAccess =
-            new CachedBehaviourExtensionAccess<>(() -> this, (e) -> e instanceof KineticBlockEntityBehaviourExtension);
+    private final CachedBehaviourExtensionAccess<KineticBehaviourExtension> azimuth$kineticBehaviourCacheAccess =
+            new CachedBehaviourExtensionAccess<>(KineticBehaviourExtension.class, () -> this, (e) -> e instanceof KineticBehaviourExtension);
 
+    //TODO REST
     @Inject(method = "addPropagationLocations", at = @At("HEAD"))
     public void addPropagationLocations(IRotate block, BlockState state, List<BlockPos> neighbours, CallbackInfoReturnable<List<BlockPos>> cir) {
-        for (KineticBlockEntityBehaviourExtension behaviour : azimuth$kineticBehaviourCacheAccess.get()) {
+        for (KineticBehaviourExtension behaviour : azimuth$kineticBehaviourCacheAccess.get()) {
             behaviour.addExtraPropagationLocations(block, state, neighbours);
         }
     }

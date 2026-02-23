@@ -15,6 +15,7 @@
     "azimuth.CachedRenderBBBlockEntityMixin",
     "azimuth.ItemRequirementMixin",
     "azimuth.KineticBlockEntityMixin",
+    "azimuth.SafeBlockEntityRendererMixin",
     "azimuth.SmartBlockEntityMixin",
     "azimuth.StructureTransformMixin",
     "encasable_piston_poles.ContraptionColliderMixin",

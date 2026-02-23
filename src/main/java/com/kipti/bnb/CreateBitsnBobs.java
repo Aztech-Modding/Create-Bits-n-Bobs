@@ -2,6 +2,7 @@ package com.kipti.bnb;
 
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.BnbCogwheelChainTypes;
 import com.kipti.bnb.network.BnbPackets;
+import com.kipti.bnb.registry.azimuth.BnbBehaviourApplicators;
 import com.kipti.bnb.registry.compat.BnbCreateStresses;
 import com.kipti.bnb.registry.content.BnbBlockEntities;
 import com.kipti.bnb.registry.content.BnbBlocksBootstrap;
@@ -67,6 +68,7 @@ public class CreateBitsnBobs {
         BnbPackets.register();
 
         BnbCreateStresses.registerRedirects();
+        BnbBehaviourApplicators.init();
 
         BnbLangEntries.register();
         BnbTags.registerDataGenerators();

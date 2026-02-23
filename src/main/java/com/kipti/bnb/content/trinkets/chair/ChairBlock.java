@@ -1,6 +1,6 @@
 package com.kipti.bnb.content.trinkets.chair;
 
-import com.kipti.bnb.registry.content.blocks.deco.BnbDecorativeBlocks;
+import com.kipti.bnb.registry.content.blocks.BnbTrinketBlocks;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.content.contraptions.actors.seat.SeatBlock;
@@ -84,7 +84,7 @@ public class ChairBlock extends SeatBlock implements IWrenchable {
         if (color != null && color != this.color) {
             if (level.isClientSide)
                 return ItemInteractionResult.SUCCESS;
-            final BlockState newState = BlockHelper.copyProperties(state, BnbDecorativeBlocks.CHAIRS.get(color)
+            final BlockState newState = BlockHelper.copyProperties(state, BnbTrinketBlocks.CHAIRS.get(color)
                     .getDefaultState());
             level.setBlockAndUpdate(pos, newState);
             return ItemInteractionResult.SUCCESS;
@@ -133,7 +133,7 @@ public class ChairBlock extends SeatBlock implements IWrenchable {
 
         final BlockState stateBack = pLevel.getBlockState(pCurrentPos.relative(facing.getOpposite()));
 
-        boolean isFlatBack = BnbDecorativeBlocks.CHAIRS.contains(stateBack.getBlock()) || stateBack.isCollisionShapeFullBlock(pLevel, pCurrentPos.relative(facing.getOpposite()));
+        boolean isFlatBack = BnbTrinketBlocks.CHAIRS.contains(stateBack.getBlock()) || stateBack.isCollisionShapeFullBlock(pLevel, pCurrentPos.relative(facing.getOpposite()));
         final boolean isBackCorner = stateBack.getOptionalValue(CORNER).orElse(false);
 
         final boolean isInvertedCorner = stateBack.getBlock() instanceof ChairBlock &&
@@ -147,7 +147,7 @@ public class ChairBlock extends SeatBlock implements IWrenchable {
             final BlockPos cornerPos = pCurrentPos.relative(cornerFacing);
             final BlockState stateBackCorner = pLevel.getBlockState(cornerPos);
 
-            isFlatBack = isFlatBack || (isCorner && (BnbDecorativeBlocks.CHAIRS.contains(stateBackCorner.getBlock()) || stateBackCorner.isCollisionShapeFullBlock(pLevel, cornerPos)));
+            isFlatBack = isFlatBack || (isCorner && (BnbTrinketBlocks.CHAIRS.contains(stateBackCorner.getBlock()) || stateBackCorner.isCollisionShapeFullBlock(pLevel, cornerPos)));
         }
 
         return blockState

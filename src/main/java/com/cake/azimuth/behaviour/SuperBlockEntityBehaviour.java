@@ -5,9 +5,11 @@ import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BehaviourType;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
@@ -16,67 +18,9 @@ import java.util.Optional;
  * where you want to compose (or apply) almost full block entity functionality.
  * This also includes some shorthands for accessing things such as block entity level, or getting a likewise behaviour on another block entity.
  */
-public abstract class SuperBlockEntityBehaviour extends BlockEntityBehaviour {
+public abstract non-sealed class SuperBlockEntityBehaviour extends BlockEntityBehaviour implements SuperBlockEntityBehaviourLevelHelpers {
     public SuperBlockEntityBehaviour(SmartBlockEntity be) {
         super(be);
-    }
-
-    /**
-     * Shorthand for getting a complimentary behaviour of the same type on another block entity. This is designed for things
-     * such as multi-blocks, where you want to have the same behaviour on multiple block entities and have them interact
-     * with each other, but can also be used for other things such as linked machines.
-     * <br/>
-     * Example usage:
-     * <pre>
-     * if (controllerOffset != null && getLevel() != null) {
-     * final BlockPos controllerPos = getPos().offset(controllerOffset);
-     * this.<CogwheelChainComponentBehaviour>getComplimentaryBehaviour(controllerPos)
-     *    .ifPresent(controller -> controller.chainsToRefund = 0);
-     * }
-     * </pre>
-     *
-     * @param otherPos the position of the other block entity to get the behaviour from
-     * @param <T>      the type of the current behaviour, used to ensure the optional is of the correct type
-     * @return an optional containing the complimentary behaviour if it exists and is of the same type, or an empty optional if it doesn't exist, isn't loaded, or isn't of the same type.
-     */
-    @SuppressWarnings("unchecked")
-    public <T extends SuperBlockEntityBehaviour> Optional<T> getComplimentaryBehaviour(BlockPos otherPos) {
-        final Level level = this.getLevel();
-        if (level == null)
-            return Optional.empty();
-        if (!level.isLoaded(otherPos))
-            return Optional.empty();
-        if (!(level.getBlockEntity(otherPos) instanceof SmartBlockEntity otherBE))
-            return Optional.empty();
-        return Optional.ofNullable(otherBE.getBehaviour((BehaviourType<? extends T>) this.getType()));
-    }
-
-    /**
-     * Shorthand for getting a complimentary behaviour of the same type on another block entity. This is designed for things
-     * such as multi-blocks, where you want to have the same behaviour on multiple block entities and have them interact
-     * with each other, but can also be used for other things such as linked machines.
-     * <br/>
-     * Example usage:
-     * <pre>
-     * if (controllerOffset != null && getLevel() != null) {
-     * final BlockPos controllerPos = getPos().offset(controllerOffset);
-     * this.<CogwheelChainComponentBehaviour>getComplimentaryBehaviour(controllerPos)
-     *    .ifPresent(controller -> controller.chainsToRefund = 0);
-     * }
-     * </pre>
-     *
-     * @param otherBlockEntity the other block entity to get the behaviour from
-     * @param <T>              the type of the current behaviour, used to ensure the optional is of the correct type
-     * @return an optional containing the complimentary behaviour if it exists and is of the same type, or an empty optional if it doesn't exist, isn't loaded, or isn't of the same type.
-     */
-    @SuppressWarnings("unchecked")
-    public <T extends SuperBlockEntityBehaviour> Optional<T> getComplimentaryBehaviour(BlockEntity otherBlockEntity) {
-        final Level level = this.getLevel();
-        if (level == null)
-            return Optional.empty();
-        if (!(otherBlockEntity instanceof SmartBlockEntity otherBE))
-            return Optional.empty();
-        return Optional.ofNullable(otherBE.getBehaviour((BehaviourType<? extends T>) this.getType()));
     }
 
     public Level getLevel() {
@@ -97,4 +41,73 @@ public abstract class SuperBlockEntityBehaviour extends BlockEntityBehaviour {
 
     public void transform(BlockEntity be, StructureTransform structureTransformMixin) {
     }
+
+    /**
+     * Shorthand for getting an optional behaviour of a specific type from a level at a given position.
+     *
+     * @param level the level to get the behaviour from
+     * @param pos   the position of the block entity to get the behaviour from
+     * @param type  the type of the behaviour to get
+     * @param <T>   the type of the behaviour
+     * @return an optional containing the behaviour if it exists and is of the correct type, or an empty optional if it doesn't exist, isn't loaded, or isn't a SmartBlockEntity.
+     */
+    public static <T extends BlockEntityBehaviour> Optional<T> getOptional(Level level, @NotNull BlockPos pos, BehaviourType<T> type) {
+        return Optional.ofNullable(BlockEntityBehaviour.get(level, pos, type));
+    }
+
+    /**
+     * Shorthand for getting an optional behaviour of a specific type from a level at a given position, and expect it.
+     * If you do not want to throw, then use {@link #getOptional(Level, BlockPos, BehaviourType)} or {@link #get(BlockGetter, BlockPos, BehaviourType)}.
+     *
+     * @param level the level to get the behaviour from
+     * @param pos   the position of the block entity to get the behaviour from
+     * @param type  the type of the behaviour to get
+     * @param <T>   the type of the behaviour
+     * @return an optional containing the behaviour if it exists and is of the correct type, or an empty optional if it doesn't exist, isn't loaded, or isn't a SmartBlockEntity.
+     */
+    public static <T extends BlockEntityBehaviour> T getOrThrow(Level level, @NotNull BlockPos pos, BehaviourType<T> type) {
+        return Optional.ofNullable(BlockEntityBehaviour.get(level, pos, type))
+                .orElseThrow(() -> new IllegalStateException(
+                        "Expected to find a behaviour (type " +
+                                type +
+                                ") at position " +
+                                pos +
+                                ", but it was not present or was not of the correct type."
+                ));
+    }
+
+    /**
+     * Shorthand for getting an optional behaviour of a specific type from a level at a given position.
+     *
+     * @param be   the block entity to get the behaviour from
+     * @param type the type of the behaviour to get
+     * @param <T>  the type of the behaviour
+     * @return an optional containing the behaviour if it exists and is of the correct type, or an empty optional if it doesn't exist, isn't loaded, or isn't a SmartBlockEntity.
+     */
+    public static <T extends BlockEntityBehaviour> Optional<T> getOptional(BlockEntity be, BehaviourType<T> type) {
+        return Optional.ofNullable(BlockEntityBehaviour.get(be, type));
+    }
+
+    /**
+     * Shorthand for getting an optional behaviour of a specific type from a level at a given position.
+     * If you do not want to throw, then use {@link #getOptional(BlockEntity, BehaviourType)} or {@link #get(BlockEntity, BehaviourType)}.
+     *
+     * @param be   the block entity to get the behaviour from
+     * @param type the type of the behaviour to get
+     * @param <T>  the type of the behaviour
+     * @return an optional containing the behaviour if it exists and is of the correct type, or an empty optional if it doesn't exist, isn't loaded, or isn't a SmartBlockEntity.
+     */
+    public static <T extends BlockEntityBehaviour> T getOrThrow(BlockEntity be, BehaviourType<T> type) {
+        return Optional.ofNullable(BlockEntityBehaviour.get(be, type))
+                .orElseThrow(() -> new IllegalStateException(
+                        "Expected to find a behaviour (type " +
+                                type +
+                                ") inside block entity " +
+                                be +
+                                " at position " +
+                                be.getBlockPos() +
+                                ", but it was not present or was not of the correct type."
+                ));
+    }
+
 }

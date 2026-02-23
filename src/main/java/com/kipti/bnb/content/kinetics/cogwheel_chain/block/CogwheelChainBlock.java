@@ -1,5 +1,7 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.block;
 
+import com.cake.azimuth.behaviour.SuperBlockEntityBehaviour;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.behaviour.CogwheelChainBehaviour;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.shape.CogwheelChainBreakerHelper;
 import com.kipti.bnb.registry.content.BnbBlockEntities;
 import com.kipti.bnb.registry.content.blocks.BnbChainBlocks;
@@ -123,10 +125,8 @@ public class CogwheelChainBlock extends RotatedPillarKineticBlock
     @Override
     public @NotNull BlockState playerWillDestroy(final Level level, final @NotNull BlockPos pos, final @NotNull BlockState state, final @NotNull Player player) {
         if (!level.isClientSide && player.hasInfiniteMaterials()) {
-            final BlockEntity be = level.getBlockEntity(pos);
-            if (be instanceof final CogwheelChainBlockEntity cogwheelChainBE) {
-                cogwheelChainBE.clearStoredChains();
-            }
+            SuperBlockEntityBehaviour.getOptional(level, pos, CogwheelChainBehaviour.TYPE)
+                    .ifPresent(CogwheelChainBehaviour::clearStoredChains);
         }
         return super.playerWillDestroy(level, pos, state, player);
     }

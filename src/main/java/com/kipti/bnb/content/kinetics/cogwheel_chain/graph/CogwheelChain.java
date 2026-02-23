@@ -1,15 +1,15 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.graph;
 
-import com.kipti.bnb.CreateBitsnBobs;
+import com.cake.azimuth.behaviour.SuperBlockEntityBehaviour;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.behaviour.CogwheelChainBehaviour;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.block.CogwheelChainBlock;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.block.CogwheelChainBlockEntity;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.block.ICogwheelChainBlock;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.BnbCogwheelChainTypes;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.CogwheelChainType;
 import com.kipti.bnb.registry.core.BnbRegistries;
 import com.simibubi.create.content.contraptions.StructureTransform;
 import com.simibubi.create.content.kinetics.simpleRelays.CogWheelBlock;
-import com.simibubi.create.foundation.utility.BlockHelper;
+import com.simibubi.create.content.kinetics.simpleRelays.ICogWheel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
@@ -116,7 +116,7 @@ public class CogwheelChain {
                 return false;
             }
             final Direction.Axis axis = state.getValue(CogWheelBlock.AXIS);
-            final boolean isLarge = state.getBlock() instanceof final ICogwheelChainBlock iCogWheel && iCogWheel.isLargeCog();
+            final boolean isLarge = state.getBlock() instanceof final ICogWheel iCogWheel && iCogWheel.isLargeCog();
             if (axis != node.rotationAxis() || isLarge != node.isLarge()) {
                 return false;
             }
@@ -125,7 +125,7 @@ public class CogwheelChain {
     }
 
     private boolean isValidChainCogwheel(final BlockState state) {
-        return state.getBlock() instanceof ICogwheelChainBlock;
+        return state.getBlock() instanceof ICogWheel;
     }
 
     public int getChainsRequired() {
@@ -169,31 +169,28 @@ public class CogwheelChain {
             placeChainCogwheelInLevel(level, node, isController, chainsUsed, controllerPos);
             isController = false;
         }
-
     }
 
     private void placeChainCogwheelInLevel(final Level level, final PlacingCogwheelNode node, final boolean isController, final int chainsUsed, final BlockPos controllerPos) {
         final BlockState existingState = level.getBlockState(node.pos());
         final CogwheelChainCandidateInfo info = CogwheelChainCandidateInfo.REGISTRY.get(existingState.getBlock());
 
-        @Nullable final BlockState newState = info == null ? null : BlockHelper.copyProperties(existingState, info.resultingBlock().get().defaultBlockState());
+        //TODO: deprecate state replacement
+//        @Nullable final BlockState newState = info == null ? null : BlockHelper.copyProperties(existingState, info.resultingBlock().get().defaultBlockState());
+//
+//        if (newState == null) {
+//            CreateBitsnBobs.LOGGER.error("Failed to place cogwheel chain at {}, existing block {}, because the chain state could not be resolved", node.pos(), existingState);
+//            return;
+//        }
+//        level.setBlockAndUpdate(node.pos(), newState);
 
-        if (newState == null) {
-            CreateBitsnBobs.LOGGER.error("Failed to place cogwheel chain at {}, existing block {}, because the chain state could not be resolved", node.pos(), existingState);
-            return;
-        }
-        level.setBlockAndUpdate(node.pos(), newState);
+        CogwheelChainBehaviour behaviour = SuperBlockEntityBehaviour.getOrThrow(level, node.pos(), CogwheelChainBehaviour.TYPE);
 
-        final BlockEntity be = level.getBlockEntity(node.pos());
-        if (be instanceof final CogwheelChainBlockEntity chainBE) {
-            if (isController) {
-                chainBE.setAsController(this);
-                chainBE.setChainsUsed(chainsUsed);
-            } else {
-                chainBE.setController(controllerPos.subtract(node.pos()));
-            }
+        if (isController) {
+            behaviour.setAsController(this);
+            behaviour.setChainsUsed(chainsUsed);
         } else {
-            throw new IllegalStateException("Expected CogwheelChainBlockEntity at " + node.pos());
+            behaviour.setController(controllerPos.subtract(node.pos()));
         }
     }
 

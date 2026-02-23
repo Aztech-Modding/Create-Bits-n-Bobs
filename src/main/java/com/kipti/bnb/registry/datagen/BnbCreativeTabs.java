@@ -3,7 +3,7 @@ package com.kipti.bnb.registry.datagen;
 import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.registry.content.BnbItems;
 import com.kipti.bnb.registry.content.blocks.BnbKineticBlocks;
-import com.kipti.bnb.registry.content.blocks.deco.BnbDecorativeBlocks;
+import com.kipti.bnb.registry.content.blocks.BnbTrinketBlocks;
 import com.kipti.bnb.registry.core.BnbFeatureFlag;
 import com.kipti.bnb.registry.worldgen.BnbPaletteStoneTypes;
 import com.simibubi.create.AllCreativeModeTabs;
@@ -43,14 +43,14 @@ public class BnbCreativeTabs {
                     .displayItems((p, o) -> buildCreativeTabContents(p, o, () -> BnbCreativeTabs.DECO_CREATIVE_TAB)).build());
 
     private static boolean matchesBlockFilter(final BlockItem item) {
-        if (BnbDecorativeBlocks.CHAIRS.contains(item.getBlock()) && !BnbDecorativeBlocks.CHAIRS.get(DyeColor.RED).is(item.getBlock()))
+        if (BnbTrinketBlocks.CHAIRS.contains(item.getBlock()) && !BnbTrinketBlocks.CHAIRS.get(DyeColor.RED).is(item.getBlock()))
             return false;
 
         return !(item.getBlock() instanceof EncasedBlock);
     }
 
     private static boolean matchesSearchOnlyBlockFilter(final BlockItem item) {
-        return BnbDecorativeBlocks.CHAIRS.contains(item.getBlock()) && !BnbDecorativeBlocks.CHAIRS.get(DyeColor.RED).is(item.getBlock());
+        return BnbTrinketBlocks.CHAIRS.contains(item.getBlock()) && !BnbTrinketBlocks.CHAIRS.get(DyeColor.RED).is(item.getBlock());
     }
 
     @ApiStatus.Internal
