@@ -6,7 +6,6 @@ import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,10 +16,10 @@ public interface KineticBehaviourExtension extends BehaviourExtension {
     /**
      * Adds additional propagation locations (as long as this is attached to a kinetic block entity).
      *
-     * @return an empty array list by default, so that super calls can be safely made without null checks.
+     * @return an array list of the neighbors by default
      */
     default List<BlockPos> addExtraPropagationLocations(final IRotate block, final BlockState state, final List<BlockPos> neighbours) {
-        return new ArrayList<>();
+        return neighbours;
     }
 
     /**

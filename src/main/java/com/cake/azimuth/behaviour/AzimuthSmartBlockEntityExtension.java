@@ -1,6 +1,7 @@
 package com.cake.azimuth.behaviour;
 
 import com.cake.azimuth.behaviour.extensions.ItemRequirementBehaviourExtension;
+import com.cake.azimuth.behaviour.extensions.KineticBehaviourExtension;
 import com.cake.azimuth.behaviour.extensions.RenderedBehaviourExtension;
 
 import java.util.List;
@@ -32,5 +33,7 @@ public interface AzimuthSmartBlockEntityExtension {
     ItemRequirementBehaviourExtension[] azimuth$getItemRequirementExtensionCache();
 
     RenderedBehaviourExtension[] azimuth$getRenderedExtensionCache();
+
+    KineticBehaviourExtension[] azimuth$getKineticExtensionCache();
 
 }

@@ -14,7 +14,7 @@
     "RotationPropagatorMixin",
     "azimuth.CachedRenderBBBlockEntityMixin",
     "azimuth.ItemRequirementMixin",
-    "azimuth.KineticBlockEntityMixin",
+    "azimuth.RotationPropagatorMixin",
     "azimuth.SafeBlockEntityRendererMixin",
     "azimuth.SmartBlockEntityMixin",
     "azimuth.StructureTransformMixin",

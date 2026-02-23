@@ -1,7 +1,11 @@
 package com.kipti.bnb.mixin.azimuth;
 
-import com.cake.azimuth.behaviour.*;
+import com.cake.azimuth.behaviour.AzimuthSmartBlockEntityExtension;
+import com.cake.azimuth.behaviour.CachedBehaviourExtensionAccess;
+import com.cake.azimuth.behaviour.CachedSuperBehaviourAccess;
+import com.cake.azimuth.behaviour.SuperBlockEntityBehaviour;
 import com.cake.azimuth.behaviour.extensions.ItemRequirementBehaviourExtension;
+import com.cake.azimuth.behaviour.extensions.KineticBehaviourExtension;
 import com.cake.azimuth.behaviour.extensions.RenderedBehaviourExtension;
 import com.cake.azimuth.registration.BehaviourApplicators;
 import com.simibubi.create.foundation.blockEntity.CachedRenderBBBlockEntity;
@@ -85,18 +89,11 @@ public abstract class SmartBlockEntityMixin extends CachedRenderBBBlockEntity im
     private final CachedSuperBehaviourAccess azimuth$extensionCacheAccess =
             new CachedSuperBehaviourAccess(() -> this);
 
-    //Non-integrated caches
+    //Caches by extension type
     @Unique
     private final CachedBehaviourExtensionAccess<ItemRequirementBehaviourExtension> azimuth$itemRequirementExtension =
             new CachedBehaviourExtensionAccess<>(ItemRequirementBehaviourExtension.class, () -> this, (e) -> e instanceof ItemRequirementBehaviourExtension);
 
-    @Unique
-    private final CachedBehaviourExtensionAccess<RenderedBehaviourExtension> azimuth$renderedBehaviourCacheAccess =
-            new CachedBehaviourExtensionAccess<>(RenderedBehaviourExtension.class, () -> this, (e) -> e instanceof RenderedBehaviourExtension);
-
-    /**
-     * A cache of specifically the super behaviours. Should be avoided in place of {@link BehaviourExtension}s
-     */
     @Override
     public SuperBlockEntityBehaviour[] azimuth$getSuperBehaviours() {
         return azimuth$extensionCacheAccess.get();
@@ -107,8 +104,22 @@ public abstract class SmartBlockEntityMixin extends CachedRenderBBBlockEntity im
         return azimuth$itemRequirementExtension.get();
     }
 
+    @Unique
+    private final CachedBehaviourExtensionAccess<RenderedBehaviourExtension> azimuth$renderedBehaviourCacheAccess =
+            new CachedBehaviourExtensionAccess<>(RenderedBehaviourExtension.class, () -> this, (e) -> e instanceof RenderedBehaviourExtension);
+
     @Override
     public RenderedBehaviourExtension[] azimuth$getRenderedExtensionCache() {
         return azimuth$renderedBehaviourCacheAccess.get();
     }
+
+    @Unique
+    private final CachedBehaviourExtensionAccess<KineticBehaviourExtension> azimuth$kineticBehaviourCacheAccess =
+            new CachedBehaviourExtensionAccess<>(KineticBehaviourExtension.class, () -> this, (e) -> e instanceof KineticBehaviourExtension);
+
+    @Override
+    public KineticBehaviourExtension[] azimuth$getKineticExtensionCache() {
+        return azimuth$kineticBehaviourCacheAccess.get();
+    }
+
 }

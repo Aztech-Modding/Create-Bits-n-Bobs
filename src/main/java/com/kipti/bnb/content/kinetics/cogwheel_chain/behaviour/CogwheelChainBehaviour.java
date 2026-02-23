@@ -292,8 +292,6 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
         this.controlledChain = cogwheelChain;
         if (isClientLevel()) {
             updateChainShapes();
-        } else {
-
         }
     }
 
@@ -338,23 +336,8 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
         return controlledChain;
     }
 
-    public void setControlledChain(@Nullable final CogwheelChain controlledChain) {
-        this.controlledChain = controlledChain;
-        if (isController() && isClientLevel()) {
-            if (controlledChain == null) {
-                CogwheelChainInteractionHandler.invalidate(getLevel(), getPos());
-            } else {
-                updateChainShapes();
-            }
-        }
-    }
-
     public @Nullable Vec3i getControllerOffset() {
         return controllerOffset;
-    }
-
-    public void setControllerOffset(@Nullable final Vec3i controllerOffset) {
-        this.controllerOffset = controllerOffset;
     }
 
     public void setChainsUsed(final int chainsUsed) {

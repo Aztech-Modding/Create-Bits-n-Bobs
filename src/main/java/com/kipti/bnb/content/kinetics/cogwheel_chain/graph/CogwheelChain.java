@@ -192,6 +192,8 @@ public class CogwheelChain {
         } else {
             behaviour.setController(controllerPos.subtract(node.pos()));
         }
+
+        behaviour.sendData();
     }
 
     public void destroy(final Level level, final BlockPos worldPosition) {

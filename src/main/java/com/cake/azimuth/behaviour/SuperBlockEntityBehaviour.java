@@ -19,6 +19,7 @@ import java.util.Optional;
  * This also includes some shorthands for accessing things such as block entity level, or getting a likewise behaviour on another block entity.
  */
 public abstract non-sealed class SuperBlockEntityBehaviour extends BlockEntityBehaviour implements SuperBlockEntityBehaviourLevelHelpers {
+
     public SuperBlockEntityBehaviour(SmartBlockEntity be) {
         super(be);
     }
@@ -29,6 +30,11 @@ public abstract non-sealed class SuperBlockEntityBehaviour extends BlockEntityBe
 
     public BlockState getBlockState() {
         return this.blockEntity.getBlockState();
+    }
+
+    //TODO: provide a method where just the behaviour is syncing, not the entire block entity
+    public void sendData() {
+        this.blockEntity.sendData();
     }
 
     public boolean isClientLevel() {
