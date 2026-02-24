@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class CogwheelChainRenderGeometry {
+public class CogwheelChainRenderGeometryBuilder {
 
     public static List<ChainSegment> buildSegments(final CogwheelChain chain, final Vec3 origin) {
         if (chain == null || chain.getChainPathNodes().isEmpty()) {

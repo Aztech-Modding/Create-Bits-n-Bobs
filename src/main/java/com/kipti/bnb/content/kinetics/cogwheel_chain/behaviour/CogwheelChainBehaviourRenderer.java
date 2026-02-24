@@ -4,8 +4,8 @@ import com.cake.azimuth.behaviour.SuperBlockEntityBehaviour;
 import com.cake.azimuth.behaviour.render.BlockEntityBehaviourRenderer;
 import com.kipti.bnb.content.decoration.girder_strut.IBlockEntityRelighter;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChain;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.render.CogwheelChainRenderGeometry;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.render.CogwheelChainRenderGeometry.ChainSegment;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.render.CogwheelChainRenderGeometryBuilder;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.render.CogwheelChainRenderGeometryBuilder.ChainSegment;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.CogwheelChainType;
 import com.kipti.bnb.foundation.client.ShipyardHelper;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -27,7 +27,7 @@ import org.joml.Vector3f;
 import java.util.List;
 import java.util.function.Function;
 
-public class CogwheelChainBlockEntityBehaviourRenderer extends BlockEntityBehaviourRenderer<KineticBlockEntity> {
+public class CogwheelChainBehaviourRenderer extends BlockEntityBehaviourRenderer<KineticBlockEntity> {
 
     public static final int MIP_DISTANCE = 48;
     public static final int SEAM_DIST = 16;
@@ -73,7 +73,7 @@ public class CogwheelChainBlockEntityBehaviourRenderer extends BlockEntityBehavi
             final float offset = rotationsPerTick == 0 ? 0 : (float) (Math.PI * 2 * rotationsPerTick * time);
 
             final Vec3 origin = Vec3.atLowerCornerOf(be.getBlockPos());
-            final List<ChainSegment> segments = CogwheelChainRenderGeometry.buildSegments(chain, origin);
+            final List<ChainSegment> segments = CogwheelChainRenderGeometryBuilder.buildSegments(chain, origin);
             final double totalChainDistance = segments.stream().mapToDouble(ChainSegment::distance).sum();
             if (totalChainDistance <= 1e-4) {
                 return;
@@ -117,12 +117,12 @@ public class CogwheelChainBlockEntityBehaviourRenderer extends BlockEntityBehavi
         final CogwheelChainType.ChainRenderInfo chainRenderInfo = type.getRenderType();
 
         // Calculate corners in world space for the segment ends
-        List<Vec3> destinationPoints = CogwheelChainRenderGeometry.getEndPointsForChainJoint(from, to, postTo, chainRenderInfo, toCogwheelAxis);
-        final List<Vec3> sourcePoints = CogwheelChainRenderGeometry.getEndPointsForChainJoint(preFrom, from, to, chainRenderInfo, fromCogwheelAxis);
+        List<Vec3> destinationPoints = CogwheelChainRenderGeometryBuilder.getEndPointsForChainJoint(from, to, postTo, chainRenderInfo, toCogwheelAxis);
+        final List<Vec3> sourcePoints = CogwheelChainRenderGeometryBuilder.getEndPointsForChainJoint(preFrom, from, to, chainRenderInfo, fromCogwheelAxis);
 
         //This is my shame, i couldnt find a deterministic way to order the points consistently between joints so here we are,
         //Matching it in a post process step
-        destinationPoints = CogwheelChainRenderGeometry.getPointsInClosestOrder(destinationPoints, sourcePoints);
+        destinationPoints = CogwheelChainRenderGeometryBuilder.getPointsInClosestOrder(destinationPoints, sourcePoints);
 
         final float length = (float) from.distanceTo(to);
         final float minV = offset * textureSquish;
