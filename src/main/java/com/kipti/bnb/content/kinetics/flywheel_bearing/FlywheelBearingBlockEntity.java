@@ -137,7 +137,7 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
         if (!IRotate.StressImpact.isEnabled())
             return;
 
-        float stressBase = calculateAddedStressCapacity();
+        final float stressBase = calculateAddedStressCapacity();
         if (!Mth.equal(stressBase, 0))
             return;
 

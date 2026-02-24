@@ -62,7 +62,7 @@ public class GenericNixieDisplayBlockEntity extends SmartBlockEntity {
         return currentDisplayOption;
     }
 
-    public char getRenderedText(int line, int width) {
+    public char getRenderedText(final int line, final int width) {
         if (line == 0) {
             if (width < renderedTextTop.length()) {
                 return renderedTextTop.charAt(width);
@@ -206,7 +206,7 @@ public class GenericNixieDisplayBlockEntity extends SmartBlockEntity {
         //TODO: remove migration by release 1.0.1
         if (tag.contains("CurrentTextTop")) {
             log.info("Migrating old Nixie display data for block entity at {}", getBlockPos());
-            String oldTextTop = tag.getString("CurrentTextTop");
+            final String oldTextTop = tag.getString("CurrentTextTop");
             if (!oldTextTop.isEmpty()) {
                 final EndClipping clipping = getEndClipping();
                 final DynamicComponent component = new DynamicComponent();

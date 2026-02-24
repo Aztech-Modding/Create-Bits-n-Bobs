@@ -7,7 +7,7 @@ public class CachedSuperBehaviourAccess {
 
     private SuperBlockEntityBehaviour[] behaviourCache;
 
-    public CachedSuperBehaviourAccess(Supplier<Object> blockEntitySupplier) {
+    public CachedSuperBehaviourAccess(final Supplier<Object> blockEntitySupplier) {
         this.blockEntitySupplier = blockEntitySupplier;
     }
 
@@ -16,8 +16,8 @@ public class CachedSuperBehaviourAccess {
             return behaviourCache;
         }
 
-        Object blockEntity = blockEntitySupplier.get();
-        if (!(blockEntity instanceof AzimuthSmartBlockEntityExtension azebe)) {
+        final Object blockEntity = blockEntitySupplier.get();
+        if (!(blockEntity instanceof final AzimuthSmartBlockEntityExtension azebe)) {
             // Create a safe empty array of type T
             return new SuperBlockEntityBehaviour[0];
         }

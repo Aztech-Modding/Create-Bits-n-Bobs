@@ -8,12 +8,12 @@ import net.minecraft.client.renderer.MultiBufferSource;
 public class BlockEntityBehaviourRenderer<T extends SmartBlockEntity> {
 
     @SuppressWarnings("unchecked")
-    public void castRenderSafe(SuperBlockEntityBehaviour behaviour, SmartBlockEntity blockEntity, float partialTicks, PoseStack ms, MultiBufferSource buffer, int light,
-                               int overlay) {
+    public void castRenderSafe(final SuperBlockEntityBehaviour behaviour, final SmartBlockEntity blockEntity, final float partialTicks, final PoseStack ms, final MultiBufferSource buffer, final int light,
+                               final int overlay) {
         T castBlockEntity = null;
         try {
             castBlockEntity = (T) blockEntity;
-        } catch (ClassCastException e) {
+        } catch (final ClassCastException e) {
             throw new ClassCastException(
                     "BlockEntityBehaviourRenderer expected a block entity of type " +
                             getClass().getGenericSuperclass() +
@@ -28,8 +28,8 @@ public class BlockEntityBehaviourRenderer<T extends SmartBlockEntity> {
         }
     }
 
-    public void renderSafe(SuperBlockEntityBehaviour behaviour, T blockEntity, float partialTicks, PoseStack ms, MultiBufferSource buffer, int light,
-                           int overlay) {
+    public void renderSafe(final SuperBlockEntityBehaviour behaviour, final T blockEntity, final float partialTicks, final PoseStack ms, final MultiBufferSource buffer, final int light,
+                           final int overlay) {
     }
 
 }

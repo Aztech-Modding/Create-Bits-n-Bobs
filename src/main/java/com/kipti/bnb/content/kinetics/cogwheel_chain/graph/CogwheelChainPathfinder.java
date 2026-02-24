@@ -245,7 +245,7 @@ public class CogwheelChainPathfinder {
     /*
      * Get a list of sides (on the last node) which have any valid path to the new node
      * */
-    public static List<Integer> getValidPathSteps(PlacingCogwheelNode lastNode, PlacingCogwheelNode newNode) {
+    public static List<Integer> getValidPathSteps(final PlacingCogwheelNode lastNode, final PlacingCogwheelNode newNode) {
         final List<Integer> validSides = new ArrayList<>();
         for (int side = 1; side >= -1; side -= 2) {
             if (isValidPathStep(lastNode, side, newNode, 1) || isValidPathStep(lastNode, side, newNode, -1)) {

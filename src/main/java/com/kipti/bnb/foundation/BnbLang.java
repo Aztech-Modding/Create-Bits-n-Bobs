@@ -19,14 +19,14 @@ public class BnbLang extends Lang {
     /**
      * legacy-ish. Use CreateLang.translate and other builder methods where possible
      */
-    public static MutableComponent translateDirect(String key, Object... args) {
-        Object[] args1 = LangBuilder.resolveBuilders(args);
+    public static MutableComponent translateDirect(final String key, final Object... args) {
+        final Object[] args1 = LangBuilder.resolveBuilders(args);
         return Component.translatable(Create.ID + "." + key, args1);
     }
 
-    public static List<Component> translatedOptions(String prefix, String... keys) {
-        List<Component> result = new ArrayList<>(keys.length);
-        for (String key : keys)
+    public static List<Component> translatedOptions(final String prefix, final String... keys) {
+        final List<Component> result = new ArrayList<>(keys.length);
+        for (final String key : keys)
             result.add(translate((prefix != null ? prefix + "." : "") + key).component());
         return result;
     }
@@ -37,35 +37,35 @@ public class BnbLang extends Lang {
         return new LangBuilder(CreateBitsnBobs.MOD_ID);
     }
 
-    public static LangBuilder blockName(BlockState state) {
+    public static LangBuilder blockName(final BlockState state) {
         return builder().add(state.getBlock()
                 .getName());
     }
 
-    public static LangBuilder itemName(ItemStack stack) {
+    public static LangBuilder itemName(final ItemStack stack) {
         return builder().add(stack.getHoverName()
                 .copy());
     }
 
-    public static LangBuilder fluidName(FluidStack stack) {
+    public static LangBuilder fluidName(final FluidStack stack) {
         return builder().add(stack.getHoverName()
                 .copy());
     }
 
-    public static LangBuilder number(double d) {
+    public static LangBuilder number(final double d) {
         return builder().text(LangNumberFormat.format(d));
     }
 
-    public static LangBuilder translate(String langKey, Object... args) {
+    public static LangBuilder translate(final String langKey, final Object... args) {
         return builder().translate(langKey, args);
     }
 
-    public static LangBuilder text(String text) {
+    public static LangBuilder text(final String text) {
         return builder().text(text);
     }
 
     @Deprecated // Use while implementing and replace all references with Lang.translate
-    public static LangBuilder temporaryText(String text) {
+    public static LangBuilder temporaryText(final String text) {
         return builder().text(text);
     }
 

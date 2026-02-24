@@ -158,7 +158,7 @@ public class ChairBlock extends SeatBlock implements IWrenchable {
                 .setValue(INVERTED_CORNER, isInvertedCorner);
     }
 
-    private static @NotNull ChairBlock.ConnectableSides getConnectableSides(LevelAccessor pLevel, BlockPos pCurrentPos, Direction facing) {
+    private static @NotNull ChairBlock.ConnectableSides getConnectableSides(final LevelAccessor pLevel, final BlockPos pCurrentPos, final Direction facing) {
         final BlockState stateLeft = pLevel.getBlockState(pCurrentPos.relative(facing.getClockWise()));
         final boolean hasConnectableLeft = AllBlocks.SEATS.contains(stateLeft.getBlock()) || stateLeft.getBlock() instanceof ChairBlock &&
                 (stateLeft.getValue(FACING) == facing || stateLeft.getValue(FACING) == facing.getCounterClockWise() || stateLeft.getValue(INVERTED_CORNER));

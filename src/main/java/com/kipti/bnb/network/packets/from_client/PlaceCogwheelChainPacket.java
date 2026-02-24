@@ -36,7 +36,7 @@ public record PlaceCogwheelChainPacket(
             );
 
     @Override
-    public void handle(ServerPlayer player) {
+    public void handle(final ServerPlayer player) {
         //Server side validation of the chain
         if (worldSpacePartialChain.maxBounds() > PlacingCogwheelChain.MAX_CHAIN_BOUNDS)
             return;

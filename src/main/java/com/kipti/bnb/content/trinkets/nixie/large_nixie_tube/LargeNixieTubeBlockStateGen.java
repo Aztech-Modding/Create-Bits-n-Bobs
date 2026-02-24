@@ -8,7 +8,7 @@ import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
 
 public class LargeNixieTubeBlockStateGen {
 
-    public static <T extends LargeNixieTubeBlockNixie> void nixieTube(DataGenContext<Block, T> c, RegistrateBlockstateProvider p) {
+    public static <T extends LargeNixieTubeBlockNixie> void nixieTube(final DataGenContext<Block, T> c, final RegistrateBlockstateProvider p) {
         p.getVariantBuilder(c.get())
                 .forAllStates(state -> ConfiguredModel.builder()
                         .modelFile(p.models().getExistingFile(CreateBitsnBobs.asResource("block/large_nixie_tube/large_nixie_tube")))

@@ -8,6 +8,7 @@ import com.kipti.bnb.content.kinetics.cogwheel_chain.types.BnbCogwheelChainTypes
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.CogwheelChainType;
 import com.kipti.bnb.registry.core.BnbRegistries;
 import com.simibubi.create.content.contraptions.StructureTransform;
+import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.simpleRelays.CogWheelBlock;
 import com.simibubi.create.content.kinetics.simpleRelays.ICogWheel;
 import net.minecraft.core.BlockPos;
@@ -165,9 +166,19 @@ public class CogwheelChain {
         boolean isController = true;
         final BlockPos controllerPos = source.getFirstNode().pos();
         final int chainsUsed = source.getChainsRequiredInLoop();
+
         for (final PlacingCogwheelNode node : source.getVisitedNodes()) {
             placeChainCogwheelInLevel(level, node, isController, chainsUsed, controllerPos);
             isController = false;
+        }
+
+        //Try to get the kinetic block entity at controller, and update the kinetics
+        final BlockEntity be = level.getBlockEntity(controllerPos);
+        if (be instanceof final KineticBlockEntity kbe) {
+            kbe.detachKinetics();
+            kbe.updateSpeed = true;
+        } else {
+            throw new IllegalStateException("Expected a kinetic block entity at the controller position when placing a cogwheel chain, but found none! Position: " + controllerPos);
         }
     }
 
@@ -184,7 +195,7 @@ public class CogwheelChain {
 //        }
 //        level.setBlockAndUpdate(node.pos(), newState);
 
-        CogwheelChainBehaviour behaviour = SuperBlockEntityBehaviour.getOrThrow(level, node.pos(), CogwheelChainBehaviour.TYPE);
+        final CogwheelChainBehaviour behaviour = SuperBlockEntityBehaviour.getOrThrow(level, node.pos(), CogwheelChainBehaviour.TYPE);
 
         if (isController) {
             behaviour.setAsController(this);

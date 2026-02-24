@@ -15,16 +15,16 @@ public class BnbPonderPlugin implements PonderPlugin {
     }
 
     @Override
-    public void registerScenes(PonderSceneRegistrationHelper<ResourceLocation> helper) {
+    public void registerScenes(final PonderSceneRegistrationHelper<ResourceLocation> helper) {
         BnbPonderScenes.register(helper);
     }
 
     @Override
-    public void registerTags(PonderTagRegistrationHelper<ResourceLocation> helper) {
+    public void registerTags(final PonderTagRegistrationHelper<ResourceLocation> helper) {
     }
 
     @Override
-    public void registerSharedText(SharedTextRegistrationHelper helper) {
+    public void registerSharedText(final SharedTextRegistrationHelper helper) {
     }
 
 }

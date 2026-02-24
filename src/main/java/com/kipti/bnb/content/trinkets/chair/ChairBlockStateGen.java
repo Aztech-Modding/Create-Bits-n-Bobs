@@ -178,7 +178,7 @@ public class ChairBlockStateGen {
         };
     }
 
-    private static void addNonFlatBackStates(DataGenContext<Block, ChairBlock> c, RegistrateBlockstateProvider p, Direction direction, BlockModelBuilder chairBack) {
+    private static void addNonFlatBackStates(final DataGenContext<Block, ChairBlock> c, final RegistrateBlockstateProvider p, final Direction direction, final BlockModelBuilder chairBack) {
         //Corner back
         p.getMultipartBuilder(c.get())
                 .part()

@@ -9,7 +9,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import java.util.function.Supplier;
 
 public class BnbEncasedEmptyFlangedGearBlock extends BnbEncasedCogwheelBlock {
-    public BnbEncasedEmptyFlangedGearBlock(Properties properties, boolean large, Supplier<Block> casing) {
+    public BnbEncasedEmptyFlangedGearBlock(final Properties properties, final boolean large, final Supplier<Block> casing) {
         super(properties, large, casing);
     }
 

@@ -54,7 +54,7 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
 
     private int chainsToRefund = 0;
 
-    public CogwheelChainBehaviour(SmartBlockEntity be) {
+    public CogwheelChainBehaviour(final SmartBlockEntity be) {
         super(be);
         setLazyTickRate(5);
     }
@@ -137,7 +137,6 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
 
         if (!isController() && controllerOffset != null && getLevel() != null) {
             final BlockPos controllerPos = getPos().offset(controllerOffset);
-            final BlockEntity be = getLevel().getBlockEntity(controllerPos);
 
             if (this.getComplementaryBehaviour(controllerPos) instanceof final CogwheelChainBehaviour controllerBE) {
                 chainsToReturn = controllerBE.chainsToRefund;
@@ -297,7 +296,7 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
 
     @Override
     public List<BlockPos> addExtraPropagationLocations(final IRotate block, final BlockState state, final List<BlockPos> neighbours) {
-        List<BlockPos> toPropagate = new ArrayList<>(KineticBehaviourExtension.super.addExtraPropagationLocations(block, state, neighbours));
+        final List<BlockPos> toPropagate = new ArrayList<>(KineticBehaviourExtension.super.addExtraPropagationLocations(block, state, neighbours));
         if (controlledChain != null) {
             addPropagationLocationsFromControllerExcept(toPropagate, getPos());
         } else {
@@ -379,4 +378,20 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
     public BehaviourRenderSupplier getRenderer() {
         return BnbBlockEntityBehaviourRenderers.COGWHEEL_CHAIN;
     }
+
+    @Override
+    public BehaviourVisualFactory getVisualFactory() {
+        return (context, behaviour, blockEntity, parentVisual, partialTick) -> {
+            if (!(blockEntity instanceof final KineticBlockEntity kineticBlockEntity) || behaviour != this) {
+                return null;
+            }
+            return new CogwheelChainBehaviourVisual(context, kineticBlockEntity, this, parentVisual);
+        };
+    }
+
+    @Override
+    public boolean shouldAlwaysActivateRenderer() {
+        return false;
+    }
+
 }

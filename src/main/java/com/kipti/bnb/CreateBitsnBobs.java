@@ -1,5 +1,7 @@
 package com.kipti.bnb;
 
+import com.cake.azimuth.registration.BehaviourApplicators;
+import com.cake.azimuth.registration.RenderedBehaviourInterest;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.BnbCogwheelChainTypes;
 import com.kipti.bnb.network.BnbPackets;
 import com.kipti.bnb.registry.azimuth.BnbBehaviourApplicators;
@@ -79,6 +81,8 @@ public class CreateBitsnBobs {
     }
 
     private static void commonSetup(final FMLCommonSetupEvent event) {
+        BehaviourApplicators.resolveRegisteredTypes();
+        RenderedBehaviourInterest.resolve();
     }
 
     public static ResourceLocation asResource(final String s) {

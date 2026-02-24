@@ -31,7 +31,7 @@ public class ThrottleLeverBlock extends DirectionalKineticBlock implements IBE<T
     }
 
     @Override
-    public Direction.Axis getRotationAxis(BlockState state) {
+    public Direction.Axis getRotationAxis(final BlockState state) {
         return state.getValue(FACING).getAxis();
     }
 

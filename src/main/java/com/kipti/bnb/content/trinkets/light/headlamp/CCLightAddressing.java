@@ -26,7 +26,7 @@ public class CCLightAddressing {
     }
 
     public record View(byte mask) {
-        public TriState getCCAddressingForIndex(HeadlampBlockEntity.HeadlampPlacement i) {
+        public TriState getCCAddressingForIndex(final HeadlampBlockEntity.HeadlampPlacement i) {
             final Vector2i localMaskCoordinate = getLocalMaskCoordinateForPlacement(i);
             final boolean maskValue = getMaskValue(mask, localMaskCoordinate);
             return maskValue ? TriState.TRUE : TriState.FALSE;

@@ -54,6 +54,7 @@ public class CreateBitsnBobsClient {
 
     public static void invalidateRenderers() {
         GirderStrutModelManipulator.invalidateMeshes();
+        CogwheelChainGeneratedModel.clearCache();
         HeadlampRenderCache.clearCaches();
         HeadlampVertexBufferCache.clear();
     }

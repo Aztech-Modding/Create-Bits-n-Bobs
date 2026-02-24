@@ -12,7 +12,7 @@ public class CachedBehaviourExtensionAccess<T extends BehaviourExtension> {
 
     private T[] behaviourCache;
 
-    public CachedBehaviourExtensionAccess(Class<T> type, Supplier<Object> blockEntitySupplier, Predicate<SuperBlockEntityBehaviour> filter) {
+    public CachedBehaviourExtensionAccess(final Class<T> type, final Supplier<Object> blockEntitySupplier, final Predicate<SuperBlockEntityBehaviour> filter) {
         this.type = type;
         this.blockEntitySupplier = blockEntitySupplier;
         this.filter = filter;
@@ -23,18 +23,18 @@ public class CachedBehaviourExtensionAccess<T extends BehaviourExtension> {
             return behaviourCache;
         }
 
-        Object blockEntity = blockEntitySupplier.get();
-        if (!(blockEntity instanceof AzimuthSmartBlockEntityExtension azebe)) {
+        final Object blockEntity = blockEntitySupplier.get();
+        if (!(blockEntity instanceof final AzimuthSmartBlockEntityExtension azebe)) {
             // Create a safe empty array of type T
             return (T[]) Array.newInstance(type, 0);
         }
 
         azebe.azimuth$addCacheClearListener(() -> behaviourCache = null);
 
-        List<T> behaviours = azebe.azimuth$searchExtensionBehaviours(filter);
+        final List<T> behaviours = azebe.azimuth$searchExtensionBehaviours(filter);
 
         // Use Array.newInstance to create a physically correct T[] array
-        T[] array = (T[]) Array.newInstance(type, behaviours.size());
+        final T[] array = (T[]) Array.newInstance(type, behaviours.size());
         behaviourCache = behaviours.toArray(array);
 
         return behaviourCache;

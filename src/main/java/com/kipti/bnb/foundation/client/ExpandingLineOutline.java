@@ -13,12 +13,12 @@ public class ExpandingLineOutline extends LineOutline {
     protected int growingTicksElapsed = 0;
     protected int growingTicks;
 
-    public ExpandingLineOutline setGrowingTicks(int growingTicks) {
+    public ExpandingLineOutline setGrowingTicks(final int growingTicks) {
         this.growingTicks = growingTicks;
         return this;
     }
 
-    public ExpandingLineOutline setGrowingTicksElapsed(int growingTicksElapsed) {
+    public ExpandingLineOutline setGrowingTicksElapsed(final int growingTicksElapsed) {
         this.growingTicksElapsed = growingTicksElapsed;
         return this;
     }

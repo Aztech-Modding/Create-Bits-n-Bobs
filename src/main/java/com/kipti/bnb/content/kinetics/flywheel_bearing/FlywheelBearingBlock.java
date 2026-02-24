@@ -17,12 +17,12 @@ import net.minecraft.world.phys.BlockHitResult;
 
 public class FlywheelBearingBlock extends DirectionalKineticBlock implements IBE<FlywheelBearingBlockEntity>, ICogWheel {
 
-    public FlywheelBearingBlock(Properties properties) {
+    public FlywheelBearingBlock(final Properties properties) {
         super(properties);
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+    protected ItemInteractionResult useItemOn(final ItemStack stack, final BlockState state, final Level level, final BlockPos pos, final Player player, final InteractionHand hand, final BlockHitResult hitResult) {
         if (!player.mayBuild())
             return ItemInteractionResult.FAIL;
         if (player.isShiftKeyDown())
@@ -43,7 +43,7 @@ public class FlywheelBearingBlock extends DirectionalKineticBlock implements IBE
     }
 
     @Override
-    public Direction.Axis getRotationAxis(BlockState state) {
+    public Direction.Axis getRotationAxis(final BlockState state) {
         return state.getValue(FACING).getAxis();
     }
 

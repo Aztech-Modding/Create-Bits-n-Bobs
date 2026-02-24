@@ -15,9 +15,9 @@
     "azimuth.CachedRenderBBBlockEntityMixin",
     "azimuth.ItemRequirementMixin",
     "azimuth.RotationPropagatorMixin",
-    "azimuth.SafeBlockEntityRendererMixin",
     "azimuth.SmartBlockEntityMixin",
     "azimuth.StructureTransformMixin",
+    "azimuth.VisualizationHelperMixin",
     "encasable_piston_poles.ContraptionColliderMixin",
     "encasable_piston_poles.MechanicalPistonBlockMixin",
     "encasable_piston_poles.PistonContraptionMixin",
@@ -35,7 +35,9 @@
     "CreateClientMixin",
     "FontAccessMixin",
     "GirderCTBehaviourMixin",
-    "GuiGameElementMixin"
+    "GuiGameElementMixin",
+    "azimuth.BlockEntityRenderersMixin",
+    "azimuth.VisualizerRegistryMixin"
   ],
   "server": [
   ],

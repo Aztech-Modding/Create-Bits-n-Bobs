@@ -4,7 +4,8 @@ import com.cake.azimuth.behaviour.SuperBlockEntityBehaviour;
 import com.cake.azimuth.behaviour.render.BlockEntityBehaviourRenderer;
 import com.kipti.bnb.content.decoration.girder_strut.IBlockEntityRelighter;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChain;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.RenderedChainPathNode;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.render.CogwheelChainRenderGeometry;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.render.CogwheelChainRenderGeometry.ChainSegment;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.CogwheelChainType;
 import com.kipti.bnb.foundation.client.ShipyardHelper;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -20,15 +21,11 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Matrix3f;
 import org.joml.Matrix4f;
-import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
 public class CogwheelChainBlockEntityBehaviourRenderer extends BlockEntityBehaviourRenderer<KineticBlockEntity> {
 
@@ -39,7 +36,7 @@ public class CogwheelChainBlockEntityBehaviourRenderer extends BlockEntityBehavi
     public void renderSafe(final SuperBlockEntityBehaviour behaviour, final KineticBlockEntity be, final float partialTicks, final PoseStack ms, final MultiBufferSource buffer, final int light, final int overlay) {
         super.renderSafe(behaviour, be, partialTicks, ms, buffer, light, overlay);
 
-        if (!(behaviour instanceof CogwheelChainBehaviour chainBehaviour))
+        if (!(behaviour instanceof final CogwheelChainBehaviour chainBehaviour))
             return;
 
 //        if (be.getBlockState().getBlock() instanceof EncasedCogwheelBlock) {
@@ -75,40 +72,30 @@ public class CogwheelChainBlockEntityBehaviourRenderer extends BlockEntityBehavi
 
             final float offset = rotationsPerTick == 0 ? 0 : (float) (Math.PI * 2 * rotationsPerTick * time);
 
-            final double totalChainDistance = calculateTotalChainDistance(chainBehaviour);
-            final double chainTextureSquish = Math.ceil(totalChainDistance) / totalChainDistance;
-
-            double accumulatedUV = 0f;
-
             final Vec3 origin = Vec3.atLowerCornerOf(be.getBlockPos());
-            final int size = chain.getChainPathNodes().size();
-            for (int i = 0; i < size; i++) {
-                final RenderedChainPathNode node0 = chain.getChainPathNodes().get((size + i - 1) % size);
-                final RenderedChainPathNode node1 = chain.getChainPathNodes().get(i);
-                final RenderedChainPathNode node2 = chain.getChainPathNodes().get((i + 1) % size);
-                final RenderedChainPathNode node3 = chain.getChainPathNodes().get((i + 2) % size);
-
-                final double stretchOffset = offset + accumulatedUV;
-
-                final double distance = node1.getPosition().add(origin).distanceTo(node2.getPosition().add(origin));
+            final List<ChainSegment> segments = CogwheelChainRenderGeometry.buildSegments(chain, origin);
+            final double totalChainDistance = segments.stream().mapToDouble(ChainSegment::distance).sum();
+            if (totalChainDistance <= 1e-4) {
+                return;
+            }
+            final double chainTextureSquish = Math.ceil(totalChainDistance) / totalChainDistance;
+            for (final ChainSegment segment : segments) {
+                final double stretchOffset = offset + segment.uvStart();
 
                 renderChain(be,
                         ms,
                         buffer,
-                        node3.getPosition().add(origin),
-                        node2.getPosition().add(origin),
-                        node1.getPosition().add(origin),
-                        node0.getPosition().add(origin),
-                        node2.sourceCogwheelAxis(),
-                        node1.sourceCogwheelAxis(),
+                        segment.preFrom(),
+                        segment.from(),
+                        segment.to(),
+                        segment.postTo(),
+                        segment.fromCogwheelAxis(),
+                        segment.toCogwheelAxis(),
                         lighter,
                         (float) stretchOffset,
                         (float) chainTextureSquish,
                         type,
                         flipInsideOutside);
-
-                accumulatedUV += distance;
-
             }
         }
     }
@@ -130,12 +117,12 @@ public class CogwheelChainBlockEntityBehaviourRenderer extends BlockEntityBehavi
         final CogwheelChainType.ChainRenderInfo chainRenderInfo = type.getRenderType();
 
         // Calculate corners in world space for the segment ends
-        List<Vec3> destinationPoints = getEndPointsForChainJoint(from, to, postTo, chainRenderInfo, toCogwheelAxis);
-        final List<Vec3> sourcePoints = getEndPointsForChainJoint(preFrom, from, to, chainRenderInfo, fromCogwheelAxis);
+        List<Vec3> destinationPoints = CogwheelChainRenderGeometry.getEndPointsForChainJoint(from, to, postTo, chainRenderInfo, toCogwheelAxis);
+        final List<Vec3> sourcePoints = CogwheelChainRenderGeometry.getEndPointsForChainJoint(preFrom, from, to, chainRenderInfo, fromCogwheelAxis);
 
         //This is my shame, i couldnt find a deterministic way to order the points consistently between joints so here we are,
         //Matching it in a post process step
-        destinationPoints = getPointsInClosestOrder(destinationPoints, sourcePoints);
+        destinationPoints = CogwheelChainRenderGeometry.getPointsInClosestOrder(destinationPoints, sourcePoints);
 
         final float length = (float) from.distanceTo(to);
         final float minV = offset * textureSquish;
@@ -156,58 +143,6 @@ public class CogwheelChainBlockEntityBehaviourRenderer extends BlockEntityBehavi
         }
 
         ms.popPose();
-    }
-
-    /**
-     * Ai slop but heres the explanation:
-     * - When you have two sets of 4 points each that are supposed to correspond to each other in pairs, there are 24 possible ways to match them up
-     * - You could just say, "find the nearest point to point connection and connect that way", but that doesent preserve the correct order we are after.
-     * - Therefore, this needs a "ring-preserving" search to ensure we dont loose the orderings (that are necassary for making CROSS rendering shapes work)
-     */
-    private static List<Vec3> getPointsInClosestOrder(final List<Vec3> destinationPoints, final List<Vec3> sourcePoints) {
-        if (destinationPoints.size() != 4 || sourcePoints.size() != 4) {
-            return new ArrayList<>(destinationPoints);
-        }
-
-        double bestScore = Double.POSITIVE_INFINITY;
-        List<Vec3> best = new ArrayList<>(destinationPoints);
-
-        // Only allow cyclic orderings: 4 rotations * (normal/reversed winding) = 8 candidates
-        for (int reversed = 0; reversed <= 1; reversed++) {
-            for (int shift = 0; shift < 4; shift++) {
-                final ArrayList<Vec3> candidate = new ArrayList<>(4);
-                double pointScore = 0.0;
-
-                for (int i = 0; i < 4; i++) {
-                    final int j = (reversed == 0)
-                            ? ((i + shift) & 3)
-                            : ((shift - i + 4) & 3);
-
-                    final Vec3 d = destinationPoints.get(j);
-                    candidate.add(d);
-                    pointScore += sourcePoints.get(i).distanceToSqr(d);
-                }
-
-                // Edge-direction term to discourage "crossed" face mapping
-                double edgeScore = 0.0;
-                for (int i = 0; i < 4; i++) {
-                    final Vec3 sEdge = sourcePoints.get((i + 1) & 3).subtract(sourcePoints.get(i)).normalize();
-                    final Vec3 dEdge = candidate.get((i + 1) & 3).subtract(candidate.get(i)).normalize();
-                    edgeScore += 1.0 - sEdge.dot(dEdge); // 0 is best
-                }
-
-                // Small bias against reversing winding unless clearly better
-                final double windingPenalty = reversed == 1 ? 1e-4 : 0.0;
-                final double score = pointScore + edgeScore * 0.25 + windingPenalty;
-
-                if (score < bestScore) {
-                    bestScore = score;
-                    best = candidate;
-                }
-            }
-        }
-
-        return best;
     }
 
     private static void renderCrossShapeFace(final PoseStack ms, final VertexConsumer vc, final Matrix4f poseMatrix, final Vec3 origin,
@@ -295,55 +230,6 @@ public class CogwheelChainBlockEntityBehaviourRenderer extends BlockEntityBehavi
         }
     }
 
-    private static List<Vec3> getEndPointsForChainJoint(final Vec3 before, final Vec3 point, final Vec3 after, final CogwheelChainType.ChainRenderInfo chainRenderInfo, final Vec3 cogwheelAxis) {
-        final float radius = (float) ((chainRenderInfo.getVertexShape() == CogwheelChainType.VertexShape.CROSS ? Math.sqrt(2f) / 2f : 1f) * 1f / 16f);
-        final Vec3 dirToBefore = point.subtract(before).normalize();
-        final Vec3 dirToAfter = after.subtract(point).normalize();
-
-        Vec3 averagedDir = dirToBefore.add(dirToAfter).normalize();
-
-        final Matrix3f transform;
-
-        if (chainRenderInfo.getVertexShape() == CogwheelChainType.VertexShape.CROSS) {
-            transform = new Quaternionf()
-                    .rotationTo(0, 1, 0, (float) averagedDir.x, (float) averagedDir.y, (float) averagedDir.z)
-                    .get(new Matrix3f());
-        } else {
-            //Project averagedDir to axis if needed
-            if (averagedDir.dot(cogwheelAxis) > 1e-4)
-                averagedDir = averagedDir.subtract(cogwheelAxis.multiply(averagedDir)).normalize();
-
-            //Some s****y fallback
-            if (averagedDir.lengthSqr() < 1e-4)
-                averagedDir = cogwheelAxis.cross(new Vec3(1, 0, 0));
-            if (averagedDir.lengthSqr() < 1e-4)
-                averagedDir = cogwheelAxis.cross(new Vec3(0, 1, 0));
-
-            final Vec3 perpendicular = cogwheelAxis.cross(averagedDir);
-            transform = new Matrix3f(
-                    (float) perpendicular.x, (float) perpendicular.y, (float) perpendicular.z,
-                    (float) averagedDir.x, (float) averagedDir.y, (float) averagedDir.z,
-                    (float) cogwheelAxis.x, (float) cogwheelAxis.y, (float) cogwheelAxis.z
-            );
-        }
-
-
-        final Vector3f localAxis1Joml = transform.transform(1f, 0f, 0f, new Vector3f());
-        final Vec3 localAxis1Direction = new Vec3(localAxis1Joml.x, localAxis1Joml.y, localAxis1Joml.z).normalize();
-        final Vec3 localAxis1 = localAxis1Direction.scale(chainRenderInfo.getHeight() / 2f);
-        final Vector3f localAxis2Joml = transform.transform(0f, 0f, 1f, new Vector3f());
-        final Vec3 localAxis2 = new Vec3(localAxis2Joml.x, localAxis2Joml.y, localAxis2Joml.z).normalize().scale(chainRenderInfo.getWidth() / 2f);
-
-        return Stream.of(
-                        point.add(localAxis1.add(localAxis2).scale(radius)),
-                        point.add(localAxis1.subtract(localAxis2).scale(radius)),
-                        point.add(localAxis2.scale(-1).subtract(localAxis1).scale(radius)),
-                        point.add(localAxis2.subtract(localAxis1).scale(radius))
-                )
-                .map(e -> chainRenderInfo.getHeight() < 3 ? e.add(localAxis1Direction.scale((3f - chainRenderInfo.getHeight()) / (2 * 3 * 16))) : e)
-                .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
-    }
-
     private static void renderChainFastButWithGaps(final PoseStack ms,
                                                    final MultiBufferSource buffer,
                                                    final float offset,
@@ -420,19 +306,6 @@ public class CogwheelChainBlockEntityBehaviourRenderer extends BlockEntityBehavi
 
     /// /        return CachedBuffers.block(KINETIC_BLOCK, state);
 //    }
-    private double calculateTotalChainDistance(final CogwheelChainBehaviour be) {
-        double totalDistance = 0f;
-        final Vec3 origin = Vec3.atLowerCornerOf(be.getPos());
-        List<RenderedChainPathNode> chainPathNodes = be.getControlledChain().getChainPathNodes();
-        for (int i = 0; i < chainPathNodes.size(); i++) {
-            final RenderedChainPathNode nodeA = chainPathNodes.get(i);
-            final RenderedChainPathNode nodeB = chainPathNodes.get((i + 1) % chainPathNodes.size());
-
-            totalDistance += nodeA.getPosition().add(origin).distanceTo(nodeB.getPosition().add(origin));
-        }
-        return totalDistance;
-    }
-
     private void renderChain(final KineticBlockEntity be,
                              final PoseStack ms,
                              final MultiBufferSource buffer,

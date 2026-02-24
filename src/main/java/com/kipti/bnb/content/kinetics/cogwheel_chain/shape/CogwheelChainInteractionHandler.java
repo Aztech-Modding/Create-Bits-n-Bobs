@@ -10,6 +10,7 @@ import net.createmod.catnip.data.WorldAttached;
 import net.createmod.catnip.render.DefaultSuperRenderTypeBuffer;
 import net.createmod.catnip.render.SuperRenderTypeBuffer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
@@ -81,7 +82,7 @@ public class CogwheelChainInteractionHandler {
         }
 
         final Level level = mc.level;
-        final var player = mc.player;
+        final LocalPlayer player = mc.player;
 
         if (!isActive(player.getMainHandItem())) {
             clearSelection();

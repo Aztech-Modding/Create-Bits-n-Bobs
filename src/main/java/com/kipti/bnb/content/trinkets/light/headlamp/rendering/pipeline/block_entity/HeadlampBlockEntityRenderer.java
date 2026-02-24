@@ -67,7 +67,7 @@ public class HeadlampBlockEntityRenderer extends SmartBlockEntityRenderer<Headla
                     .rotateYDegrees(facing.get2DDataValue() != -1 ? facing.get2DDataValue() * -90.0f : 0)
                     .uncenter();
         }
-        BlockState state = blockEntity.getBlockState();
+        final BlockState state = blockEntity.getBlockState();
         cached
                 .light(LightBlock.isEmissive(state, null, null) ? LightTexture.FULL_BLOCK : light)
                 .disableDiffuse()

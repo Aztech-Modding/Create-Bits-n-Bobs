@@ -16,13 +16,13 @@ import static net.minecraft.world.level.block.state.properties.BlockStatePropert
 
 public class WeatheredGirderEncasedShaftBlock extends GirderEncasedShaftBlock {
 
-    public WeatheredGirderEncasedShaftBlock(Properties properties) {
+    public WeatheredGirderEncasedShaftBlock(final Properties properties) {
         super(properties);
     }
 
 
     @Override
-    public BlockState getRotatedBlockState(BlockState originalState, Direction targetedFace) {
+    public BlockState getRotatedBlockState(final BlockState originalState, final Direction targetedFace) {
         return BnbDecorativeBlocks.WEATHERED_METAL_GIRDER.getDefaultState()
                 .setValue(WATERLOGGED, originalState.getValue(WATERLOGGED))
                 .setValue(GirderBlock.X, originalState.getValue(HORIZONTAL_AXIS) == Direction.Axis.Z)
@@ -33,7 +33,7 @@ public class WeatheredGirderEncasedShaftBlock extends GirderEncasedShaftBlock {
     }
 
     @Override
-    public ItemRequirement getRequiredItems(BlockState state, BlockEntity be) {
+    public ItemRequirement getRequiredItems(final BlockState state, final BlockEntity be) {
         return ItemRequirement.of(AllBlocks.SHAFT.getDefaultState(), be)
                 .union(ItemRequirement.of(BnbDecorativeBlocks.WEATHERED_METAL_GIRDER.getDefaultState(), be));
     }

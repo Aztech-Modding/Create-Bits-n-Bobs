@@ -37,7 +37,7 @@ public record CogwheelChainCandidateInfo(boolean isLarge, boolean hasSmallCogwhe
     /**
      * Creates a consumer that will register a candidate info to a block. Useful for Registrate.
      */
-    public static <B extends Block> NonNullConsumer<? super B> candidate(CogwheelChainCandidateInfo info) {
+    public static <B extends Block> NonNullConsumer<? super B> candidate(final CogwheelChainCandidateInfo info) {
         return b -> REGISTRY.register(b, info);
     }
 }

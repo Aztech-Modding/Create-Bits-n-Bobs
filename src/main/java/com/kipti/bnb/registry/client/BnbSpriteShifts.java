@@ -24,7 +24,7 @@ public class BnbSpriteShifts {
     public static final CTSpriteShiftEntry
             INDUSTRIAL_GRATING = omni("industrial_grating");
 
-    private static Map<DyeColor, SpriteShiftEntry> getHeadlampSpriteShifts(boolean off) {
+    private static Map<DyeColor, SpriteShiftEntry> getHeadlampSpriteShifts(final boolean off) {
         final Map<DyeColor, SpriteShiftEntry> map = new java.util.EnumMap<>(DyeColor.class);
         for (final DyeColor color : DyeColor.values()) {
             map.put(color, get(
@@ -43,9 +43,13 @@ public class BnbSpriteShifts {
             "block/headlight/headlight_on"
     );
 
-    /** Sprite shifts from the off (undyed) base texture to the on (dyed) texture for each dye color. */
+    /**
+     * Sprite shifts from the off (undyed) base texture to the on (dyed) texture for each dye color.
+     */
     public static final Map<DyeColor, SpriteShiftEntry> HEADLAMP_ON_SPRITE_SHIFTS = getHeadlampSpriteShifts(false);
-    /** Sprite shifts from the off (undyed) base texture to the off (dyed) texture for each dye color. */
+    /**
+     * Sprite shifts from the off (undyed) base texture to the off (dyed) texture for each dye color.
+     */
     public static final Map<DyeColor, SpriteShiftEntry> HEADLAMP_OFF_SPRITE_SHIFTS = getHeadlampSpriteShifts(true);
 
     private static CTSpriteShiftEntry omni(final String name) {

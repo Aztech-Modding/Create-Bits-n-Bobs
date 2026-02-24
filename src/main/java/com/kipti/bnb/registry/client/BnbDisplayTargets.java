@@ -11,7 +11,7 @@ public class BnbDisplayTargets {
 
     public static final RegistryEntry<DisplayTarget, GenericNixieDisplayTarget> GENERIC_NIXIE_TARGET = simple("nixie_board", GenericNixieDisplayTarget::new);
 
-    private static <T extends DisplayTarget> RegistryEntry<DisplayTarget, T> simple(String name, Supplier<T> supplier) {
+    private static <T extends DisplayTarget> RegistryEntry<DisplayTarget, T> simple(final String name, final Supplier<T> supplier) {
         return CreateBitsnBobs.REGISTRATE.displayTarget(name, supplier).register();
     }
 }

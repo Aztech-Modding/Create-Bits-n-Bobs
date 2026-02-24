@@ -18,14 +18,14 @@ import java.util.List;
 public class RotationPropagatorMixin {
 
     @WrapOperation(method = "getPotentialNeighbourLocations", at = @At(value = "INVOKE", target = "Lcom/simibubi/create/content/kinetics/base/KineticBlockEntity;addPropagationLocations(Lcom/simibubi/create/content/kinetics/base/IRotate;Lnet/minecraft/world/level/block/state/BlockState;Ljava/util/List;)Ljava/util/List;"))
-    private static List<BlockPos> addPropagationLocations(KineticBlockEntity instance,
-                                                          IRotate block,
-                                                          BlockState state,
+    private static List<BlockPos> addPropagationLocations(final KineticBlockEntity instance,
+                                                          final IRotate block,
+                                                          final BlockState state,
                                                           List<BlockPos> neighbours,
-                                                          Operation<List<BlockPos>> original) {
+                                                          final Operation<List<BlockPos>> original) {
         neighbours = original.call(instance, block, state, neighbours);
-        if (instance instanceof AzimuthSmartBlockEntityExtension azebe) {
-            for (KineticBehaviourExtension behaviour : azebe.azimuth$getKineticExtensionCache()) {
+        if (instance instanceof final AzimuthSmartBlockEntityExtension azebe) {
+            for (final KineticBehaviourExtension behaviour : azebe.azimuth$getKineticExtensionCache()) {
                 neighbours = behaviour.addExtraPropagationLocations(block, state, neighbours);
             }
         }
@@ -33,11 +33,11 @@ public class RotationPropagatorMixin {
     }
 
     @WrapOperation(method = "getRotationSpeedModifier", at = @At(value = "INVOKE", target = "Lcom/simibubi/create/content/kinetics/base/KineticBlockEntity;propagateRotationTo(Lcom/simibubi/create/content/kinetics/base/KineticBlockEntity;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;ZZ)F"))
-    private static float propagateRotationTo(KineticBlockEntity instance, KineticBlockEntity target, BlockState stateFrom, BlockState stateTo, BlockPos diff, boolean connectedViaAxes, boolean connectedViaCogs, Operation<Float> original) {
+    private static float propagateRotationTo(final KineticBlockEntity instance, final KineticBlockEntity target, final BlockState stateFrom, final BlockState stateTo, final BlockPos diff, final boolean connectedViaAxes, final boolean connectedViaCogs, final Operation<Float> original) {
         final float originalValue = original.call(instance, target, stateFrom, stateTo, diff, connectedViaAxes, connectedViaCogs);
-        if (instance instanceof AzimuthSmartBlockEntityExtension azebe) {
-            for (KineticBehaviourExtension behaviour : azebe.azimuth$getKineticExtensionCache()) {
-                float hardPropagated = behaviour.forcePropagateRotationTo(target, stateFrom, stateTo, diff, connectedViaAxes, connectedViaCogs);
+        if (instance instanceof final AzimuthSmartBlockEntityExtension azebe) {
+            for (final KineticBehaviourExtension behaviour : azebe.azimuth$getKineticExtensionCache()) {
+                final float hardPropagated = behaviour.forcePropagateRotationTo(target, stateFrom, stateTo, diff, connectedViaAxes, connectedViaCogs);
                 if (hardPropagated != 0) {
                     return hardPropagated;
                 }
@@ -45,8 +45,8 @@ public class RotationPropagatorMixin {
             if (originalValue != 0)
                 return originalValue;
 
-            for (KineticBehaviourExtension behaviour : azebe.azimuth$getKineticExtensionCache()) {
-                float propagated = behaviour.propagateRotationTo(target, stateFrom, stateTo, diff, connectedViaAxes, connectedViaCogs);
+            for (final KineticBehaviourExtension behaviour : azebe.azimuth$getKineticExtensionCache()) {
+                final float propagated = behaviour.propagateRotationTo(target, stateFrom, stateTo, diff, connectedViaAxes, connectedViaCogs);
                 if (propagated != 0) {
                     return propagated;
                 }

@@ -24,8 +24,8 @@ public enum BnbPackets implements BasePacketPayload.PacketTypeProvider {
 
     private final CatnipPacketRegistry.PacketType<?> type;
 
-    <T extends BasePacketPayload> BnbPackets(Class<T> clazz, StreamCodec<? super RegistryFriendlyByteBuf, T> codec) {
-        String name = this.name().toLowerCase(Locale.ROOT);
+    <T extends BasePacketPayload> BnbPackets(final Class<T> clazz, final StreamCodec<? super RegistryFriendlyByteBuf, T> codec) {
+        final String name = this.name().toLowerCase(Locale.ROOT);
         this.type = new CatnipPacketRegistry.PacketType<>(
                 new CustomPacketPayload.Type<>(CreateBitsnBobs.asResource(name)),
                 clazz, codec
@@ -39,8 +39,8 @@ public enum BnbPackets implements BasePacketPayload.PacketTypeProvider {
     }
 
     public static void register() {
-        CatnipPacketRegistry packetRegistry = new CatnipPacketRegistry(CreateBitsnBobs.MOD_ID, 1);
-        for (BnbPackets packet : BnbPackets.values()) {
+        final CatnipPacketRegistry packetRegistry = new CatnipPacketRegistry(CreateBitsnBobs.MOD_ID, 1);
+        for (final BnbPackets packet : BnbPackets.values()) {
             packetRegistry.registerPacket(packet.type);
         }
         packetRegistry.registerAllPackets();

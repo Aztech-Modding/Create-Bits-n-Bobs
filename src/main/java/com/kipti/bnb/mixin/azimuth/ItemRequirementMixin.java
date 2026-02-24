@@ -14,10 +14,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class ItemRequirementMixin {
 
     @Inject(method = "of(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/entity/BlockEntity;)Lcom/simibubi/create/content/schematics/requirement/ItemRequirement;", at = @At("HEAD"), cancellable = true)
-    private static void of(BlockState state, BlockEntity be, CallbackInfoReturnable<ItemRequirement> cir) {
-        if (be instanceof AzimuthSmartBlockEntityExtension azebe) {
-            for (ItemRequirementBehaviourExtension itemRequirementBehaviour : azebe.azimuth$getItemRequirementExtensionCache()) {
-                ItemRequirement behaviourRequirements = itemRequirementBehaviour.getRequiredItems(state);
+    private static void of(final BlockState state, final BlockEntity be, final CallbackInfoReturnable<ItemRequirement> cir) {
+        if (be instanceof final AzimuthSmartBlockEntityExtension azebe) {
+            for (final ItemRequirementBehaviourExtension itemRequirementBehaviour : azebe.azimuth$getItemRequirementExtensionCache()) {
+                final ItemRequirement behaviourRequirements = itemRequirementBehaviour.getRequiredItems(state);
                 if (behaviourRequirements != null) {
                     cir.setReturnValue(behaviourRequirements.union(cir.getReturnValue()));
                     return;

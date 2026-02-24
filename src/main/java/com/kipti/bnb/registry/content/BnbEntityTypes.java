@@ -26,19 +26,19 @@ public class BnbEntityTypes {
                     .visual(() -> ContraptionVisual::new)
                     .register();
 
-    private static <T extends Entity> CreateEntityBuilder<T, ?> contraption(String name, EntityType.EntityFactory<T> factory,
-                                                                            NonNullSupplier<NonNullFunction<EntityRendererProvider.Context, EntityRenderer<? super T>>> renderer, int range,
-                                                                            int updateFrequency, boolean sendVelocity) {
+    private static <T extends Entity> CreateEntityBuilder<T, ?> contraption(final String name, final EntityType.EntityFactory<T> factory,
+                                                                            final NonNullSupplier<NonNullFunction<EntityRendererProvider.Context, EntityRenderer<? super T>>> renderer, final int range,
+                                                                            final int updateFrequency, final boolean sendVelocity) {
         return (CreateEntityBuilder<T, ?>) register(name, factory, renderer, MobCategory.MISC, range, updateFrequency, sendVelocity, true,
                 AbstractContraptionEntity::build)
                 .tag(Tags.EntityTypes.TELEPORTING_NOT_SUPPORTED);
     }
 
-    private static <T extends Entity> CreateEntityBuilder<T, ?> register(String name, EntityType.EntityFactory<T> factory,
-                                                                         NonNullSupplier<NonNullFunction<EntityRendererProvider.Context, EntityRenderer<? super T>>> renderer,
-                                                                         MobCategory group, int range, int updateFrequency, boolean sendVelocity, boolean immuneToFire,
-                                                                         NonNullConsumer<EntityType.Builder<T>> propertyBuilder) {
-        String id = Lang.asId(name);
+    private static <T extends Entity> CreateEntityBuilder<T, ?> register(final String name, final EntityType.EntityFactory<T> factory,
+                                                                         final NonNullSupplier<NonNullFunction<EntityRendererProvider.Context, EntityRenderer<? super T>>> renderer,
+                                                                         final MobCategory group, final int range, final int updateFrequency, final boolean sendVelocity, final boolean immuneToFire,
+                                                                         final NonNullConsumer<EntityType.Builder<T>> propertyBuilder) {
+        final String id = Lang.asId(name);
         return (CreateEntityBuilder<T, ?>) CreateBitsnBobs.REGISTRATE
                 .entity(id, factory, group)
                 .properties(b -> b.setTrackingRange(range)

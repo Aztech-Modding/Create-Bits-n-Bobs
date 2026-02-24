@@ -22,11 +22,11 @@ public class ElasticFloat {
     }
 
     public void tick() {
-        float overshoot = 0.6f;
-        float stiffness = 0.5f;
-        float range = 15f;
+        final float overshoot = 0.6f;
+        final float stiffness = 0.5f;
+        final float range = 15f;
         velocity += (target - current) * overshoot;
-        float maxVelocity = range / 2f;
+        final float maxVelocity = range / 2f;
         velocity = Math.clamp(velocity, -maxVelocity, maxVelocity);
         velocity *= stiffness;
         previous = current;

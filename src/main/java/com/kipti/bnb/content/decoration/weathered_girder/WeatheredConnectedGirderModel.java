@@ -25,28 +25,28 @@ public class WeatheredConnectedGirderModel extends CTModel {
 
     protected static final ModelProperty<ConnectionData> CONNECTION_PROPERTY = new ModelProperty<>();
 
-    public WeatheredConnectedGirderModel(BakedModel originalModel) {
+    public WeatheredConnectedGirderModel(final BakedModel originalModel) {
         super(originalModel, new WeatheredGirderCTBehaviour());
     }
 
     @Override
-    protected ModelData.Builder gatherModelData(ModelData.Builder builder, BlockAndTintGetter world, BlockPos pos, BlockState state,
-                                                ModelData blockEntityData) {
+    protected ModelData.Builder gatherModelData(final ModelData.Builder builder, final BlockAndTintGetter world, final BlockPos pos, final BlockState state,
+                                                final ModelData blockEntityData) {
         super.gatherModelData(builder, world, pos, state, blockEntityData);
-        ConnectionData connectionData = new ConnectionData();
-        for (Direction d : Iterate.horizontalDirections)
+        final ConnectionData connectionData = new ConnectionData();
+        for (final Direction d : Iterate.horizontalDirections)
             connectionData.setConnected(d, WeatheredGirderBlock.isConnected(world, pos, state, d));
         return builder.with(CONNECTION_PROPERTY, connectionData);
     }
 
     @Override
-    public List<BakedQuad> getQuads(BlockState state, Direction side, RandomSource rand, ModelData extraData, RenderType renderType) {
-        List<BakedQuad> superQuads = super.getQuads(state, side, rand, extraData, renderType);
+    public List<BakedQuad> getQuads(final BlockState state, final Direction side, final RandomSource rand, final ModelData extraData, final RenderType renderType) {
+        final List<BakedQuad> superQuads = super.getQuads(state, side, rand, extraData, renderType);
         if (side != null || !extraData.has(CONNECTION_PROPERTY))
             return superQuads;
-        List<BakedQuad> quads = new ArrayList<>(superQuads);
-        ConnectionData data = extraData.get(CONNECTION_PROPERTY);
-        for (Direction d : Iterate.horizontalDirections)
+        final List<BakedQuad> quads = new ArrayList<>(superQuads);
+        final ConnectionData data = extraData.get(CONNECTION_PROPERTY);
+        for (final Direction d : Iterate.horizontalDirections)
             if (data.isConnected(d))
                 quads.addAll(BnbPartialModels.WEATHERED_METAL_GIRDER_BRACKETS.get(d)
                         .get()
@@ -62,11 +62,11 @@ public class WeatheredConnectedGirderModel extends CTModel {
             Arrays.fill(connectedFaces, false);
         }
 
-        void setConnected(Direction face, boolean connected) {
+        void setConnected(final Direction face, final boolean connected) {
             connectedFaces[face.get2DDataValue()] = connected;
         }
 
-        boolean isConnected(Direction face) {
+        boolean isConnected(final Direction face) {
             return connectedFaces[face.get2DDataValue()];
         }
     }

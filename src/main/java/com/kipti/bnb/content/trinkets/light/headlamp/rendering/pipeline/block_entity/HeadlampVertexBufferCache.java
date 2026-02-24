@@ -6,6 +6,7 @@ import net.createmod.catnip.render.SuperBufferFactory;
 import net.createmod.catnip.render.SuperByteBuffer;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -116,7 +117,7 @@ public final class HeadlampVertexBufferCache {
         if (excess <= 0) {
             return;
         }
-        final var iterator = CACHE.keySet().iterator();
+        final Iterator<Long> iterator = CACHE.keySet().iterator();
         for (int i = 0; i < excess && iterator.hasNext(); i++) {
             iterator.next();
             iterator.remove();

@@ -8,7 +8,7 @@ import java.util.function.Supplier;
 
 public class ConnectingCogwheelChainBlock extends CogwheelChainBlock implements ICogWheel, ICogwheelChainBlock {
 
-    protected ConnectingCogwheelChainBlock(final boolean large, Properties properties, Supplier<BlockEntry<?>> sourceBlock) {
+    protected ConnectingCogwheelChainBlock(final boolean large, final Properties properties, final Supplier<BlockEntry<?>> sourceBlock) {
         super(large, properties, sourceBlock);
     }
 

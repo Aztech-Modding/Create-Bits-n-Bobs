@@ -17,7 +17,7 @@ public class BnbBlockStateGen {
 
     private static final int DEFAULT_ANGLE_OFFSET = 180;
 
-    public static <T extends Block> void directionalUvLockBlock(DataGenContext<Block, T> ctx, RegistrateBlockstateProvider prov, Function<BlockState, ModelFile> modelFunc) {
+    public static <T extends Block> void directionalUvLockBlock(final DataGenContext<Block, T> ctx, final RegistrateBlockstateProvider prov, final Function<BlockState, ModelFile> modelFunc) {
         prov.getVariantBuilder(ctx.get())
                 .forAllStates(state -> {
                     final Direction dir = state.getValue(BlockStateProperties.FACING);
@@ -60,7 +60,7 @@ public class BnbBlockStateGen {
                 });
     }
 
-    public static <T extends AlternatingTrussBlock> void alternatingTrussModel(DataGenContext<Block, T> ctx, RegistrateBlockstateProvider prov) {
+    public static <T extends AlternatingTrussBlock> void alternatingTrussModel(final DataGenContext<Block, T> ctx, final RegistrateBlockstateProvider prov) {
         prov.getVariantBuilder(ctx.get())
                 .forAllStates(state -> {
                     final Direction dir = Direction.fromAxisAndDirection(state.getValue(RotatedPillarBlock.AXIS), Direction.AxisDirection.POSITIVE);

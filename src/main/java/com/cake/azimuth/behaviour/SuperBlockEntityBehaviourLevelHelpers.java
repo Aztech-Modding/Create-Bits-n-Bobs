@@ -33,11 +33,11 @@ sealed interface SuperBlockEntityBehaviourLevelHelpers permits SuperBlockEntityB
      */
     @SuppressWarnings("unchecked")
     @Nullable
-    default <T extends SuperBlockEntityBehaviour> T getComplementaryBehaviour(BlockPos otherPos) {
+    default <T extends SuperBlockEntityBehaviour> T getComplementaryBehaviour(final BlockPos otherPos) {
         final Level level = this.getLevel();
         if (level == null || !level.isLoaded(otherPos))
             return null;
-        if (!(level.getBlockEntity(otherPos) instanceof SmartBlockEntity otherBE))
+        if (!(level.getBlockEntity(otherPos) instanceof final SmartBlockEntity otherBE))
             return null;
         return otherBE.getBehaviour((BehaviourType<? extends T>) this.getType());
     }
@@ -60,7 +60,7 @@ sealed interface SuperBlockEntityBehaviourLevelHelpers permits SuperBlockEntityB
      * @param <T>      the type of the current behaviour, used to ensure the optional is of the correct type
      * @return an optional containing the complementary behaviour if it exists and is of the same type, or an empty optional if it doesn't exist, isn't loaded, or isn't of the same type.
      */
-    default <T extends SuperBlockEntityBehaviour> Optional<T> getComplementaryBehaviourOptional(BlockPos otherPos) {
+    default <T extends SuperBlockEntityBehaviour> Optional<T> getComplementaryBehaviourOptional(final BlockPos otherPos) {
         return Optional.ofNullable(getComplementaryBehaviour(otherPos));
     }
 
@@ -73,7 +73,7 @@ sealed interface SuperBlockEntityBehaviourLevelHelpers permits SuperBlockEntityB
      * @return the complementary behaviour if it exists and is of the same type
      * @throws IllegalStateException if the complementary behaviour does not exist, is not loaded, or is of a different type
      */
-    default <T extends SuperBlockEntityBehaviour> T getComplementaryBehaviourOrThrow(BlockPos otherPos) {
+    default <T extends SuperBlockEntityBehaviour> T getComplementaryBehaviourOrThrow(final BlockPos otherPos) {
         return this.<T>getComplementaryBehaviourOptional(otherPos)
                 .orElseThrow(() -> new IllegalStateException(
                         "Expected to find a complementary behaviour (type " +
@@ -105,9 +105,9 @@ sealed interface SuperBlockEntityBehaviourLevelHelpers permits SuperBlockEntityB
      */
     @SuppressWarnings("unchecked")
     @Nullable
-    default <T extends SuperBlockEntityBehaviour> T getComplementaryBehaviour(BlockEntity otherBlockEntity) {
+    default <T extends SuperBlockEntityBehaviour> T getComplementaryBehaviour(final BlockEntity otherBlockEntity) {
         final Level level = this.getLevel();
-        if (level == null || !(otherBlockEntity instanceof SmartBlockEntity otherBE))
+        if (level == null || !(otherBlockEntity instanceof final SmartBlockEntity otherBE))
             return null;
         return otherBE.getBehaviour((BehaviourType<? extends T>) this.getType());
     }
@@ -130,7 +130,7 @@ sealed interface SuperBlockEntityBehaviourLevelHelpers permits SuperBlockEntityB
      * @param <T>              the type of the current behaviour, used to ensure the optional is of the correct type
      * @return an optional containing the complementary behaviour if it exists and is of the same type, or an empty optional if it doesn't exist, isn't loaded, or isn't of the same type.
      */
-    default <T extends SuperBlockEntityBehaviour> Optional<T> getComplementaryBehaviourOptional(BlockEntity otherBlockEntity) {
+    default <T extends SuperBlockEntityBehaviour> Optional<T> getComplementaryBehaviourOptional(final BlockEntity otherBlockEntity) {
         return Optional.ofNullable(getComplementaryBehaviour(otherBlockEntity));
     }
 
@@ -143,7 +143,7 @@ sealed interface SuperBlockEntityBehaviourLevelHelpers permits SuperBlockEntityB
      * @return the complementary behaviour if it exists and is of the same type
      * @throws IllegalStateException if the complementary behaviour does not exist or is of a different type
      */
-    default <T extends SuperBlockEntityBehaviour> T getComplementaryBehaviourOrThrow(BlockEntity otherBlockEntity) {
+    default <T extends SuperBlockEntityBehaviour> T getComplementaryBehaviourOrThrow(final BlockEntity otherBlockEntity) {
         return this.<T>getComplementaryBehaviourOptional(otherBlockEntity)
                 .orElseThrow(() -> new IllegalStateException(
                         "Expected to find a complementary behaviour (type " +

@@ -13,9 +13,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class StructureTransformMixin {
 
     @Inject(method = "apply(Lnet/minecraft/world/level/block/entity/BlockEntity;)V", at = @At("HEAD"))
-    public void apply(BlockEntity be, CallbackInfo ci) {
-        if (be instanceof AzimuthSmartBlockEntityExtension azebe) {
-            for (SuperBlockEntityBehaviour extension : azebe.azimuth$getSuperBehaviours()) {
+    public void apply(final BlockEntity be, final CallbackInfo ci) {
+        if (be instanceof final AzimuthSmartBlockEntityExtension azebe) {
+            for (final SuperBlockEntityBehaviour extension : azebe.azimuth$getSuperBehaviours()) {
                 extension.transform(be, ((StructureTransform) (Object) this));
             }
         }

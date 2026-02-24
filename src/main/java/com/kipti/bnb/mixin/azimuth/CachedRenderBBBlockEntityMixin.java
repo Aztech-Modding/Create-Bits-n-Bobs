@@ -13,11 +13,11 @@ import org.spongepowered.asm.mixin.injection.At;
 public class CachedRenderBBBlockEntityMixin {
 
     @WrapOperation(method = "getRenderBoundingBox", at = @At(value = "INVOKE", target = "Lcom/simibubi/create/foundation/blockEntity/CachedRenderBBBlockEntity;createRenderBoundingBox()Lnet/minecraft/world/phys/AABB;"))
-    private AABB azimuth$includeAdditionalRenderBounds(CachedRenderBBBlockEntity instance, Operation<AABB> original) {
+    private AABB azimuth$includeAdditionalRenderBounds(final CachedRenderBBBlockEntity instance, final Operation<AABB> original) {
         AABB originalBox = original.call(instance);
-        if (this instanceof AzimuthSmartBlockEntityExtension azebe) {
-            for (RenderedBehaviourExtension behaviour : azebe.azimuth$getRenderedExtensionCache()) {
-                AABB renderBoundingBox = behaviour.getRenderBoundingBox();
+        if (this instanceof final AzimuthSmartBlockEntityExtension azebe) {
+            for (final RenderedBehaviourExtension behaviour : azebe.azimuth$getRenderedExtensionCache()) {
+                final AABB renderBoundingBox = behaviour.getRenderBoundingBox();
                 if (renderBoundingBox != null)
                     originalBox = originalBox.minmax(renderBoundingBox);
             }

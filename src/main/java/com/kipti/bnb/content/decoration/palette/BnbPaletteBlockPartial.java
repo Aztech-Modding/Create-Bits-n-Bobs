@@ -290,7 +290,7 @@ public abstract class BnbPaletteBlockPartial<B extends Block> {
                     }, StairBlock.WATERLOGGED);
         }
 
-        private static @NotNull BlockModelBuilder getStairModel(RegistrateBlockstateProvider prov, String name, String s, ResourceLocation mainTexture, ResourceLocation flippedTexture) {
+        private static @NotNull BlockModelBuilder getStairModel(final RegistrateBlockstateProvider prov, final String name, final String s, final ResourceLocation mainTexture, final ResourceLocation flippedTexture) {
             return prov.models()
                     .withExistingParent(name, CreateBitsnBobs.asResource(s))
                     .texture("side", mainTexture)

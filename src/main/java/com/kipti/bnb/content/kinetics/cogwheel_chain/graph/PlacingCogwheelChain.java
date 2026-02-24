@@ -78,12 +78,12 @@ public class PlacingCogwheelChain {
     }
 
     public static boolean isLargeBlockTarget(final BlockState state) {
-        CogwheelChainCandidateInfo info = CogwheelChainCandidateInfo.REGISTRY.get(state.getBlock());
+        final CogwheelChainCandidateInfo info = CogwheelChainCandidateInfo.REGISTRY.get(state.getBlock());
         return info != null && info.isLarge();
     }
 
     public static boolean hasSmallCogwheelOffset(final BlockState state) {
-        CogwheelChainCandidateInfo info = CogwheelChainCandidateInfo.REGISTRY.get(state.getBlock());
+        final CogwheelChainCandidateInfo info = CogwheelChainCandidateInfo.REGISTRY.get(state.getBlock());
         return info != null && info.hasSmallCogwheelOffset();
     }
 

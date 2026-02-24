@@ -31,7 +31,7 @@ public class ConveyChainRotationsInstruction extends PonderInstruction {
     }
 
     @Override
-    public void tick(PonderScene scene) {
+    public void tick(final PonderScene scene) {
         final BlockEntity blockEntity = scene.getWorld().getBlockEntity(chainStartLocation);
         if (!(blockEntity instanceof final KineticBlockEntity kineticBlockEntity)) {
             CreateBitsnBobs.LOGGER.warn("Could not find kinetic chain block entity at {}, skipping instruction", chainStartLocation);

@@ -38,32 +38,32 @@ public abstract class SmartBlockEntityMixin extends CachedRenderBBBlockEntity im
     @Unique
     private final List<Runnable> azimuth$cacheClearListeners = new ArrayList<>();
 
-    public SmartBlockEntityMixin(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+    public SmartBlockEntityMixin(final BlockEntityType<?> type, final BlockPos pos, final BlockState state) {
         super(type, pos, state);
     }
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    public void azimuth$constructWithAdditionalBehaviours(BlockEntityType<?> type, BlockPos pos, BlockState state, CallbackInfo ci) {
-        for (BlockEntityBehaviour b : BehaviourApplicators.getBehavioursFor((SmartBlockEntity) (Object) this)) {
+    public void azimuth$constructWithAdditionalBehaviours(final BlockEntityType<?> type, final BlockPos pos, final BlockState state, final CallbackInfo ci) {
+        for (final BlockEntityBehaviour b : BehaviourApplicators.getBehavioursFor((SmartBlockEntity) (Object) this)) {
             behaviours.put(b.getType(), b);
         }
     }
 
     @Override
     public void azimuth$updateBehaviourExtensionCache() {
-        for (Runnable cacheClearListener : azimuth$cacheClearListeners) {
+        for (final Runnable cacheClearListener : azimuth$cacheClearListeners) {
             cacheClearListener.run();
         }
     }
 
     @SuppressWarnings("unchecked")
     @Unique
-    public <T> List<T> azimuth$searchExtensionBehaviours(Predicate<SuperBlockEntityBehaviour> filter) {
+    public <T> List<T> azimuth$searchExtensionBehaviours(final Predicate<SuperBlockEntityBehaviour> filter) {
         return behaviours
                 .values()
                 .stream()
                 .filter((beb) ->
-                        beb instanceof SuperBlockEntityBehaviour sbeb &&
+                        beb instanceof final SuperBlockEntityBehaviour sbeb &&
                                 filter.test(sbeb))
                 .map(sbeb -> (T) sbeb)
                 .toList();
@@ -81,7 +81,7 @@ public abstract class SmartBlockEntityMixin extends CachedRenderBBBlockEntity im
     }
 
     @Override
-    public void azimuth$addCacheClearListener(Runnable cacheClearListener) {
+    public void azimuth$addCacheClearListener(final Runnable cacheClearListener) {
         azimuth$cacheClearListeners.add(cacheClearListener);
     }
 

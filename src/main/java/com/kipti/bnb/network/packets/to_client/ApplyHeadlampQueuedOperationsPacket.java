@@ -33,7 +33,7 @@ public record ApplyHeadlampQueuedOperationsPacket(
     );
 
     @Override
-    public void handle(LocalPlayer player) {
+    public void handle(final LocalPlayer player) {
         HeadlampQueuedOperationHandler.applyChangeSnapshot(player.level(), queuedChanges);
     }
 

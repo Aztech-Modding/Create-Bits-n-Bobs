@@ -20,7 +20,7 @@ import java.util.Optional;
  */
 public abstract non-sealed class SuperBlockEntityBehaviour extends BlockEntityBehaviour implements SuperBlockEntityBehaviourLevelHelpers {
 
-    public SuperBlockEntityBehaviour(SmartBlockEntity be) {
+    public SuperBlockEntityBehaviour(final SmartBlockEntity be) {
         super(be);
     }
 
@@ -45,7 +45,7 @@ public abstract non-sealed class SuperBlockEntityBehaviour extends BlockEntityBe
         return !this.isClientLevel();
     }
 
-    public void transform(BlockEntity be, StructureTransform structureTransformMixin) {
+    public void transform(final BlockEntity be, final StructureTransform structureTransformMixin) {
     }
 
     /**
@@ -57,7 +57,7 @@ public abstract non-sealed class SuperBlockEntityBehaviour extends BlockEntityBe
      * @param <T>   the type of the behaviour
      * @return an optional containing the behaviour if it exists and is of the correct type, or an empty optional if it doesn't exist, isn't loaded, or isn't a SmartBlockEntity.
      */
-    public static <T extends BlockEntityBehaviour> Optional<T> getOptional(Level level, @NotNull BlockPos pos, BehaviourType<T> type) {
+    public static <T extends BlockEntityBehaviour> Optional<T> getOptional(final Level level, @NotNull final BlockPos pos, final BehaviourType<T> type) {
         return Optional.ofNullable(BlockEntityBehaviour.get(level, pos, type));
     }
 
@@ -71,7 +71,7 @@ public abstract non-sealed class SuperBlockEntityBehaviour extends BlockEntityBe
      * @param <T>   the type of the behaviour
      * @return an optional containing the behaviour if it exists and is of the correct type, or an empty optional if it doesn't exist, isn't loaded, or isn't a SmartBlockEntity.
      */
-    public static <T extends BlockEntityBehaviour> T getOrThrow(Level level, @NotNull BlockPos pos, BehaviourType<T> type) {
+    public static <T extends BlockEntityBehaviour> T getOrThrow(final Level level, @NotNull final BlockPos pos, final BehaviourType<T> type) {
         return Optional.ofNullable(BlockEntityBehaviour.get(level, pos, type))
                 .orElseThrow(() -> new IllegalStateException(
                         "Expected to find a behaviour (type " +
@@ -90,7 +90,7 @@ public abstract non-sealed class SuperBlockEntityBehaviour extends BlockEntityBe
      * @param <T>  the type of the behaviour
      * @return an optional containing the behaviour if it exists and is of the correct type, or an empty optional if it doesn't exist, isn't loaded, or isn't a SmartBlockEntity.
      */
-    public static <T extends BlockEntityBehaviour> Optional<T> getOptional(BlockEntity be, BehaviourType<T> type) {
+    public static <T extends BlockEntityBehaviour> Optional<T> getOptional(final BlockEntity be, final BehaviourType<T> type) {
         return Optional.ofNullable(BlockEntityBehaviour.get(be, type));
     }
 
@@ -103,7 +103,7 @@ public abstract non-sealed class SuperBlockEntityBehaviour extends BlockEntityBe
      * @param <T>  the type of the behaviour
      * @return an optional containing the behaviour if it exists and is of the correct type, or an empty optional if it doesn't exist, isn't loaded, or isn't a SmartBlockEntity.
      */
-    public static <T extends BlockEntityBehaviour> T getOrThrow(BlockEntity be, BehaviourType<T> type) {
+    public static <T extends BlockEntityBehaviour> T getOrThrow(final BlockEntity be, final BehaviourType<T> type) {
         return Optional.ofNullable(BlockEntityBehaviour.get(be, type))
                 .orElseThrow(() -> new IllegalStateException(
                         "Expected to find a behaviour (type " +
