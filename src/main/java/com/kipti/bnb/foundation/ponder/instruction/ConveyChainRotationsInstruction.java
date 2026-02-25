@@ -51,7 +51,7 @@ public class ConveyChainRotationsInstruction extends PonderInstruction {
                 CreateBitsnBobs.LOGGER.warn("Could not find kinetic block entity for controller at {}, skipping instruction", chainStartLocation.offset(offset));
                 return;
             }
-            final CogwheelChainBehaviour controllerBehaviour = behaviour.getComplementaryBehaviourOrThrow(controllerBlockEntity);
+            final CogwheelChainBehaviour controllerBehaviour = behaviour.getSameBehaviourOrThrow(controllerBlockEntity);
             conveyRotationsFromController(controllerBehaviour, kineticControllerBlockEntity, rpm);
         }
     }
@@ -77,7 +77,7 @@ public class ConveyChainRotationsInstruction extends PonderInstruction {
                 CreateBitsnBobs.LOGGER.warn("Could not find kinetic block entity for chain node at {}, skipping node", nodePos);
                 continue;
             }
-            final CogwheelChainBehaviour behaviour = controllerBehaviour.getComplementaryBehaviourOrThrow(childKineticBlockEntity);
+            final CogwheelChainBehaviour behaviour = controllerBehaviour.getSameBehaviourOrThrow(childKineticBlockEntity);
             modifyBlockEntityKineticRotation(level, childKineticBlockEntity, initialChainRotationFactor, behaviour.getChainRotationFactor(), rpm);
         }
         modifyBlockEntityKineticRotation(level, kineticBlockEntity, -1, initialChainRotationFactor, rpm);

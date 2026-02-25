@@ -15,8 +15,8 @@ public class CachedRenderBBBlockEntityMixin {
     @WrapOperation(method = "getRenderBoundingBox", at = @At(value = "INVOKE", target = "Lcom/simibubi/create/foundation/blockEntity/CachedRenderBBBlockEntity;createRenderBoundingBox()Lnet/minecraft/world/phys/AABB;"))
     private AABB azimuth$includeAdditionalRenderBounds(final CachedRenderBBBlockEntity instance, final Operation<AABB> original) {
         AABB originalBox = original.call(instance);
-        if (this instanceof final AzimuthSmartBlockEntityExtension azebe) {
-            for (final RenderedBehaviourExtension behaviour : azebe.azimuth$getRenderedExtensionCache()) {
+        if (this instanceof final AzimuthSmartBlockEntityExtension asbee) {
+            for (final RenderedBehaviourExtension behaviour : asbee.azimuth$getRenderedExtensionCache()) {
                 final AABB renderBoundingBox = behaviour.getRenderBoundingBox();
                 if (renderBoundingBox != null)
                     originalBox = originalBox.minmax(renderBoundingBox);

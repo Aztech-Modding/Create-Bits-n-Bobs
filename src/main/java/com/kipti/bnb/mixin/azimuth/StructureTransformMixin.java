@@ -14,8 +14,8 @@ public class StructureTransformMixin {
 
     @Inject(method = "apply(Lnet/minecraft/world/level/block/entity/BlockEntity;)V", at = @At("HEAD"))
     public void apply(final BlockEntity be, final CallbackInfo ci) {
-        if (be instanceof final AzimuthSmartBlockEntityExtension azebe) {
-            for (final SuperBlockEntityBehaviour extension : azebe.azimuth$getSuperBehaviours()) {
+        if (be instanceof final AzimuthSmartBlockEntityExtension asbee) {
+            for (final SuperBlockEntityBehaviour extension : asbee.azimuth$getSuperBehaviours()) {
                 extension.transform(be, ((StructureTransform) (Object) this));
             }
         }

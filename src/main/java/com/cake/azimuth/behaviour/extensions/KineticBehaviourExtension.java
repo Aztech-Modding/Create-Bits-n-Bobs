@@ -14,7 +14,7 @@ import java.util.List;
 public interface KineticBehaviourExtension extends BehaviourExtension {
 
     /**
-     * Adds additional propagation locations (as long as this is attached to a kinetic block entity).
+     * Allows a behaviour to add to (or modify) the neighbors list in kinetic propagation
      *
      * @return an array list of the neighbors by default
      */

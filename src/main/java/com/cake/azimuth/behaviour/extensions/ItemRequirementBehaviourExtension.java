@@ -9,6 +9,6 @@ import net.minecraft.world.level.block.state.BlockState;
  */
 public interface ItemRequirementBehaviourExtension extends BehaviourExtension {
 
-
     ItemRequirement getRequiredItems(BlockState state);
+
 }

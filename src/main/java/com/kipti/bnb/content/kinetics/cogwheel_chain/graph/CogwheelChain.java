@@ -2,8 +2,6 @@ package com.kipti.bnb.content.kinetics.cogwheel_chain.graph;
 
 import com.cake.azimuth.behaviour.SuperBlockEntityBehaviour;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.behaviour.CogwheelChainBehaviour;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.block.CogwheelChainBlock;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.block.CogwheelChainBlockEntity;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.BnbCogwheelChainTypes;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.CogwheelChainType;
 import com.kipti.bnb.registry.core.BnbRegistries;
@@ -214,13 +212,13 @@ public class CogwheelChain {
         }
     }
 
-    public static void removeChainCogwheelFromLevelIfPresent(final Level level, final BlockPos pos) {
+    public static void removeChainCogwheelFromLevelIfPresent(final Level level, final BlockPos pos) {//TODO: do
         final BlockEntity be = level.getBlockEntity(pos);
         final BlockState state = level.getBlockState(pos);
-        if (be instanceof CogwheelChainBlockEntity && (state.getBlock() instanceof final CogwheelChainBlock cogwheelChainBlock)) {
-            level.setBlockAndUpdate(pos, cogwheelChainBlock.getSourceBlockState()
-                    .setValue(CogwheelChainBlock.AXIS, state.getValue(CogwheelChainBlock.AXIS)));
-        }
+//        if (be instanceof CogwheelChainBlockEntity && (state.getBlock() instanceof final CogwheelChainBlock cogwheelChainBlock)) {
+//            level.setBlockAndUpdate(pos, cogwheelChainBlock.getSourceBlockState()
+//                    .setValue(CogwheelChainBlock.AXIS, state.getValue(CogwheelChainBlock.AXIS)));
+//        }
     }
 
     public void createDestroyEffects(final Level level, final BlockPos worldPosition) {

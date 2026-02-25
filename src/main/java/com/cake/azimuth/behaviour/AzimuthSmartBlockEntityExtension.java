@@ -3,6 +3,7 @@ package com.cake.azimuth.behaviour;
 import com.cake.azimuth.behaviour.extensions.ItemRequirementBehaviourExtension;
 import com.cake.azimuth.behaviour.extensions.KineticBehaviourExtension;
 import com.cake.azimuth.behaviour.extensions.RenderedBehaviourExtension;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -12,6 +13,7 @@ import java.util.function.Predicate;
  * Shouldn't be necessary to use, and should be considered internal, but if necessary, allows for clearing the rendered block entity behaviour cache if the behaviours have been changed on the fly.
  * By default, the rendered block entity behaviour cache is lazily constructed, so non-deferred {@link RenderedBehaviourExtension}s should be completely fine.
  */
+@ApiStatus.Internal
 public interface AzimuthSmartBlockEntityExtension {
 
     /**

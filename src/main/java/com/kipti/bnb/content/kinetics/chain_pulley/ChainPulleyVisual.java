@@ -28,6 +28,7 @@ import org.joml.Quaternionfc;
 
 /**
  * Unused because the scrolling visuals don't have cutout support, and I cant be asked to figure it out and make a custom shader yet
+ * TODO: use cutout supp cause it actually exists
  */
 public class ChainPulleyVisual extends ShaftVisual<ChainPulleyBlockEntity> implements SimpleDynamicVisual, ShaderLightVisual {
     private final InstanceRecycler<ScrollInstance> belt;

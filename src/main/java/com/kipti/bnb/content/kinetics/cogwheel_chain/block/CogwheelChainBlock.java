@@ -37,6 +37,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.common.util.Lazy;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,6 +46,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+@Deprecated
+@ApiStatus.ScheduledForRemoval
 public class CogwheelChainBlock extends RotatedPillarKineticBlock
         implements IBE<CogwheelChainBlockEntity>, SpecialBlockItemRequirement, EncasableBlock, ICogwheelChainBlock, IHaveBigOutline { //TODO : waterlog state
     private static final List<CogwheelChainBlock> ALL_CHAIN_BLOCKS = new ArrayList<>();
@@ -65,7 +68,7 @@ public class CogwheelChainBlock extends RotatedPillarKineticBlock
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(final ItemStack stack, final BlockState state, final Level level, final BlockPos pos, final Player player, final InteractionHand hand, final BlockHitResult hitResult) {
+    protected @NotNull ItemInteractionResult useItemOn(final @NotNull ItemStack stack, final @NotNull BlockState state, final @NotNull Level level, final @NotNull BlockPos pos, final @NotNull Player player, final @NotNull InteractionHand hand, final @NotNull BlockHitResult hitResult) {
         final ItemInteractionResult result = tryEncase(state, level, pos, stack, player, hand, hitResult);
         if (result.consumesAction())
             return result;
