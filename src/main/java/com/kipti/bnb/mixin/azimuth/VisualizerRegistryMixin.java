@@ -1,8 +1,7 @@
 package com.kipti.bnb.mixin.azimuth;
 
-import com.cake.azimuth.behaviour.render.WrappedVisualizer;
-import com.cake.azimuth.registration.RenderedBehaviourInterest;
-import com.cake.azimuth.registration.RenderedBehaviourWrapPlan;
+import com.cake.azimuth.behaviour.render.WrappingVisualizer;
+import com.cake.azimuth.registration.VisualWrapperInterest;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import dev.engine_room.flywheel.api.internal.FlwApiLink;
@@ -24,12 +23,12 @@ public class VisualizerRegistryMixin {
             )
     )
     private static <T extends BlockEntity> void azimuth$wrapInterestedVisualizer(final FlwApiLink instance, final BlockEntityType<T> type, final BlockEntityVisualizer<? super T> visualizer, final Operation<Void> original) {
-        final RenderedBehaviourWrapPlan plan = RenderedBehaviourInterest.getPlan(type);
-        if (plan == null || !plan.wrapVisual()) {
+        if (!VisualWrapperInterest.isInterested(type)) {
             original.call(instance, type, visualizer);
             return;
         }
-        final BlockEntityVisualizer<? super T> wrapped = WrappedVisualizer.wrap(type, visualizer, plan);
+        final BlockEntityVisualizer<? super T> wrapped = WrappingVisualizer.getWrapping(visualizer);
         original.call(instance, type, wrapped);
     }
+
 }

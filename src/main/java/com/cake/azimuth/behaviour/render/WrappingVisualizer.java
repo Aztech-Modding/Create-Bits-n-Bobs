@@ -3,44 +3,47 @@ package com.cake.azimuth.behaviour.render;
 import com.cake.azimuth.behaviour.AzimuthSmartBlockEntityExtension;
 import com.cake.azimuth.behaviour.SuperBlockEntityBehaviour;
 import com.cake.azimuth.behaviour.extensions.RenderedBehaviourExtension;
-import com.cake.azimuth.registration.RenderedBehaviourWrapPlan;
+import com.cake.azimuth.registration.VisualWrapperInterest;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import dev.engine_room.flywheel.api.visual.BlockEntityVisual;
 import dev.engine_room.flywheel.api.visualization.BlockEntityVisualizer;
 import dev.engine_room.flywheel.api.visualization.VisualizationContext;
 import dev.engine_room.flywheel.lib.visual.AbstractBlockEntityVisual;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
-public class WrappedVisualizer<T extends BlockEntity> implements BlockEntityVisualizer<T> {
+/**
+ * A wrapper around a {@link BlockEntityVisualizer} that adds support for rendering {@link RenderedBehaviourExtension}s.
+ * This is only used when necessary, according to the {@link VisualWrapperInterest}.
+ * The wrapper is reused when targeting a visual multiple times to avoid unnecessary allocations.
+ */
+public class WrappingVisualizer<T extends BlockEntity> implements BlockEntityVisualizer<T> {
+    private static final HashMap<BlockEntityVisualizer<?>, WrappingVisualizer<?>> WRAPPERS_BY_DELEGATE = new HashMap<>();
+
     private final BlockEntityVisualizer<? super T> delegate;
-    private final RenderedBehaviourWrapPlan wrapPlan;
 
-    public WrappedVisualizer(final BlockEntityType<T> type,
-                             final BlockEntityVisualizer<? super T> delegate,
-                             final RenderedBehaviourWrapPlan wrapPlan) {
+    public WrappingVisualizer(final BlockEntityVisualizer<? super T> delegate) {
         this.delegate = delegate;
-        this.wrapPlan = wrapPlan;
     }
 
-    public static <T extends BlockEntity> BlockEntityVisualizer<? super T> wrap(final BlockEntityType<T> type,
-                                                                                @Nullable final BlockEntityVisualizer<? super T> delegate,
-                                                                                final RenderedBehaviourWrapPlan wrapPlan) {
-        if (delegate == null || delegate instanceof WrappedVisualizer<?>) {
+    @SuppressWarnings("unchecked")
+    public static <T extends BlockEntity> BlockEntityVisualizer<? super T> getWrapping(@Nullable final BlockEntityVisualizer<? super T> delegate) {
+        if (delegate == null || delegate instanceof WrappingVisualizer<?>) {
             return delegate;
         }
-        return new WrappedVisualizer<>(type, delegate, wrapPlan);
+        final WrappingVisualizer<?> visualizer = WRAPPERS_BY_DELEGATE.computeIfAbsent(delegate, WrappingVisualizer::new);
+        if (visualizer.delegate != delegate) {
+            throw new IllegalStateException("Inconsistent delegate mapping for " + delegate);
+        }
+        return (BlockEntityVisualizer<? super T>) visualizer;
     }
 
     @Override
     public BlockEntityVisual<? super T> createVisual(final VisualizationContext ctx, final T blockEntity, final float partialTick) {
         final BlockEntityVisual<? super T> delegateVisual = delegate.createVisual(ctx, blockEntity, partialTick);
-        if (!wrapPlan.wrapVisual()) {
-            return delegateVisual;
-        }
         if (!(blockEntity instanceof final SmartBlockEntity smartBe) || !(smartBe instanceof final AzimuthSmartBlockEntityExtension azimuthBE)) {
             return delegateVisual;
         }
@@ -64,7 +67,7 @@ public class WrappedVisualizer<T extends BlockEntity> implements BlockEntityVisu
             return delegateVisual;
         }
 
-        return new CombinedVisual<>(delegateVisual, behaviourVisuals);
+        return new WrappedVisual<>(delegateVisual, behaviourVisuals);
     }
 
     @Override

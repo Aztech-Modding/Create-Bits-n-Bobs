@@ -71,8 +71,6 @@ public class ConveyChainRotationsInstruction extends PonderInstruction {
             if (chainNode.localPos().equals(Vec3i.ZERO)) { // Controller node, skip
                 continue;
             }
-                continue;
-            }
 
             final BlockEntity blockEntity = controllerBehaviour.getLevel().getBlockEntity(nodePos);
             if (!(blockEntity instanceof final KineticBlockEntity childKineticBlockEntity)) {
@@ -93,7 +91,6 @@ public class ConveyChainRotationsInstruction extends PonderInstruction {
         final CompoundTag tag = childCogwheelChainBlockEntity.saveWithFullMetadata(level.registryAccess());
         tag.putFloat("Speed", rpm * initialFactor / factor);
         childCogwheelChainBlockEntity.loadWithComponents(tag, level.registryAccess());
-    }
     }
 
     @Override

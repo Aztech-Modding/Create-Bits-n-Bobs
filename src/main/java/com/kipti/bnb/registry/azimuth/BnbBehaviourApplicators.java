@@ -1,8 +1,7 @@
 package com.kipti.bnb.registry.azimuth;
 
 import com.cake.azimuth.registration.BehaviourApplicators;
-import com.cake.azimuth.registration.RenderedBehaviourInterest;
-import com.cake.azimuth.registration.RenderedBehaviourWrapPlan;
+import com.cake.azimuth.registration.VisualWrapperInterest;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.behaviour.CogwheelChainBehaviour;
 import com.simibubi.create.content.kinetics.simpleRelays.ICogWheel;
 import net.minecraft.world.level.block.Block;
@@ -19,9 +18,8 @@ public class BnbBehaviourApplicators {
             }
             return null;
         });
-        RenderedBehaviourInterest.registerInterest(
-                BnbBehaviourApplicators::isSomeCogwheelBlockEntity,
-                RenderedBehaviourWrapPlan.wrapAll()
+        VisualWrapperInterest.registerInterest(
+                BnbBehaviourApplicators::isSomeCogwheelBlockEntity
         );
     }
 

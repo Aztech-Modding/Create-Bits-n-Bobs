@@ -1,6 +1,7 @@
 package com.cake.azimuth.behaviour.render;
 
 import com.cake.azimuth.behaviour.extensions.RenderedBehaviourExtension;
+import com.cake.azimuth.registration.VisualWrapperInterest;
 import dev.engine_room.flywheel.api.instance.Instance;
 import dev.engine_room.flywheel.api.task.Plan;
 import dev.engine_room.flywheel.api.visual.*;
@@ -13,10 +14,12 @@ import java.util.List;
 import java.util.function.Consumer;
 
 /**
- * Do i like this? no.
- * But, this means i am able to make a visual with behaviours, and i dont need to create some anonymous class bs
+ * Do I like this? no.
+ * Visuals are (quite reasonably) locked behind impl packages and very difficult to mess with.
+ * The easiest way I could see is to wrap the visual with an intermediate that allows an array of behaviourVisuals to be attached.
+ * This is used only when necessary, according to the {@link VisualWrapperInterest}.
  */
-class CombinedVisual<T extends BlockEntity>
+class WrappedVisual<T extends BlockEntity>
         implements BlockEntityVisual<T>, DynamicVisual, TickableVisual, LightUpdatedVisual, ShaderLightVisual {
     private final BlockEntityVisual<? super T> delegateVisual;
     private final @Nullable DynamicVisual delegateDynamic;
@@ -25,7 +28,7 @@ class CombinedVisual<T extends BlockEntity>
     private final @Nullable SectionTrackedVisual delegateSectionTracked;
     private final List<RenderedBehaviourExtension.BehaviourVisual> behaviourVisuals;
 
-    CombinedVisual(final BlockEntityVisual<? super T> delegateVisual, final List<RenderedBehaviourExtension.BehaviourVisual> behaviourVisuals) {
+    WrappedVisual(final BlockEntityVisual<? super T> delegateVisual, final List<RenderedBehaviourExtension.BehaviourVisual> behaviourVisuals) {
         this.delegateVisual = delegateVisual;
         this.behaviourVisuals = behaviourVisuals;
         this.delegateDynamic = delegateVisual instanceof final DynamicVisual dynamic ? dynamic : null;

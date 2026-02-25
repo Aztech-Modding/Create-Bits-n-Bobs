@@ -15,6 +15,7 @@
     "azimuth.CachedRenderBBBlockEntityMixin",
     "azimuth.ItemRequirementMixin",
     "azimuth.RotationPropagatorMixin",
+    "azimuth.SafeBlockEntityRendererMixin",
     "azimuth.SmartBlockEntityMixin",
     "azimuth.StructureTransformMixin",
     "azimuth.VisualizationHelperMixin",
@@ -36,7 +37,6 @@
     "FontAccessMixin",
     "GirderCTBehaviourMixin",
     "GuiGameElementMixin",
-    "azimuth.BlockEntityRenderersMixin",
     "azimuth.VisualizerRegistryMixin"
   ],
   "server": [
