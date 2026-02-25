@@ -68,7 +68,9 @@ public class ConveyChainRotationsInstruction extends PonderInstruction {
 
         for (final PathedCogwheelNode chainNode : new ArrayList<>(chain.getChainPathCogwheelNodes())) {
             final BlockPos nodePos = chainControllerPos.offset(chainNode.localPos());
-            if (chainNode.localPos() == Vec3i.ZERO) { // Controller node, skip
+            if (chainNode.localPos().equals(Vec3i.ZERO)) { // Controller node, skip
+                continue;
+            }
                 continue;
             }
 
