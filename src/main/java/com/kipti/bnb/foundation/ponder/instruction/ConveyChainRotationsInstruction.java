@@ -86,9 +86,14 @@ public class ConveyChainRotationsInstruction extends PonderInstruction {
     }
 
     private void modifyBlockEntityKineticRotation(final Level level, final KineticBlockEntity childCogwheelChainBlockEntity, final float initialFactor, final float factor, final float rpm) {
+        if (Math.abs(factor) < 1.0e-6f) {
+            CreateBitsnBobs.LOGGER.warn("Skipped kinetic rotation update at {} due to zero chain factor", childCogwheelChainBlockEntity.getBlockPos());
+            return;
+        }
         final CompoundTag tag = childCogwheelChainBlockEntity.saveWithFullMetadata(level.registryAccess());
         tag.putFloat("Speed", rpm * initialFactor / factor);
         childCogwheelChainBlockEntity.loadWithComponents(tag, level.registryAccess());
+    }
     }
 
     @Override
