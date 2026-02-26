@@ -1,6 +1,7 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.graph;
 
 import com.google.common.collect.ImmutableList;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.placement.ChainInteractionFailedException;
 import net.createmod.catnip.data.Pair;
 import net.minecraft.world.phys.Vec3;
 

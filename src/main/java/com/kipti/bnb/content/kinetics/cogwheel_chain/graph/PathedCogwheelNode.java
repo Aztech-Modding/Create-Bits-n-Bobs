@@ -7,16 +7,16 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.phys.Vec3;
 
 public record PathedCogwheelNode(int side, boolean isLarge, Direction.Axis rotationAxis, BlockPos localPos,
-                                 boolean offsetForSmallCogwheel) {
+                                 boolean hasSmallCogwheelOffset) {
 
     public PathedCogwheelNode(final PlacingCogwheelNode partialNode, final int side) {
-        this(side, partialNode.isLarge(), partialNode.rotationAxis(), partialNode.pos(), partialNode.hasOffsetForSmallCogwheel());
+        this(side, partialNode.isLarge(), partialNode.rotationAxis(), partialNode.pos(), partialNode.hasSmallCogwheelOffset());
     }
 
     public void write(final CompoundTag nodeTag) {
         nodeTag.putBoolean("Side", side == 1);
         nodeTag.putBoolean("IsLarge", isLarge);
-        nodeTag.putBoolean("OffsetForSmallCogwheel", offsetForSmallCogwheel);
+        nodeTag.putBoolean("OffsetForSmallCogwheel", hasSmallCogwheelOffset);
         nodeTag.putInt("OffsetX", localPos.getX());
         nodeTag.putInt("OffsetY", localPos.getY());
         nodeTag.putInt("OffsetZ", localPos.getZ());
@@ -79,7 +79,7 @@ public record PathedCogwheelNode(int side, boolean isLarge, Direction.Axis rotat
                 isLarge,
                 transformedAxisResult.getAxis(),
                 transformedPos,
-                offsetForSmallCogwheel
+                hasSmallCogwheelOffset
         );
     }
 }

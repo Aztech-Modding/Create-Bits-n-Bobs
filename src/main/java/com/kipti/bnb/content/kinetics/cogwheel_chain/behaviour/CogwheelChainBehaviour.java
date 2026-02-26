@@ -5,7 +5,6 @@ import com.cake.azimuth.behaviour.extensions.ItemRequirementBehaviourExtension;
 import com.cake.azimuth.behaviour.extensions.KineticBehaviourExtension;
 import com.cake.azimuth.behaviour.extensions.RenderedBehaviourExtension;
 import com.kipti.bnb.CreateBitsnBobs;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.block.CogwheelChainBlockEntity;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChain;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.PathedCogwheelNode;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.RenderedChainPathNode;
@@ -63,18 +62,26 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
     @Override
     public void lazyTick() {
         super.lazyTick();
+        if (isClientLevel()) {
+            if (controlledChain != null) {
+                updateChainShapes();
+            }
+            return;
+        }
         if (controlledChain != null) {
             if (!controlledChain.checkIntegrity(getLevel(), getPos())) {
-                destroyChain(true);
+                destroyForInvalidShape();
             }
-            updateChainShapes();
         } else {
             if (controllerOffset != null && getLevel() != null) {
                 final BlockPos controllerPos = getPos().offset(controllerOffset);
-                final BlockEntity be = getLevel().getBlockEntity(controllerPos);
-                if (!(be instanceof CogwheelChainBlockEntity)) {
-                    CogwheelChain.removeChainCogwheelFromLevelIfPresent(getLevel(), getPos());
-                }
+                if (!getLevel().isLoaded(controllerPos)) return;
+                this.<CogwheelChainBehaviour>getSameBehaviourOptional(controllerPos)
+                        .ifPresentOrElse(controller -> {
+                            if (!controller.isInSameChain(this)) {
+                                destroyForInvalidShape();
+                            }
+                        }, this::destroyForInvalidShape);
             }
         }
     }
@@ -88,7 +95,6 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
     @Override
     public void destroy() {
         super.destroy();
-        destroyChain(true);
     }
 
     @Override
@@ -99,12 +105,16 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
         ) : ItemRequirement.NONE;
     }
 
+    public void destroyForInvalidShape() {
+        destroyChain(true, false);
+    }
+
     public void destroyChain(final boolean dropItemsInWorld) {
         destroyChain(dropItemsInWorld, false);
     }
 
     private void updateChainShapes() {
-        if (controlledChain == null || getLevel() == null || !isClientLevel()) {
+        if (controlledChain == null || getLevel() == null || isServerLevel()) {
             return;
         }
 
@@ -128,7 +138,7 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
     }
 
     public ItemStack destroyChain(final boolean dropItemsInWorld, final boolean effects) {
-        if (getLevel() == null) return ItemStack.EMPTY;
+        if (getLevel() == null || !isPartOfChain()) return ItemStack.EMPTY;
         invalidateClientChainShapeCache();
 
         //Try drop chains from the current block for convenience
@@ -154,7 +164,6 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
         if (dropItemsInWorld) {
             Block.popResource(getLevel(), getPos(), drops);
         }
-        this.chainsToRefund = 0; // Reset after dropping
 
         if (isController()) {
             if (this.controlledChain == null) return ItemStack.EMPTY;
@@ -174,7 +183,7 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
     }
 
     private void invalidateClientChainShapeCache() {
-        if (isClientLevel()) {
+        if (!hasLevel() || isServerLevel()) {
             return;
         }
 
@@ -214,7 +223,7 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
             } else {
                 controlledChain = new CogwheelChain(compound.getCompound("Chain"));
             }
-            if (controlledChain != null && isClientLevel()) {
+            if (controlledChain != null && hasLevel() && isClientLevel()) {
                 updateChainShapes();
             }
         } else {
@@ -363,7 +372,7 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
     @Override
     public void transform(final BlockEntity blockEntity, final StructureTransform transform) {
         if (controlledChain != null)
-            controlledChain.transform(blockEntity, transform);
+            controlledChain.transform(transform);
         if (controllerOffset != null) {
             final Vec3i transformedOffset = transform.applyWithoutOffset(new BlockPos(controllerOffset));
             setController(transformedOffset);
@@ -371,7 +380,7 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
     }
 
     public boolean isPartOfChain() {
-        return this.controlledChain != null && this.controllerOffset != null;
+        return this.controlledChain != null || this.controllerOffset != null;
     }
 
     @Override
@@ -400,9 +409,18 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
         destroyChain(!event.getPlayer().hasInfiniteMaterials(), true);
     }
 
+    /**
+     * Since we have the visual to use, no forcing is necessary
+     */
     @Override
-    public boolean shouldAlwaysActivateRenderer() {
+    public boolean rendersWhenVisualizationAvailable() {
         return false;
     }
 
+    public void disconnectFromChain() {
+        this.controlledChain = null;
+        this.controllerOffset = null;
+        this.chainsToRefund = 0;
+        sendData();
+    }
 }

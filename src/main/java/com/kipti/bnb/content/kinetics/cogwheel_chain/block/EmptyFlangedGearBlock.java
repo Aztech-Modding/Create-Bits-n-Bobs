@@ -23,7 +23,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 
-public class EmptyFlangedGearBlock extends RotatedPillarKineticBlock implements IBE<KineticBlockEntity>, EncasableBlock {
+public class EmptyFlangedGearBlock extends RotatedPillarKineticBlock implements IBE<KineticBlockEntity>, EncasableBlock, IExclusiveCogwheelChainBlock {
 
     final private boolean isLarge;
 
@@ -80,5 +80,9 @@ public class EmptyFlangedGearBlock extends RotatedPillarKineticBlock implements 
         return BnbBlockEntities.EMPTY_FLANGED_COGWHEEL.get();
     }
 
+    @Override
+    public boolean isLargeCog() {
+        return isLarge;
+    }
 }
 

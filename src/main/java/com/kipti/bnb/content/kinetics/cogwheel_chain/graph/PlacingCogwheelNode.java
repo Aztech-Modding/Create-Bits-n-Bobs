@@ -11,14 +11,14 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.phys.Vec3;
 
 public record PlacingCogwheelNode(BlockPos pos, Direction.Axis rotationAxis, boolean isLarge,
-                                  boolean hasOffsetForSmallCogwheel) {
+                                  boolean hasSmallCogwheelOffset) {
 
     public static final Codec<PlacingCogwheelNode> CODEC = RecordCodecBuilder.create(
             p_337946_ -> p_337946_.group(
                             BlockPos.CODEC.fieldOf("pos").forGetter(PlacingCogwheelNode::pos),
                             Direction.Axis.CODEC.fieldOf("rotationAxis").forGetter(PlacingCogwheelNode::rotationAxis),
                             Codec.BOOL.fieldOf("isLarge").forGetter(PlacingCogwheelNode::isLarge),
-                            Codec.BOOL.fieldOf("hasOffsetForSmallCogwheel").forGetter(PlacingCogwheelNode::hasOffsetForSmallCogwheel)
+                            Codec.BOOL.fieldOf("hasSmallCogwheelOffset").forGetter(PlacingCogwheelNode::hasSmallCogwheelOffset)
                     )
                     .apply(p_337946_, PlacingCogwheelNode::new)
     );
@@ -31,7 +31,7 @@ public record PlacingCogwheelNode(BlockPos pos, Direction.Axis rotationAxis, boo
             ByteBufCodecs.BOOL,
             PlacingCogwheelNode::isLarge,
             ByteBufCodecs.BOOL,
-            PlacingCogwheelNode::hasOffsetForSmallCogwheel,
+            PlacingCogwheelNode::hasSmallCogwheelOffset,
             PlacingCogwheelNode::new
     );
 

@@ -3,6 +3,7 @@ package com.kipti.bnb.registry.azimuth;
 import com.cake.azimuth.registration.BehaviourApplicators;
 import com.cake.azimuth.registration.VisualWrapperInterest;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.behaviour.CogwheelChainBehaviour;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChainCandidate;
 import com.simibubi.create.content.kinetics.simpleRelays.ICogWheel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -13,7 +14,7 @@ public class BnbBehaviourApplicators {
 
     public static void init() {
         BehaviourApplicators.register(be -> {
-            if (be.getBlockState().getBlock() instanceof ICogWheel) {
+            if (CogwheelChainCandidate.isValidCandidate(be.getBlockState())) {
                 return List.of(new CogwheelChainBehaviour(be));
             }
             return null;

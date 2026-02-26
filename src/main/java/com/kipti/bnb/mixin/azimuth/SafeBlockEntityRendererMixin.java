@@ -22,7 +22,7 @@ public class SafeBlockEntityRendererMixin<T extends BlockEntity> {
         if (blockEntity instanceof final SmartBlockEntity smartBe && smartBe instanceof final AzimuthSmartBlockEntityExtension azimuthBE) {
             final boolean visualizationActive = smartBe.getLevel() != null && VisualizationManager.supportsVisualization(smartBe.getLevel());
             for (final RenderedBehaviourExtension behaviour : azimuthBE.azimuth$getRenderedExtensionCache()) {
-                if (visualizationActive && !behaviour.shouldAlwaysActivateRenderer()) {
+                if (visualizationActive && !behaviour.rendersWhenVisualizationAvailable()) {
                     continue;
                 }
                 behaviour.getRenderer().get().get().castRenderSafe(

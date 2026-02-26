@@ -1,7 +1,7 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.placement;
 
+import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChainCandidate;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChainPathfinder;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.PlacingCogwheelChain;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.PlacingCogwheelNode;
 import com.simibubi.create.content.equipment.blueprint.BlueprintOverlayRenderer;
 import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorBlockEntity;
@@ -58,7 +58,7 @@ public class CogwheelChainPlacementEffect {
     }
 
     private static @Nullable BlockPos getTargetedBlockAndDisplay() {
-        if (currentBuildingChain == null)
+        if (currentBuildingChain == null || currentChainLevel == null)
             return null;
 
         final ClientLevel level = Minecraft.getInstance().level;
@@ -80,12 +80,6 @@ public class CogwheelChainPlacementEffect {
         final Vec3 axisNormal = Vec3.atLowerCornerOf(Direction.get(Direction.AxisDirection.POSITIVE, axis).getNormal());
         final Vec3 projected = toTargeted.subtract(axisNormal.scale(toTargeted.dot(axisNormal))).add(lastNodePos);
 
-//        Vec3 lastPos = currentBuildingChain.getNodeCenter(0);
-//        for (int i = 1; i < currentBuildingChain.getSize(); i++) {
-//            final Vec3 currentPos = currentBuildingChain.getNodeCenter(i);
-//            renderParticlesBetween(level, lastPos, currentPos);
-//            lastPos = currentPos;
-//        }
         for (int i = 0; i < currentBuildingChain.getSize(); i++) {
             showBlockOutline(level, currentBuildingChain.getNodes().get(i).pos());
         }
@@ -119,7 +113,7 @@ public class CogwheelChainPlacementEffect {
 
         final BlockPos targetedPos = hit.getBlockPos();
         final BlockState targetedState = level.getBlockState(targetedPos);
-        return PlacingCogwheelChain.isValidBlockTarget(targetedState) ? targetedPos : null;
+        return CogwheelChainCandidate.isValidCandidate(targetedState) ? targetedPos : null;
     }
 
     private static void showBlockOutline(final ClientLevel level, final BlockPos pos) {

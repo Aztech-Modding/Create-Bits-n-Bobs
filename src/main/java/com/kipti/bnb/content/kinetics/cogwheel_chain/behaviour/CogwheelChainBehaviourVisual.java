@@ -240,9 +240,9 @@ public class CogwheelChainBehaviourVisual extends RenderedBehaviourExtension.Beh
                 vertexList.z(i, vertex.z);
                 vertexList.u(i, vertex.u);
                 vertexList.v(i, vertex.v);
-                vertexList.normalX(i, vertex.nx);
-                vertexList.normalY(i, vertex.ny);
-                vertexList.normalZ(i, vertex.nz);
+                vertexList.normalX(i, 0);
+                vertexList.normalY(i, 1);
+                vertexList.normalZ(i, 0);
                 vertexList.r(i, 1);
                 vertexList.g(i, 1);
                 vertexList.b(i, 1);

@@ -49,6 +49,8 @@ public class BnbTags {
         HEAVY,
         SUPER_HEAVY,
 
+        COGWHEEL_CHAIN_NO_SMALL_OFFSET,
+
         CHAIRS;
 
         public final TagKey<Block> tag;
@@ -74,7 +76,6 @@ public class BnbTags {
     }
 
     public static void registerDataGenerators() {
-
         CreateBitsnBobs.REGISTRATE.addDataGenerator(ProviderType.BLOCK_TAGS, prov -> {
             prov.addTag(BnbTags.BnbBlockTags.SUPER_HEAVY.tag)
                     .addTag(Tags.Blocks.STORAGE_BLOCKS)

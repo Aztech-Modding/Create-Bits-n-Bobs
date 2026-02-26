@@ -34,7 +34,7 @@ public interface RenderedBehaviourExtension extends BehaviourExtension {
      * When true, the wrapper dispatches this behaviour's renderer even when Flywheel visualization is supported.
      * Defaults to true to keep BER active unless explicitly opted out.
      */
-    default boolean shouldAlwaysActivateRenderer() {
+    default boolean rendersWhenVisualizationAvailable() {
         return true;
     }
 

@@ -60,7 +60,7 @@ public class CogwheelChainInteractionHandler {
         }
 
         return SuperBlockEntityBehaviour.getOptional(level, selectedController, CogwheelChainBehaviour.TYPE)
-                .map(CogwheelChainBehaviour::isController)
+                .map(behaviour -> !behaviour.isController())
                 .orElse(false);
     }
 

@@ -39,6 +39,10 @@ public abstract class SuperBlockEntityBehaviour extends BlockEntityBehaviour {
         this.blockEntity.sendData();
     }
 
+    public boolean hasLevel() {
+        return this.getLevel() != null;
+    }
+
     public boolean isClientLevel() {
         return this.getLevel().isClientSide;
     }

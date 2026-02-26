@@ -1,9 +1,9 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.graph;
 
+import com.kipti.bnb.content.kinetics.cogwheel_chain.placement.ChainInteractionFailedException;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.CogwheelChainType;
 import com.kipti.bnb.registry.core.BnbConfigs;
 import com.mojang.serialization.Codec;
-import com.simibubi.create.content.kinetics.simpleRelays.CogWheelBlock;
 import net.createmod.catnip.codecs.stream.CatnipStreamCodecBuilders;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -11,7 +11,6 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -72,26 +71,11 @@ public class PlacingCogwheelChain {
         return (int) Math.max(Math.round(factor * length / 5), 1);
     }
 
-
-    public static boolean isValidBlockTarget(final BlockState state) {
-        return CogwheelChainCandidateInfo.REGISTRY.get(state.getBlock()) != null;
-    }
-
-    public static boolean isLargeBlockTarget(final BlockState state) {
-        final CogwheelChainCandidateInfo info = CogwheelChainCandidateInfo.REGISTRY.get(state.getBlock());
-        return info != null && info.isLarge();
-    }
-
-    public static boolean hasSmallCogwheelOffset(final BlockState state) {
-        final CogwheelChainCandidateInfo info = CogwheelChainCandidateInfo.REGISTRY.get(state.getBlock());
-        return info != null && info.hasSmallCogwheelOffset();
-    }
-
-
     public boolean tryAddNode(final BlockPos newPos, final BlockState newBlockState, final CogwheelChainType type) throws ChainInteractionFailedException {
         final PlacingCogwheelNode lastNode = getLastNode();
 
-        if (!isValidBlockTarget(newBlockState)) {
+        final CogwheelChainCandidate candidate = CogwheelChainCandidate.getForBlock(newBlockState);
+        if (candidate == null) {
             return false;
         }
 
@@ -105,9 +89,9 @@ public class PlacingCogwheelChain {
                 throw new ChainInteractionFailedException("cannot_revisit_node");
             }
         }
-        final Direction.Axis axis = newBlockState.getValue(CogWheelBlock.AXIS);
-        final boolean isLarge = isLargeBlockTarget(newBlockState);
-        final boolean hasSmallCogwheelOffset = hasSmallCogwheelOffset(newBlockState);
+        final Direction.Axis axis = candidate.axis();
+        final boolean isLarge = candidate.isLarge();
+        final boolean hasSmallCogwheelOffset = candidate.hasSmallCogwheelOffset();
 
         final PlacingCogwheelNode newNode = new PlacingCogwheelNode(newPos, axis, isLarge, hasSmallCogwheelOffset);
 
@@ -279,16 +263,9 @@ public class PlacingCogwheelChain {
     public boolean checkMissingNodesInLevel(final Level level, final CogwheelChainType type) {
         for (final PlacingCogwheelNode node : visitedNodes) {
             final BlockState state = level.getBlockState(node.pos());
-            if (!isValidBlockTarget(state)) {
-                return true;
-            }
-            if (!type.getCogwheelPredicate().test(state.getBlock())) {
-                return true;
-            }
-            final Direction.Axis axis = state.getValue(CogWheelBlock.AXIS);
-            final boolean isLarge = isLargeBlockTarget(state);
-            final boolean hasSmallCogwheelOffset = hasSmallCogwheelOffset(state);
-            if (axis != node.rotationAxis() || isLarge != node.isLarge() || hasSmallCogwheelOffset != node.hasOffsetForSmallCogwheel()) {
+            final CogwheelChainCandidate candidate = CogwheelChainCandidate.getForBlock(state);
+
+            if (candidate == null || !candidate.isConsistentWithNode(node) || !type.getCogwheelPredicate().test(state.getBlock())) {
                 return true;
             }
         }
@@ -300,7 +277,7 @@ public class PlacingCogwheelChain {
         final List<PlacingCogwheelNode> localNodes = new ArrayList<>();
         for (final PlacingCogwheelNode node : visitedNodes) {
             final BlockPos localPos = node.pos().subtract(origin);
-            localNodes.add(new PlacingCogwheelNode(localPos, node.rotationAxis(), node.isLarge(), node.hasOffsetForSmallCogwheel()));
+            localNodes.add(new PlacingCogwheelNode(localPos, node.rotationAxis(), node.isLarge(), node.hasSmallCogwheelOffset()));
         }
         return new PlacingCogwheelChain(localNodes);
     }

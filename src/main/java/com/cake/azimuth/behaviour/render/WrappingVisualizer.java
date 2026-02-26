@@ -77,7 +77,7 @@ public class WrappingVisualizer<T extends BlockEntity> implements BlockEntityVis
         }
 
         for (final RenderedBehaviourExtension behaviour : azimuthBE.azimuth$getRenderedExtensionCache()) {
-            if (behaviour.shouldAlwaysActivateRenderer())
+            if (behaviour.rendersWhenVisualizationAvailable())
                 return false;
         }
 

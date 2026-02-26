@@ -16,7 +16,7 @@ public class VisualizationHelperMixin {
     private static void azimuth$allowVanillaRenderForForcedBehaviours(final BlockEntity blockEntity, final CallbackInfoReturnable<Boolean> cir) {
         if (blockEntity instanceof final SmartBlockEntity smartBe && smartBe instanceof final AzimuthSmartBlockEntityExtension azimuthBE) {
             for (final RenderedBehaviourExtension behaviour : azimuthBE.azimuth$getRenderedExtensionCache()) {
-                if (behaviour.shouldAlwaysActivateRenderer()) {
+                if (behaviour.rendersWhenVisualizationAvailable()) {
                     cir.setReturnValue(false);
                     return;
                 }

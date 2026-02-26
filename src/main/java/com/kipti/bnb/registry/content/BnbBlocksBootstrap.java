@@ -12,7 +12,6 @@ public class BnbBlocksBootstrap {
         BnbBracketBlocks.register();
 
         //Non item blocks
-        BnbChainBlocks.register();
         BnbEncasedBlocks.register();
         BnbSpecialEncasedBlocks.register();
         //Deco
