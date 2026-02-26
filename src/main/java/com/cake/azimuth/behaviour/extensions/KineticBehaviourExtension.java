@@ -4,6 +4,7 @@ import com.cake.azimuth.behaviour.BehaviourExtension;
 import com.simibubi.create.content.kinetics.base.IRotate;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
@@ -42,5 +43,34 @@ public interface KineticBehaviourExtension extends BehaviourExtension {
         return 0;
     }
 
+    default void detachKinetics() {
+        final BlockEntity blockEntity = getBlockEntity();
+        if (blockEntity instanceof final KineticBlockEntity kineticBlockEntity) {
+            kineticBlockEntity.detachKinetics();
+        } else {
+            throw new IllegalStateException("BlockEntity must be a KineticBlockEntity to detach kinetics");
+        }
+    }
+
+    default void attachKinetics() {
+        final BlockEntity blockEntity = getBlockEntity();
+        if (blockEntity instanceof final KineticBlockEntity kineticBlockEntity) {
+            kineticBlockEntity.attachKinetics();
+        } else {
+            throw new IllegalStateException("BlockEntity must be a KineticBlockEntity to attach kinetics");
+        }
+    }
+
+    default void repropagateKinetics() {
+        final BlockEntity blockEntity = getBlockEntity();
+        if (blockEntity instanceof final KineticBlockEntity kineticBlockEntity) {
+            kineticBlockEntity.detachKinetics();
+            kineticBlockEntity.updateSpeed = true;
+        } else {
+            throw new IllegalStateException("BlockEntity must be a KineticBlockEntity to detach kinetics");
+        }
+    }
+
+    BlockEntity getBlockEntity();
 
 }

@@ -34,6 +34,10 @@ public abstract class SuperBlockEntityBehaviour extends BlockEntityBehaviour {
         return this.blockEntity.getBlockState();
     }
 
+    public BlockEntity getBlockEntity() {
+        return this.blockEntity;
+    }
+
     //TODO: provide a method where just the behaviour is syncing, not the entire block entity
     public void sendData() {
         this.blockEntity.sendData();
