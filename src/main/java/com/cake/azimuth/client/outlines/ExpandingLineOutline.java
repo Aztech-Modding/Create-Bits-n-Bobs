@@ -1,4 +1,4 @@
-package com.kipti.bnb.foundation.client;
+package com.cake.azimuth.client.outlines;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;

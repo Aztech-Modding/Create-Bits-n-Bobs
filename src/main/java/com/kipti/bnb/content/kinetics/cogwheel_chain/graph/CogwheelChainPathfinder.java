@@ -215,7 +215,7 @@ public class CogwheelChainPathfinder {
         return t >= 0 && t <= 1 && u >= 0 && u <= 1;
     }
 
-    public static boolean isValidPathStepOutto(final PlacingCogwheelNode nodeA, final PlacingCogwheelNode nodeB, final int side) {
+    public static boolean isValidPathStepOutOf(final PlacingCogwheelNode nodeA, final PlacingCogwheelNode nodeB, final int side) {
         return isValidPathStep(nodeA, side, nodeB, 1) || isValidPathStep(nodeA, side, nodeB, -1);
     }
 

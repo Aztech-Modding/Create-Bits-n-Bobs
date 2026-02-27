@@ -1,6 +1,6 @@
 package com.kipti.bnb.foundation.ponder.instruction;
 
-import com.kipti.bnb.foundation.client.ExpandingLineOutline;
+import com.cake.azimuth.client.outlines.ExpandingLineOutline;
 import net.createmod.ponder.api.PonderPalette;
 import net.createmod.ponder.foundation.PonderScene;
 import net.createmod.ponder.foundation.instruction.TickingInstruction;

@@ -20,6 +20,8 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.kipti.bnb.content.kinetics.cogwheel_chain.placement.CogwheelChainPlacementInteraction.*;
@@ -27,6 +29,7 @@ import static com.kipti.bnb.content.kinetics.cogwheel_chain.placement.CogwheelCh
 public class CogwheelChainPlacementEffect {
 
     private static final float PARTICLE_DENSITY = 0.1f;
+    private static List<PlacingCogwheelNode> lastPlannedNodes = List.of();
 
     public static void tick(final LocalPlayer player) {
         if (Minecraft.getInstance().isPaused() || Minecraft.getInstance().hitResult == null) return;
@@ -96,50 +99,28 @@ public class CogwheelChainPlacementEffect {
 
     private static void showOnlyPermitted() {
         if (currentBuildingChain == null) return;
+        if (!lastPlannedNodes.equals(currentBuildingChain.getNodes())) {
+            lastPlannedNodes = new ArrayList<>(currentBuildingChain.getNodes());
+        }
+
+        final int[] sides = ChainPlacementPathDisplayHelper.getPathDisplaySides(currentBuildingChain);
+
         for (int i = 0; i < currentBuildingChain.getSize() - 1; i++) {
             final PlacingCogwheelNode nodeA = currentBuildingChain.getNodes().get(i);
             final PlacingCogwheelNode nodeB = currentBuildingChain.getNodes().get(i + 1);
-            final @Nullable PlacingCogwheelNode nodePreA = i - 1 >= 0 ? currentBuildingChain.getNodes().get(i - 1) : null;
-            final @Nullable PlacingCogwheelNode nodePostB = i + 2 < currentBuildingChain.getSize() ? currentBuildingChain.getNodes().get(i + 2) : null;
 
-            final boolean isbeforejustfineaswell = nodePreA == null || CogwheelChainPathfinder.isValidPathStep(nodePreA, 1, nodeB, 1) &&
-                    CogwheelChainPathfinder.isValidPathStep(nodePreA, -1, nodeB, -1);
-            final boolean isJustFineAndDoesentReallyMatter = CogwheelChainPathfinder.isValidPathStep(nodeA, 1, nodeB, 1) &&
-                    CogwheelChainPathfinder.isValidPathStep(nodeA, -1, nodeB, -1);
-            final boolean isAfterJustFineAsWell = nodePostB == null || CogwheelChainPathfinder.isValidPathStep(nodeA, 1, nodePostB, 1) &&
-                    CogwheelChainPathfinder.isValidPathStep(nodeA, -1, nodePostB, -1);
-            //if is jsut fine and donsent matter render one line in the mdidle thicker
-            if (isJustFineAndDoesentReallyMatter && isbeforejustfineaswell && isAfterJustFineAsWell) {
-                Outliner.getInstance().showLine("cogwheel_chain_placement_pathing_" + nodeA.pos() + "_" + nodeB.pos() + "_merged",
-                                nodeA.center(), nodeB.center())
-                        .colored(0x95CD41)
-                        .lineWidth(1 / 8f);
-                continue;
-            }
-            for (int side = -1; side <= 1; side += 2) {
-                if (CogwheelChainPathfinder.isValidPathStep(nodeA, side, nodeB, side) &&
-                        (nodePreA == null || CogwheelChainPathfinder.isValidPathStepInto(nodePreA, nodeA, side)) &&
-                        (nodePostB == null || CogwheelChainPathfinder.isValidPathStepOutto(nodeB, nodePostB, side))) {
-                    final Vec3 pathingTangentB = CogwheelChainPathfinder.getPathingTangentOnCog(nodeA, nodeB, side);
-                    final Vec3 pathingTangentA = CogwheelChainPathfinder.getPathingTangentOnCog(nodeB, nodeA, -side);
-                    Outliner.getInstance().showLine("cogwheel_chain_placement_pathing_" + nodeA.pos() + "_" + nodeB.pos() + "_side_" + side,
-                                    nodeA.center().add(pathingTangentA),
-                                    nodeB.center().add(pathingTangentB))
-                            .colored(0x95CD41)
-                            .lineWidth(1 / 8f);
-                } else if (CogwheelChainPathfinder.isValidPathStep(nodeA, side, nodeB, -side) &&
-                        (nodePreA == null || CogwheelChainPathfinder.isValidPathStepInto(nodePreA, nodeA, -side)) &&
-                        (nodePostB == null || CogwheelChainPathfinder.isValidPathStepOutto(nodeB, nodePostB, side))) {
-                    final Vec3 pathingTangentB = CogwheelChainPathfinder.getPathingTangentOnCog(nodeA, nodeB, -side);
-                    final Vec3 pathingTangentA = CogwheelChainPathfinder.getPathingTangentOnCog(nodeB, nodeA, -side);
-                    Outliner.getInstance().showLine("cogwheel_chain_placement_pathing_" + nodeA.pos() + "_" + nodeB.pos() + "_side_" + side + "_switching",
-                                    nodeA.center().add(pathingTangentA),
-                                    nodeB.center().add(pathingTangentB))
-                            .colored(0x95CD41)
-                            .lineWidth(1 / 8f);
-                }
-            }
+            renderSegment(nodeA, nodeB, sides[i], sides[i + 1]);
         }
+    }
+
+    private static void renderSegment(final PlacingCogwheelNode nodeA, final PlacingCogwheelNode nodeB, final int fromSide, final int toSide) {
+        final Vec3 fromOffset = fromSide == 0 ? Vec3.ZERO : CogwheelChainPathfinder.getPathingTangentOnCog(nodeB, nodeA, -fromSide);
+        final Vec3 toOffset = toSide == 0 ? Vec3.ZERO : CogwheelChainPathfinder.getPathingTangentOnCog(nodeA, nodeB, toSide);
+        Outliner.getInstance().showLine("cogwheel_chain_placement_pathing_" + nodeA.pos() + "_" + nodeB.pos() + "_from_" + fromSide + "_to_" + toSide,
+                        nodeA.center().add(fromOffset),
+                        nodeB.center().add(toOffset))
+                .colored(0x95CD41)
+                .lineWidth(2f / 16f);
     }
 
     private static void showBlockOutline(final ClientLevel level, final BlockPos pos) {
