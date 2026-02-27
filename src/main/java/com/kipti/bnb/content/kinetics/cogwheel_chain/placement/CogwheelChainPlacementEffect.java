@@ -118,8 +118,8 @@ public class CogwheelChainPlacementEffect {
             }
             for (int side = -1; side <= 1; side += 2) {
                 if (CogwheelChainPathfinder.isValidPathStep(nodeA, side, nodeB, side) &&
-                        (nodePreA == null || CogwheelChainPathfinder.isValidPathStep(nodePreA, side, nodeA, side)) &&
-                        (nodePostB == null || CogwheelChainPathfinder.isValidPathStep(nodeB, side, nodePostB, side))) {
+                        (nodePreA == null || CogwheelChainPathfinder.isValidPathStepInto(nodePreA, nodeA, side)) &&
+                        (nodePostB == null || CogwheelChainPathfinder.isValidPathStepOutto(nodeB, nodePostB, side))) {
                     final Vec3 pathingTangentB = CogwheelChainPathfinder.getPathingTangentOnCog(nodeA, nodeB, side);
                     final Vec3 pathingTangentA = CogwheelChainPathfinder.getPathingTangentOnCog(nodeB, nodeA, -side);
                     Outliner.getInstance().showLine("cogwheel_chain_placement_pathing_" + nodeA.pos() + "_" + nodeB.pos() + "_side_" + side,
@@ -128,8 +128,8 @@ public class CogwheelChainPlacementEffect {
                             .colored(0x95CD41)
                             .lineWidth(1 / 8f);
                 } else if (CogwheelChainPathfinder.isValidPathStep(nodeA, side, nodeB, -side) &&
-                        (nodePreA == null || CogwheelChainPathfinder.isValidPathStep(nodePreA, side, nodeA, -side)) &&
-                        (nodePostB == null || CogwheelChainPathfinder.isValidPathStep(nodeB, -side, nodePostB, side))) {
+                        (nodePreA == null || CogwheelChainPathfinder.isValidPathStepInto(nodePreA, nodeA, -side)) &&
+                        (nodePostB == null || CogwheelChainPathfinder.isValidPathStepOutto(nodeB, nodePostB, side))) {
                     final Vec3 pathingTangentB = CogwheelChainPathfinder.getPathingTangentOnCog(nodeA, nodeB, -side);
                     final Vec3 pathingTangentA = CogwheelChainPathfinder.getPathingTangentOnCog(nodeB, nodeA, -side);
                     Outliner.getInstance().showLine("cogwheel_chain_placement_pathing_" + nodeA.pos() + "_" + nodeB.pos() + "_side_" + side + "_switching",

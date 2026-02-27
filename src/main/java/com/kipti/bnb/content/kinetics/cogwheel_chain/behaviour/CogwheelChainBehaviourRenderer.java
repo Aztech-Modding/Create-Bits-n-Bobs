@@ -4,6 +4,7 @@ import com.cake.azimuth.behaviour.SuperBlockEntityBehaviour;
 import com.cake.azimuth.behaviour.render.BlockEntityBehaviourRenderer;
 import com.kipti.bnb.content.decoration.girder_strut.IBlockEntityRelighter;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChain;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.render.ChainQuadBuilder;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.render.CogwheelChainRenderGeometryBuilder;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.render.CogwheelChainRenderGeometryBuilder.ChainSegment;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.CogwheelChainType;
@@ -38,28 +39,6 @@ public class CogwheelChainBehaviourRenderer extends BlockEntityBehaviourRenderer
 
         if (!(behaviour instanceof final CogwheelChainBehaviour chainBehaviour))
             return;
-
-//        if (be.getBlockState().getBlock() instanceof EncasedCogwheelBlock) {
-//            final BlockState blockState = be.getBlockState();
-//            final Block block = blockState.getBlock();
-//            if (block instanceof final IRotate def) {
-//                final Direction.Axis axis = getRotationAxisOf(be);
-//                boolean large = false;
-//                if (block instanceof final ICogwheelChainBlock chainBlock)
-//                    large = chainBlock.isLargeCog();
-//
-//                final float angle = large ? BracketedKineticBlockEntityRenderer.getAngleForLargeCogShaft(be, axis)
-//                        : getAngleForBe(be, be.getBlockPos(), axis);
-//
-//                for (final Direction d : Iterate.directionsInAxis(getRotationAxisOf(be))) {
-//                    if (def.hasShaftTowards(be.getLevel(), be.getBlockPos(), blockState, d)) {
-//                        final SuperByteBuffer shaft = CachedBuffers.partialFacing(AllPartialModels.SHAFT_HALF, be.getBlockState(), d);
-//                        kineticRotationTransform(shaft, be, axis, angle, light);
-//                        shaft.renderInto(ms, buffer.getBuffer(RenderType.solid()));
-//                    }
-//                }
-//            }
-//        }
 
         final Function<Vector3f, Integer> lighter = IBlockEntityRelighter.createGlobalLighter(be);
         final CogwheelChain chain = chainBehaviour.getControlledChain();
@@ -132,102 +111,43 @@ public class CogwheelChainBehaviourRenderer extends BlockEntityBehaviourRenderer
 
         final VertexConsumer vc = buffer.getBuffer(RenderTypes.chain(type.getRenderTexture()));
         final Matrix4f poseMatrix = ms.last().pose();
+        final PoseStack.Pose pose = ms.last();
 
-        // Iterate over the 4 faces of the chain beam
-        for (int faceIndex = 0; faceIndex < 4; faceIndex += 1) {
-            if (chainRenderInfo.getVertexShape() == CogwheelChainType.VertexShape.CROSS) {
-                renderCrossShapeFace(ms, vc, poseMatrix, from, destinationPoints, sourcePoints, faceIndex, minV, maxV, lightAtSource);
-            } else {
-                renderDefaultShapeFace(ms, vc, poseMatrix, from, destinationPoints, sourcePoints, chainRenderInfo, faceIndex, minV, maxV, lightAtSource, flipInsideOutside);
-            }
-        }
+        // Per-vertex light interpolation data: project vertex position onto the from→to
+        // direction to blend between lightAtSource and lightAtDest. This eliminates abrupt
+        // brightness jumps at segment boundaries (previously only lightAtSource was used).
+        final Vec3 segDir = to.subtract(from);
+        final double segLenSq = segDir.lengthSqr();
+
+        // Emit all faces via shared geometry builder, adapting vertex output to VertexConsumer
+        final ChainQuadBuilder.VertexEmitter emitter = (x, y, z, u, v, nx, ny, nz) -> {
+            final float rx = x - (float) from.x;
+            final float ry = y - (float) from.y;
+            final float rz = z - (float) from.z;
+            final float t = segLenSq > 1e-8
+                    ? Mth.clamp((float) (new Vec3(x, y, z).subtract(from).dot(segDir) / segLenSq), 0f, 1f)
+                    : 0f;
+            final int vertexLight = lerpPackedLight(lightAtSource, lightAtDest, t);
+            vc.addVertex(poseMatrix, rx, ry, rz)
+                    .setColor(1.0f, 1.0f, 1.0f, 1.0f)
+                    .setUv(u, v)
+                    .setOverlay(OverlayTexture.NO_OVERLAY)
+                    .setLight(vertexLight)
+                    .setNormal(pose, 0.0F, 1.0F, 0.0F);
+        };
+
+        ChainQuadBuilder.buildSegmentFaces(destinationPoints, sourcePoints, chainRenderInfo, minV, maxV, flipInsideOutside, emitter);
 
         ms.popPose();
     }
 
-    private static void renderCrossShapeFace(final PoseStack ms, final VertexConsumer vc, final Matrix4f poseMatrix, final Vec3 origin,
-                                             final List<Vec3> destinationPoints, final List<Vec3> sourcePoints,
-                                             final int faceIndex, final float minV, final float maxV, final int light) {
-        final float uOffset = (faceIndex % 2 == 1) ? 0 : 3 / 16f;
-        final float uWidth = 3 / 16f;
-        final float minU = 0f;
-
-        final float uLeft = minU + uOffset;
-        final float uRight = uWidth + uOffset;
-
-        // "Top" corresponds to Destination (Matches original logic where endPoints got minV)
-        // "Bottom" corresponds to Source
-        // Indices preserved from original 'CROSS' logic: (i+2), (i+2), i, i
-        final Vec3 posTL = destinationPoints.get((faceIndex + 2) % 4);
-        final Vec3 posBL = sourcePoints.get((faceIndex + 2) % 4);
-        final Vec3 posBR = sourcePoints.get(faceIndex);
-        final Vec3 posTR = destinationPoints.get(faceIndex);
-
-        renderSubdividedQuad(ms, vc, poseMatrix, origin, posTL, posBL, posBR, posTR, uLeft, uRight, minV, maxV, light);
-    }
-
-    private static void renderDefaultShapeFace(final PoseStack ms, final VertexConsumer vc, final Matrix4f poseMatrix, final Vec3 origin,
-                                               final List<Vec3> destinationPoints, final List<Vec3> sourcePoints,
-                                               final CogwheelChainType.ChainRenderInfo renderInfo,
-                                               final int faceIndex, final float minV, final float maxV, final int light, final boolean flipTopBottom) {
-        final float h = renderInfo.getHeight() / 16f;
-        final float w = renderInfo.getWidth() / 16f;
-
-        final float minU;
-        final float maxU;
-
-        final int uvFaceIndex = flipTopBottom ? (faceIndex + 2) % 4 : faceIndex;
-        if (uvFaceIndex == 0) { // Top
-            minU = h;
-            maxU = h + w;
-        } else if (uvFaceIndex == 1) { // Left
-            minU = 0;
-            maxU = h;
-        } else if (uvFaceIndex == 2) { // Bottom
-            minU = h + w + h;
-            maxU = h + w + h + w;
-        } else { // Right (faceIndex == 3)
-            minU = h + w;
-            maxU = h + w + h;
-        }
-
-        // Indices preserved from original 'DEFAULT' logic: (i+1), (i+1), i, i
-        final Vec3 posTL = destinationPoints.get((faceIndex + 1) % 4);
-        final Vec3 posBL = sourcePoints.get((faceIndex + 1) % 4);
-        final Vec3 posBR = sourcePoints.get(faceIndex);
-        final Vec3 posTR = destinationPoints.get(faceIndex);
-
-        renderSubdividedQuad(ms, vc, poseMatrix, origin, posTL, posBL, posBR, posTR, minU, maxU, minV, maxV, light);
-    }
-
-    private static void renderSubdividedQuad(final PoseStack ms, final VertexConsumer vc, final Matrix4f poseMatrix, final Vec3 origin,
-                                             final Vec3 posTL, final Vec3 posBL, final Vec3 posBR, final Vec3 posTR,
-                                             final float uLeft, final float uRight, final float minV, final float maxV, final int light) {
-        // Subdividing the quad prevents AFFINE TEXTURE MAPPING artifacts (shearing/kinks)
-        // when the quad is twisted (non-planar) by drawing smaller, approximate planar strips.
-        final int segmentCount = 4;
-
-        for (int s = 0; s < segmentCount; s++) {
-            final float t1 = (float) s / segmentCount;
-            final float t2 = (float) (s + 1) / segmentCount;
-
-            // Interpolate V coordinates along the chain length
-            final float vStart = Mth.lerp(t1, minV, maxV);
-            final float vEnd = Mth.lerp(t2, minV, maxV);
-
-            // Interpolate vertex positions between Top (Destination) and Bottom (Source)
-            // t=0 is Top/Dest, t=1 is Bottom/Source
-            final Vec3 p1 = posTL.lerp(posBL, t1); // Top-Left interpolated
-            final Vec3 p2 = posTL.lerp(posBL, t2); // Bottom-Left interpolated
-            final Vec3 p3 = posTR.lerp(posBR, t2); // Bottom-Right interpolated
-            final Vec3 p4 = posTR.lerp(posBR, t1); // Top-Right interpolated
-
-            // Render sub-quad relative to 'origin'
-            addVertex(poseMatrix, ms.last(), vc, p1.subtract(origin), uLeft, vStart, light);
-            addVertex(poseMatrix, ms.last(), vc, p2.subtract(origin), uLeft, vEnd, light);
-            addVertex(poseMatrix, ms.last(), vc, p3.subtract(origin), uRight, vEnd, light);
-            addVertex(poseMatrix, ms.last(), vc, p4.subtract(origin), uRight, vStart, light);
-        }
+    /**
+     * Linearly interpolates between two packed light values (block | sky << 16).
+     */
+    private static int lerpPackedLight(final int light1, final int light2, final float t) {
+        final int block = (int) Mth.lerp(t, light1 & 0xFFFF, light2 & 0xFFFF);
+        final int sky = (int) Mth.lerp(t, (light1 >> 16) & 0xFFFF, (light2 >> 16) & 0xFFFF);
+        return block | (sky << 16);
     }
 
     private static void renderChainFastButWithGaps(final PoseStack ms,
@@ -237,38 +157,50 @@ public class CogwheelChainBehaviourRenderer extends BlockEntityBehaviourRenderer
                                                    final float length,
                                                    final int light1,
                                                    final int light2,
-                                                   final boolean far) {
-        final float radius = far ? 1f / 16f : 1.5f / 16f;
-        final float minV = far ? 0 : offset * textureSquish;
-        final float maxV = far ? 1 / 16f : length * textureSquish + minV;
-        final float minU = far ? 3 / 16f : 0;
-        final float maxU = far ? 4 / 16f : 3 / 16f;
+                                                   final boolean far,
+                                                   final CogwheelChainType type) {
+        final CogwheelChainType.ChainRenderInfo info = type.getRenderType();
+        final float w = info.getWidth() / 16f;
+        final float h = info.getHeight() / 16f;
 
         ms.pushPose();
         ms.translate(0.5D, 0.0D, 0.5D);
 
-        final VertexConsumer vc = buffer.getBuffer(RenderTypes.chain(CogwheelChainType.DEFAULT_CHAIN_TEXTURE_LOCATION));
-        renderPart(ms, vc, length, 0.0F, radius, radius, 0.0F, -radius, 0.0F, 0.0F, -radius, minU, maxU, minV, maxV,
-                light1, light2, far);
+        final VertexConsumer vc = buffer.getBuffer(RenderTypes.chain(type.getRenderTexture()));
+        final PoseStack.Pose pose = ms.last();
+        final Matrix4f matrix4f = pose.pose();
+
+        if (info.getVertexShape() == CogwheelChainType.VertexShape.CROSS) {
+            final float radius = far ? 1f / 16f : w / 2f;
+            final float minV = far ? 0 : offset * textureSquish;
+            final float maxV = far ? h : length * textureSquish + minV;
+            final float crossMinU = far ? w : 0;
+            final float crossMaxU = far ? w + 1f / 16f : w;
+            final float crossUO = far ? 0 : w;
+
+            // Two perpendicular cross planes, each double-sided
+            renderQuad(matrix4f, pose, vc, 0, length, 0, radius, 0, -radius, crossMinU, crossMaxU, minV, maxV, light1, light2);
+            renderQuad(matrix4f, pose, vc, 0, length, 0, -radius, 0, radius, crossMinU, crossMaxU, minV, maxV, light1, light2);
+            renderQuad(matrix4f, pose, vc, 0, length, radius, 0, -radius, 0, crossMinU + crossUO, crossMaxU + crossUO, minV, maxV, light1, light2);
+            renderQuad(matrix4f, pose, vc, 0, length, -radius, 0, radius, 0, crossMinU + crossUO, crossMaxU + crossUO, minV, maxV, light1, light2);
+        } else {
+            // SQUARE shape: rectangular beam with 4 single-sided faces
+            final float halfW = far ? 1f / 16f : w / 2f;
+            final float halfH = far ? 1f / 16f : h / 2f;
+            final float minV = far ? 0 : offset * textureSquish;
+            final float maxV = far ? h : length * textureSquish + minV;
+
+            // Top face
+            renderQuad(matrix4f, pose, vc, 0, length, -halfW, halfH, halfW, halfH, h, h + w, minV, maxV, light1, light2);
+            // Left face
+            renderQuad(matrix4f, pose, vc, 0, length, -halfW, -halfH, -halfW, halfH, 0, h, minV, maxV, light1, light2);
+            // Bottom face
+            renderQuad(matrix4f, pose, vc, 0, length, halfW, -halfH, -halfW, -halfH, h + w + h, h + w + h + w, minV, maxV, light1, light2);
+            // Right face
+            renderQuad(matrix4f, pose, vc, 0, length, halfW, halfH, halfW, -halfH, h + w, h + w + h, minV, maxV, light1, light2);
+        }
 
         ms.popPose();
-    }
-
-    private static void renderPart(final PoseStack pPoseStack, final VertexConsumer pConsumer, final float pMaxY, final float pX0, final float pZ0,
-                                   final float pX1, final float pZ1, final float pX2, final float pZ2, final float pX3, final float pZ3, final float pMinU, final float pMaxU, final float pMinV,
-                                   final float pMaxV, final int light1, final int light2, final boolean far) {
-        final PoseStack.Pose posestack$pose = pPoseStack.last();
-        final Matrix4f matrix4f = posestack$pose.pose();
-
-        final float uO = far ? 0f : 3 / 16f;
-        renderQuad(matrix4f, posestack$pose, pConsumer, 0, pMaxY, pX0, pZ0, pX3, pZ3, pMinU, pMaxU, pMinV, pMaxV, light1,
-                light2);
-        renderQuad(matrix4f, posestack$pose, pConsumer, 0, pMaxY, pX3, pZ3, pX0, pZ0, pMinU, pMaxU, pMinV, pMaxV, light1,
-                light2);
-        renderQuad(matrix4f, posestack$pose, pConsumer, 0, pMaxY, pX1, pZ1, pX2, pZ2, pMinU + uO, pMaxU + uO, pMinV, pMaxV,
-                light1, light2);
-        renderQuad(matrix4f, posestack$pose, pConsumer, 0, pMaxY, pX2, pZ2, pX1, pZ1, pMinU + uO, pMaxU + uO, pMinV, pMaxV,
-                light1, light2);
     }
 
     private static void renderQuad(final Matrix4f pPose, final PoseStack.Pose pNormal, final VertexConsumer pConsumer, final float pMinY, final float pMaxY,
@@ -278,11 +210,6 @@ public class CogwheelChainBehaviourRenderer extends BlockEntityBehaviourRenderer
         addVertex(pPose, pNormal, pConsumer, pMinY, pMinX, pMinZ, pMaxU, pMaxV, light1);
         addVertex(pPose, pNormal, pConsumer, pMinY, pMaxX, pMaxZ, pMinU, pMaxV, light1);
         addVertex(pPose, pNormal, pConsumer, pMaxY, pMaxX, pMaxZ, pMinU, pMinV, light2);
-    }
-
-    private static void addVertex(final Matrix4f pPose, final PoseStack.Pose pNormal, final VertexConsumer pConsumer, final Vec3 pPos,
-                                  final float pU, final float pV, final int light) {
-        addVertex(pPose, pNormal, pConsumer, (float) pPos.y, (float) pPos.x, (float) pPos.z, pU, pV, light);
     }
 
     private static void addVertex(final Matrix4f pPose, final PoseStack.Pose pNormal, final VertexConsumer pConsumer, final float pY, final float pX,
@@ -295,17 +222,6 @@ public class CogwheelChainBehaviourRenderer extends BlockEntityBehaviourRenderer
                 .setNormal(pNormal, 0.0F, 1.0F, 0.0F);
     }
 
-//    @Override
-//    protected SuperByteBuffer getRotatedModel(final CogwheelChainBlockEntity be, final BlockState state) {
-//        return CachedBuffers.partialFacingVertical(
-//                Objects.requireNonNull(GenericBlockEntityRenderModels.REGISTRY.get(state.getBlock())),
-//                state.getBlock().defaultBlockState(),
-//                Direction.fromAxisAndDirection(getRotationAxisOf(be), Direction.AxisDirection.POSITIVE)
-//        );
-//
-
-    /// /        return CachedBuffers.block(KINETIC_BLOCK, state);
-//    }
     private void renderChain(final KineticBlockEntity be,
                              final PoseStack ms,
                              final MultiBufferSource buffer,
@@ -346,7 +262,7 @@ public class CogwheelChainBehaviourRenderer extends BlockEntityBehaviourRenderer
                 .getBlockEntityRenderDispatcher().camera.getPosition()
                 .closerThan(from.lerp(to, 0.5), SEAM_DIST));
 
-        if (close || type.getRenderType() != CogwheelChainType.ChainRenderInfo.CHAIN) //For now there is only slow rendering of diff types TODO implement fast
+        if (close)
             renderChainSlowerButWithoutGaps(ms, buffer, offset, textureSquish, preFrom, from, to, postTo, fromCogwheelAxis, toCogwheelAxis, light1, light2, type, flipInsideOutside);
         else {
             chain.rotateYDegrees((float) yaw);
@@ -355,7 +271,7 @@ public class CogwheelChainBehaviourRenderer extends BlockEntityBehaviourRenderer
             final float overextend = 0.05f;
             chain.translate(0, 8 / 16f - overextend / 2f, 0);
             chain.uncenter();
-            renderChainFastButWithGaps(ms, buffer, offset - overextend / 2f, textureSquish, (float) from.distanceTo(to) + overextend, light1, light2, far);
+            renderChainFastButWithGaps(ms, buffer, offset - overextend / 2f, textureSquish, (float) from.distanceTo(to) + overextend, light1, light2, far, type);
         }
 
         ms.popPose();

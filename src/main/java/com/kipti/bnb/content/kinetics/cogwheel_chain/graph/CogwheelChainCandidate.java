@@ -46,20 +46,12 @@ public record CogwheelChainCandidate(Direction.Axis axis, boolean isLarge, boole
         return new CogwheelChainCandidate(getAxis(state), isLargeCogwheel(state), hasSmallCogwheelOffset(state));
     }
 
-    public boolean isConsistentWithNode(final PlacingCogwheelNode node) {
+    public boolean isConsistentWithNode(final ICogwheelNode node) {
         if (node.isLarge() != isLarge)
             return false;
         if (node.rotationAxis() != axis)
             return false;
         return node.hasSmallCogwheelOffset() == hasSmallCogwheelOffset;
-    }
-
-    public boolean isConsistentWithNode(final PathedCogwheelNode chain) {
-        if (chain.isLarge() != isLarge)
-            return false;
-        if (chain.rotationAxis() != axis)
-            return false;
-        return chain.hasSmallCogwheelOffset() == hasSmallCogwheelOffset;
     }
 }
 

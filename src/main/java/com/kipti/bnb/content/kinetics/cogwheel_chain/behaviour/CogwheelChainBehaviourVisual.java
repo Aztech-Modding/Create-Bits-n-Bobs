@@ -3,6 +3,7 @@ package com.kipti.bnb.content.kinetics.cogwheel_chain.behaviour;
 import com.cake.azimuth.behaviour.extensions.RenderedBehaviourExtension;
 import com.kipti.bnb.content.decoration.girder_strut.IBlockEntityRelighter;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChain;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.render.ChainQuadBuilder;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.render.CogwheelChainRenderGeometryBuilder;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.render.CogwheelChainRenderGeometryBuilder.ChainSegment;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.CogwheelChainType;
@@ -34,8 +35,6 @@ import java.util.function.Function;
 
 //TODO: fix light updates
 public class CogwheelChainBehaviourVisual extends RenderedBehaviourExtension.BehaviourVisual {
-
-    private static final int SUBDIVISION_COUNT = 4;
 
     private final VisualizationContext context;
     private final KineticBlockEntity kineticBlockEntity;
@@ -147,9 +146,12 @@ public class CogwheelChainBehaviourVisual extends RenderedBehaviourExtension.Beh
                 kineticBlockEntity.getBlockPos().getZ(),
                 lighter
         );
+        // SQUARE shapes form a closed tube — enable backface culling to avoid rendering
+        // the interior faces. CROSS shapes need both sides visible.
+        final boolean isCross = chainType.getRenderType().getVertexShape() == CogwheelChainType.VertexShape.CROSS;
         final SimpleMaterial material = SimpleMaterial.builderOf(Materials.CUTOUT_MIPPED_BLOCK)
                 .texture(chainType.getRenderTexture())
-                .backfaceCulling(false)
+                .backfaceCulling(!isCross)
                 .build();
 
         deleteInstance();
@@ -213,13 +215,12 @@ public class CogwheelChainBehaviourVisual extends RenderedBehaviourExtension.Beh
                 final float minV = (float) (segment.uvStart() * textureSquish);
                 final float maxV = (float) ((segment.uvStart() + segment.distance()) * textureSquish);
 
-                for (int faceIndex = 0; faceIndex < 4; faceIndex++) {
-                    if (chainRenderInfo.getVertexShape() == CogwheelChainType.VertexShape.CROSS) {
-                        putCrossShapeFace(builtVertices, bounds, destinationPoints, sourcePoints, faceIndex, minV, maxV, baseX, baseY, baseZ, lighter);
-                    } else {
-                        putDefaultShapeFace(builtVertices, bounds, destinationPoints, sourcePoints, chainRenderInfo, faceIndex, minV, maxV, flipInsideOutside, baseX, baseY, baseZ, lighter);
-                    }
-                }
+                ChainQuadBuilder.buildSegmentFaces(destinationPoints, sourcePoints, chainRenderInfo, minV, maxV, flipInsideOutside,
+                        (x, y, z, u, v, nx, ny, nz) -> {
+                            final int light = lighter.apply(new Vector3f(x + baseX, y + baseY, z + baseZ));
+                            builtVertices.add(new Vertex(x, y, z, u, v, nx, ny, nz, light));
+                            bounds.include(x, y, z);
+                        });
             }
 
             this.vertices = builtVertices;
@@ -255,155 +256,6 @@ public class CogwheelChainBehaviourVisual extends RenderedBehaviourExtension.Beh
         @Override
         public Vector4fc boundingSphere() {
             return boundingSphere;
-        }
-
-        private static void putCrossShapeFace(final List<Vertex> vertices,
-                                              final Bounds bounds,
-                                              final List<Vec3> destinationPoints,
-                                              final List<Vec3> sourcePoints,
-                                              final int faceIndex,
-                                              final float minV,
-                                              final float maxV,
-                                              final int baseX,
-                                              final int baseY,
-                                              final int baseZ,
-                                              final Function<Vector3f, Integer> lighter) {
-            final float uOffset = (faceIndex % 2 == 1) ? 0 : 3 / 16f;
-            final float uWidth = 3 / 16f;
-            final float minU = 0;
-            final float uLeft = minU + uOffset;
-            final float uRight = uWidth + uOffset;
-
-            final Vec3 posTL = destinationPoints.get((faceIndex + 2) % 4);
-            final Vec3 posBL = sourcePoints.get((faceIndex + 2) % 4);
-            final Vec3 posBR = sourcePoints.get(faceIndex);
-            final Vec3 posTR = destinationPoints.get(faceIndex);
-
-            putSubdividedQuad(vertices, bounds, posTL, posBL, posBR, posTR, uLeft, uRight, minV, maxV, baseX, baseY, baseZ, lighter);
-        }
-
-        private static void putDefaultShapeFace(final List<Vertex> vertices,
-                                                final Bounds bounds,
-                                                final List<Vec3> destinationPoints,
-                                                final List<Vec3> sourcePoints,
-                                                final CogwheelChainType.ChainRenderInfo renderInfo,
-                                                final int faceIndex,
-                                                final float minV,
-                                                final float maxV,
-                                                final boolean flipTopBottom,
-                                                final int baseX,
-                                                final int baseY,
-                                                final int baseZ,
-                                                final Function<Vector3f, Integer> lighter) {
-            final float h = renderInfo.getHeight() / 16f;
-            final float w = renderInfo.getWidth() / 16f;
-
-            final int uvFaceIndex = flipTopBottom ? (faceIndex + 2) % 4 : faceIndex;
-            final float minU;
-            final float maxU;
-            if (uvFaceIndex == 0) {
-                minU = h;
-                maxU = h + w;
-            } else if (uvFaceIndex == 1) {
-                minU = 0;
-                maxU = h;
-            } else if (uvFaceIndex == 2) {
-                minU = h + w + h;
-                maxU = h + w + h + w;
-            } else {
-                minU = h + w;
-                maxU = h + w + h;
-            }
-
-            final Vec3 posTL = destinationPoints.get((faceIndex + 1) % 4);
-            final Vec3 posBL = sourcePoints.get((faceIndex + 1) % 4);
-            final Vec3 posBR = sourcePoints.get(faceIndex);
-            final Vec3 posTR = destinationPoints.get(faceIndex);
-
-            putSubdividedQuad(vertices, bounds, posTL, posBL, posBR, posTR, minU, maxU, minV, maxV, baseX, baseY, baseZ, lighter);
-        }
-
-        private static void putSubdividedQuad(final List<Vertex> vertices,
-                                              final Bounds bounds,
-                                              final Vec3 posTL,
-                                              final Vec3 posBL,
-                                              final Vec3 posBR,
-                                              final Vec3 posTR,
-                                              final float uLeft,
-                                              final float uRight,
-                                              final float minV,
-                                              final float maxV,
-                                              final int baseX,
-                                              final int baseY,
-                                              final int baseZ,
-                                              final Function<Vector3f, Integer> lighter) {
-            for (int s = 0; s < SUBDIVISION_COUNT; s++) {
-                final float t1 = (float) s / SUBDIVISION_COUNT;
-                final float t2 = (float) (s + 1) / SUBDIVISION_COUNT;
-
-                final float vStart = Mth.lerp(t1, minV, maxV);
-                final float vEnd = Mth.lerp(t2, minV, maxV);
-
-                final Vec3 p1 = posTL.lerp(posBL, t1);
-                final Vec3 p2 = posTL.lerp(posBL, t2);
-                final Vec3 p3 = posTR.lerp(posBR, t2);
-                final Vec3 p4 = posTR.lerp(posBR, t1);
-
-                putQuad(vertices, bounds, p1, p2, p3, p4, uLeft, uRight, vStart, vEnd, baseX, baseY, baseZ, lighter);
-            }
-        }
-
-        private static void putQuad(final List<Vertex> vertices,
-                                    final Bounds bounds,
-                                    final Vec3 p1,
-                                    final Vec3 p2,
-                                    final Vec3 p3,
-                                    final Vec3 p4,
-                                    final float uLeft,
-                                    final float uRight,
-                                    final float vStart,
-                                    final float vEnd,
-                                    final int baseX,
-                                    final int baseY,
-                                    final int baseZ,
-                                    final Function<Vector3f, Integer> lighter) {
-            final Vec3 edgeA = p2.subtract(p1);
-            final Vec3 edgeB = p4.subtract(p1);
-            Vec3 normal = edgeA.cross(edgeB);
-            if (normal.lengthSqr() < 1e-7) {
-                normal = new Vec3(0, 1, 0);
-            } else {
-                normal = normal.normalize();
-            }
-
-            final float nx = (float) normal.x;
-            final float ny = (float) normal.y;
-            final float nz = (float) normal.z;
-
-            addVertex(vertices, bounds, p1, uLeft, vStart, nx, ny, nz, baseX, baseY, baseZ, lighter);
-            addVertex(vertices, bounds, p2, uLeft, vEnd, nx, ny, nz, baseX, baseY, baseZ, lighter);
-            addVertex(vertices, bounds, p3, uRight, vEnd, nx, ny, nz, baseX, baseY, baseZ, lighter);
-            addVertex(vertices, bounds, p4, uRight, vStart, nx, ny, nz, baseX, baseY, baseZ, lighter);
-        }
-
-        private static void addVertex(final List<Vertex> vertices,
-                                      final Bounds bounds,
-                                      final Vec3 pos,
-                                      final float u,
-                                      final float v,
-                                      final float nx,
-                                      final float ny,
-                                      final float nz,
-                                      final int baseX,
-                                      final int baseY,
-                                      final int baseZ,
-                                      final Function<Vector3f, Integer> lighter) {
-            final float x = (float) pos.x;
-            final float y = (float) pos.y;
-            final float z = (float) pos.z;
-            final int light = lighter.apply(new Vector3f(x + baseX, y + baseY, z + baseZ));
-            vertices.add(new Vertex(x, y, z, u, v, nx, ny, nz, light));
-            bounds.include(x, y, z);
         }
 
         private record Vertex(float x, float y, float z, float u, float v, float nx, float ny, float nz, int light) {

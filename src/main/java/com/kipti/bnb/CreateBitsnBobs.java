@@ -9,6 +9,7 @@ import com.kipti.bnb.registry.compat.BnbCreateStresses;
 import com.kipti.bnb.registry.content.BnbBlockEntities;
 import com.kipti.bnb.registry.content.BnbBlocksBootstrap;
 import com.kipti.bnb.registry.content.BnbEntityTypes;
+import com.kipti.bnb.registry.content.BnbAdvancements;
 import com.kipti.bnb.registry.content.BnbItems;
 import com.kipti.bnb.registry.core.BnbConfigs;
 import com.kipti.bnb.registry.core.BnbDataComponents;
@@ -63,6 +64,7 @@ public class CreateBitsnBobs {
         BnbDataConditions.register(modEventBus);
 
         BnbItems.register();
+        BnbAdvancements.register();
         BnbBlocksBootstrap.register();
         BnbEntityTypes.register();
         BnbBlockEntities.register();

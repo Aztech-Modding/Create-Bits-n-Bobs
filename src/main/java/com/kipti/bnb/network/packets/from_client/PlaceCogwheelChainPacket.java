@@ -30,7 +30,7 @@ public record PlaceCogwheelChainPacket(
             StreamCodec.composite(
                     PlacingCogwheelChain.STREAM_CODEC,
                     PlaceCogwheelChainPacket::worldSpacePartialChain,
-                    CogwheelChainType.STEAM_CODEC,
+                    CogwheelChainType.STREAM_CODEC,
                     PlaceCogwheelChainPacket::chainType,
                     ByteBufCodecs.INT,
                     PlaceCogwheelChainPacket::priorityChainTakeHand,

@@ -1,4 +1,6 @@
 {
+  "advancement.bits_n_bobs.cookie_dough": "But It Tastes So Good...",
+  "advancement.bits_n_bobs.cookie_dough.desc": "Eat cookie dough",
   "bits_n_bobs.ponder.chain_cog_changing_axis.header": "Changing axes on cogwheel chains",
   "bits_n_bobs.ponder.chain_cog_changing_axis.text_1": "Chains can change axis when connecting two large cogwheels",
   "bits_n_bobs.ponder.chain_cog_changing_axis.text_2": "They must share a common tangent that the chain can follow",
@@ -167,6 +169,7 @@
   "block.bits_n_bobs.yellow_nixie_board": "Yellow Nixie Board",
   "entity.bits_n_bobs.inert_stationary_contraption": "Inert Stationary Contraption",
   "generator.bits_n_bobs.ponderous_planes": "Ponderflat",
+  "item.bits_n_bobs.cookie_dough": "Cookie Dough",
   "item.bits_n_bobs.icon_lightbulb": "Icon Lightbulb",
   "item.bits_n_bobs.test_rope": "Test Rope",
   "message.bits_n_bobs.cogwheel_chain.chain_addition_aborted.cannot_revisit_node": "You cannot self-intersect the chain!",

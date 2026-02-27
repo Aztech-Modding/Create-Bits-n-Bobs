@@ -13,6 +13,7 @@
     "DynamicComponentMixin",
     "RotationPropagatorMixin",
     "azimuth.CachedRenderBBBlockEntityMixin",
+    "azimuth.CreateAdvancementIdMixin",
     "azimuth.ItemRequirementMixin",
     "azimuth.RotationPropagatorMixin",
     "azimuth.SafeBlockEntityRendererMixin",

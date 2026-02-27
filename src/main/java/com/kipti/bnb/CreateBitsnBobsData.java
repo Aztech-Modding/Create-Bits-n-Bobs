@@ -1,6 +1,7 @@
 package com.kipti.bnb;
 
 import com.kipti.bnb.foundation.ponder.BnbPonderPlugin;
+import com.kipti.bnb.registry.content.BnbAdvancements;
 import com.tterrag.registrate.providers.ProviderType;
 import net.createmod.ponder.foundation.PonderIndex;
 import net.minecraft.core.HolderLookup;
@@ -23,7 +24,10 @@ public class CreateBitsnBobsData {
             // Register this since FMLClientSetupEvent does not run during datagen
             PonderIndex.addPlugin(new BnbPonderPlugin());
             PonderIndex.getLangAccess().provideLang(CreateBitsnBobs.MOD_ID, langConsumer);
+            BnbAdvancements.provideLang(langConsumer);
         });
+
+        generator.addProvider(event.includeServer(), BnbAdvancements.dataProvider(output, lookupProvider));
     }
 
 }
