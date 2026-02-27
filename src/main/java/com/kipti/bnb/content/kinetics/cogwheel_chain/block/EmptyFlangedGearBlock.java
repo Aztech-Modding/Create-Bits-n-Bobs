@@ -1,7 +1,7 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.block;
 
+import com.kipti.bnb.registry.client.BnbShapes;
 import com.kipti.bnb.registry.content.BnbBlockEntities;
-import com.simibubi.create.AllShapes;
 import com.simibubi.create.content.decoration.encasing.EncasableBlock;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.RotatedPillarKineticBlock;
@@ -43,7 +43,7 @@ public class EmptyFlangedGearBlock extends RotatedPillarKineticBlock implements 
 
     @Override
     protected @NotNull VoxelShape getShape(final BlockState state, final @NotNull BlockGetter level, final @NotNull BlockPos pos, final @NotNull CollisionContext context) {
-        return (isLarge ? AllShapes.LARGE_GEAR : AllShapes.SMALL_GEAR).get(state.getValue(AXIS));
+        return (isLarge ? BnbShapes.LARGE_FLANGED_GEAR : BnbShapes.SMALL_FLANGED_GEAR).get(state.getValue(AXIS));
     }
 
     public static EmptyFlangedGearBlock small(final Properties properties) {
