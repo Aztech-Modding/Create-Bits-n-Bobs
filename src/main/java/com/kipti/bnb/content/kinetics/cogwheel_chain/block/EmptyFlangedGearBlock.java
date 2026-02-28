@@ -77,7 +77,7 @@ public class EmptyFlangedGearBlock extends RotatedPillarKineticBlock implements 
 
     @Override
     public BlockEntityType<? extends KineticBlockEntity> getBlockEntityType() {
-        return BnbBlockEntities.EMPTY_FLANGED_COGWHEEL.get();
+        return BnbBlockEntities.SIMPLE_KINETIC.get();
     }
 
     @Override

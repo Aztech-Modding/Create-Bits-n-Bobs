@@ -15,7 +15,7 @@ public class BnbEncasedEmptyFlangedGearBlock extends BnbEncasedCogwheelBlock {
 
     @Override
     public BlockEntityType<? extends SimpleKineticBlockEntity> getBlockEntityType() {
-        return BnbBlockEntities.EMPTY_FLANGED_COGWHEEL.get();
+        return BnbBlockEntities.SIMPLE_KINETIC.get();
     }
 }
 

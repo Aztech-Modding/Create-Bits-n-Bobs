@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A wrapper around a {@link BlockEntityVisualizer} that adds support for rendering {@link RenderedBehaviourExtension}s.
@@ -21,7 +21,7 @@ import java.util.HashMap;
  * The wrapper is reused when targeting a visual multiple times to avoid unnecessary allocations.
  */
 public class WrappingVisualizer<T extends BlockEntity> implements BlockEntityVisualizer<T> {
-    private static final HashMap<BlockEntityVisualizer<?>, WrappingVisualizer<?>> WRAPPERS_BY_DELEGATE = new HashMap<>();
+    private static final ConcurrentHashMap<BlockEntityVisualizer<?>, WrappingVisualizer<?>> WRAPPERS_BY_DELEGATE = new ConcurrentHashMap<>();
 
     private final BlockEntityVisualizer<? super T> delegate;
 

@@ -19,6 +19,7 @@ import com.kipti.bnb.registry.content.blocks.BnbKineticBlocks;
 import com.kipti.bnb.registry.content.blocks.BnbSpecialEncasedBlocks;
 import com.kipti.bnb.registry.content.blocks.BnbTrinketBlocks;
 import com.kipti.bnb.registry.content.blocks.deco.BnbDecorativeBlocks;
+import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 import com.simibubi.create.content.kinetics.base.ShaftRenderer;
@@ -85,11 +86,12 @@ public class BnbBlockEntities {
             .renderer(() -> ChainPulleyRenderer::new)
             .register();
 
-    public static final BlockEntityEntry<SimpleKineticBlockEntity> EMPTY_FLANGED_COGWHEEL = REGISTRATE.blockEntity("empty_flanged_cogwheel", SimpleKineticBlockEntity::new)
+    public static final BlockEntityEntry<SimpleKineticBlockEntity> SIMPLE_KINETIC = REGISTRATE.blockEntity("simple_kinetic", SimpleKineticBlockEntity::new)
             .visual(() -> (context, blockEntity, partialTick) ->
                     new SingleAxisRotatingVisual<>(context, blockEntity, partialTick,
                             Models.partial(GenericBlockEntityRenderModels.REGISTRY.get(blockEntity.getBlockState().getBlock()))), true)
             .validBlocks(BnbKineticBlocks.SMALL_EMPTY_FLANGED_COGWHEEL, BnbKineticBlocks.LARGE_EMPTY_FLANGED_COGWHEEL)
+            .validBlocks(AllBlocks.COGWHEEL, AllBlocks.LARGE_COGWHEEL)
             .validBlocks(BnbEncasedBlocks.ENCASED_LARGE_FLANGED_COGWHEEL.toArray())
             .validBlocks(BnbEncasedBlocks.ENCASED_FLANGED_COGWHEEL.toArray())
             .renderer(() -> KineticBlockEntityRenderer::new)

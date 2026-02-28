@@ -93,6 +93,11 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
     }
 
     @Override
+    public boolean isSafeNBT() {
+        return true;
+    }
+
+    @Override
     public void destroy() {
         super.destroy();
     }
