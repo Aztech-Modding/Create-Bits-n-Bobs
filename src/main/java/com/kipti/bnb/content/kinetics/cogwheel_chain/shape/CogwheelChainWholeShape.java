@@ -13,7 +13,6 @@ import org.joml.Matrix4f;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("null")
 public class CogwheelChainWholeShape extends CogwheelChainShape {
 
     private static final double INFLATE_PIXELS = 1.0 / 16.0;

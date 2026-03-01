@@ -124,6 +124,11 @@ public class GirderStrutBlockItem extends BlockItem {
             return false;
         }
 
+        //Check not straight up since thats ILLEGAL (cba to fix shape issues and all the other rendering stuff)
+        if (Math.abs(diffY) > 0 && diffX == 0 && diffZ == 0) {
+            return false;
+        }
+
         final double lengthSq = diffX * diffX + diffY * diffY + diffZ * diffZ;
         if (lengthSq > GirderStrutBlock.MAX_SPAN * GirderStrutBlock.MAX_SPAN) {
             return false;
@@ -230,8 +235,10 @@ public class GirderStrutBlockItem extends BlockItem {
         if (!(level.getBlockEntity(targetPos) instanceof final GirderStrutBlockEntity target)) {
             return;
         }
-        from.addConnection(targetPos);
-        target.addConnection(fromPos);
+        final Direction fromFacing = level.getBlockState(fromPos).getValue(GirderStrutBlock.FACING);
+        final Direction targetFacing = level.getBlockState(targetPos).getValue(GirderStrutBlock.FACING);
+        from.addConnection(targetPos, targetFacing);
+        target.addConnection(fromPos, fromFacing);
 
         final BlockState updatedFromState = level.getBlockState(fromPos);
         final BlockState updatedTargetState = level.getBlockState(targetPos);

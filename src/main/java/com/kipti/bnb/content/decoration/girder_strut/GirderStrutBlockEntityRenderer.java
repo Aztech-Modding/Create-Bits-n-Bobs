@@ -1,5 +1,6 @@
 package com.kipti.bnb.content.decoration.girder_strut;
 
+import com.kipti.bnb.content.decoration.girder_strut.connection.GirderConnectionNode;
 import com.mojang.blaze3d.vertex.*;
 import com.simibubi.create.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
@@ -13,6 +14,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -43,19 +45,19 @@ public class GirderStrutBlockEntityRenderer extends SmartBlockEntityRenderer<Gir
         // Fast, pure partial based approach, which actually looks ok so ill leave it for fast graphics
         if (Minecraft.getInstance().options.graphicsMode().get() == GraphicsStatus.FAST) {
             // Render the girder strut segment
-            for (BlockPos pos : blockEntity.getConnectionsCopy()) {
-                pos = pos.offset(blockEntity.getBlockPos());
+            for (final GirderConnectionNode data : blockEntity.getConnectionsCopy()) {
+                final BlockPos pos = data.absoluteFrom(blockEntity.getBlockPos());
                 final BlockState state = blockEntity.getLevel().getBlockState(pos);
                 if (!
                         (state.getBlock() instanceof GirderStrutBlock)) {
                     continue; // Skip if the block is not a Girder Strut
                 }
 
-                final Vec3i relative = pos.subtract(blockEntity.getBlockPos());
+                final Vec3i relative = data.relativeOffset();
                 // Calculate the length of the strut segment based on the distance to the connected block
                 final Vec3 thisAttachment = Vec3.atCenterOf(blockEntity.getBlockPos()).relative(blockEntity.getBlockState().getValue(GirderStrutBlock.FACING), -0.4);
-                final BlockState otherState = blockEntity.getLevel().getBlockState(pos);
-                final Vec3 otherAttachment = Vec3.atCenterOf(pos).relative(otherState.getValue(GirderStrutBlock.FACING), -0.4);
+                final Direction otherFacing = data.peerFacing();
+                final Vec3 otherAttachment = Vec3.atCenterOf(pos).relative(otherFacing, -0.4);
 
                 final double length = thisAttachment.distanceTo(otherAttachment);
                 final int segments = (int) Math.ceil(length);
