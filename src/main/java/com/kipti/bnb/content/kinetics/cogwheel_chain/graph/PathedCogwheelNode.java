@@ -4,19 +4,23 @@ import com.simibubi.create.content.contraptions.StructureTransform;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.phys.Vec3;
 
 public record PathedCogwheelNode(int side, boolean isLarge, Direction.Axis rotationAxis, BlockPos localPos,
-                                 boolean offsetForSmallCogwheel) {
+                                 boolean hasSmallCogwheelOffset) implements ICogwheelNode {
+
+    @Override
+    public BlockPos pos() {
+        return localPos;
+    }
 
     public PathedCogwheelNode(final PlacingCogwheelNode partialNode, final int side) {
-        this(side, partialNode.isLarge(), partialNode.rotationAxis(), partialNode.pos(), partialNode.hasOffsetForSmallCogwheel());
+        this(side, partialNode.isLarge(), partialNode.rotationAxis(), partialNode.pos(), partialNode.hasSmallCogwheelOffset());
     }
 
     public void write(final CompoundTag nodeTag) {
         nodeTag.putBoolean("Side", side == 1);
         nodeTag.putBoolean("IsLarge", isLarge);
-        nodeTag.putBoolean("OffsetForSmallCogwheel", offsetForSmallCogwheel);
+        nodeTag.putBoolean("OffsetForSmallCogwheel", hasSmallCogwheelOffset);
         nodeTag.putInt("OffsetX", localPos.getX());
         nodeTag.putInt("OffsetY", localPos.getY());
         nodeTag.putInt("OffsetZ", localPos.getZ());
@@ -48,25 +52,6 @@ public record PathedCogwheelNode(int side, boolean isLarge, Direction.Axis rotat
         return side * (isLarge ? 1 : 0.5f);
     }
 
-    public Vec3 center() {
-        return localPos.getCenter();
-    }
-
-    public Vec3 rotationAxisVec() {
-        switch (rotationAxis) {
-            case X -> {
-                return new Vec3(1, 0, 0);
-            }
-            case Y -> {
-                return new Vec3(0, 1, 0);
-            }
-            case Z -> {
-                return new Vec3(0, 0, 1);
-            }
-        }
-        return Vec3.ZERO;
-    }
-
     public double dist(final PathedCogwheelNode other) {
         return center().distanceTo(other.center());
     }
@@ -79,7 +64,7 @@ public record PathedCogwheelNode(int side, boolean isLarge, Direction.Axis rotat
                 isLarge,
                 transformedAxisResult.getAxis(),
                 transformedPos,
-                offsetForSmallCogwheel
+                hasSmallCogwheelOffset
         );
     }
 }

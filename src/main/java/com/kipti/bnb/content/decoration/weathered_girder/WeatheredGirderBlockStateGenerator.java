@@ -16,9 +16,9 @@ import net.neoforged.neoforge.client.model.generators.MultiPartBlockStateBuilder
  */
 public class WeatheredGirderBlockStateGenerator {
 
-    public static void blockStateWithShaft(DataGenContext<Block, WeatheredGirderEncasedShaftBlock> c,
-                                           RegistrateBlockstateProvider p) {
-        MultiPartBlockStateBuilder builder = p.getMultipartBuilder(c.get());
+    public static void blockStateWithShaft(final DataGenContext<Block, WeatheredGirderEncasedShaftBlock> c,
+                                           final RegistrateBlockstateProvider p) {
+        final MultiPartBlockStateBuilder builder = p.getMultipartBuilder(c.get());
 
         builder.part()
                 .modelFile(AssetLookup.partialBaseModel(c, p))
@@ -48,8 +48,8 @@ public class WeatheredGirderBlockStateGenerator {
 
     }
 
-    public static void blockState(DataGenContext<Block, WeatheredGirderBlock> c, RegistrateBlockstateProvider p) {
-        MultiPartBlockStateBuilder builder = p.getMultipartBuilder(c.get());
+    public static void blockState(final DataGenContext<Block, WeatheredGirderBlock> c, final RegistrateBlockstateProvider p) {
+        final MultiPartBlockStateBuilder builder = p.getMultipartBuilder(c.get());
 
         builder.part()
                 .modelFile(AssetLookup.partialBaseModel(c, p, "pole"))
@@ -70,7 +70,7 @@ public class WeatheredGirderBlockStateGenerator {
                 .condition(GirderBlock.Z, true)
                 .end();
 
-        for (boolean x : Iterate.trueAndFalse)
+        for (final boolean x : Iterate.trueAndFalse)
             builder.part()
                     .modelFile(AssetLookup.partialBaseModel(c, p, "top"))
                     .addModel()

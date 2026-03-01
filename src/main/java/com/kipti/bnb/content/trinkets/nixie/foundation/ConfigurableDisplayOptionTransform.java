@@ -14,30 +14,30 @@ public enum ConfigurableDisplayOptionTransform {
     public final int lines;
     public final float scale;
 
-    ConfigurableDisplayOptionTransform(int width, int lines, float scale) {
+    ConfigurableDisplayOptionTransform(final int width, final int lines, final float scale) {
         this.width = width;
         this.lines = lines;
         this.scale = scale;
     }
 
-    public void transform(PoseStack stack, int x, int y) {
-        int totalSize = 16;
-        float xStep = totalSize / (float) (width);
-        float yStep = totalSize / (float) (lines);
-        float xOffset = xStep / 2f + x * xStep;
-        float yOffset = yStep / 2f + y * yStep;
+    public void transform(final PoseStack stack, final int x, final int y) {
+        final int totalSize = 16;
+        final float xStep = totalSize / (float) (width);
+        final float yStep = totalSize / (float) (lines);
+        final float xOffset = xStep / 2f + x * xStep;
+        final float yOffset = yStep / 2f + y * yStep;
 
         stack.translate(xOffset - 8f, yOffset - 8f + lines * 2f, 0);
         stack.scale(scale, scale, 1f);
     }
 
-    public void render(PoseStack stack, GenericNixieDisplayBlockEntity be, Consumer<Character> consumer) {
+    public void render(final PoseStack stack, final GenericNixieDisplayBlockEntity be, final Consumer<Character> consumer) {
         stack.pushPose();
         for (int i = 0; i < lines; i++) {
             for (int j = 0; j < width; j++) {
                 stack.pushPose();
                 transform(stack, j, i);
-                char glyph = be.getRenderedText(i, j);
+                final char glyph = be.getRenderedText(i, j);
                 consumer.accept(glyph);
                 stack.popPose();
             }

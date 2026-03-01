@@ -1,17 +1,13 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.graph;
 
-import com.kipti.bnb.CreateBitsnBobs;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.block.CogwheelChainBlock;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.block.CogwheelChainBlockEntity;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.block.ICogwheelChainBlock;
+import com.cake.azimuth.behaviour.SuperBlockEntityBehaviour;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.behaviour.CogwheelChainBehaviour;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.BnbCogwheelChainTypes;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.CogwheelChainType;
 import com.kipti.bnb.registry.core.BnbRegistries;
 import com.simibubi.create.content.contraptions.StructureTransform;
-import com.simibubi.create.content.kinetics.simpleRelays.CogWheelBlock;
-import com.simibubi.create.foundation.utility.BlockHelper;
+import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
@@ -111,21 +107,15 @@ public class CogwheelChain {
 
     public boolean checkIntegrity(final Level level, final BlockPos origin) {
         for (final PathedCogwheelNode node : this.cogwheelNodes) {
-            final BlockState state = level.getBlockState(node.localPos().offset(origin));
-            if (!isValidChainCogwheel(state)) {
-                return false;
-            }
-            final Direction.Axis axis = state.getValue(CogWheelBlock.AXIS);
-            final boolean isLarge = state.getBlock() instanceof final ICogwheelChainBlock iCogWheel && iCogWheel.isLargeCog();
-            if (axis != node.rotationAxis() || isLarge != node.isLarge()) {
+            final BlockPos pos = node.localPos().offset(origin);
+            if (!level.isLoaded(pos)) continue; //Skip checks if unloaded
+            final BlockState state = level.getBlockState(pos);
+            final CogwheelChainCandidate candidate = CogwheelChainCandidate.getForBlock(state);
+            if (candidate == null || !candidate.isConsistentWithNode(node)) {
                 return false;
             }
         }
         return true;
-    }
-
-    private boolean isValidChainCogwheel(final BlockState state) {
-        return state.getBlock() instanceof ICogwheelChainBlock;
     }
 
     public int getChainsRequired() {
@@ -165,36 +155,33 @@ public class CogwheelChain {
         boolean isController = true;
         final BlockPos controllerPos = source.getFirstNode().pos();
         final int chainsUsed = source.getChainsRequiredInLoop();
+
         for (final PlacingCogwheelNode node : source.getVisitedNodes()) {
             placeChainCogwheelInLevel(level, node, isController, chainsUsed, controllerPos);
             isController = false;
         }
 
+        //Try to get the kinetic block entity at controller, and update the kinetics
+        final BlockEntity be = level.getBlockEntity(controllerPos);
+        if (be instanceof final KineticBlockEntity kbe) {
+            kbe.detachKinetics();
+            kbe.updateSpeed = true;
+        } else {
+            throw new IllegalStateException("Expected a kinetic block entity at the controller position when placing a cogwheel chain, but found none! Position: " + controllerPos);
+        }
     }
 
     private void placeChainCogwheelInLevel(final Level level, final PlacingCogwheelNode node, final boolean isController, final int chainsUsed, final BlockPos controllerPos) {
-        final BlockState existingState = level.getBlockState(node.pos());
-        final CogwheelChainCandidateInfo info = CogwheelChainCandidateInfo.REGISTRY.get(existingState.getBlock());
+        final CogwheelChainBehaviour behaviour = SuperBlockEntityBehaviour.getOrThrow(level, node.pos(), CogwheelChainBehaviour.TYPE);
 
-        @Nullable final BlockState newState = info == null ? null : BlockHelper.copyProperties(existingState, info.resultingBlock().get().defaultBlockState());
-
-        if (newState == null) {
-            CreateBitsnBobs.LOGGER.error("Failed to place cogwheel chain at {}, existing block {}, because the chain state could not be resolved", node.pos(), existingState);
-            return;
-        }
-        level.setBlockAndUpdate(node.pos(), newState);
-
-        final BlockEntity be = level.getBlockEntity(node.pos());
-        if (be instanceof final CogwheelChainBlockEntity chainBE) {
-            if (isController) {
-                chainBE.setAsController(this);
-                chainBE.setChainsUsed(chainsUsed);
-            } else {
-                chainBE.setController(controllerPos.subtract(node.pos()));
-            }
+        if (isController) {
+            behaviour.setAsController(this);
+            behaviour.setChainsUsed(chainsUsed);
         } else {
-            throw new IllegalStateException("Expected CogwheelChainBlockEntity at " + node.pos());
+            behaviour.setController(controllerPos.subtract(node.pos()));
         }
+
+        behaviour.sendData();
     }
 
     public void destroy(final Level level, final BlockPos worldPosition) {
@@ -205,12 +192,7 @@ public class CogwheelChain {
     }
 
     public static void removeChainCogwheelFromLevelIfPresent(final Level level, final BlockPos pos) {
-        final BlockEntity be = level.getBlockEntity(pos);
-        final BlockState state = level.getBlockState(pos);
-        if (be instanceof CogwheelChainBlockEntity && (state.getBlock() instanceof final CogwheelChainBlock cogwheelChainBlock)) {
-            level.setBlockAndUpdate(pos, cogwheelChainBlock.getSourceBlockState()
-                    .setValue(CogwheelChainBlock.AXIS, state.getValue(CogwheelChainBlock.AXIS)));
-        }
+        SuperBlockEntityBehaviour.getOptional(level, pos, CogwheelChainBehaviour.TYPE).ifPresent(CogwheelChainBehaviour::disconnectFromChain);
     }
 
     public void createDestroyEffects(final Level level, final BlockPos worldPosition) {
@@ -295,7 +277,7 @@ public class CogwheelChain {
         return flipInsideOutside;
     }
 
-    public void transform(final BlockEntity blockEntity, final StructureTransform transform) {
+    public void transform(final StructureTransform transform) {
         final List<PathedCogwheelNode> newNodes = new ArrayList<>();
         for (final PathedCogwheelNode node : cogwheelNodes) {
             newNodes.add(node.transform(transform));

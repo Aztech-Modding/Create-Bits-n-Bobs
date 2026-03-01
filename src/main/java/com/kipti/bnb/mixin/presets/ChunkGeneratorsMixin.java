@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(ChunkGenerators.class)
 public class ChunkGeneratorsMixin {
     @Inject(method = "bootstrap", at = @At("TAIL"))
-    private static void bootstrap(Registry<MapCodec<? extends ChunkGenerator>> registry, CallbackInfoReturnable<MapCodec<? extends ChunkGenerator>> cir) {
+    private static void bootstrap(final Registry<MapCodec<? extends ChunkGenerator>> registry, final CallbackInfoReturnable<MapCodec<? extends ChunkGenerator>> cir) {
         Registry.register(registry, CreateBitsnBobs.asResource("ponderous_planes"), PonderflatLevelSource.CODEC);
 
     }

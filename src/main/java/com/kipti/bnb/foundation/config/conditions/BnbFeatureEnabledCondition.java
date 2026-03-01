@@ -17,7 +17,7 @@ public record BnbFeatureEnabledCondition(String featureFlagKey) implements ICond
     );
 
     @Override
-    public boolean test(IContext context) {
+    public boolean test(final IContext context) {
         return BnbFeatureFlag.isEnabled(this.featureFlagKey);
     }
 

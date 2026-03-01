@@ -1,7 +1,7 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.block;
 
+import com.kipti.bnb.registry.client.BnbShapes;
 import com.kipti.bnb.registry.content.BnbBlockEntities;
-import com.simibubi.create.AllShapes;
 import com.simibubi.create.content.decoration.encasing.EncasableBlock;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.RotatedPillarKineticBlock;
@@ -23,7 +23,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 
-public class EmptyFlangedGearBlock extends RotatedPillarKineticBlock implements IBE<KineticBlockEntity>, EncasableBlock {
+public class EmptyFlangedGearBlock extends RotatedPillarKineticBlock implements IBE<KineticBlockEntity>, EncasableBlock, IExclusiveCogwheelChainBlock {
 
     final private boolean isLarge;
 
@@ -33,8 +33,8 @@ public class EmptyFlangedGearBlock extends RotatedPillarKineticBlock implements 
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        ItemInteractionResult result = tryEncase(state, level, pos, stack, player, hand, hitResult);
+    protected ItemInteractionResult useItemOn(final ItemStack stack, final BlockState state, final Level level, final BlockPos pos, final Player player, final InteractionHand hand, final BlockHitResult hitResult) {
+        final ItemInteractionResult result = tryEncase(state, level, pos, stack, player, hand, hitResult);
         if (result.consumesAction())
             return result;
 
@@ -43,7 +43,7 @@ public class EmptyFlangedGearBlock extends RotatedPillarKineticBlock implements 
 
     @Override
     protected @NotNull VoxelShape getShape(final BlockState state, final @NotNull BlockGetter level, final @NotNull BlockPos pos, final @NotNull CollisionContext context) {
-        return (isLarge ? AllShapes.LARGE_GEAR : AllShapes.SMALL_GEAR).get(state.getValue(AXIS));
+        return (isLarge ? BnbShapes.LARGE_FLANGED_GEAR : BnbShapes.SMALL_FLANGED_GEAR).get(state.getValue(AXIS));
     }
 
     public static EmptyFlangedGearBlock small(final Properties properties) {
@@ -77,8 +77,12 @@ public class EmptyFlangedGearBlock extends RotatedPillarKineticBlock implements 
 
     @Override
     public BlockEntityType<? extends KineticBlockEntity> getBlockEntityType() {
-        return BnbBlockEntities.EMPTY_FLANGED_COGWHEEL.get();
+        return BnbBlockEntities.SIMPLE_KINETIC.get();
     }
 
+    @Override
+    public boolean isLargeCog() {
+        return isLarge;
+    }
 }
 

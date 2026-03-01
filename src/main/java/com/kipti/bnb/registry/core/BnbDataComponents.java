@@ -31,14 +31,14 @@ public class BnbDataComponents {
             builder -> builder.persistent(PlacingCogwheelChain.CODEC).networkSynchronized(PlacingCogwheelChain.STREAM_CODEC)
     );
 
-    private static <T> DataComponentType<T> register(String name, UnaryOperator<DataComponentType.Builder<T>> builder) {
-        DataComponentType<T> type = builder.apply(DataComponentType.builder()).build();
+    private static <T> DataComponentType<T> register(final String name, final UnaryOperator<DataComponentType.Builder<T>> builder) {
+        final DataComponentType<T> type = builder.apply(DataComponentType.builder()).build();
         DATA_COMPONENTS.register(name, () -> type);
         return type;
     }
 
     @ApiStatus.Internal
-    public static void register(IEventBus modEventBus) {
+    public static void register(final IEventBus modEventBus) {
         DATA_COMPONENTS.register(modEventBus);
     }
 

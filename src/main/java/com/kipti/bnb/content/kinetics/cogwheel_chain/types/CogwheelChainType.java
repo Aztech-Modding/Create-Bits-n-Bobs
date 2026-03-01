@@ -20,7 +20,7 @@ import java.util.function.Supplier;
 
 public class CogwheelChainType {
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, CogwheelChainType> STEAM_CODEC = ByteBufCodecs.registry(BnbResourceKeys.COGWHEEL_CHAIN_TYPE);
+    public static final StreamCodec<RegistryFriendlyByteBuf, CogwheelChainType> STREAM_CODEC = ByteBufCodecs.registry(BnbResourceKeys.COGWHEEL_CHAIN_TYPE);
 
     public static final SimpleRegistry<Item, CogwheelChainType> COGWHEEL_TYPE_BY_ITEM = SimpleRegistry.create();
 

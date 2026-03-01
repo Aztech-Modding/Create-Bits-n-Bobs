@@ -14,11 +14,6 @@ public class BnbShapes {
     public static final VoxelShaper GIRDER_STRUT = shape(3, 0, 3, 13, 10, 13)
             .forDirectional();
 
-    public static final VoxelShaper SIX_VOXEL_POLE = shape(5, 0, 5, 11, 16, 11).forAxis(),
-            SMALL_GEAR = shape(cuboid(2, 4, 2, 14, 12, 14)).add(SIX_VOXEL_POLE.get(Direction.Axis.Y))
-                    .forAxis(),
-            LARGE_GEAR = shape(cuboid(0, 4, 0, 16, 12, 16)).add(SIX_VOXEL_POLE.get(Direction.Axis.Y))
-                    .forAxis();
     public static final VoxelShaper LIGHTBULB_SHAPE = shape(6, 0, 6, 10, 2, 10)
             .add(cuboid(5, 2, 5, 11, 13, 11))
             .forDirectional();
@@ -50,15 +45,26 @@ public class BnbShapes {
             .add(cuboid(3, 3, 3, 13, 16, 13))
             .forDirectional();
 
-    public static AllShapes.Builder shape(VoxelShape shape) {
+    public static final VoxelShape
+            SMALL_FLANGED_GEAR_SHAPE = cuboid(2, 4, 2, 14, 12, 14),
+            LARGE_FLANGED_GEAR_SHAPE = cuboid(0, 4, 0, 16, 12, 16);
+
+    public static final VoxelShaper
+            SIX_VOXEL_POLE = shape(5, 0, 5, 11, 16, 11).forAxis(),
+            SMALL_FLANGED_GEAR = shape(SMALL_FLANGED_GEAR_SHAPE).add(SIX_VOXEL_POLE.get(Direction.Axis.Y))
+                    .forAxis(),
+            LARGE_FLANGED_GEAR = shape(LARGE_FLANGED_GEAR_SHAPE).add(SIX_VOXEL_POLE.get(Direction.Axis.Y))
+                    .forAxis();
+
+    public static AllShapes.Builder shape(final VoxelShape shape) {
         return new AllShapes.Builder(shape);
     }
 
-    public static AllShapes.Builder shape(double x1, double y1, double z1, double x2, double y2, double z2) {
+    public static AllShapes.Builder shape(final double x1, final double y1, final double z1, final double x2, final double y2, final double z2) {
         return shape(cuboid(x1, y1, z1, x2, y2, z2));
     }
 
-    public static VoxelShape cuboid(double x1, double y1, double z1, double x2, double y2, double z2) {
+    public static VoxelShape cuboid(final double x1, final double y1, final double z1, final double x2, final double y2, final double z2) {
         return Block.box(x1, y1, z1, x2, y2, z2);
     }
 

@@ -215,12 +215,12 @@ public class BnbPaletteBlockPattern {
     }
 
     @FunctionalInterface
-    public static interface IPatternBlockStateGenerator
+    public interface IPatternBlockStateGenerator
             extends Function<BnbPaletteBlockPattern, Function<String, IBlockStateProvider>> {
     }
 
     @FunctionalInterface
-    public static interface IBlockStateProvider
+    public interface IBlockStateProvider
             extends NonNullBiConsumer<DataGenContext<Block, ? extends Block>, RegistrateBlockstateProvider> {
     }
 
@@ -237,15 +237,15 @@ public class BnbPaletteBlockPattern {
         LAYERED(AllCTTypes.HORIZONTAL_KRYPPERS, s -> toLocation(s, "layered"));
 
         public CTType type;
-        private Function<String, ResourceLocation> srcFactory;
-        private Function<String, ResourceLocation> targetFactory;
+        private final Function<String, ResourceLocation> srcFactory;
+        private final Function<String, ResourceLocation> targetFactory;
 
-        private CTs(final CTType type, final Function<String, ResourceLocation> factory) {
+        CTs(final CTType type, final Function<String, ResourceLocation> factory) {
             this(type, factory, factory);
         }
 
-        private CTs(final CTType type, final Function<String, ResourceLocation> srcFactory,
-                    final Function<String, ResourceLocation> targetFactory) {
+        CTs(final CTType type, final Function<String, ResourceLocation> srcFactory,
+            final Function<String, ResourceLocation> targetFactory) {
             this.type = type;
             this.srcFactory = srcFactory;
             this.targetFactory = targetFactory;

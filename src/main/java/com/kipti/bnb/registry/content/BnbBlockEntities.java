@@ -4,9 +4,6 @@ import com.kipti.bnb.content.decoration.girder_strut.GirderStrutBlockEntity;
 import com.kipti.bnb.content.decoration.girder_strut.GirderStrutBlockEntityRenderer;
 import com.kipti.bnb.content.kinetics.chain_pulley.ChainPulleyBlockEntity;
 import com.kipti.bnb.content.kinetics.chain_pulley.ChainPulleyRenderer;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.block.CogwheelChainBlockEntity;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.block.CogwheelChainBlockEntityRenderer;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.block.GenericBlockEntityRenderModels;
 import com.kipti.bnb.content.kinetics.flywheel_bearing.FlywheelBearingBlockEntity;
 import com.kipti.bnb.content.kinetics.flywheel_bearing.FlywheelBearingBlockEntityRenderer;
 import com.kipti.bnb.content.kinetics.throttle_lever.ThrottleLeverBlockEntity;
@@ -16,8 +13,13 @@ import com.kipti.bnb.content.trinkets.light.headlamp.rendering.pipeline.block_en
 import com.kipti.bnb.content.trinkets.light.headlamp.rendering.pipeline.visual.HeadlampVisual;
 import com.kipti.bnb.content.trinkets.nixie.foundation.GenericNixieDisplayBlockEntity;
 import com.kipti.bnb.content.trinkets.nixie.foundation.GenericNixieDisplayBoardRenderer;
-import com.kipti.bnb.registry.content.blocks.*;
+import com.kipti.bnb.foundation.GenericBlockEntityRenderModels;
+import com.kipti.bnb.registry.content.blocks.BnbEncasedBlocks;
+import com.kipti.bnb.registry.content.blocks.BnbKineticBlocks;
+import com.kipti.bnb.registry.content.blocks.BnbSpecialEncasedBlocks;
+import com.kipti.bnb.registry.content.blocks.BnbTrinketBlocks;
 import com.kipti.bnb.registry.content.blocks.deco.BnbDecorativeBlocks;
+import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 import com.simibubi.create.content.kinetics.base.ShaftRenderer;
@@ -25,8 +27,8 @@ import com.simibubi.create.content.kinetics.base.SingleAxisRotatingVisual;
 import com.simibubi.create.content.kinetics.simpleRelays.SimpleKineticBlockEntity;
 import com.simibubi.create.content.kinetics.simpleRelays.encased.EncasedCogRenderer;
 import com.simibubi.create.content.kinetics.simpleRelays.encased.EncasedCogVisual;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.migration.MigratingSimpleKineticBlockEntity;
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
-import dev.engine_room.flywheel.api.model.Model;
 import dev.engine_room.flywheel.lib.model.Models;
 
 import static com.kipti.bnb.CreateBitsnBobs.REGISTRATE;
@@ -72,24 +74,6 @@ public class BnbBlockEntities {
             .renderer(() -> GirderStrutBlockEntityRenderer::new)
             .register();
 
-    public static final BlockEntityEntry<CogwheelChainBlockEntity> COGWHEEL_CHAIN = REGISTRATE.blockEntity("cogwheel_chain", CogwheelChainBlockEntity::new)
-            .visual(() -> (context, blockEntity, partialTick) -> {
-                Model model = Models.partial(GenericBlockEntityRenderModels.REGISTRY.get(blockEntity.getBlockState().getBlock()));
-                return new SingleAxisRotatingVisual<>(context, blockEntity, partialTick, model);
-            }, true)
-            .validBlocks(
-                    BnbChainBlocks.SMALL_COGWHEEL_CHAIN,
-                    BnbChainBlocks.LARGE_COGWHEEL_CHAIN,
-                    BnbChainBlocks.SMALL_FLANGED_COGWHEEL_CHAIN,
-                    BnbChainBlocks.LARGE_FLANGED_COGWHEEL_CHAIN
-            )
-            .validBlocks(BnbEncasedBlocks.ENCASED_LARGE_CHAIN_COGWHEEL.toArray())
-            .validBlocks(BnbEncasedBlocks.ENCASED_LARGE_FLANGED_CHAIN_COGWHEEL.toArray())
-            .validBlocks(BnbEncasedBlocks.ENCASED_CHAIN_COGWHEEL.toArray())
-            .validBlocks(BnbEncasedBlocks.ENCASED_FLANGED_CHAIN_COGWHEEL.toArray())
-            .renderer(() -> CogwheelChainBlockEntityRenderer::new)
-            .register();
-
     public static final BlockEntityEntry<FlywheelBearingBlockEntity> FLYWHEEL_BEARING = REGISTRATE
             .blockEntity("flywheel_bearing", FlywheelBearingBlockEntity::new)
             .validBlocks(BnbKineticBlocks.FLYWHEEL_BEARING)
@@ -103,13 +87,22 @@ public class BnbBlockEntities {
             .renderer(() -> ChainPulleyRenderer::new)
             .register();
 
-    public static final BlockEntityEntry<SimpleKineticBlockEntity> EMPTY_FLANGED_COGWHEEL = REGISTRATE.blockEntity("empty_flanged_cogwheel", SimpleKineticBlockEntity::new)
+    public static final BlockEntityEntry<MigratingSimpleKineticBlockEntity> MIGRATING_SIMPLE_KINETIC = REGISTRATE.blockEntity("migrating_simple_kinetic", MigratingSimpleKineticBlockEntity::new)
             .visual(() -> (context, blockEntity, partialTick) ->
                     new SingleAxisRotatingVisual<>(context, blockEntity, partialTick,
                             Models.partial(GenericBlockEntityRenderModels.REGISTRY.get(blockEntity.getBlockState().getBlock()))), true)
             .validBlocks(BnbKineticBlocks.SMALL_EMPTY_FLANGED_COGWHEEL, BnbKineticBlocks.LARGE_EMPTY_FLANGED_COGWHEEL)
-            .validBlocks(BnbEncasedBlocks.ENCASED_LARGE_EMPTY_FLANGED_COGWHEEL.toArray())
-            .validBlocks(BnbEncasedBlocks.ENCASED_EMPTY_FLANGED_COGWHEEL.toArray())
+            .validBlocks(AllBlocks.COGWHEEL, AllBlocks.LARGE_COGWHEEL)
+            .renderer(() -> KineticBlockEntityRenderer::new)
+            .register();
+
+    public static final BlockEntityEntry<SimpleKineticBlockEntity> SIMPLE_KINETIC = REGISTRATE.blockEntity("simple_kinetic", SimpleKineticBlockEntity::new)
+            .visual(() -> (context, blockEntity, partialTick) ->
+                    new SingleAxisRotatingVisual<>(context, blockEntity, partialTick,
+                            Models.partial(GenericBlockEntityRenderModels.REGISTRY.get(blockEntity.getBlockState().getBlock()))), true)
+            .validBlocks(BnbKineticBlocks.SMALL_EMPTY_FLANGED_COGWHEEL, BnbKineticBlocks.LARGE_EMPTY_FLANGED_COGWHEEL)
+            .validBlocks(BnbEncasedBlocks.ENCASED_LARGE_FLANGED_COGWHEEL.toArray())
+            .validBlocks(BnbEncasedBlocks.ENCASED_FLANGED_COGWHEEL.toArray())
             .renderer(() -> KineticBlockEntityRenderer::new)
             .register();
 

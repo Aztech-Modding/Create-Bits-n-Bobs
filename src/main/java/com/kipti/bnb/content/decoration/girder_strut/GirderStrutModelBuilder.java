@@ -26,7 +26,7 @@ public class GirderStrutModelBuilder extends BakedModelWrapper<BakedModel> {
     private static final ModelProperty<GirderStrutModelData> GIRDER_PROPERTY = new ModelProperty<>();
     private static final double SURFACE_OFFSET = (6 / 16f) + 1e-3;
 
-    public GirderStrutModelBuilder(BakedModel originalModel) {
+    public GirderStrutModelBuilder(final BakedModel originalModel) {
         super(originalModel);
     }
 
@@ -36,7 +36,7 @@ public class GirderStrutModelBuilder extends BakedModelWrapper<BakedModel> {
     }
 
     @Override
-    public TriState useAmbientOcclusion(BlockState state, ModelData data, RenderType renderType) {
+    public TriState useAmbientOcclusion(final BlockState state, final ModelData data, final RenderType renderType) {
         return TriState.FALSE;
     }
 
@@ -46,8 +46,8 @@ public class GirderStrutModelBuilder extends BakedModelWrapper<BakedModel> {
     }
 
     @Override
-    public List<BakedQuad> getQuads(BlockState state, Direction side, RandomSource rand, ModelData data, RenderType renderType) {
-        List<BakedQuad> base = new ArrayList<>(super.getQuads(state, side, rand, data, renderType));
+    public List<BakedQuad> getQuads(final BlockState state, final Direction side, final RandomSource rand, final ModelData data, final RenderType renderType) {
+        final List<BakedQuad> base = new ArrayList<>(super.getQuads(state, side, rand, data, renderType));
 //        if (renderType != null && renderType != RenderType.solid()) {
 //            return base;
 //        }
@@ -68,8 +68,8 @@ public class GirderStrutModelBuilder extends BakedModelWrapper<BakedModel> {
     }
 
     @Override
-    public @NotNull ModelData getModelData(BlockAndTintGetter level, BlockPos pos, BlockState state, ModelData blockEntityData) {
-        if (!(level.getBlockEntity(pos) instanceof GirderStrutBlockEntity blockEntity)) {
+    public @NotNull ModelData getModelData(final BlockAndTintGetter level, final BlockPos pos, final BlockState state, final ModelData blockEntityData) {
+        if (!(level.getBlockEntity(pos) instanceof final GirderStrutBlockEntity blockEntity)) {
             return ModelData.EMPTY;
         }
         blockEntity.connectionRenderBufferCache = null; // Invalidate cache on model data request
@@ -83,43 +83,43 @@ public class GirderStrutModelBuilder extends BakedModelWrapper<BakedModel> {
         private final List<GirderConnection> connections;
         private final BlockPos pos;
 
-        private GirderStrutModelData(List<GirderConnection> connections, BlockPos pos) {
+        private GirderStrutModelData(final List<GirderConnection> connections, final BlockPos pos) {
             this.connections = connections;
             this.pos = pos;
         }
 
-        static GirderStrutModelData collect(BlockAndTintGetter level, BlockPos pos, BlockState state, GirderStrutBlockEntity blockEntity) {
+        static GirderStrutModelData collect(final BlockAndTintGetter level, final BlockPos pos, final BlockState state, final GirderStrutBlockEntity blockEntity) {
             if (!(state.getBlock() instanceof GirderStrutBlock)) {
                 return new GirderStrutModelData(List.of(), pos);
             }
-            Direction facing = state.getValue(GirderStrutBlock.FACING);
-            Vec3 blockOrigin = Vec3.atLowerCornerOf(pos);
-            Vec3 facePoint = Vec3.atCenterOf(pos).relative(facing, -10 / 16f - 1e-3);
-            Vec3 thisSurface = Vec3.atCenterOf(pos).relative(facing, -SURFACE_OFFSET);
+            final Direction facing = state.getValue(GirderStrutBlock.FACING);
+            final Vec3 blockOrigin = Vec3.atLowerCornerOf(pos);
+            final Vec3 facePoint = Vec3.atCenterOf(pos).relative(facing, -10 / 16f - 1e-3);
+            final Vec3 thisSurface = Vec3.atCenterOf(pos).relative(facing, -SURFACE_OFFSET);
 
-            List<GirderConnection> connections = new ArrayList<>();
+            final List<GirderConnection> connections = new ArrayList<>();
 
             for (BlockPos otherPos : blockEntity.getConnectionsCopy()) {
                 otherPos = otherPos.offset(pos);
-                BlockState otherState = level.getBlockState(otherPos);
+                final BlockState otherState = level.getBlockState(otherPos);
                 if (!(otherState.getBlock() instanceof GirderStrutBlock)) {
                     continue;
                 }
-                Direction otherFacing = otherState.getValue(GirderStrutBlock.FACING);
-                Vec3 otherSurface = Vec3.atCenterOf(otherPos).relative(otherFacing, -SURFACE_OFFSET);
-                Vec3 span = otherSurface.subtract(thisSurface);
+                final Direction otherFacing = otherState.getValue(GirderStrutBlock.FACING);
+                final Vec3 otherSurface = Vec3.atCenterOf(otherPos).relative(otherFacing, -SURFACE_OFFSET);
+                final Vec3 span = otherSurface.subtract(thisSurface);
                 if (span.lengthSqr() < 1.0e-4) {
                     continue;
                 }
-                Vec3 halfVector = span.scale(0.5);
-                double renderLength = halfVector.length() + 0.5f;
+                final Vec3 halfVector = span.scale(0.5);
+                final double renderLength = halfVector.length() + 0.5f;
                 if (renderLength <= 1.0e-4) {
                     continue;
                 }
 
-                Vec3 direction = halfVector.normalize();
-                Vec3 startLocal = thisSurface.subtract(blockOrigin);
-                Vec3 planePointLocal = facePoint.subtract(blockOrigin);
+                final Vec3 direction = halfVector.normalize();
+                final Vec3 startLocal = thisSurface.subtract(blockOrigin);
+                final Vec3 planePointLocal = facePoint.subtract(blockOrigin);
 
                 connections.add(new GirderConnection(
                         startLocal,
@@ -149,7 +149,7 @@ public class GirderStrutModelBuilder extends BakedModelWrapper<BakedModel> {
         private final Vec3 surfacePlanePoint;
         private final Vec3 surfaceNormal;
 
-        GirderConnection(Vec3 start, Vec3 direction, double renderLength, Vec3 surfacePlanePoint, Vec3 surfaceNormal) {
+        GirderConnection(final Vec3 start, final Vec3 direction, final double renderLength, final Vec3 surfacePlanePoint, final Vec3 surfaceNormal) {
             this.start = start;
             this.direction = direction;
             this.renderLength = renderLength;

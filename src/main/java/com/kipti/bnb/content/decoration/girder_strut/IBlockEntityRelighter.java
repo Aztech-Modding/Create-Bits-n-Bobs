@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -24,12 +25,12 @@ public interface IBlockEntityRelighter {
         return createLighter(getBlockPos());
     }
 
-    default Function<Vector3f, Integer> createLighter(BlockPos blockPos) {
+    default Function<Vector3f, Integer> createLighter(final BlockPos blockPos) {
         return (position) -> {
             if (getLevel() == null) return GirderGeometry.DEFAULT_LIGHT;
-            Matrix4f lightTransform = new Matrix4f().translate(blockPos.getX(), blockPos.getY(), blockPos.getZ());
-            Vector3f lightPosition = lightTransform.transformPosition(position, new Vector3f());
-            List<BlockPos> positions = getClosePositions(lightPosition.x, lightPosition.y, lightPosition.z);
+            final Matrix4f lightTransform = new Matrix4f().translate(blockPos.getX(), blockPos.getY(), blockPos.getZ());
+            final Vector3f lightPosition = lightTransform.transformPosition(position, new Vector3f());
+            final List<BlockPos> positions = getClosePositions(lightPosition.x, lightPosition.y, lightPosition.z);
             return positions
                     .stream()
                     .map(p -> LevelRenderer.getLightColor(getLevel(), p))
@@ -40,7 +41,7 @@ public interface IBlockEntityRelighter {
     default Function<Vector3f, Integer> createGlobalLighter() {
         return (position) -> {
             if (getLevel() == null) return GirderGeometry.DEFAULT_LIGHT;
-            List<BlockPos> positions = getClosePositions(position.x, position.y, position.z);
+            final List<BlockPos> positions = getClosePositions(position.x, position.y, position.z);
             return positions
                     .stream()
                     .map(p -> LevelRenderer.getLightColor(getLevel(), p))
@@ -48,12 +49,23 @@ public interface IBlockEntityRelighter {
         };
     }
 
-    private List<BlockPos> getClosePositions(float x, float y, float z) {
-        float fx = x - Math.round(x);
-        float fy = y - Math.round(y);
-        float fz = z - Math.round(z);
-        BlockPos base = new BlockPos((int) Math.floor(x), (int) Math.floor(y), (int) Math.floor(z));
-        List<BlockPos> positions = new ArrayList<>();
+    static Function<Vector3f, Integer> createGlobalLighter(final BlockEntity be) {
+        return (position) -> {
+            if (be.getLevel() == null) return GirderGeometry.DEFAULT_LIGHT;
+            final List<BlockPos> positions = getClosePositions(position.x, position.y, position.z);
+            return positions
+                    .stream()
+                    .map(p -> LevelRenderer.getLightColor(be.getLevel(), p))
+                    .reduce(0, IBlockEntityRelighter::maximizeLight);
+        };
+    }
+
+    private static List<BlockPos> getClosePositions(final float x, final float y, final float z) {
+        final float fx = x - Math.round(x);
+        final float fy = y - Math.round(y);
+        final float fz = z - Math.round(z);
+        final BlockPos base = new BlockPos((int) Math.floor(x), (int) Math.floor(y), (int) Math.floor(z));
+        final List<BlockPos> positions = new ArrayList<>();
         positions.add(base);
         if (Math.abs(fx) < ADJACENT_BLOCK_TOLERANCE) {
             positions.add(base.relative(fx > 0 ? Direction.WEST : Direction.EAST));
@@ -67,13 +79,13 @@ public interface IBlockEntityRelighter {
         return positions;
     }
 
-    static int maximizeLight(int lightA, int lightB) {
-        int blockA = lightA & 0xFFFF;
-        int skyA = (lightA >>> 16) & 0xFFFF;
-        int blockB = lightB & 0xFFFF;
-        int skyB = (lightB >>> 16) & 0xFFFF;
-        int block = Math.max(blockA, blockB);
-        int sky = Math.max(skyA, skyB);
+    static int maximizeLight(final int lightA, final int lightB) {
+        final int blockA = lightA & 0xFFFF;
+        final int skyA = (lightA >>> 16) & 0xFFFF;
+        final int blockB = lightB & 0xFFFF;
+        final int skyB = (lightB >>> 16) & 0xFFFF;
+        final int block = Math.max(blockA, blockB);
+        final int sky = Math.max(skyA, skyB);
         return (sky << 16) | block;
     }
 

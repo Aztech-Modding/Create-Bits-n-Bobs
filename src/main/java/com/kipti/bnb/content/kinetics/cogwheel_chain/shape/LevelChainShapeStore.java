@@ -1,6 +1,7 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.shape;
 
-import com.kipti.bnb.content.kinetics.cogwheel_chain.block.CogwheelChainBlockEntity;
+import com.cake.azimuth.behaviour.SuperBlockEntityBehaviour;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.behaviour.CogwheelChainBehaviour;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 
@@ -43,11 +44,11 @@ class LevelChainShapeStore {
                 return true;
             }
 
-            if (!(level.getBlockEntity(pos) instanceof CogwheelChainBlockEntity chainBE)) {
+            final CogwheelChainBehaviour behaviour = SuperBlockEntityBehaviour.get(level, pos, CogwheelChainBehaviour.TYPE);
+            if (behaviour == null) {
                 return true;
             }
-
-            return !chainBE.isController() || chainBE.getChain() == null;
+            return !behaviour.isController();
         });
     }
 }

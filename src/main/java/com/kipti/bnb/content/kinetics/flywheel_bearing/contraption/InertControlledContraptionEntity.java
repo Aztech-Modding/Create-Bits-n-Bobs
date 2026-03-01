@@ -14,7 +14,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class InertControlledContraptionEntity extends ControlledContraptionEntity {
 
-    public InertControlledContraptionEntity(EntityType<?> type, Level world) {
+    public InertControlledContraptionEntity(final EntityType<?> type, final Level world) {
         super(type, world);
     }
 
@@ -23,8 +23,8 @@ public class InertControlledContraptionEntity extends ControlledContraptionEntit
         return false;
     }
 
-    public static InertControlledContraptionEntity create(Level world, IControlContraption controller,
-                                                          Contraption contraption) {
+    public static InertControlledContraptionEntity create(final Level world, final IControlContraption controller,
+                                                          final Contraption contraption) {
         final InertControlledContraptionEntity entity =
                 new InertControlledContraptionEntity(BnbEntityTypes.INERT_CONTROLLED_CONTRAPTION.get(), world);
         entity.controllerPos = controller.getBlockPosition();

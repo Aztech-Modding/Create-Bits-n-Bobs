@@ -187,8 +187,8 @@ public class CogwheelChainGeometryBuilder {
         final Vec3 axis = getDirectionOfAxis(currentNode);
         final Vec3 incoming = isIncoming ? getConnectionDirection(previousNode, currentNode) : getConnectionDirection(currentNode, previousNode);
 
-        final double previousRadius = previousNode.isLarge() ? 1.0f : 0.5f + (previousNode.offsetForSmallCogwheel() ? 1 / 8f : 0.0f);
-        final double currentRadius = currentNode.isLarge() ? 1.0f : 0.5f + (currentNode.offsetForSmallCogwheel() ? 1 / 8f : 0.0f);
+        final double previousRadius = previousNode.isLarge() ? 1.0f : 0.5f + (previousNode.hasSmallCogwheelOffset() ? 1 / 8f : 0.0f);
+        final double currentRadius = currentNode.isLarge() ? 1.0f : 0.5f + (currentNode.hasSmallCogwheelOffset() ? 1 / 8f : 0.0f);
 
         if (previousNode.rotationAxis() != currentNode.rotationAxis()) {
             //Find the common line

@@ -1,10 +1,8 @@
 package com.kipti.bnb.registry.content.blocks;
 
-import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChainCandidateInfo;
 import com.kipti.bnb.content.kinetics.encased_blocks.BnbEncasedCogwheelBlock;
 import com.kipti.bnb.content.kinetics.encased_blocks.BnbEncasedShaftBlock;
 import com.kipti.bnb.foundation.BnbBuilderTransformers;
-import com.kipti.bnb.foundation.EncasedBlockList;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.decoration.encasing.EncasingRegistry;
 import com.tterrag.registrate.util.entry.BlockEntry;
@@ -35,7 +33,6 @@ public class BnbSpecialEncasedBlocks {
             .transform(BnbBuilderTransformers.encasedCogwheelWithoutCT("industrial_iron"))
             .transform(EncasingRegistry.addVariantTo(AllBlocks.COGWHEEL))
             .transform(axeOrPickaxe())
-            .onRegister(CogwheelChainCandidateInfo.candidate(new CogwheelChainCandidateInfo(false, false, () -> BnbEncasedBlocks.ENCASED_CHAIN_COGWHEEL.get(EncasedBlockList.CasingMaterial.INDUSTRIAL_IRON).get())))
             .register();
     public static final BlockEntry<BnbEncasedCogwheelBlock> WEATHERED_IRON_ENCASED_COGWHEEL = REGISTRATE
             .block("weathered_iron_encased_cogwheel", p -> new BnbEncasedCogwheelBlock(p, false, AllBlocks.WEATHERED_IRON_BLOCK))
@@ -43,7 +40,6 @@ public class BnbSpecialEncasedBlocks {
             .transform(BnbBuilderTransformers.encasedCogwheelWithoutCT("weathered_iron"))
             .transform(EncasingRegistry.addVariantTo(AllBlocks.COGWHEEL))
             .transform(axeOrPickaxe())
-            .onRegister(CogwheelChainCandidateInfo.candidate(new CogwheelChainCandidateInfo(false, false, () -> BnbEncasedBlocks.ENCASED_CHAIN_COGWHEEL.get(EncasedBlockList.CasingMaterial.WEATHERED_IRON).get())))
             .register();
     public static final BlockEntry<BnbEncasedCogwheelBlock> INDUSTRIAL_IRON_ENCASED_LARGE_COGWHEEL = REGISTRATE
             .block("industrial_iron_encased_large_cogwheel", p -> new BnbEncasedCogwheelBlock(p, true, AllBlocks.INDUSTRIAL_IRON_BLOCK))
@@ -51,7 +47,6 @@ public class BnbSpecialEncasedBlocks {
             .transform(BnbBuilderTransformers.encasedLargeCogwheelWithoutCT("industrial_iron"))
             .transform(EncasingRegistry.addVariantTo(AllBlocks.LARGE_COGWHEEL))
             .transform(axeOrPickaxe())
-            .onRegister(CogwheelChainCandidateInfo.candidate(new CogwheelChainCandidateInfo(true, false, () -> BnbEncasedBlocks.ENCASED_LARGE_CHAIN_COGWHEEL.get(EncasedBlockList.CasingMaterial.INDUSTRIAL_IRON).get())))
             .register();
     public static final BlockEntry<BnbEncasedCogwheelBlock> WEATHERED_IRON_ENCASED_LARGE_COGWHEEL = REGISTRATE
             .block("weathered_iron_encased_large_cogwheel", p -> new BnbEncasedCogwheelBlock(p, true, AllBlocks.WEATHERED_IRON_BLOCK))
@@ -59,7 +54,6 @@ public class BnbSpecialEncasedBlocks {
             .transform(BnbBuilderTransformers.encasedLargeCogwheelWithoutCT("weathered_iron"))
             .transform(EncasingRegistry.addVariantTo(AllBlocks.LARGE_COGWHEEL))
             .transform(axeOrPickaxe())
-            .onRegister(CogwheelChainCandidateInfo.candidate(new CogwheelChainCandidateInfo(true, false, () -> BnbEncasedBlocks.ENCASED_LARGE_CHAIN_COGWHEEL.get(EncasedBlockList.CasingMaterial.WEATHERED_IRON).get())))
             .register();
 
     public static void register() {

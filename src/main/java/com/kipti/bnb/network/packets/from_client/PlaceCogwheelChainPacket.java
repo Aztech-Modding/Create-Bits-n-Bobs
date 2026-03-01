@@ -1,6 +1,10 @@
 package com.kipti.bnb.network.packets.from_client;
 
-import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.*;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChain;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChainPathfinder;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.PathedCogwheelNode;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.PlacingCogwheelChain;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.placement.ChainInteractionFailedException;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.CogwheelChainType;
 import com.kipti.bnb.network.BnbPackets;
 import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorBlockEntity;
@@ -26,7 +30,7 @@ public record PlaceCogwheelChainPacket(
             StreamCodec.composite(
                     PlacingCogwheelChain.STREAM_CODEC,
                     PlaceCogwheelChainPacket::worldSpacePartialChain,
-                    CogwheelChainType.STEAM_CODEC,
+                    CogwheelChainType.STREAM_CODEC,
                     PlaceCogwheelChainPacket::chainType,
                     ByteBufCodecs.INT,
                     PlaceCogwheelChainPacket::priorityChainTakeHand,
@@ -36,7 +40,7 @@ public record PlaceCogwheelChainPacket(
             );
 
     @Override
-    public void handle(ServerPlayer player) {
+    public void handle(final ServerPlayer player) {
         //Server side validation of the chain
         if (worldSpacePartialChain.maxBounds() > PlacingCogwheelChain.MAX_CHAIN_BOUNDS)
             return;

@@ -1,11 +1,15 @@
 package com.kipti.bnb;
 
+import com.cake.azimuth.registration.BehaviourApplicators;
+import com.cake.azimuth.registration.VisualWrapperInterest;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.BnbCogwheelChainTypes;
 import com.kipti.bnb.network.BnbPackets;
+import com.kipti.bnb.registry.azimuth.BnbBehaviourApplicators;
 import com.kipti.bnb.registry.compat.BnbCreateStresses;
 import com.kipti.bnb.registry.content.BnbBlockEntities;
 import com.kipti.bnb.registry.content.BnbBlocksBootstrap;
 import com.kipti.bnb.registry.content.BnbEntityTypes;
+import com.kipti.bnb.registry.content.BnbAdvancements;
 import com.kipti.bnb.registry.content.BnbItems;
 import com.kipti.bnb.registry.core.BnbConfigs;
 import com.kipti.bnb.registry.core.BnbDataComponents;
@@ -60,6 +64,7 @@ public class CreateBitsnBobs {
         BnbDataConditions.register(modEventBus);
 
         BnbItems.register();
+        BnbAdvancements.register();
         BnbBlocksBootstrap.register();
         BnbEntityTypes.register();
         BnbBlockEntities.register();
@@ -67,6 +72,7 @@ public class CreateBitsnBobs {
         BnbPackets.register();
 
         BnbCreateStresses.registerRedirects();
+        BnbBehaviourApplicators.init();
 
         BnbLangEntries.register();
         BnbTags.registerDataGenerators();
@@ -77,6 +83,8 @@ public class CreateBitsnBobs {
     }
 
     private static void commonSetup(final FMLCommonSetupEvent event) {
+        BehaviourApplicators.resolveRegisteredTypes();
+        VisualWrapperInterest.resolve();
     }
 
     public static ResourceLocation asResource(final String s) {

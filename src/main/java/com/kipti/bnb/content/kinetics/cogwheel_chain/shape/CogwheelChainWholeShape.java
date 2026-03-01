@@ -1,5 +1,6 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.shape;
 
+import com.kipti.bnb.content.kinetics.cogwheel_chain.render.CogwheelChainRenderGeometryBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.core.BlockPos;
@@ -16,6 +17,8 @@ import java.util.List;
 public class CogwheelChainWholeShape extends CogwheelChainShape {
 
     private static final double INFLATE_PIXELS = 1.0 / 16.0;
+    private static final double TANGENT_EXTENSION_PIXELS = 0.5 / 16.0;
+    private static final double INTERSECTION_EPSILON = 1e-9;
     private static final double MIN_LENGTH_SQR = 1e-12;
 
     private final List<Vec3> points;
@@ -63,7 +66,8 @@ public class CogwheelChainWholeShape extends CogwheelChainShape {
     @Nullable
     public Vec3 intersect(final Vec3 from, final Vec3 to) {
         if (points.size() < 2) return null;
-        if (bounds.inflate(radius).clip(from, to).isEmpty()) return null;
+        final AABB expandedBounds = bounds.inflate(radius);
+        if (!expandedBounds.contains(from) && expandedBounds.clip(from, to).isEmpty()) return null;
 
         final Vec3 rayDir = to.subtract(from);
         if (rayDir.lengthSqr() < MIN_LENGTH_SQR) return null;
@@ -77,48 +81,87 @@ public class CogwheelChainWholeShape extends CogwheelChainShape {
             final Vec3 a = points.get(startIndex);
             final Vec3 b = points.get(endIndex);
             final Vec3 segment = b.subtract(a);
-            final double segmentLenSq = segment.lengthSqr();
-            if (segmentLenSq < MIN_LENGTH_SQR) continue;
+            final double segmentLen = segment.length();
+            if (segmentLen * segmentLen < MIN_LENGTH_SQR) continue;
 
-            final Vec3 segmentTangent = segment.normalize();
-            double tRay = getClosestPointT(from, to, a, b);
-            tRay = Mth.clamp(tRay, 0, 1);
-            final Vec3 pointOnRay = from.add(rayDir.scale(tRay));
+            final Vec3 segmentTangent = segment.scale(1.0 / segmentLen);
+            final Frame frame = frameForSegment(startIndex, endIndex, 0.5, segmentTangent);
+            final Vec3 segmentCenter = a.add(segment.scale(0.5));
+            final double halfLength = segmentLen * 0.5 + TANGENT_EXTENSION_PIXELS;
 
-            final double segT = Mth.clamp(pointOnRay.subtract(a).dot(segment) / segmentLenSq, 0, 1);
-            final Vec3 pointOnSegment = a.add(segment.scale(segT));
-            final Frame frame = frameForSegment(startIndex, endIndex, segT, segmentTangent);
+            final double rayT = intersectRayWithObb(
+                    from,
+                    rayDir,
+                    segmentCenter,
+                    segmentTangent,
+                    frame.u,
+                    frame.v,
+                    halfLength,
+                    radius,
+                    radius
+            );
+            if (Double.isNaN(rayT)) continue;
 
-            final Vec3 delta = pointOnRay.subtract(pointOnSegment);
-            final double du = Math.abs(delta.dot(frame.u));
-            final double dv = Math.abs(delta.dot(frame.v));
-
-            if (du <= radius && dv <= radius) {
-                final double distSq = from.distanceToSqr(pointOnRay);
-                if (distSq < bestDistanceSq) {
-                    bestDistanceSq = distSq;
-                    bestHit = pointOnRay;
-                }
+            final Vec3 pointOnRay = from.add(rayDir.scale(rayT));
+            final double distSq = from.distanceToSqr(pointOnRay);
+            if (distSq < bestDistanceSq) {
+                bestDistanceSq = distSq;
+                bestHit = pointOnRay;
             }
         }
 
         return bestHit;
     }
 
-    private static double getClosestPointT(final Vec3 p1, final Vec3 p2, final Vec3 p3, final Vec3 p4) {
-        final Vec3 d1 = p2.subtract(p1);
-        final Vec3 d2 = p4.subtract(p3);
-        final Vec3 r = p1.subtract(p3);
+    private static double intersectRayWithObb(
+            final Vec3 rayOrigin,
+            final Vec3 rayDirection,
+            final Vec3 boxCenter,
+            final Vec3 boxAxisX,
+            final Vec3 boxAxisY,
+            final Vec3 boxAxisZ,
+            final double halfX,
+            final double halfY,
+            final double halfZ
+    ) {
+        final Vec3 p = rayOrigin.subtract(boxCenter);
+        final double[] rayRange = {0.0, 1.0};
 
-        final double a = d1.lengthSqr();
-        final double e = d2.lengthSqr();
-        final double f = d2.dot(r);
-        final double b = d1.dot(d2);
-        final double c = d1.dot(r);
-        final double denom = a * e - b * b;
+        if (!clipAxis(p.dot(boxAxisX), rayDirection.dot(boxAxisX), halfX, rayRange)) return Double.NaN;
+        if (!clipAxis(p.dot(boxAxisY), rayDirection.dot(boxAxisY), halfY, rayRange)) return Double.NaN;
+        if (!clipAxis(p.dot(boxAxisZ), rayDirection.dot(boxAxisZ), halfZ, rayRange)) return Double.NaN;
 
-        if (Math.abs(denom) < 1e-6) return 0.0;
-        return (b * f - c * e) / denom;
+        if (rayRange[1] < 0.0 || rayRange[0] > 1.0) return Double.NaN;
+
+        final double entry = Mth.clamp(rayRange[0], 0.0, 1.0);
+        final double exit = Mth.clamp(rayRange[1], 0.0, 1.0);
+        final boolean originInside = Math.abs(p.dot(boxAxisX)) <= halfX
+                && Math.abs(p.dot(boxAxisY)) <= halfY
+                && Math.abs(p.dot(boxAxisZ)) <= halfZ;
+        return originInside ? exit : entry;
+    }
+
+    private static boolean clipAxis(
+            final double rayOriginProjection,
+            final double rayDirectionProjection,
+            final double halfExtent,
+            final double[] rayRange
+    ) {
+        if (Math.abs(rayDirectionProjection) < INTERSECTION_EPSILON) {
+            return Math.abs(rayOriginProjection) <= halfExtent;
+        }
+
+        double tMin = (-halfExtent - rayOriginProjection) / rayDirectionProjection;
+        double tMax = (halfExtent - rayOriginProjection) / rayDirectionProjection;
+        if (tMin > tMax) {
+            final double tmp = tMin;
+            tMin = tMax;
+            tMax = tmp;
+        }
+
+        rayRange[0] = Math.max(rayRange[0], tMin);
+        rayRange[1] = Math.min(rayRange[1], tMax);
+        return rayRange[0] <= rayRange[1];
     }
 
     @Override
@@ -207,46 +250,7 @@ public class CogwheelChainWholeShape extends CogwheelChainShape {
     }
 
     private static List<Vec3> getPointsInClosestOrder(final List<Vec3> destinationPoints, final List<Vec3> sourcePoints) {
-        if (destinationPoints.size() != 4 || sourcePoints.size() != 4) {
-            return new ArrayList<>(destinationPoints);
-        }
-
-        double bestScore = Double.POSITIVE_INFINITY;
-        List<Vec3> best = new ArrayList<>(destinationPoints);
-
-        for (int reversed = 0; reversed <= 1; reversed++) {
-            for (int shift = 0; shift < 4; shift++) {
-                final ArrayList<Vec3> candidate = new ArrayList<>(4);
-                double pointScore = 0.0;
-
-                for (int i = 0; i < 4; i++) {
-                    final int j = (reversed == 0)
-                            ? ((i + shift) & 3)
-                            : ((shift - i + 4) & 3);
-
-                    final Vec3 point = destinationPoints.get(j);
-                    candidate.add(point);
-                    pointScore += sourcePoints.get(i).distanceToSqr(point);
-                }
-
-                double edgeScore = 0.0;
-                for (int i = 0; i < 4; i++) {
-                    final Vec3 sourceEdge = sourcePoints.get((i + 1) & 3).subtract(sourcePoints.get(i)).normalize();
-                    final Vec3 destinationEdge = candidate.get((i + 1) & 3).subtract(candidate.get(i)).normalize();
-                    edgeScore += 1.0 - sourceEdge.dot(destinationEdge);
-                }
-
-                final double windingPenalty = reversed == 1 ? 1e-4 : 0.0;
-                final double score = pointScore + edgeScore * 0.25 + windingPenalty;
-
-                if (score < bestScore) {
-                    bestScore = score;
-                    best = candidate;
-                }
-            }
-        }
-
-        return best;
+        return CogwheelChainRenderGeometryBuilder.getPointsInClosestOrder(destinationPoints, sourcePoints);
     }
 
     private static void drawRing(final VertexConsumer vb, final PoseStack ms,

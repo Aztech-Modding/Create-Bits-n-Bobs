@@ -28,6 +28,7 @@ import org.joml.Quaternionfc;
 
 /**
  * Unused because the scrolling visuals don't have cutout support, and I cant be asked to figure it out and make a custom shader yet
+ * TODO: use cutout supp cause it actually exists
  */
 public class ChainPulleyVisual extends ShaftVisual<ChainPulleyBlockEntity> implements SimpleDynamicVisual, ShaderLightVisual {
     private final InstanceRecycler<ScrollInstance> belt;
@@ -45,13 +46,13 @@ public class ChainPulleyVisual extends ShaftVisual<ChainPulleyBlockEntity> imple
 
     private long lastBottomSection;
 
-    public ChainPulleyVisual(VisualizationContext context, ChainPulleyBlockEntity blockEntity, float partialTick) {
+    public ChainPulleyVisual(final VisualizationContext context, final ChainPulleyBlockEntity blockEntity, final float partialTick) {
         super(context, blockEntity, partialTick);
 
-        float blockStateAngle =
+        final float blockStateAngle =
                 AngleHelper.horizontalAngle(Direction.get(Direction.AxisDirection.POSITIVE, blockState.getValue(ChainPulleyBlock.HORIZONTAL_AXIS)));
 
-        Quaternionfc rotation = new Quaternionf().rotationY(Mth.DEG_TO_RAD * blockStateAngle);
+        final Quaternionfc rotation = new Quaternionf().rotationY(Mth.DEG_TO_RAD * blockStateAngle);
 
         topSection = SectionPos.of(pos).asLong();
 
@@ -93,21 +94,21 @@ public class ChainPulleyVisual extends ShaftVisual<ChainPulleyBlockEntity> imple
     }
 
     @Override
-    public void updateLight(float partialTick) {
+    public void updateLight(final float partialTick) {
         super.updateLight(partialTick);
 
         relight(coil);
     }
 
     @Override
-    public void setSectionCollector(SectionCollector sectionCollector) {
+    public void setSectionCollector(final SectionCollector sectionCollector) {
         super.setSectionCollector(sectionCollector);
 
         sectionCollector.sections(getLightSections(lastOffset));
     }
 
     @Override
-    public void beginFrame(DynamicVisual.Context ctx) {
+    public void beginFrame(final DynamicVisual.Context ctx) {
         final float offset = PulleyRenderer.getBlockEntityOffset(ctx.partialTick(), blockEntity);
         if (!PulleyRenderer.isPulleyRunning(blockEntity)) {
             lastOffset = offset;
@@ -130,7 +131,7 @@ public class ChainPulleyVisual extends ShaftVisual<ChainPulleyBlockEntity> imple
         magnet.delete();
     }
 
-    private void animate(float offset) {
+    private void animate(final float offset) {
         if (offset == lastOffset) {
             return;
         }
@@ -147,7 +148,7 @@ public class ChainPulleyVisual extends ShaftVisual<ChainPulleyBlockEntity> imple
         animateMagnet(offset);
     }
 
-    private void maybeUpdateSections(float offset) {
+    private void maybeUpdateSections(final float offset) {
         if (lightSections == null) {
             return;
         }
@@ -158,18 +159,18 @@ public class ChainPulleyVisual extends ShaftVisual<ChainPulleyBlockEntity> imple
         lightSections.sections(getLightSections(offset));
     }
 
-    private void animateMagnet(float offset) {
+    private void animateMagnet(final float offset) {
         magnet.setVisible(true);
         magnet.setTransform(cachedMagnetTransform)
                 .translateY(-offset)
                 .setChanged();
     }
 
-    private void animateBelt(float offset) {
+    private void animateBelt(final float offset) {
         belt.resetCount();
 
         for (int i = 0; i < offset - .25f; i++) {
-            var segment = belt.get()
+            final ScrollInstance segment = belt.get()
                     .position(getVisualPosition())
                     .shift(0, -(offset - i), 0);
 
@@ -181,8 +182,8 @@ public class ChainPulleyVisual extends ShaftVisual<ChainPulleyBlockEntity> imple
         belt.discardExtra();
     }
 
-    private void animateHalfBelt(float offset) {
-        float f = offset % 1;
+    private void animateHalfBelt(final float offset) {
+        final float f = offset % 1;
         if (f < .25f || f > .75f) {
             halfBelt.setVisible(true);
             halfBelt.position(getVisualPosition())
@@ -196,16 +197,16 @@ public class ChainPulleyVisual extends ShaftVisual<ChainPulleyBlockEntity> imple
         }
     }
 
-    private void animateCoil(float offset) {
+    private void animateCoil(final float offset) {
         coil.offsetV = -offset * 2;
 
         coil.setChanged();
     }
 
-    private LongSet getLightSections(float offset) {
-        var out = new LongArraySet();
+    private LongSet getLightSections(final float offset) {
+        final LongArraySet out = new LongArraySet();
 
-        int sectionCount = offset2SectionCount(offset);
+        final int sectionCount = offset2SectionCount(offset);
 
         for (int i = 0; i < sectionCount; i++) {
             out.add(SectionPos.offset(topSection, 0, -i, 0));
@@ -216,7 +217,7 @@ public class ChainPulleyVisual extends ShaftVisual<ChainPulleyBlockEntity> imple
         return out;
     }
 
-    private static int offset2SectionCount(float offset) {
+    private static int offset2SectionCount(final float offset) {
         return (int) Math.ceil((offset + 1) / 16);
     }
 

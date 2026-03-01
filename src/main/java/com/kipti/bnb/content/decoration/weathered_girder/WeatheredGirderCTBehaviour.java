@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 public class WeatheredGirderCTBehaviour extends ConnectedTextureBehaviour.Base {
 
     @Override
-    public CTSpriteShiftEntry getShift(BlockState state, Direction direction, @Nullable TextureAtlasSprite sprite) {
+    public CTSpriteShiftEntry getShift(final BlockState state, final Direction direction, @Nullable final TextureAtlasSprite sprite) {
         if (!state.hasProperty(GirderBlock.X))
             return null;
         return !state.getValue(GirderBlock.X) && !state.getValue(GirderBlock.Z) && direction.getAxis() != Axis.Y
@@ -24,8 +24,8 @@ public class WeatheredGirderCTBehaviour extends ConnectedTextureBehaviour.Base {
     }
 
     @Override
-    public boolean connectsTo(BlockState state, BlockState other, BlockAndTintGetter reader, BlockPos pos,
-                              BlockPos otherPos, Direction face) {
+    public boolean connectsTo(final BlockState state, final BlockState other, final BlockAndTintGetter reader, final BlockPos pos,
+                              final BlockPos otherPos, final Direction face) {
         if (other.getBlock() != state.getBlock() && !(other.getBlock() instanceof GirderBlock))
             return false;
         return !other.getValue(GirderBlock.X) && !other.getValue(GirderBlock.Z);

@@ -149,7 +149,6 @@ public class WeatheredGirderWrenchBehaviour {
                         // toggle up/down connection for both
                         consumer.accept(Pair.of(direction, WeatheredGirderWrenchBehaviour.Action.PAIR));
 
-                        return;
                     }
 
 //					if (BnbBlocksBootstrap.WEATHERED_METAL_GIRDER.has(other))

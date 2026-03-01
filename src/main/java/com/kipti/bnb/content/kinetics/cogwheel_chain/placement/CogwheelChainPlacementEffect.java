@@ -1,7 +1,7 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.placement;
 
+import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChainCandidate;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChainPathfinder;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.PlacingCogwheelChain;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.PlacingCogwheelNode;
 import com.simibubi.create.content.equipment.blueprint.BlueprintOverlayRenderer;
 import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorBlockEntity;
@@ -20,6 +20,8 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.kipti.bnb.content.kinetics.cogwheel_chain.placement.CogwheelChainPlacementInteraction.*;
@@ -27,6 +29,7 @@ import static com.kipti.bnb.content.kinetics.cogwheel_chain.placement.CogwheelCh
 public class CogwheelChainPlacementEffect {
 
     private static final float PARTICLE_DENSITY = 0.1f;
+    private static List<PlacingCogwheelNode> lastPlannedNodes = List.of();
 
     public static void tick(final LocalPlayer player) {
         if (Minecraft.getInstance().isPaused() || Minecraft.getInstance().hitResult == null) return;
@@ -58,7 +61,7 @@ public class CogwheelChainPlacementEffect {
     }
 
     private static @Nullable BlockPos getTargetedBlockAndDisplay() {
-        if (currentBuildingChain == null)
+        if (currentBuildingChain == null || currentChainLevel == null)
             return null;
 
         final ClientLevel level = Minecraft.getInstance().level;
@@ -80,46 +83,44 @@ public class CogwheelChainPlacementEffect {
         final Vec3 axisNormal = Vec3.atLowerCornerOf(Direction.get(Direction.AxisDirection.POSITIVE, axis).getNormal());
         final Vec3 projected = toTargeted.subtract(axisNormal.scale(toTargeted.dot(axisNormal))).add(lastNodePos);
 
-//        Vec3 lastPos = currentBuildingChain.getNodeCenter(0);
-//        for (int i = 1; i < currentBuildingChain.getSize(); i++) {
-//            final Vec3 currentPos = currentBuildingChain.getNodeCenter(i);
-//            renderParticlesBetween(level, lastPos, currentPos);
-//            lastPos = currentPos;
-//        }
         for (int i = 0; i < currentBuildingChain.getSize(); i++) {
             showBlockOutline(level, currentBuildingChain.getNodes().get(i).pos());
         }
 
-        for (int side = -1; side <= 1; side += 2) {
-            for (int i = 0; i < currentBuildingChain.getSize() - 1; i++) {
-                final PlacingCogwheelNode nodeA = currentBuildingChain.getNodes().get(i);
-                final PlacingCogwheelNode nodeB = currentBuildingChain.getNodes().get(i + 1);
-                if (CogwheelChainPathfinder.isValidPathStep(nodeA, side, nodeB, side)) {
-                    final Vec3 pathingTangentB = CogwheelChainPathfinder.getPathingTangentOnCog(nodeA, nodeB, side);
-                    final Vec3 pathingTangentA = CogwheelChainPathfinder.getPathingTangentOnCog(nodeB, nodeA, -side);
-                    Outliner.getInstance().showLine("cogwheel_chain_placement_pathing_" + nodeA.pos() + "_" + nodeB.pos() + "_side_" + side,
-                                    nodeA.center().add(pathingTangentA),
-                                    nodeB.center().add(pathingTangentB))
-                            .colored(0x95CD41)
-                            .lineWidth(1 / 16f);
-                } else if (CogwheelChainPathfinder.isValidPathStep(nodeA, side, nodeB, -side)) {
-                    final Vec3 pathingTangentB = CogwheelChainPathfinder.getPathingTangentOnCog(nodeA, nodeB, -side);
-                    final Vec3 pathingTangentA = CogwheelChainPathfinder.getPathingTangentOnCog(nodeB, nodeA, -side);
-                    Outliner.getInstance().showLine("cogwheel_chain_placement_pathing_" + nodeA.pos() + "_" + nodeB.pos() + "_side_" + side + "_switching",
-                                    nodeA.center().add(pathingTangentA),
-                                    nodeB.center().add(pathingTangentB))
-                            .colored(0x95CD41)
-                            .lineWidth(1 / 16f);
-                }
-            }
-        }
+        showOnlyPermitted();
 
         final Vec3 lastPos = currentBuildingChain.getLastNode().center();
         renderParticlesBetween(level, lastPos, projected);
 
         final BlockPos targetedPos = hit.getBlockPos();
         final BlockState targetedState = level.getBlockState(targetedPos);
-        return PlacingCogwheelChain.isValidBlockTarget(targetedState) ? targetedPos : null;
+        return CogwheelChainCandidate.isValidCandidate(targetedState) ? targetedPos : null;
+    }
+
+    private static void showOnlyPermitted() {
+        if (currentBuildingChain == null) return;
+        if (!lastPlannedNodes.equals(currentBuildingChain.getNodes())) {
+            lastPlannedNodes = new ArrayList<>(currentBuildingChain.getNodes());
+        }
+
+        final int[] sides = ChainPlacementPathDisplayHelper.getPathDisplaySides(currentBuildingChain);
+
+        for (int i = 0; i < currentBuildingChain.getSize() - 1; i++) {
+            final PlacingCogwheelNode nodeA = currentBuildingChain.getNodes().get(i);
+            final PlacingCogwheelNode nodeB = currentBuildingChain.getNodes().get(i + 1);
+
+            renderSegment(nodeA, nodeB, sides[i], sides[i + 1]);
+        }
+    }
+
+    private static void renderSegment(final PlacingCogwheelNode nodeA, final PlacingCogwheelNode nodeB, final int fromSide, final int toSide) {
+        final Vec3 fromOffset = fromSide == 0 ? Vec3.ZERO : CogwheelChainPathfinder.getPathingTangentOnCog(nodeB, nodeA, -fromSide);
+        final Vec3 toOffset = toSide == 0 ? Vec3.ZERO : CogwheelChainPathfinder.getPathingTangentOnCog(nodeA, nodeB, toSide);
+        Outliner.getInstance().showLine("cogwheel_chain_placement_pathing_" + nodeA.pos() + "_" + nodeB.pos() + "_from_" + fromSide + "_to_" + toSide,
+                        nodeA.center().add(fromOffset),
+                        nodeB.center().add(toOffset))
+                .colored(0x95CD41)
+                .lineWidth(2f / 16f);
     }
 
     private static void showBlockOutline(final ClientLevel level, final BlockPos pos) {

@@ -1,12 +1,11 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.graph;
 
 import com.google.common.collect.ImmutableList;
-import net.createmod.catnip.data.Pair;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.placement.ChainInteractionFailedException;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Chain pathing version 3 cause this a b****
@@ -57,54 +56,54 @@ public class CogwheelChainPathfinder {
         //Reconstruct chain to local space
         final PlacingCogwheelChain chain = worldSpaceChain.toLocalSpaceChain();
 
-        AtomicReference<PartialPathFrontierData> leftPath = new AtomicReference<>(new PartialPathFrontierData(
+        PartialPathFrontierData leftPath = new PartialPathFrontierData(
                 ImmutableList.of(new PathedCogwheelNode(chain.getNodes().getFirst(), 1)),
                 0,
                 0
-        ));
-        AtomicReference<PartialPathFrontierData> rightPath = new AtomicReference<>(new PartialPathFrontierData(
+        );
+        PartialPathFrontierData rightPath = new PartialPathFrontierData(
                 ImmutableList.of(new PathedCogwheelNode(chain.getNodes().getFirst(), -1)),
                 0,
                 0
-        ));
+        );
 
         PlacingCogwheelNode prevNode = chain.getNodes().get(0);
         for (int i = 1; i < chain.getNodes().size() * 2; i++) {
             final PlacingCogwheelNode nextNode = chain.getNodes().get(i % chain.getNodes().size());
             final PlacingCogwheelNode nextNextNode = chain.getNodes().get((i + 1) % chain.getNodes().size());
 
-            final AtomicReference<PartialPathFrontierData> nextLeftPath = new AtomicReference<>(null);
-            final AtomicReference<PartialPathFrontierData> nextRightPath = new AtomicReference<>(null);
+            PartialPathFrontierData nextLeftPath = null;
+            PartialPathFrontierData nextRightPath = null;
 
-            for (final Pair<AtomicReference<PartialPathFrontierData>, Integer> pathChannel : List.of(Pair.of(leftPath, 1), Pair.of(rightPath, -1))) {
-                final AtomicReference<PartialPathFrontierData> fromPath = pathChannel.getFirst();
-                if (fromPath.get() == null) {
+            for (int fromSide = 1; fromSide >= -1; fromSide -= 2) {
+                final PartialPathFrontierData fromPath = (fromSide == 1) ? leftPath : rightPath;
+                if (fromPath == null) {
                     continue;
                 }
-                final int fromSide = pathChannel.getSecond();
 
                 for (int toSide = 1; toSide >= -1; toSide -= 2) {
                     if (isValidPathStep(prevNode, fromSide, nextNode, toSide)) {
-                        stepPathfinding(prevNode, nextNode, fromSide, toSide, fromPath, nextNextNode, nextLeftPath, nextRightPath, chain.getSize());
+                        final PartialPathFrontierData extended = computeExtendedPath(prevNode, nextNode, fromSide, toSide, fromPath, nextNextNode, chain.getSize());
+                        if (toSide == 1) {
+                            nextLeftPath = merge(nextLeftPath, extended);
+                        } else {
+                            nextRightPath = merge(nextRightPath, extended);
+                        }
                     }
                 }
             }
             leftPath = nextLeftPath;
             rightPath = nextRightPath;
 
-            if (leftPath.get() == null && rightPath.get() == null) {
+            if (leftPath == null && rightPath == null) {
                 throw new ChainInteractionFailedException("pathfinding_failed_at_node");
             }
             prevNode = nextNode;
         }
-        final PartialPathFrontierData finalPath = (leftPath.get() != null && rightPath.get() != null)
-                ? leftPath.get().compare(rightPath.get())
-                : (leftPath.get() != null ? leftPath.get() : rightPath.get());
+        final PartialPathFrontierData finalPath = (leftPath != null && rightPath != null)
+                ? leftPath.compare(rightPath)
+                : (leftPath != null ? leftPath : rightPath);
         if (finalPath == null) return null;
-
-//        if (finalPath.chainIntersections > 0) {
-//            throw new CogwheelChain.InvalidGeometryException("self_intersections_forbidden");
-//        }
 
         final ArrayList<PathedCogwheelNode> finalTraversed = new ArrayList<>(finalPath.traversed);
 
@@ -116,14 +115,18 @@ public class CogwheelChainPathfinder {
         return finalTraversed;
     }
 
-    private static void stepPathfinding(final PlacingCogwheelNode prevNode, final PlacingCogwheelNode nextNode, final int fromSide, final int toSide, final AtomicReference<PartialPathFrontierData> fromPath, final PlacingCogwheelNode nextNextNode, final AtomicReference<PartialPathFrontierData> nextLeftPath, final AtomicReference<PartialPathFrontierData> nextRightPath, final int size) {
+    private static PartialPathFrontierData merge(final PartialPathFrontierData existing, final PartialPathFrontierData candidate) {
+        return existing == null ? candidate : existing.compare(candidate);
+    }
+
+    private static PartialPathFrontierData computeExtendedPath(final PlacingCogwheelNode prevNode, final PlacingCogwheelNode nextNode, final int fromSide, final int toSide, final PartialPathFrontierData fromPath, final PlacingCogwheelNode nextNextNode, final int size) {
         final Vec3 fromPos = prevNode.center().add(
                 getPathingTangentOnCog(nextNode, prevNode, -fromSide)
         );
         final Vec3 toPos = nextNode.center().add(
                 getPathingTangentOnCog(prevNode, nextNode, toSide)
         );
-        final ImmutableList<PathedCogwheelNode> traversed = fromPath.get().traversed;
+        final ImmutableList<PathedCogwheelNode> traversed = fromPath.traversed;
         final int traversedSize = traversed.size();
 
         final double distance = fromPos.distanceTo(toPos) + (getArcDistanceOnCog(
@@ -140,19 +143,11 @@ public class CogwheelChainPathfinder {
                         toSide
                 ));
 
-        final PartialPathFrontierData extendedPath = fromPath.get().extend(
+        return fromPath.extend(
                 new PathedCogwheelNode(nextNode, toSide),
                 distance,
                 selfIntersections
         );
-
-        final AtomicReference<PartialPathFrontierData> targetPath = (toSide == 1) ? nextLeftPath : nextRightPath;
-
-        if (targetPath.get() == null) {
-            targetPath.set(extendedPath);
-        } else {
-            targetPath.set(targetPath.get().compare(extendedPath));
-        }
     }
 
     private static double getArcDistanceOnCog(final PathedCogwheelNode prevNode, final PathedCogwheelNode currentNode, final PathedCogwheelNode nextNode) {
@@ -220,6 +215,14 @@ public class CogwheelChainPathfinder {
         return t >= 0 && t <= 1 && u >= 0 && u <= 1;
     }
 
+    public static boolean isValidPathStepOutOf(final PlacingCogwheelNode nodeA, final PlacingCogwheelNode nodeB, final int side) {
+        return isValidPathStep(nodeA, side, nodeB, 1) || isValidPathStep(nodeA, side, nodeB, -1);
+    }
+
+    public static boolean isValidPathStepInto(final PlacingCogwheelNode nodeA, final PlacingCogwheelNode nodeB, final int side) {
+        return isValidPathStep(nodeA, 1, nodeB, side) || isValidPathStep(nodeA, -1, nodeB, side);
+    }
+
     /**
      * Check if the combination is valid, predominantly dedicated to axis changes
      */
@@ -245,7 +248,7 @@ public class CogwheelChainPathfinder {
     /*
      * Get a list of sides (on the last node) which have any valid path to the new node
      * */
-    public static List<Integer> getValidPathSteps(PlacingCogwheelNode lastNode, PlacingCogwheelNode newNode) {
+    public static List<Integer> getValidPathSteps(final PlacingCogwheelNode lastNode, final PlacingCogwheelNode newNode) {
         final List<Integer> validSides = new ArrayList<>();
         for (int side = 1; side >= -1; side -= 2) {
             if (isValidPathStep(lastNode, side, newNode, 1) || isValidPathStep(lastNode, side, newNode, -1)) {
@@ -255,19 +258,7 @@ public class CogwheelChainPathfinder {
         return validSides;
     }
 
-    public static Vec3 getPathingTangentOnCog(final PathedCogwheelNode from, final PathedCogwheelNode to, final int toSide) {
-        return getPathingTangentOnCog(from.center(), from.rotationAxisVec(), to.center(), to.isLarge(), to.rotationAxisVec(), toSide);
-    }
-
-    public static Vec3 getPathingTangentOnCog(final PathedCogwheelNode from, final PlacingCogwheelNode to, final int toSide) {
-        return getPathingTangentOnCog(from.center(), from.rotationAxisVec(), to.center(), to.isLarge(), to.rotationAxisVec(), toSide);
-    }
-
-    public static Vec3 getPathingTangentOnCog(final PlacingCogwheelNode from, final PathedCogwheelNode to, final int toSide) {
-        return getPathingTangentOnCog(from.center(), from.rotationAxisVec(), to.center(), to.isLarge(), to.rotationAxisVec(), toSide);
-    }
-
-    public static Vec3 getPathingTangentOnCog(final PlacingCogwheelNode from, final PlacingCogwheelNode to, final int toSide) {
+    public static Vec3 getPathingTangentOnCog(final ICogwheelNode from, final ICogwheelNode to, final int toSide) {
         return getPathingTangentOnCog(from.center(), from.rotationAxisVec(), to.center(), to.isLarge(), to.rotationAxisVec(), toSide);
     }
 

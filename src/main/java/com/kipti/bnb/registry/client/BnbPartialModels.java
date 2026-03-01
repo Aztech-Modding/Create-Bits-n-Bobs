@@ -50,7 +50,7 @@ public class BnbPartialModels {
     public static final Map<Direction, PartialModel> WEATHERED_METAL_GIRDER_BRACKETS = new EnumMap<>(Direction.class);
 
     static {
-        for (Direction d : Iterate.horizontalDirections) {
+        for (final Direction d : Iterate.horizontalDirections) {
             WEATHERED_METAL_GIRDER_BRACKETS.put(d, block("weathered_metal_girder/bracket_" + Lang.asId(d.name())));
         }
     }
@@ -60,11 +60,11 @@ public class BnbPartialModels {
     public static final PartialModel WOODEN_GIRDER_STRUT_SEGMENT = block("girder_strut/wooden_girder");
     public static final PartialModel CABLE_STRUT_SEGMENT = block("girder_strut/cable");
 
-    private static PartialModel block(String path) {
+    private static PartialModel block(final String path) {
         return PartialModel.of(CreateBitsnBobs.asResource("block/" + path));
     }
 
-    private static PartialModel createBlock(String path) {
+    private static PartialModel createBlock(final String path) {
         return PartialModel.of(Create.asResource("block/" + path));
     }
 

@@ -1,13 +1,12 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.placement;
 
-import com.kipti.bnb.content.kinetics.cogwheel_chain.shape.CogwheelChainInteractionHandler;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.ChainInteractionFailedException;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChainCandidate;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.PlacingCogwheelChain;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.shape.CogwheelChainInteractionHandler;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.CogwheelChainType;
 import com.kipti.bnb.network.packets.from_client.PlaceCogwheelChainPacket;
 import com.kipti.bnb.network.packets.from_client.WrenchCogwheelChainPacket;
 import com.kipti.bnb.registry.core.BnbFeatureFlag;
-import com.simibubi.create.content.kinetics.simpleRelays.CogWheelBlock;
 import com.simibubi.create.AllItems;
 import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.client.KeyMapping;
@@ -91,21 +90,23 @@ public class CogwheelChainPlacementInteraction {
         final BlockPos hitPos = bhr.getBlockPos();
         final BlockState targetedState = level.getBlockState(hitPos);
 
-        final boolean validBlockTarget = PlacingCogwheelChain.isValidBlockTarget(targetedState);
+        final CogwheelChainCandidate targetedCandidate = CogwheelChainCandidate.getForBlock(targetedState);
 
-        if (validBlockTarget && !BnbFeatureFlag.COGWHEEL_CHAIN_DRIVES.get()) {
+        if (targetedCandidate == null) {
+            return currentBuildingChain != null;
+        }
+
+        if (!BnbFeatureFlag.COGWHEEL_CHAIN_DRIVES.get()) {
             player.displayClientMessage(new ChainInteractionFailedException("config_forbids").getComponent(), true);
             return true;
         }
-        if (validBlockTarget && !heldChainType.getCogwheelPredicate().test(targetedState.getBlock())) {
+
+        if (!heldChainType.getCogwheelPredicate().test(targetedState.getBlock())) {
             player.displayClientMessage(new ChainInteractionFailedException("invalid_cogwheel_type." + heldChainType.getTranslationKey()).getComponent(), true);
             return true;
         }
 
-        if (!validBlockTarget) {
-            return currentBuildingChain != null;
-        }
-        rightClickForChain(event, level, hitPos, targetedState, heldChainType, chainItemInHand, player);
+        rightClickForChain(event, level, hitPos, targetedState, targetedCandidate, heldChainType, chainItemInHand, player);
         return true;
     }
 
@@ -113,12 +114,12 @@ public class CogwheelChainPlacementInteraction {
                                            final ClientLevel level,
                                            final BlockPos hitPos,
                                            final BlockState targetedState,
-                                           final CogwheelChainType heldChainType,
+                                           final CogwheelChainCandidate targetedCandidate, final CogwheelChainType heldChainType,
                                            final ItemStack chainItemInHand,
                                            final LocalPlayer player) {
         if (currentBuildingChain == null || currentChainLevel == null || !currentChainLevel.equals(level.dimension())) {
             //Start a new chain
-            currentBuildingChain = new PlacingCogwheelChain(hitPos, targetedState.getValue(CogWheelBlock.AXIS), PlacingCogwheelChain.isLargeBlockTarget(targetedState), PlacingCogwheelChain.hasSmallCogwheelOffset(targetedState));
+            currentBuildingChain = new PlacingCogwheelChain(hitPos, targetedCandidate.axis(), targetedCandidate.isLarge(), targetedCandidate.hasSmallCogwheelOffset());
             currentChainLevel = level.dimension();
             currentChainType = heldChainType;
             currentChainItemType = chainItemInHand.getItem();

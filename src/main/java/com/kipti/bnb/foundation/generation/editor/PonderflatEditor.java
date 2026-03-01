@@ -20,7 +20,7 @@ public class PonderflatEditor extends Screen {
     private final Screen parent;
     private final Consumer<PonderflatGeneratorSettings> settingsConsumer;
 
-    public PonderflatEditor(final Screen parent, final WorldCreationContext context, Consumer<PonderflatGeneratorSettings> settingsConsumer) {
+    public PonderflatEditor(final Screen parent, final WorldCreationContext context, final Consumer<PonderflatGeneratorSettings> settingsConsumer) {
         super(Component.translatable("createWorld.customize.buffet.title"));
         this.parent = parent;
         this.settingsConsumer = settingsConsumer;
@@ -39,7 +39,7 @@ public class PonderflatEditor extends Screen {
         linearlayout.addChild(new StringWidget(this.getTitle(), this.font));
         linearlayout.addChild(new StringWidget(BIOME_SELECT_INFO, this.font));
         final LinearLayout linearlayout1 = this.layout.addToFooter(LinearLayout.horizontal().spacing(8));
-        Button doneButton = linearlayout1.addChild(Button.builder(CommonComponents.GUI_DONE, p_329718_ -> {
+        final Button doneButton = linearlayout1.addChild(Button.builder(CommonComponents.GUI_DONE, p_329718_ -> {
             this.onClose();
         }).build());
         linearlayout1.addChild(Button.builder(CommonComponents.GUI_CANCEL, p_329719_ -> this.onClose()).build());

@@ -1,6 +1,6 @@
 package com.kipti.bnb.foundation.ponder.instruction;
 
-import com.kipti.bnb.foundation.client.ExpandingLineOutline;
+import com.cake.azimuth.client.outlines.ExpandingLineOutline;
 import net.createmod.ponder.api.PonderPalette;
 import net.createmod.ponder.foundation.PonderScene;
 import net.createmod.ponder.foundation.instruction.TickingInstruction;
@@ -12,7 +12,7 @@ public class ExpandingOutlineInstruction extends TickingInstruction {
 
     private final ExpandingLineOutline expandingOutlineInstruction = new ExpandingLineOutline();
 
-    public ExpandingOutlineInstruction(PonderPalette color, Vec3 start, Vec3 end, int ticks, int growingTicks) {
+    public ExpandingOutlineInstruction(final PonderPalette color, final Vec3 start, final Vec3 end, final int ticks, final int growingTicks) {
         super(false, ticks);
         this.color = color;
         this.expandingOutlineInstruction
@@ -27,7 +27,7 @@ public class ExpandingOutlineInstruction extends TickingInstruction {
     }
 
     @Override
-    public void tick(PonderScene scene) {
+    public void tick(final PonderScene scene) {
         super.tick(scene);
         expandingOutlineInstruction.tickGrowingTicksElapsed();
         scene.getOutliner()

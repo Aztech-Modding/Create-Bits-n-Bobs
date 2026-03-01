@@ -12,7 +12,7 @@ import net.minecraft.core.Direction;
 
 public class ThrottleLeverBlockEntityRenderer extends SmartBlockEntityRenderer<ThrottleLeverBlockEntity> {
 
-    public ThrottleLeverBlockEntityRenderer(BlockEntityRendererProvider.Context context) {
+    public ThrottleLeverBlockEntityRenderer(final BlockEntityRendererProvider.Context context) {
         super(context);
     }
 
@@ -24,7 +24,7 @@ public class ThrottleLeverBlockEntityRenderer extends SmartBlockEntityRenderer<T
         final float currentPower = blockEntity.getCurrentPower(partialTicks);
 
         ms.pushPose();
-        Direction facing = blockEntity.getBlockState().getValue(ThrottleLeverBlock.FACING);
+        final Direction facing = blockEntity.getBlockState().getValue(ThrottleLeverBlock.FACING);
         TransformStack.of(ms)
                 .center()
                 .rotateTo(Direction.UP, facing)
@@ -35,7 +35,7 @@ public class ThrottleLeverBlockEntityRenderer extends SmartBlockEntityRenderer<T
                     .rotateYDegrees((float) (facing.get2DDataValue() * 90));
         }
         TransformStack.of(ms)
-                .rotateXDegrees((float) (-45 + (currentPower / 15f) * 90))
+                .rotateXDegrees(-45 + (currentPower / 15f) * 90)
                 .translate(0, 6 / 16f, 0)
                 .uncenter();
         CachedBuffers.partial(BnbPartialModels.THROTTLE_LEVER_HANDLE, blockEntity.getBlockState())

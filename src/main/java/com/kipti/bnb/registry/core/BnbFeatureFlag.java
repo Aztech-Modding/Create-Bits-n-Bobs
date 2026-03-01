@@ -70,7 +70,7 @@ public enum BnbFeatureFlag {
     private static Lazy<Supplier<Block>[]> createSupplierSet(final BlockEntry<? extends Block> baseBlock, final DyedBlockList<? extends Block> dyedBlockList) {
         return Lazy.of(() -> {
             final List<Supplier<Block>> blocks = new ArrayList<>();
-            blocks.add((Supplier<Block>) baseBlock::get);
+            blocks.add(baseBlock::get);
             blocks.addAll(Arrays.stream(dyedBlockList.toArray())
                     .map(dyedEntry -> (Supplier<Block>) dyedEntry::get)
                     .toList());

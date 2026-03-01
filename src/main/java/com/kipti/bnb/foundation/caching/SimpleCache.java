@@ -12,7 +12,7 @@ public class SimpleCache<K, V> {
     private final int capacity;
     private final Predicate<V> validator;
 
-    public SimpleCache(final int capacity, Predicate<V> validator) {
+    public SimpleCache(final int capacity, final Predicate<V> validator) {
         this.capacity = capacity;
 
         // Thread-safe LRU Map
