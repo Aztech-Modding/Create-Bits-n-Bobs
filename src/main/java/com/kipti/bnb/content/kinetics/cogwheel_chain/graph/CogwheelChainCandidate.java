@@ -35,6 +35,8 @@ public record CogwheelChainCandidate(Direction.Axis axis, boolean isLarge, boole
     private static boolean hasSmallCogwheelOffset(final BlockState state) {
         if (BnbTags.BnbBlockTags.COGWHEEL_CHAIN_NO_SMALL_OFFSET.matches(state))
             return false;
+        if (state.getBlock() instanceof final ICogWheel cogwheelBlock)
+            return !cogwheelBlock.isLargeCog();
         if (state.getBlock() instanceof final IExclusiveCogwheelChainBlock exclusiveBlock)
             return !exclusiveBlock.isLargeCog();
         return true;

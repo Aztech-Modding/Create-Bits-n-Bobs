@@ -54,7 +54,7 @@ public final class ChainQuadBuilder {
         final int faceCount = chainRenderInfo.getVertexShape() == CogwheelChainType.VertexShape.CROSS ? 2 : 4;
         for (int faceIndex = 0; faceIndex < faceCount; faceIndex++) {
             if (chainRenderInfo.getVertexShape() == CogwheelChainType.VertexShape.CROSS) {
-                buildCrossShapeFace(destinationPoints, sourcePoints, faceIndex, minV, maxV, emitter);
+                buildCrossShapeFace(destinationPoints, sourcePoints, faceIndex, minV, maxV, flipInsideOutside, emitter);
             } else {
                 buildDefaultShapeFace(destinationPoints, sourcePoints, chainRenderInfo, faceIndex, minV, maxV, flipInsideOutside, emitter);
             }
@@ -66,7 +66,7 @@ public final class ChainQuadBuilder {
                                             final int faceIndex,
                                             final float minV,
                                             final float maxV,
-                                            final VertexEmitter emitter) {
+                                            final boolean flipInsideOutside, final VertexEmitter emitter) {
         final float uOffset = (faceIndex % 2 == 1) ? 0 : 3 / 16f;
         final float uWidth = 3 / 16f;
 
@@ -79,7 +79,7 @@ public final class ChainQuadBuilder {
         final Vec3 posBR = sourcePoints.get(faceIndex);
         final Vec3 posTR = destinationPoints.get(faceIndex);
 
-        buildSubdividedQuad(posTL, posBL, posBR, posTR, uLeft, uRight, minV, maxV, emitter);
+        buildSubdividedQuad(posTL, posBL, posBR, posTR, uLeft, uRight, minV, maxV, flipInsideOutside, emitter);
     }
 
     private static void buildDefaultShapeFace(final List<Vec3> destinationPoints,
@@ -117,7 +117,7 @@ public final class ChainQuadBuilder {
         final Vec3 posBR = sourcePoints.get(faceIndex);
         final Vec3 posTR = destinationPoints.get(faceIndex);
 
-        buildSubdividedQuad(posTL, posBL, posBR, posTR, minU, maxU, minV, maxV, emitter);
+        buildSubdividedQuad(posTL, posBL, posBR, posTR, minU, maxU, minV, maxV, false, emitter);
     }
 
     /**
@@ -132,7 +132,7 @@ public final class ChainQuadBuilder {
                                             final float uRight,
                                             final float minV,
                                             final float maxV,
-                                            final VertexEmitter emitter) {
+                                            final boolean flipInsideOutside, final VertexEmitter emitter) {
         for (int s = 0; s < SUBDIVISION_COUNT; s++) {
             final float t1 = (float) s / SUBDIVISION_COUNT;
             final float t2 = (float) (s + 1) / SUBDIVISION_COUNT;
@@ -163,6 +163,14 @@ public final class ChainQuadBuilder {
             emitter.emit((float) p2.x, (float) p2.y, (float) p2.z, uLeft, vEnd, nx, ny, nz);
             emitter.emit((float) p3.x, (float) p3.y, (float) p3.z, uRight, vEnd, nx, ny, nz);
             emitter.emit((float) p4.x, (float) p4.y, (float) p4.z, uRight, vStart, nx, ny, nz);
+
+            if (flipInsideOutside) {
+                // Emit the same vertices in reverse order for the back face
+                emitter.emit((float) p4.x, (float) p4.y, (float) p4.z, uRight, vStart, -nx, -ny, -nz);
+                emitter.emit((float) p3.x, (float) p3.y, (float) p3.z, uRight, vEnd, -nx, -ny, -nz);
+                emitter.emit((float) p2.x, (float) p2.y, (float) p2.z, uLeft, vEnd, -nx, -ny, -nz);
+                emitter.emit((float) p1.x, (float) p1.y, (float) p1.z, uLeft, vStart, -nx, -ny, -nz);
+            }
         }
     }
 }

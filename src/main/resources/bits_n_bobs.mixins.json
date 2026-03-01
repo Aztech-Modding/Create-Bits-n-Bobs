@@ -27,7 +27,6 @@
     "flywheel_bearing.KineticNetworkMixin",
     "glowing_belts.BeltBlockMixin",
     "glowing_belts.BeltSlicerMixin",
-    "migration.StructureTemplateMigrationMixin",
     "presets.ChunkGeneratorsMixin",
     "presets.WorldDimensionsMixin",
     "presets.WorldPresetsBootstrapMixin",

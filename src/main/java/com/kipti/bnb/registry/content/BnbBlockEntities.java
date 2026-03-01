@@ -91,7 +91,7 @@ public class BnbBlockEntities {
                     new SingleAxisRotatingVisual<>(context, blockEntity, partialTick,
                             Models.partial(GenericBlockEntityRenderModels.REGISTRY.get(blockEntity.getBlockState().getBlock()))), true)
             .validBlocks(BnbKineticBlocks.SMALL_EMPTY_FLANGED_COGWHEEL, BnbKineticBlocks.LARGE_EMPTY_FLANGED_COGWHEEL)
-            .validBlocks(AllBlocks.COGWHEEL, AllBlocks.LARGE_COGWHEEL)
+            .validBlocks(AllBlocks.COGWHEEL, AllBlocks.LARGE_COGWHEEL) //Holds refugee chain block entities since i cant differentiate them in the remap
             .validBlocks(BnbEncasedBlocks.ENCASED_LARGE_FLANGED_COGWHEEL.toArray())
             .validBlocks(BnbEncasedBlocks.ENCASED_FLANGED_COGWHEEL.toArray())
             .renderer(() -> KineticBlockEntityRenderer::new)

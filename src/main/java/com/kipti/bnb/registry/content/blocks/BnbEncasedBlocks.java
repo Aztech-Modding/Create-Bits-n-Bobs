@@ -74,6 +74,7 @@ public class BnbEncasedBlocks {
                     .transform(BnbBuilderTransformers.casingMaterialCogwheelBase(casing, BnbKineticBlocks.LARGE_EMPTY_FLANGED_COGWHEEL::get, true))
                     .transform(EncasingRegistry.addVariantTo(BnbKineticBlocks.LARGE_EMPTY_FLANGED_COGWHEEL))
                     .onRegister(GenericBlockEntityRenderModels.model(BnbPartialModels.ENCASED_LARGE_FLANGED_COGWHEEL_BLOCK))
+                    .tag(BnbTags.BnbBlockTags.COGWHEEL_CHAIN_NO_SMALL_OFFSET.tag)
                     .register());
 
     public static void register() {

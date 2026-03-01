@@ -54,9 +54,8 @@ public class ChainIdMigrations {
      * {@link #COGWHEEL_CHAIN_BE} is intentionally absent — see above.
      */
     public static final Map<ResourceLocation, ResourceLocation> BLOCK_ENTITY_RENAMES = Map.of(
-            CreateBitsnBobs.asResource("empty_flanged_cogwheel"), BNB_SIMPLE_KINETIC
+            CreateBitsnBobs.asResource("empty_flanged_cogwheel"), BNB_SIMPLE_KINETIC,
+            COGWHEEL_CHAIN_BE, BNB_SIMPLE_KINETIC
     );
 
-    private ChainIdMigrations() {
-    }
 }

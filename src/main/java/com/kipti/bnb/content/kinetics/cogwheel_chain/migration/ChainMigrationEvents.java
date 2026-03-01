@@ -13,19 +13,19 @@ public class ChainMigrationEvents {
 
     @SubscribeEvent
     public static void onRegisterAliasEvent(final RegisterEvent event) {
-        if (event.getRegistry() == Registries.BLOCK) {
-            for (Map.Entry<ResourceLocation, ResourceLocation> entry : ChainIdMigrations.BLOCK_RENAMES.entrySet())
-                event.getRegistry().addAlias(entry.getKey(), entry.getValue());
+        if (event.getRegistry().key() == Registries.BLOCK) {
+            for (final Map.Entry<ResourceLocation, ResourceLocation> entry : ChainIdMigrations.BLOCK_RENAMES.entrySet())
+                addAliasLogged(event, entry.getKey(), entry.getValue());
         }
-        if (event.getRegistry() == Registries.BLOCK_ENTITY_TYPE) {
-            for (Map.Entry<ResourceLocation, ResourceLocation> entry : ChainIdMigrations.BLOCK_ENTITY_RENAMES.entrySet())
-                event.getRegistry().addAlias(entry.getKey(), entry.getValue());
-            // cogwheel_chain is context-dependent (flanged vs. non-flanged) but addAlias can't
-            // be context-aware. Schematics are handled correctly by StructureTemplateMigrationMixin.
-            // For world saves, fall back to create:simple_kinetic; the placed block's own
-            // getBlockEntityType() will still produce the right BE after the block alias is applied.
-            event.getRegistry().addAlias(ChainIdMigrations.COGWHEEL_CHAIN_BE, ChainIdMigrations.CREATE_SIMPLE_KINETIC);
+        if (event.getRegistry().key() == Registries.BLOCK_ENTITY_TYPE) {
+            for (final Map.Entry<ResourceLocation, ResourceLocation> entry : ChainIdMigrations.BLOCK_ENTITY_RENAMES.entrySet())
+                addAliasLogged(event, entry.getKey(), entry.getValue());
         }
+    }
+
+    private static void addAliasLogged(final RegisterEvent event, final ResourceLocation a, final ResourceLocation b) {
+        event.getRegistry().addAlias(a, b);
+        System.out.println("!!!! Registered alias: " + a + " → " + b);
     }
 
 }
