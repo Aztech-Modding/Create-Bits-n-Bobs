@@ -124,6 +124,11 @@ public class GirderStrutBlockItem extends BlockItem {
             return false;
         }
 
+        //Check not straight up since thats ILLEGAL (cba to fix shape issues and all the other rendering stuff)
+        if (Math.abs(diffY) > 0 && diffX == 0 && diffZ == 0) {
+            return false;
+        }
+
         final double lengthSq = diffX * diffX + diffY * diffY + diffZ * diffZ;
         if (lengthSq > GirderStrutBlock.MAX_SPAN * GirderStrutBlock.MAX_SPAN) {
             return false;
