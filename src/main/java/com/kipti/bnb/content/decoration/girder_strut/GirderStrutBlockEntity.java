@@ -39,11 +39,12 @@ public class GirderStrutBlockEntity extends SmartBlockEntity implements IBlockEn
     public void onLoad() {
         super.onLoad();
         if (level != null && !level.isClientSide) {
+            final StrutModelType modelType = getBlockState().getBlock() instanceof GirderStrutBlock block ? block.getModelType() : BnbStrutModels.NORMAL;
             for (final GirderConnectionNode data : connections) {
                 if (registeredConnections.add(data)) {
                     com.kipti.bnb.content.decoration.girder_strut.structure.GirderStrutStructureShapes.registerConnection(
                             level, getBlockPos(), getAttachmentDirection(),
-                            data.absoluteFrom(getBlockPos()), data.peerFacing());
+                            data.absoluteFrom(getBlockPos()), data.peerFacing(), modelType);
                 }
             }
             tryResolveLegacyConnections();
@@ -73,8 +74,9 @@ public class GirderStrutBlockEntity extends SmartBlockEntity implements IBlockEn
         if (!other.equals(getBlockPos()) && connections.add(data)) {
             if (level != null && !level.isClientSide) {
                 if (registeredConnections.add(data)) {
+                    final StrutModelType modelType = getBlockState().getBlock() instanceof GirderStrutBlock block ? block.getModelType() : BnbStrutModels.NORMAL;
                     com.kipti.bnb.content.decoration.girder_strut.structure.GirderStrutStructureShapes.registerConnection(
-                            level, getBlockPos(), getAttachmentDirection(), other, otherFacing);
+                            level, getBlockPos(), getAttachmentDirection(), other, otherFacing, modelType);
                 }
             }
             setChanged();

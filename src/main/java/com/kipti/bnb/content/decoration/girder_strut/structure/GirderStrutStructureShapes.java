@@ -34,8 +34,8 @@ public class GirderStrutStructureShapes {
         }
     }
 
-    public static void registerConnection(final Level level, final BlockPos from, final Direction fromFacing, final BlockPos to, final Direction toFacing) {
-        STORAGE.getForLevel(level).registerConnection(level, from, fromFacing, to, toFacing);
+    public static void registerConnection(final Level level, final BlockPos from, final Direction fromFacing, final BlockPos to, final Direction toFacing, final com.kipti.bnb.content.decoration.girder_strut.StrutModelType modelType) {
+        STORAGE.getForLevel(level).registerConnection(level, from, fromFacing, to, toFacing, modelType);
     }
 
     public static void unregisterConnection(final Level level, final BlockPos a, final BlockPos b) {
@@ -103,13 +103,13 @@ public class GirderStrutStructureShapes {
             };
         }
 
-        public void registerConnection(final Level level, final BlockPos from, final Direction fromFacing, final BlockPos to, final Direction toFacing) {
+        public void registerConnection(final Level level, final BlockPos from, final Direction fromFacing, final BlockPos to, final Direction toFacing, final com.kipti.bnb.content.decoration.girder_strut.StrutModelType modelType) {
             final ConnectionKey key = new ConnectionKey(from, to);
             if (connectionsByKey.containsKey(key)) {
                 return;
             }
 
-            final BlockyStrutLineGeometry geometry = new BlockyStrutLineGeometry(from, fromFacing, to, toFacing);
+            final BlockyStrutLineGeometry geometry = new BlockyStrutLineGeometry(from, fromFacing, to, toFacing, modelType.shapeSizeXPixels(), modelType.shapeSizeYPixels());
             final Set<ChunkPos> chunks = new HashSet<>();
             for (final BlockPos pos : geometry.getPositions()) {
                 chunks.add(new ChunkPos(pos));

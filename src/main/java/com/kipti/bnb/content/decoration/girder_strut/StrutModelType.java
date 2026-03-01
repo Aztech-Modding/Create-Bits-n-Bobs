@@ -6,18 +6,10 @@ import com.simibubi.create.Create;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.minecraft.resources.ResourceLocation;
 
-public enum StrutModelType {
-    WEATHERED(BnbPartialModels.WEATHERED_GIRDER_STRUT_SEGMENT, CreateBitsnBobs.asResource("block/weathered_iron_block")),
-    NORMAL(BnbPartialModels.GIRDER_STRUT_SEGMENT, CreateBitsnBobs.asResource("block/industrial_iron_block")),
-    WOODEN(BnbPartialModels.WOODEN_GIRDER_STRUT_SEGMENT, CreateBitsnBobs.asResource("block/oak_planks")),
-    CABLE(BnbPartialModels.CABLE_STRUT_SEGMENT, CreateBitsnBobs.asResource("block/industrial_iron_block"));
+public record StrutModelType(PartialModel segmentPartial, ResourceLocation capTexture, int shapeSizeXPixels, int shapeSizeYPixels) {
 
-    private final PartialModel segmentPartial;
-    private final ResourceLocation capTexture;
-
-    StrutModelType(final PartialModel segmentPartial, final ResourceLocation capTexture) {
-        this.segmentPartial = segmentPartial;
-        this.capTexture = capTexture;
+    public StrutModelType(final PartialModel segmentPartial, final ResourceLocation capTexture) {
+        this(segmentPartial, capTexture, 8, 12);
     }
 
     public PartialModel getPartialModel() {
@@ -27,6 +19,5 @@ public enum StrutModelType {
     public ResourceLocation getCapTexture() {
         return capTexture;
     }
-
 }
 

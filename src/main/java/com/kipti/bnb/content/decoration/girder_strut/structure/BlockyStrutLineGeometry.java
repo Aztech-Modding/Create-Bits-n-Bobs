@@ -23,10 +23,10 @@ public class BlockyStrutLineGeometry {
 
     private static final float EPSILON = 1e-6f;
 
-    public static final int SHAPE_SIZE_X_PIXELS = 8;
-    public static final int SHAPE_SIZE_Y_PIXELS = 12;
-    private static final double HALF_X = (SHAPE_SIZE_X_PIXELS / 16.0) / 2.0;
-    private static final double HALF_Y = (SHAPE_SIZE_Y_PIXELS / 16.0) / 2.0;
+    private final int shapeSizeXPixels;
+    private final int shapeSizeYPixels;
+    private final double halfX;
+    private final double halfY;
 
     private final BlockPos[] positions;
 
@@ -38,7 +38,11 @@ public class BlockyStrutLineGeometry {
     private Vec3 localYDirection;
     private double totalLength;
 
-    public BlockyStrutLineGeometry(final BlockPos from, final Direction fromFacing, final BlockPos to, final Direction toFacing) {
+    public BlockyStrutLineGeometry(final BlockPos from, final Direction fromFacing, final BlockPos to, final Direction toFacing, final int shapeSizeXPixels, final int shapeSizeYPixels) {
+        this.shapeSizeXPixels = shapeSizeXPixels;
+        this.shapeSizeYPixels = shapeSizeYPixels;
+        this.halfX = (shapeSizeXPixels / 16.0) / 2.0;
+        this.halfY = (shapeSizeYPixels / 16.0) / 2.0;
         this.fromAttachment = Vec3.atCenterOf(from).relative(fromFacing, -0.4);
         this.toAttachment = Vec3.atCenterOf(to).relative(toFacing, -0.4);
         this.positions = calculatePositions();
@@ -62,18 +66,18 @@ public class BlockyStrutLineGeometry {
         final boolean straightZ = isEpsilon(difference.x) && isEpsilon(difference.y);
 
         if (straightX || straightY || straightZ) {
-            final double minX = straightX ? 0 : 0.5 - HALF_X;
-            final double maxX = straightX ? 1 : 0.5 + HALF_X;
-            final double minY = straightY ? 0 : 0.5 - HALF_Y;
-            final double maxY = straightY ? 1 : 0.5 + HALF_Y;
-            final double minZ = straightZ ? 0 : 0.5 - HALF_X;
-            final double maxZ = straightZ ? 1 : 0.5 + HALF_X;
+            final double minX = straightX ? 0 : 0.5 - halfX;
+            final double maxX = straightX ? 1 : 0.5 + halfX;
+            final double minY = straightY ? 0 : 0.5 - halfY;
+            final double maxY = straightY ? 1 : 0.5 + halfY;
+            final double minZ = straightZ ? 0 : 0.5 - halfX;
+            final double maxZ = straightZ ? 1 : 0.5 + halfX;
             return Shapes.create(minX, minY, minZ, maxX, maxY, maxZ);
         }
 
-        final double extentX = Math.abs(HALF_X * localXDirection.x()) + Math.abs(HALF_Y * localYDirection.x());
-        final double extentY = Math.abs(HALF_X * localXDirection.y()) + Math.abs(HALF_Y * localYDirection.y());
-        final double extentZ = Math.abs(HALF_X * localXDirection.z()) + Math.abs(HALF_Y * localYDirection.z());
+        final double extentX = Math.abs(halfX * localXDirection.x()) + Math.abs(halfY * localYDirection.x());
+        final double extentY = Math.abs(halfX * localXDirection.y()) + Math.abs(halfY * localYDirection.y());
+        final double extentZ = Math.abs(halfX * localXDirection.z()) + Math.abs(halfY * localYDirection.z());
 
         final AABB expanded = new AABB(pos).inflate(extentX, extentY, extentZ);
         final Vec3 scaledFrom = fromAttachment.subtract(difference); //Scale this to ensure shape extends fully to the attachment point;
@@ -209,7 +213,7 @@ public class BlockyStrutLineGeometry {
         //If we are along a flat plane we are checking against the width, otherwise its the height
         //Line definition:
         // L(mu) = fromAttatchment + difference * mu
-        final float lineWidth = isHorizontal ? (SHAPE_SIZE_X_PIXELS / 16f) : (SHAPE_SIZE_Y_PIXELS / 16f);
+        final float lineWidth = isHorizontal ? (shapeSizeXPixels / 16f) : (shapeSizeYPixels / 16f);
 
         //Then, get the line in whole block units, (finer collisions are for the actual shape generation)
         //To be a lil lazy, ths just gets the whole aabb and iterates checking for collisions

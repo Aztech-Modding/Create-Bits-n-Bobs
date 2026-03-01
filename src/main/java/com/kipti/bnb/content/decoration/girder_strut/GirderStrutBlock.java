@@ -82,19 +82,19 @@ public class GirderStrutBlock extends Block implements IBE<GirderStrutBlockEntit
     }
 
     public static NonNullFunction<Properties, GirderStrutBlock> normal() {
-        return properties -> new GirderStrutBlock(properties, StrutModelType.NORMAL);
+        return properties -> new GirderStrutBlock(properties, BnbStrutModels.NORMAL);
     }
 
     public static NonNullFunction<Properties, GirderStrutBlock> weathered() {
-        return properties -> new GirderStrutBlock(properties, StrutModelType.WEATHERED);
+        return properties -> new GirderStrutBlock(properties, BnbStrutModels.WEATHERED);
     }
 
     public static NonNullFunction<Properties, GirderStrutBlock> wooden() {
-        return properties -> new GirderStrutBlock(properties, StrutModelType.WOODEN);
+        return properties -> new GirderStrutBlock(properties, BnbStrutModels.WOODEN);
     }
 
     public static NonNullFunction<Properties, GirderStrutBlock> cable() {
-        return properties -> new GirderStrutBlock(properties, StrutModelType.CABLE);
+        return properties -> new GirderStrutBlock(properties, BnbStrutModels.CABLE);
     }
 
     @Override
