@@ -164,6 +164,7 @@ public class BnbDecorativeBlocks {
 
     public static final BlockEntry<GratingPanelBlock> INDUSTRIAL_GRATING_PANEL = CreateBitsnBobs.REGISTRATE.block("industrial_grating_panel", GratingPanelBlock::new)
             .properties(p -> p.mapColor(MapColor.METAL)
+                    .noOcclusion()
                     .strength(0.1f, 6.0f)
                     .sound(SoundType.METAL)
                     .isSuffocating((state, level, pos) -> false)
