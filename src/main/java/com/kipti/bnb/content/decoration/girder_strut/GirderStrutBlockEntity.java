@@ -7,6 +7,7 @@ import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import net.createmod.catnip.render.SuperByteBuffer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -15,6 +16,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
@@ -112,6 +114,15 @@ public class GirderStrutBlockEntity extends SmartBlockEntity implements IBlockEn
         connections.clear();
 
         connections.addAll(newConnections);
+    }
+
+    public Vec3 getAttachment() {
+        //TODO: use this in renderer to ensure parity always, even if its the same rn
+        return Vec3.atCenterOf(getBlockPos()).relative(getBlockState().getValue(GirderStrutBlock.FACING), -0.4);
+    }
+
+    public Direction getAttachmentDirection() {
+        return getBlockState().getValue(GirderStrutBlock.FACING);
     }
 }
 
