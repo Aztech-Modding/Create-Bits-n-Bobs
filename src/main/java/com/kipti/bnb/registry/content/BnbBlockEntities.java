@@ -27,6 +27,7 @@ import com.simibubi.create.content.kinetics.base.SingleAxisRotatingVisual;
 import com.simibubi.create.content.kinetics.simpleRelays.SimpleKineticBlockEntity;
 import com.simibubi.create.content.kinetics.simpleRelays.encased.EncasedCogRenderer;
 import com.simibubi.create.content.kinetics.simpleRelays.encased.EncasedCogVisual;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.migration.MigratingSimpleKineticBlockEntity;
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
 import dev.engine_room.flywheel.lib.model.Models;
 
@@ -86,12 +87,20 @@ public class BnbBlockEntities {
             .renderer(() -> ChainPulleyRenderer::new)
             .register();
 
+    public static final BlockEntityEntry<MigratingSimpleKineticBlockEntity> MIGRATING_SIMPLE_KINETIC = REGISTRATE.blockEntity("migrating_simple_kinetic", MigratingSimpleKineticBlockEntity::new)
+            .visual(() -> (context, blockEntity, partialTick) ->
+                    new SingleAxisRotatingVisual<>(context, blockEntity, partialTick,
+                            Models.partial(GenericBlockEntityRenderModels.REGISTRY.get(blockEntity.getBlockState().getBlock()))), true)
+            .validBlocks(BnbKineticBlocks.SMALL_EMPTY_FLANGED_COGWHEEL, BnbKineticBlocks.LARGE_EMPTY_FLANGED_COGWHEEL)
+            .validBlocks(AllBlocks.COGWHEEL, AllBlocks.LARGE_COGWHEEL)
+            .renderer(() -> KineticBlockEntityRenderer::new)
+            .register();
+
     public static final BlockEntityEntry<SimpleKineticBlockEntity> SIMPLE_KINETIC = REGISTRATE.blockEntity("simple_kinetic", SimpleKineticBlockEntity::new)
             .visual(() -> (context, blockEntity, partialTick) ->
                     new SingleAxisRotatingVisual<>(context, blockEntity, partialTick,
                             Models.partial(GenericBlockEntityRenderModels.REGISTRY.get(blockEntity.getBlockState().getBlock()))), true)
             .validBlocks(BnbKineticBlocks.SMALL_EMPTY_FLANGED_COGWHEEL, BnbKineticBlocks.LARGE_EMPTY_FLANGED_COGWHEEL)
-            .validBlocks(AllBlocks.COGWHEEL, AllBlocks.LARGE_COGWHEEL) //Holds refugee chain block entities since i cant differentiate them in the remap
             .validBlocks(BnbEncasedBlocks.ENCASED_LARGE_FLANGED_COGWHEEL.toArray())
             .validBlocks(BnbEncasedBlocks.ENCASED_FLANGED_COGWHEEL.toArray())
             .renderer(() -> KineticBlockEntityRenderer::new)
