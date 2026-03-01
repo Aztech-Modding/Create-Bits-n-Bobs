@@ -230,8 +230,10 @@ public class GirderStrutBlockItem extends BlockItem {
         if (!(level.getBlockEntity(targetPos) instanceof final GirderStrutBlockEntity target)) {
             return;
         }
-        from.addConnection(targetPos);
-        target.addConnection(fromPos);
+        final Direction fromFacing = level.getBlockState(fromPos).getValue(GirderStrutBlock.FACING);
+        final Direction targetFacing = level.getBlockState(targetPos).getValue(GirderStrutBlock.FACING);
+        from.addConnection(targetPos, targetFacing);
+        target.addConnection(fromPos, fromFacing);
 
         final BlockState updatedFromState = level.getBlockState(fromPos);
         final BlockState updatedTargetState = level.getBlockState(targetPos);

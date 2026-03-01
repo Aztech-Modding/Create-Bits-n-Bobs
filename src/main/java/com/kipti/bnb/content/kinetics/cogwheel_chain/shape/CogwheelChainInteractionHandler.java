@@ -33,7 +33,6 @@ import java.util.Map.Entry;
  * Client-side selection and outline handling for cogwheel chains.
  */
 @EventBusSubscriber(Dist.CLIENT)
-@SuppressWarnings("null")
 public class CogwheelChainInteractionHandler {
 
     private static final WorldAttached<LevelChainShapeStore> loadedChains =

@@ -1,5 +1,7 @@
 package com.kipti.bnb.content.decoration.girder_strut;
 
+import com.kipti.bnb.content.decoration.girder_strut.connection.GirderConnectionNode;
+import com.kipti.bnb.content.decoration.girder_strut.structure.GirderStrutShapedBlock;
 import com.kipti.bnb.registry.client.BnbShapes;
 import com.kipti.bnb.registry.content.BnbBlockEntities;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
@@ -7,6 +9,8 @@ import com.simibubi.create.foundation.block.IBE;
 import com.tterrag.registrate.util.nullness.NonNullFunction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -25,13 +29,14 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED;
 
-public class GirderStrutBlock extends Block implements IBE<GirderStrutBlockEntity>, SimpleWaterloggedBlock, IWrenchable {
+public class GirderStrutBlock extends Block implements IBE<GirderStrutBlockEntity>, SimpleWaterloggedBlock, IWrenchable, GirderStrutShapedBlock {
 
     public static final DirectionProperty FACING = DirectionalBlock.FACING;
     public static final int MAX_SPAN = 30;
@@ -97,7 +102,13 @@ public class GirderStrutBlock extends Block implements IBE<GirderStrutBlockEntit
                                            final @NotNull BlockPos pos, final @NotNull BlockPos neighbourPos) {
         if (state.getValue(WATERLOGGED))
             world.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(world));
+        scheduleStructureRebuildIfNeeded(state, direction, neighbourState, world, pos, this);
         return state;
+    }
+
+    @Override
+    protected void tick(final BlockState state, final ServerLevel level, final BlockPos pos, final RandomSource random) {
+        rebuildMissingStructureNeighbors(level, pos);
     }
 
     @Override
@@ -124,7 +135,12 @@ public class GirderStrutBlock extends Block implements IBE<GirderStrutBlockEntit
 
     @Override
     public @NotNull VoxelShape getShape(final BlockState state, final @NotNull BlockGetter level, final @NotNull BlockPos pos, final @NotNull CollisionContext context) {
-        return BnbShapes.GIRDER_STRUT.get(state.getValue(FACING));
+        final VoxelShape base = BnbShapes.GIRDER_STRUT.get(state.getValue(FACING));
+        final VoxelShape strutShape = getStrutShape(level, pos);
+        if (!strutShape.isEmpty()) {
+            return Shapes.or(base, strutShape);
+        }
+        return base;
     }
 
     @Override
@@ -145,8 +161,8 @@ public class GirderStrutBlock extends Block implements IBE<GirderStrutBlockEntit
 
     private void destroyConnectedStrut(final Level level, final BlockPos pos, final boolean dropBlock) {
         withBlockEntityDo(level, pos, (gbe) -> {
-            for (BlockPos otherPos : gbe.getConnectionsCopy()) {
-                otherPos = otherPos.offset(pos);
+            for (final GirderConnectionNode data : gbe.getConnectionsCopy()) {
+                final BlockPos otherPos = data.absoluteFrom(pos);
                 final BlockEntity otherBe = level.getBlockEntity(otherPos);
                 if (otherBe instanceof final GirderStrutBlockEntity other) {
                     other.removeConnection(pos);

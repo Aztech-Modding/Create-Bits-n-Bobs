@@ -1,5 +1,6 @@
 package com.kipti.bnb.content.decoration.girder_strut;
 
+import com.kipti.bnb.content.decoration.girder_strut.connection.GirderConnectionNode;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.resources.model.BakedModel;
@@ -99,13 +100,9 @@ public class GirderStrutModelBuilder extends BakedModelWrapper<BakedModel> {
 
             final List<GirderConnection> connections = new ArrayList<>();
 
-            for (BlockPos otherPos : blockEntity.getConnectionsCopy()) {
-                otherPos = otherPos.offset(pos);
-                final BlockState otherState = level.getBlockState(otherPos);
-                if (!(otherState.getBlock() instanceof GirderStrutBlock)) {
-                    continue;
-                }
-                final Direction otherFacing = otherState.getValue(GirderStrutBlock.FACING);
+            for (final GirderConnectionNode data : blockEntity.getConnectionsCopy()) {
+                final BlockPos otherPos = data.absoluteFrom(pos);
+                final Direction otherFacing = data.peerFacing();
                 final Vec3 otherSurface = Vec3.atCenterOf(otherPos).relative(otherFacing, -SURFACE_OFFSET);
                 final Vec3 span = otherSurface.subtract(thisSurface);
                 if (span.lengthSqr() < 1.0e-4) {

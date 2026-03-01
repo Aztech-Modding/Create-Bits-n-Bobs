@@ -1,7 +1,7 @@
 package com.kipti.bnb.content.decoration.girder_strut;
 
+import com.kipti.bnb.content.decoration.girder_strut.connection.GirderConnectionNode;
 import com.simibubi.create.api.contraption.transformable.TransformableBlockEntity;
-import com.simibubi.create.api.schematic.requirement.SpecialBlockEntityItemRequirement;
 import com.simibubi.create.content.contraptions.StructureTransform;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
@@ -24,17 +24,59 @@ import java.util.List;
 import java.util.Set;
 
 //TODO: impl SpecialBlockEntityItemRequirement
-public class GirderStrutBlockEntity extends SmartBlockEntity implements IBlockEntityRelighter, SpecialBlockEntityItemRequirement, TransformableBlockEntity {
+public class GirderStrutBlockEntity extends SmartBlockEntity implements IBlockEntityRelighter, TransformableBlockEntity {
 
-    private final Set<BlockPos> connections = new HashSet<>();
+    private final Set<GirderConnectionNode> connections = new HashSet<>();
+    private final Set<GirderConnectionNode> registeredConnections = new HashSet<>();
+    private final Set<BlockPos> unresolvedLegacyConnections = new HashSet<>();
     public @Nullable SuperByteBuffer connectionRenderBufferCache;
 
     public GirderStrutBlockEntity(final BlockEntityType<?> type, final BlockPos pos, final BlockState state) {
         super(type, pos, state);
     }
 
-    public void addConnection(final BlockPos other) {
-        if (!other.equals(getBlockPos()) && connections.add(other.immutable().subtract(getBlockPos()))) {
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        if (level != null && !level.isClientSide) {
+            for (final GirderConnectionNode data : connections) {
+                if (registeredConnections.add(data)) {
+                    com.kipti.bnb.content.decoration.girder_strut.structure.GirderStrutStructureShapes.registerConnection(
+                            level, getBlockPos(), getAttachmentDirection(),
+                            data.absoluteFrom(getBlockPos()), data.peerFacing());
+                }
+            }
+            tryResolveLegacyConnections();
+        }
+    }
+
+    @Override
+    public void lazyTick() {
+        super.lazyTick();
+        tryResolveLegacyConnections();
+    }
+
+    @Override
+    public void remove() {
+        super.remove();
+        if (level != null && !level.isClientSide) {
+            for (final GirderConnectionNode data : registeredConnections) {
+                com.kipti.bnb.content.decoration.girder_strut.structure.GirderStrutStructureShapes.unregisterConnection(
+                        level, getBlockPos(), data.absoluteFrom(getBlockPos()));
+            }
+            registeredConnections.clear();
+        }
+    }
+
+    public void addConnection(final BlockPos other, final Direction otherFacing) {
+        final GirderConnectionNode data = GirderConnectionNode.fromAbsolute(getBlockPos(), other, otherFacing);
+        if (!other.equals(getBlockPos()) && connections.add(data)) {
+            if (level != null && !level.isClientSide) {
+                if (registeredConnections.add(data)) {
+                    com.kipti.bnb.content.decoration.girder_strut.structure.GirderStrutStructureShapes.registerConnection(
+                            level, getBlockPos(), getAttachmentDirection(), other, otherFacing);
+                }
+            }
             setChanged();
             sendData();
             notifyModelChange();
@@ -42,7 +84,21 @@ public class GirderStrutBlockEntity extends SmartBlockEntity implements IBlockEn
     }
 
     public void removeConnection(final BlockPos pos) {
-        if (connections.remove(pos.subtract(getBlockPos()))) {
+        GirderConnectionNode toRemove = null;
+        final BlockPos relative = pos.subtract(getBlockPos());
+        for (final GirderConnectionNode data : connections) {
+            if (data.relativeOffset().equals(relative)) {
+                toRemove = data;
+                break;
+            }
+        }
+        if (toRemove != null && connections.remove(toRemove)) {
+            if (level != null && !level.isClientSide) {
+                if (registeredConnections.remove(toRemove)) {
+                    com.kipti.bnb.content.decoration.girder_strut.structure.GirderStrutStructureShapes.unregisterConnection(
+                            level, getBlockPos(), pos);
+                }
+            }
             setChanged();
             sendData();
             notifyModelChange();
@@ -50,14 +106,20 @@ public class GirderStrutBlockEntity extends SmartBlockEntity implements IBlockEn
     }
 
     public boolean hasConnectionTo(final BlockPos pos) {
-        return connections.contains(pos.subtract(getBlockPos()));
+        final BlockPos relative = pos.subtract(getBlockPos());
+        for (final GirderConnectionNode data : connections) {
+            if (data.relativeOffset().equals(relative)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public int connectionCount() {
         return connections.size();
     }
 
-    public Set<BlockPos> getConnectionsCopy() {
+    public Set<GirderConnectionNode> getConnectionsCopy() {
         return Set.copyOf(connections);
     }
 
@@ -65,11 +127,19 @@ public class GirderStrutBlockEntity extends SmartBlockEntity implements IBlockEn
     protected void write(final CompoundTag tag, final HolderLookup.Provider registries, final boolean clientPacket) {
         super.write(tag, registries, clientPacket);
         final ListTag list = new ListTag();
-        for (final BlockPos p : connections) {
+        for (final GirderConnectionNode p : connections) {
             final CompoundTag ct = new CompoundTag();
-            ct.putInt("X", p.getX());
-            ct.putInt("Y", p.getY());
-            ct.putInt("Z", p.getZ());
+            ct.putInt("X", p.relativeOffset().getX());
+            ct.putInt("Y", p.relativeOffset().getY());
+            ct.putInt("Z", p.relativeOffset().getZ());
+            ct.putInt("Facing", p.peerFacing().get3DDataValue());
+            list.add(ct);
+        }
+        for (final BlockPos unresolvedOffset : unresolvedLegacyConnections) {
+            final CompoundTag ct = new CompoundTag();
+            ct.putInt("X", unresolvedOffset.getX());
+            ct.putInt("Y", unresolvedOffset.getY());
+            ct.putInt("Z", unresolvedOffset.getZ());
             list.add(ct);
         }
         tag.put("Connections", list);
@@ -79,11 +149,18 @@ public class GirderStrutBlockEntity extends SmartBlockEntity implements IBlockEn
     protected void read(final CompoundTag tag, final HolderLookup.Provider registries, final boolean clientPacket) {
         super.read(tag, registries, clientPacket);
         connections.clear();
+        unresolvedLegacyConnections.clear();
         if (tag.contains("Connections", Tag.TAG_LIST)) {
             final ListTag list = tag.getList("Connections", Tag.TAG_COMPOUND);
             for (final Tag t : list) {
                 if (t instanceof final CompoundTag ct) {
-                    connections.add(new BlockPos(ct.getInt("X"), ct.getInt("Y"), ct.getInt("Z")));
+                    final BlockPos offset = new BlockPos(ct.getInt("X"), ct.getInt("Y"), ct.getInt("Z"));
+                    if (ct.contains("Facing", Tag.TAG_INT)) {
+                        final Direction facing = Direction.from3DDataValue(ct.getInt("Facing"));
+                        connections.add(new GirderConnectionNode(offset, facing));
+                    } else {
+                        unresolvedLegacyConnections.add(offset);
+                    }
                 }
             }
         }
@@ -107,13 +184,58 @@ public class GirderStrutBlockEntity extends SmartBlockEntity implements IBlockEn
 
     @Override
     public void transform(final BlockEntity blockEntity, final StructureTransform transform) {
-        final List<BlockPos> newConnections = connections.stream()
-                .map(transform::applyWithoutOffset)
-                .filter(p -> !p.equals(getBlockPos()))
+        final List<GirderConnectionNode> newConnections = connections.stream()
+                .map(data -> {
+                    final BlockPos transformedOffset = transform.applyWithoutOffset(data.relativeOffset());
+                    final Direction transformedFacing = transform.rotateFacing(data.peerFacing());
+                    return new GirderConnectionNode(transformedOffset, transformedFacing);
+                })
+                .filter(data -> !data.relativeOffset().equals(BlockPos.ZERO))
                 .toList();
         connections.clear();
 
         connections.addAll(newConnections);
+
+        if (!unresolvedLegacyConnections.isEmpty()) {
+            final Set<BlockPos> transformedLegacy = new HashSet<>();
+            for (final BlockPos unresolved : unresolvedLegacyConnections) {
+                final BlockPos transformedOffset = transform.applyWithoutOffset(unresolved);
+                if (!transformedOffset.equals(BlockPos.ZERO)) {
+                    transformedLegacy.add(transformedOffset);
+                }
+            }
+            unresolvedLegacyConnections.clear();
+            unresolvedLegacyConnections.addAll(transformedLegacy);
+        }
+    }
+
+    private void tryResolveLegacyConnections() {
+        if (level == null || level.isClientSide || unresolvedLegacyConnections.isEmpty()) {
+            return;
+        }
+
+        final Set<BlockPos> resolvedOffsets = new HashSet<>();
+        for (final BlockPos unresolvedOffset : unresolvedLegacyConnections) {
+            final BlockPos otherPosition = getBlockPos().offset(unresolvedOffset);
+            Direction otherFacing = null;
+
+            if (level.getBlockEntity(otherPosition) instanceof final GirderStrutBlockEntity otherBlockEntity) {
+                otherFacing = otherBlockEntity.getAttachmentDirection();
+            } else if (level.getBlockState(otherPosition).getBlock() instanceof GirderStrutBlock) {
+                otherFacing = level.getBlockState(otherPosition).getValue(GirderStrutBlock.FACING);
+            }
+
+            if (otherFacing != null) {
+                addConnection(otherPosition, otherFacing);
+                resolvedOffsets.add(unresolvedOffset);
+            }
+        }
+
+        if (!resolvedOffsets.isEmpty()) {
+            unresolvedLegacyConnections.removeAll(resolvedOffsets);
+            setChanged();
+            sendData();
+        }
     }
 
     public Vec3 getAttachment() {

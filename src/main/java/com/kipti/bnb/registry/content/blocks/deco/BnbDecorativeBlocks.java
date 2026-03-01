@@ -4,6 +4,7 @@ import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.decoration.girder_strut.GirderStrutBlock;
 import com.kipti.bnb.content.decoration.girder_strut.GirderStrutBlockItem;
 import com.kipti.bnb.content.decoration.girder_strut.GirderStrutModelBuilder;
+import com.kipti.bnb.content.decoration.girder_strut.structure.GirderStrutStructureBlock;
 import com.kipti.bnb.content.decoration.grating.GratingBlock;
 import com.kipti.bnb.content.decoration.grating.GratingPanelBlock;
 import com.kipti.bnb.content.decoration.grating.GratingPanelCTBehaviour;
@@ -27,6 +28,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
@@ -101,6 +103,17 @@ public class BnbDecorativeBlocks {
                     p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/girder_strut/girder_item"))
             )
             .build()
+            .register();
+
+    public static final BlockEntry<GirderStrutStructureBlock> GIRDER_STRUT_STRUCTURE = CreateBitsnBobs.REGISTRATE.block("girder_strut_structure", GirderStrutStructureBlock::new)
+            .initialProperties(SharedProperties::softMetal)
+            .transform(pickaxeOnly())
+            .properties(p -> p.noOcclusion()
+                    .noLootTable()
+                    .replaceable()
+                    .pushReaction(PushReaction.DESTROY)
+            )
+            .blockstate((c, p) -> p.simpleBlock(c.get(), p.models().getBuilder(c.getName())))
             .register();
 
     public static final BlockEntry<GirderStrutBlock> WOODEN_GIRDER_STRUT = REGISTRATE.block("wooden_girder_strut", GirderStrutBlock.wooden())
@@ -194,7 +207,6 @@ public class BnbDecorativeBlocks {
             .addLayer(() -> RenderType::cutout)
             .simpleItem()
             .register();
-
 
     static {
         CreateBitsnBobs.REGISTRATE.setCreativeTab(BnbCreativeTabs.BASE_CREATIVE_TAB);
