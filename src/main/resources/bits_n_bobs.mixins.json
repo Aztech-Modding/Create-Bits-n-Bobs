@@ -1,48 +1,40 @@
 {
-  "required": true,
-  "minVersion": "0.8",
-  "package": "com.kipti.bnb.mixin",
-  "refmap": "${mod_id}.refmap.json",
-  "compatibilityLevel": "JAVA_21",
-  "mixins": [
-    "AllBlocksMixin",
-    "AllCreatePonderScenesMixin",
-    "AllPaletteStoneTypesMixin",
-    "ComputerBehaviourMixin",
-    "ContraptionColliderMixin",
-    "DynamicComponentMixin",
-    "RotationPropagatorMixin",
-    "azimuth.CachedRenderBBBlockEntityMixin",
-    "azimuth.CreateAdvancementIdMixin",
-    "azimuth.ItemRequirementMixin",
-    "azimuth.RotationPropagatorMixin",
-    "azimuth.SafeBlockEntityRendererMixin",
-    "azimuth.SmartBlockEntityMixin",
-    "azimuth.StructureTransformMixin",
-    "azimuth.VisualizationHelperMixin",
-    "encasable_piston_poles.ContraptionColliderMixin",
-    "encasable_piston_poles.MechanicalPistonBlockMixin",
-    "encasable_piston_poles.PistonContraptionMixin",
-    "encasable_piston_poles.PistonExtensionPoleBlockMixin",
-    "flywheel_bearing.KineticNetworkMixin",
-    "glowing_belts.BeltBlockMixin",
-    "glowing_belts.BeltSlicerMixin",
-    "presets.ChunkGeneratorsMixin",
-    "presets.WorldDimensionsMixin",
-    "presets.WorldPresetsBootstrapMixin",
-    "presets.WorldPresetsMixin"
-  ],
-  "client": [
-    "BakedGlyphMixin",
-    "CreateClientMixin",
-    "FontAccessMixin",
-    "GirderCTBehaviourMixin",
-    "GuiGameElementMixin",
-    "azimuth.VisualizerRegistryMixin"
-  ],
-  "server": [
-  ],
-  "injectors": {
-    "defaultRequire": 1
-  }
+    "required":  true,
+    "minVersion":  "0.8",
+    "package":  "com.kipti.bnb.mixin",
+    "refmap":  "${mod_id}.refmap.json",
+    "compatibilityLevel":  "JAVA_21",
+    "mixins":  [
+                   "AllBlocksMixin",
+                   "AllCreatePonderScenesMixin",
+                   "AllPaletteStoneTypesMixin",
+                   "ComputerBehaviourMixin",
+                   "ContraptionColliderMixin",
+                   "DynamicComponentMixin",
+                   "RotationPropagatorMixin",
+                   "encasable_piston_poles.ContraptionColliderMixin",
+                   "encasable_piston_poles.MechanicalPistonBlockMixin",
+                   "encasable_piston_poles.PistonContraptionMixin",
+                   "encasable_piston_poles.PistonExtensionPoleBlockMixin",
+                   "flywheel_bearing.KineticNetworkMixin",
+                   "glowing_belts.BeltBlockMixin",
+                   "glowing_belts.BeltSlicerMixin",
+                   "presets.ChunkGeneratorsMixin",
+                   "presets.WorldDimensionsMixin",
+                   "presets.WorldPresetsBootstrapMixin",
+                   "presets.WorldPresetsMixin"
+               ],
+    "client":  [
+                   "BakedGlyphMixin",
+                   "CreateClientMixin",
+                   "FontAccessMixin",
+                   "GirderCTBehaviourMixin",
+                   "GuiGameElementMixin"
+               ],
+    "server":  [
+
+               ],
+    "injectors":  {
+                      "defaultRequire":  1
+                  }
 }
