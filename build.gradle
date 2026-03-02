@@ -98,10 +98,17 @@ repositories {
     maven { url = "https://maven.createmod.net" } // Create, Ponder, Flywheel
     maven { url = "https://mvn.devos.one/snapshots" } // Registrate
     maven { url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/" } // ForgeConfigAPIPort
+    maven {
+        name "azmod-maven"
+        url "https://maven.azmod.net/${findProperty('azmod_repository') ?: 'releases'}"
+    }
 }
 
 dependencies {
     implementation "net.neoforged:neoforge:${neo_version}"
+
+    implementation("com.cake.azimuth:azimuth:${azimuth_version}")
+    implementation("com.cake.struts:struts:${struts_version}+mc${minecraft_version}")
 
     implementation("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
     implementation("net.createmod.ponder:Ponder-NeoForge-${minecraft_version}:${ponder_version}")
