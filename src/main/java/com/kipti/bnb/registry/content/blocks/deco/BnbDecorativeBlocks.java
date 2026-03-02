@@ -1,10 +1,6 @@
 package com.kipti.bnb.registry.content.blocks.deco;
 
 import com.kipti.bnb.CreateBitsnBobs;
-import com.kipti.bnb.content.decoration.girder_strut.GirderStrutBlock;
-import com.kipti.bnb.content.decoration.girder_strut.GirderStrutBlockItem;
-import com.kipti.bnb.content.decoration.girder_strut.GirderStrutModelBuilder;
-import com.kipti.bnb.content.decoration.girder_strut.structure.GirderStrutStructureBlock;
 import com.kipti.bnb.content.decoration.grating.GratingBlock;
 import com.kipti.bnb.content.decoration.grating.GratingPanelBlock;
 import com.kipti.bnb.content.decoration.grating.GratingPanelCTBehaviour;
@@ -16,6 +12,9 @@ import com.kipti.bnb.content.decoration.weathered_girder.WeatheredGirderEncasedS
 import com.kipti.bnb.foundation.BnbBlockStateGen;
 import com.kipti.bnb.registry.client.BnbSpriteShifts;
 import com.kipti.bnb.registry.datagen.BnbCreativeTabs;
+import com.cake.struts.girder_strut.GirderStrutBlock;
+import com.cake.struts.girder_strut.GirderStrutBlockItem;
+import com.cake.struts.girder_strut.GirderStrutModelBuilder;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllTags;
 import com.simibubi.create.foundation.block.connected.SimpleCTBehaviour;
@@ -28,7 +27,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.material.MapColor;
-import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
@@ -70,7 +68,7 @@ public class BnbDecorativeBlocks {
                     .onRegister(CreateRegistrate.blockModel(() -> WeatheredConnectedGirderModel::new))
                     .register();
 
-    public static final BlockEntry<GirderStrutBlock> WEATHERED_GIRDER_STRUT = REGISTRATE.block("weathered_girder_strut", GirderStrutBlock.weathered())
+        public static final BlockEntry<GirderStrutBlock> WEATHERED_GIRDER_STRUT = REGISTRATE.block("weathered_girder_strut", p -> new GirderStrutBlock(p, BnbStrutModels.WEATHERED))
             .initialProperties(SharedProperties::softMetal)
             .transform(pickaxeOnly())
             .properties(p -> p.noOcclusion())
@@ -88,7 +86,7 @@ public class BnbDecorativeBlocks {
             .build()
             .register();
 
-    public static final BlockEntry<GirderStrutBlock> GIRDER_STRUT = REGISTRATE.block("girder_strut", GirderStrutBlock.normal())
+    public static final BlockEntry<GirderStrutBlock> GIRDER_STRUT = REGISTRATE.block("girder_strut", p -> new GirderStrutBlock(p, BnbStrutModels.NORMAL))
             .initialProperties(SharedProperties::softMetal)
             .transform(pickaxeOnly())
             .properties(p -> p.noOcclusion())
@@ -105,18 +103,7 @@ public class BnbDecorativeBlocks {
             .build()
             .register();
 
-    public static final BlockEntry<GirderStrutStructureBlock> GIRDER_STRUT_STRUCTURE = CreateBitsnBobs.REGISTRATE.block("girder_strut_structure", GirderStrutStructureBlock::new)
-            .initialProperties(SharedProperties::softMetal)
-            .transform(pickaxeOnly())
-            .properties(p -> p.noOcclusion()
-                    .noLootTable()
-                    .replaceable()
-                    .pushReaction(PushReaction.DESTROY)
-            )
-            .blockstate((c, p) -> p.simpleBlock(c.get(), p.models().getBuilder(c.getName())))
-            .register();
-
-    public static final BlockEntry<GirderStrutBlock> WOODEN_GIRDER_STRUT = REGISTRATE.block("wooden_girder_strut", GirderStrutBlock.wooden())
+    public static final BlockEntry<GirderStrutBlock> WOODEN_GIRDER_STRUT = REGISTRATE.block("wooden_girder_strut", p -> new GirderStrutBlock(p, BnbStrutModels.WOODEN))
             .initialProperties(SharedProperties::wooden)
             .transform(axeOnly())
             .properties(p -> p.noOcclusion()
@@ -134,7 +121,7 @@ public class BnbDecorativeBlocks {
             .build()
             .register();
 
-    public static final BlockEntry<GirderStrutBlock> CABLE_GIRDER_STRUT = REGISTRATE.block("cable_girder_strut", GirderStrutBlock.cable())
+    public static final BlockEntry<GirderStrutBlock> CABLE_GIRDER_STRUT = REGISTRATE.block("cable_girder_strut", p -> new GirderStrutBlock(p, BnbStrutModels.CABLE))
             .initialProperties(SharedProperties::softMetal)
             .transform(pickaxeOnly())
             .properties(p -> p.noOcclusion()

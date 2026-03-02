@@ -1,15 +1,17 @@
 package com.kipti.bnb;
 
-import com.kipti.bnb.content.decoration.girder_strut.GirderStrutModelManipulator;
+import com.cake.struts.girder_strut.GirderStrutModelManipulator;
 import com.kipti.bnb.content.trinkets.light.headlamp.rendering.pipeline.block_entity.HeadlampRenderCache;
 import com.kipti.bnb.content.trinkets.light.headlamp.rendering.pipeline.block_entity.HeadlampVertexBufferCache;
 import com.kipti.bnb.foundation.ponder.BnbPonderPlugin;
 import com.kipti.bnb.registry.client.BnbInstanceTypes;
 import com.kipti.bnb.registry.client.BnbPartialModels;
 import com.kipti.bnb.registry.client.BnbSpriteShifts;
+import com.kipti.bnb.registry.content.blocks.deco.BnbStrutModels;
 import com.kipti.bnb.registry.core.BnbConfigs;
 import net.createmod.catnip.config.ui.BaseConfigScreen;
 import net.createmod.ponder.foundation.PonderIndex;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -19,6 +21,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.neoforged.neoforge.client.event.ModelEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 
@@ -34,6 +37,7 @@ public class CreateBitsnBobsClient {
 
         container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
         eventBus.addListener(this::onClientSetup);
+        eventBus.addListener(this::registerAdditionalModels);
     }
 
     private void onClientSetup(final FMLClientSetupEvent event) {
@@ -52,6 +56,13 @@ public class CreateBitsnBobsClient {
         );
     }
 
+    private void registerAdditionalModels(final ModelEvent.RegisterAdditional event) {
+        event.register(ModelResourceLocation.standalone(BnbStrutModels.NORMAL.segmentModelLocation()));
+        event.register(ModelResourceLocation.standalone(BnbStrutModels.WEATHERED.segmentModelLocation()));
+        event.register(ModelResourceLocation.standalone(BnbStrutModels.WOODEN.segmentModelLocation()));
+        event.register(ModelResourceLocation.standalone(BnbStrutModels.CABLE.segmentModelLocation()));
+    }
+
     public static void invalidateRenderers() {
         GirderStrutModelManipulator.invalidateMeshes();
         HeadlampRenderCache.clearCaches();
@@ -60,7 +71,6 @@ public class CreateBitsnBobsClient {
 
     @EventBusSubscriber(Dist.CLIENT)
     private static class ModBusEvents {
-
         @SubscribeEvent
         public static void onLoadComplete(final FMLLoadCompleteEvent event) {
             final ModContainer createContainer = ModList.get()

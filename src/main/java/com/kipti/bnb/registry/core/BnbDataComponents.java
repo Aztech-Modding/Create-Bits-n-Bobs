@@ -1,5 +1,6 @@
 package com.kipti.bnb.registry.core;
 
+import com.cake.struts.registry.StrutDataComponents;
 import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.PlacingCogwheelChain;
 import net.minecraft.core.BlockPos;
@@ -16,15 +17,9 @@ public class BnbDataComponents {
 
     private static final DeferredRegister.DataComponents DATA_COMPONENTS = DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, CreateBitsnBobs.MOD_ID);
 
-    public static final DataComponentType<BlockPos> GIRDER_STRUT_FROM = register(
-            "girder_strut_from",
-            builder -> builder.persistent(BlockPos.CODEC).networkSynchronized(BlockPos.STREAM_CODEC)
-    );
+    public static final DataComponentType<BlockPos> GIRDER_STRUT_FROM = StrutDataComponents.GIRDER_STRUT_FROM;
 
-    public static final DataComponentType<Direction> GIRDER_STRUT_FROM_FACE = register(
-            "girder_strut_from_face",
-            builder -> builder.persistent(Direction.CODEC).networkSynchronized(Direction.STREAM_CODEC)
-    );
+    public static final DataComponentType<Direction> GIRDER_STRUT_FROM_FACE = StrutDataComponents.GIRDER_STRUT_FROM_FACE;
 
     public static final DataComponentType<PlacingCogwheelChain> PARTIAL_COGWHEEL_CHAIN = register(
             "partial_cogwheel_chain",

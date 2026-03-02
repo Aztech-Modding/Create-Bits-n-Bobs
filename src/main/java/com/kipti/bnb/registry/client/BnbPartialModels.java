@@ -55,11 +55,6 @@ public class BnbPartialModels {
         }
     }
 
-    public static final PartialModel GIRDER_STRUT_SEGMENT = block("girder_strut/girder");
-    public static final PartialModel WEATHERED_GIRDER_STRUT_SEGMENT = block("girder_strut/weathered_girder");
-    public static final PartialModel WOODEN_GIRDER_STRUT_SEGMENT = block("girder_strut/wooden_girder");
-    public static final PartialModel CABLE_STRUT_SEGMENT = block("girder_strut/cable");
-
     private static PartialModel block(final String path) {
         return PartialModel.of(CreateBitsnBobs.asResource("block/" + path));
     }

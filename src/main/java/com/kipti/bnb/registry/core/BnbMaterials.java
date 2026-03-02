@@ -8,14 +8,14 @@ import dev.engine_room.flywheel.lib.material.SimpleMaterial;
 public class BnbMaterials {
 
     public static final Material HEADLAMP_MATERIAL = SimpleMaterial.builder()
-            .transparency(Transparency.TRANSLUCENT)
+            .transparency(Transparency.ORDER_INDEPENDENT)
             .mipmap(false)
             .blur(false)
             .polygonOffset(true) // Ensure it renders on top of the block
             .depthTest(DepthTest.LEQUAL)
             .build();
     public static final Material HEADLAMP_NO_DIFFUSE_MATERIAL = SimpleMaterial.builder()
-            .transparency(Transparency.TRANSLUCENT)
+            .transparency(Transparency.ORDER_INDEPENDENT)
             .mipmap(false)
             .blur(false)
             .polygonOffset(true) // Ensure it renders on top of the block

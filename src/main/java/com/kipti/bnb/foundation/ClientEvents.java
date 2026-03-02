@@ -1,6 +1,6 @@
 package com.kipti.bnb.foundation;
 
-import com.kipti.bnb.content.decoration.girder_strut.GirderStrutPlacementEffects;
+import com.cake.struts.girder_strut.GirderStrutPlacementEffects;
 import com.kipti.bnb.content.decoration.weathered_girder.WeatheredGirderWrenchBehaviour;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.placement.CogwheelChainPlacementEffect;
 import com.kipti.bnb.content.trinkets.light.headlamp.rendering.pipeline.block_entity.HeadlampVertexBufferCache;

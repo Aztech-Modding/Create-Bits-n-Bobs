@@ -1,7 +1,7 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.behaviour;
 
 import com.cake.azimuth.behaviour.extensions.RenderedBehaviourExtension;
-import com.kipti.bnb.content.decoration.girder_strut.IBlockEntityRelighter;
+import com.cake.struts.girder_strut.IBlockEntityRelighter;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChain;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.render.ChainQuadBuilder;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.render.CogwheelChainRenderGeometryBuilder;

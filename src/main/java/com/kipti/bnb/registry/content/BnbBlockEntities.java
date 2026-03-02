@@ -1,9 +1,8 @@
 package com.kipti.bnb.registry.content;
 
-import com.kipti.bnb.content.decoration.girder_strut.GirderStrutBlockEntity;
-import com.kipti.bnb.content.decoration.girder_strut.GirderStrutBlockEntityRenderer;
 import com.kipti.bnb.content.kinetics.chain_pulley.ChainPulleyBlockEntity;
 import com.kipti.bnb.content.kinetics.chain_pulley.ChainPulleyRenderer;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.migration.MigratingSimpleKineticBlockEntity;
 import com.kipti.bnb.content.kinetics.flywheel_bearing.FlywheelBearingBlockEntity;
 import com.kipti.bnb.content.kinetics.flywheel_bearing.FlywheelBearingBlockEntityRenderer;
 import com.kipti.bnb.content.kinetics.throttle_lever.ThrottleLeverBlockEntity;
@@ -27,7 +26,6 @@ import com.simibubi.create.content.kinetics.base.SingleAxisRotatingVisual;
 import com.simibubi.create.content.kinetics.simpleRelays.SimpleKineticBlockEntity;
 import com.simibubi.create.content.kinetics.simpleRelays.encased.EncasedCogRenderer;
 import com.simibubi.create.content.kinetics.simpleRelays.encased.EncasedCogVisual;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.migration.MigratingSimpleKineticBlockEntity;
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
 import dev.engine_room.flywheel.lib.model.Models;
 
@@ -67,11 +65,6 @@ public class BnbBlockEntities {
             .validBlocks(BnbTrinketBlocks.DYED_NIXIE_BOARD.toArray())
             .validBlocks(BnbTrinketBlocks.DYED_LARGE_NIXIE_TUBE.toArray())
             .renderer(() -> GenericNixieDisplayBoardRenderer::new)
-            .register();
-
-    public static final BlockEntityEntry<GirderStrutBlockEntity> GIRDER_STRUT = REGISTRATE.blockEntity("girder_strut", GirderStrutBlockEntity::new)
-            .validBlocks(BnbDecorativeBlocks.GIRDER_STRUT, BnbDecorativeBlocks.WEATHERED_GIRDER_STRUT, BnbDecorativeBlocks.WOODEN_GIRDER_STRUT, BnbDecorativeBlocks.CABLE_GIRDER_STRUT)
-            .renderer(() -> GirderStrutBlockEntityRenderer::new)
             .register();
 
     public static final BlockEntityEntry<FlywheelBearingBlockEntity> FLYWHEEL_BEARING = REGISTRATE
