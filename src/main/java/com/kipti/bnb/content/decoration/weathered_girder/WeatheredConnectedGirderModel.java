@@ -13,6 +13,7 @@ import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.model.data.ModelData;
 import net.neoforged.neoforge.client.model.data.ModelProperty;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,7 +41,7 @@ public class WeatheredConnectedGirderModel extends CTModel {
     }
 
     @Override
-    public List<BakedQuad> getQuads(final BlockState state, final Direction side, final RandomSource rand, final ModelData extraData, final RenderType renderType) {
+    public @NotNull List<BakedQuad> getQuads(final BlockState state, final Direction side, final RandomSource rand, final ModelData extraData, final RenderType renderType) {
         final List<BakedQuad> superQuads = super.getQuads(state, side, rand, extraData, renderType);
         if (side != null || !extraData.has(CONNECTION_PROPERTY))
             return superQuads;

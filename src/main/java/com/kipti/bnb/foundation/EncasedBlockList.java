@@ -11,6 +11,7 @@ import com.tterrag.registrate.util.nullness.NonNullUnaryOperator;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -123,7 +124,7 @@ public class EncasedBlockList<T extends Block> implements Iterable<BlockEntry<T>
     }
 
     @Override
-    public Iterator<BlockEntry<T>> iterator() {
+    public @NotNull Iterator<BlockEntry<T>> iterator() {
         return new Iterator<>() {
             private int index = 0;
 

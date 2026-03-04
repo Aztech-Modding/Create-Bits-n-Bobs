@@ -1,13 +1,15 @@
 package com.kipti.bnb;
 
-import com.cake.struts.girder_strut.GirderStrutModelManipulator;
+import com.cake.struts.compat.flywheel.StrutsFlywheelCompatLoader;
+import com.cake.struts.content.StrutModelManipulator;
 import com.kipti.bnb.content.trinkets.light.headlamp.rendering.pipeline.block_entity.HeadlampRenderCache;
 import com.kipti.bnb.content.trinkets.light.headlamp.rendering.pipeline.block_entity.HeadlampVertexBufferCache;
 import com.kipti.bnb.foundation.ponder.BnbPonderPlugin;
 import com.kipti.bnb.registry.client.BnbInstanceTypes;
 import com.kipti.bnb.registry.client.BnbPartialModels;
 import com.kipti.bnb.registry.client.BnbSpriteShifts;
-import com.kipti.bnb.registry.content.blocks.deco.BnbStrutModels;
+import com.kipti.bnb.registry.content.BnbBlockEntities;
+import com.kipti.bnb.registry.content.blocks.deco.BnbStrutDefinitions;
 import com.kipti.bnb.registry.core.BnbConfigs;
 import net.createmod.catnip.config.ui.BaseConfigScreen;
 import net.createmod.ponder.foundation.PonderIndex;
@@ -50,6 +52,8 @@ public class CreateBitsnBobsClient {
         BnbPartialModels.register();
         BnbSpriteShifts.register();
 
+        StrutsFlywheelCompatLoader.registerStrutVisual(BnbBlockEntities.GIRDER_STRUT.get());
+
         BaseConfigScreen.setDefaultActionFor(CreateBitsnBobs.MOD_ID, base -> base
                 .withButtonLabels(null, "Feature Settings", "Balancing Settings")
                 .withSpecs(null, BnbConfigs.common().specification, BnbConfigs.server().specification)
@@ -57,14 +61,14 @@ public class CreateBitsnBobsClient {
     }
 
     private void registerAdditionalModels(final ModelEvent.RegisterAdditional event) {
-        event.register(ModelResourceLocation.standalone(BnbStrutModels.NORMAL.segmentModelLocation()));
-        event.register(ModelResourceLocation.standalone(BnbStrutModels.WEATHERED.segmentModelLocation()));
-        event.register(ModelResourceLocation.standalone(BnbStrutModels.WOODEN.segmentModelLocation()));
-        event.register(ModelResourceLocation.standalone(BnbStrutModels.CABLE.segmentModelLocation()));
+        event.register(ModelResourceLocation.standalone(BnbStrutDefinitions.NORMAL_MODEL.segmentModelLocation()));
+        event.register(ModelResourceLocation.standalone(BnbStrutDefinitions.WEATHERED_MODEL.segmentModelLocation()));
+        event.register(ModelResourceLocation.standalone(BnbStrutDefinitions.WOODEN_MODEL.segmentModelLocation()));
+        event.register(ModelResourceLocation.standalone(BnbStrutDefinitions.CABLE_MODEL.segmentModelLocation()));
     }
 
     public static void invalidateRenderers() {
-        GirderStrutModelManipulator.invalidateMeshes();
+        StrutModelManipulator.invalidateMeshes();
         HeadlampRenderCache.clearCaches();
         HeadlampVertexBufferCache.clear();
     }

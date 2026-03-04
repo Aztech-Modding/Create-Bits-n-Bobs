@@ -33,7 +33,7 @@ public class EmptyFlangedGearBlock extends RotatedPillarKineticBlock implements 
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(final ItemStack stack, final BlockState state, final Level level, final BlockPos pos, final Player player, final InteractionHand hand, final BlockHitResult hitResult) {
+    protected @NotNull ItemInteractionResult useItemOn(final @NotNull ItemStack stack, final @NotNull BlockState state, final @NotNull Level level, final @NotNull BlockPos pos, final @NotNull Player player, final @NotNull InteractionHand hand, final @NotNull BlockHitResult hitResult) {
         final ItemInteractionResult result = tryEncase(state, level, pos, stack, player, hand, hitResult);
         if (result.consumesAction())
             return result;

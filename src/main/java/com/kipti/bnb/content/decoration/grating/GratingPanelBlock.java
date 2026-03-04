@@ -42,13 +42,13 @@ public class GratingPanelBlock extends GratingBlock {
     }
 
     @Override
-    protected void createBlockStateDefinition(final StateDefinition.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(final StateDefinition.@NotNull Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
         builder.add(FACING);
     }
 
     @Override
-    public @Nullable BlockState getStateForPlacement(final BlockPlaceContext context) {
+    public @Nullable BlockState getStateForPlacement(final @NotNull BlockPlaceContext context) {
         return super.getStateForPlacement(context).setValue(FACING, context.getNearestLookingDirection().getOpposite());
     }
 

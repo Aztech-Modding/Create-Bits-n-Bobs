@@ -4,6 +4,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 
 public class HeadlampBlockItem extends BlockItem {
 
@@ -12,11 +13,11 @@ public class HeadlampBlockItem extends BlockItem {
     }
 
     @Override //TODO FIX SHIFT-PLACE
-    protected boolean canPlace(final BlockPlaceContext context, final BlockState state) {
+    protected boolean canPlace(final @NotNull BlockPlaceContext context, final @NotNull BlockState state) {
         return super.canPlace(context, state) || context.getLevel().getBlockState(context.getClickedPos()).getBlock() instanceof HeadlampBlock;
     }
 
-    protected boolean placeBlock(final BlockPlaceContext context, final BlockState state) {
+    protected boolean placeBlock(final BlockPlaceContext context, final @NotNull BlockState state) {
         final BlockState oldState = context.getLevel().getBlockState(context.getClickedPos());
         final boolean defaultResult = super.placeBlock(context, state);
         if (oldState.getBlock().equals(state.getBlock()) && oldState.getBlock() instanceof HeadlampBlock) {

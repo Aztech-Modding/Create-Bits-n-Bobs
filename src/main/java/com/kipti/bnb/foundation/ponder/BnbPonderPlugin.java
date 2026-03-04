@@ -6,25 +6,26 @@ import net.createmod.ponder.api.registration.PonderSceneRegistrationHelper;
 import net.createmod.ponder.api.registration.PonderTagRegistrationHelper;
 import net.createmod.ponder.api.registration.SharedTextRegistrationHelper;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 
 public class BnbPonderPlugin implements PonderPlugin {
 
     @Override
-    public String getModId() {
+    public @NotNull String getModId() {
         return CreateBitsnBobs.MOD_ID;
     }
 
     @Override
-    public void registerScenes(final PonderSceneRegistrationHelper<ResourceLocation> helper) {
+    public void registerScenes(final @NotNull PonderSceneRegistrationHelper<ResourceLocation> helper) {
         BnbPonderScenes.register(helper);
     }
 
     @Override
-    public void registerTags(final PonderTagRegistrationHelper<ResourceLocation> helper) {
+    public void registerTags(final @NotNull PonderTagRegistrationHelper<ResourceLocation> helper) {
     }
 
     @Override
-    public void registerSharedText(final SharedTextRegistrationHelper helper) {
+    public void registerSharedText(final @NotNull SharedTextRegistrationHelper helper) {
     }
 
 }

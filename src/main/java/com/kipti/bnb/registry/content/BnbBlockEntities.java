@@ -1,5 +1,7 @@
 package com.kipti.bnb.registry.content;
 
+import com.cake.struts.content.block.StrutBlockEntity;
+import com.cake.struts.content.block.StrutBlockEntityRenderer;
 import com.kipti.bnb.content.kinetics.chain_pulley.ChainPulleyBlockEntity;
 import com.kipti.bnb.content.kinetics.chain_pulley.ChainPulleyRenderer;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.migration.MigratingSimpleKineticBlockEntity;
@@ -37,6 +39,13 @@ public class BnbBlockEntities {
             .visual(() -> HeadlampVisual::new)
             .validBlock(BnbTrinketBlocks.HEADLAMP)
             .renderer(() -> HeadlampBlockEntityRenderer::new)
+            .register();
+
+    public static final BlockEntityEntry<StrutBlockEntity> GIRDER_STRUT = REGISTRATE
+            .blockEntity("girder_strut", StrutBlockEntity::new)
+            .validBlocks(BnbDecorativeBlocks.GIRDER_STRUT, BnbDecorativeBlocks.WEATHERED_GIRDER_STRUT,
+                    BnbDecorativeBlocks.WOODEN_GIRDER_STRUT, BnbDecorativeBlocks.CABLE_GIRDER_STRUT)
+            .renderer(() -> StrutBlockEntityRenderer::new)
             .register();
 
     public static final BlockEntityEntry<KineticBlockEntity> ENCASED_SHAFT = REGISTRATE

@@ -2,6 +2,7 @@ package com.kipti.bnb.content.trinkets.light.headlamp.rendering.pipeline.block_e
 
 import com.kipti.bnb.content.trinkets.light.headlamp.HeadlampBlockEntity;
 import com.mojang.blaze3d.vertex.*;
+import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.render.SuperBufferFactory;
 import net.createmod.catnip.render.SuperByteBuffer;
 import org.jetbrains.annotations.Nullable;
@@ -41,34 +42,36 @@ public final class HeadlampVertexBufferCache {
      * @return the cached buffer, or {@code null} if the builder produced no geometry
      */
     public static @Nullable SuperByteBuffer getOrCreate(final long renderState, final Consumer<BufferBuilder> builder) {
-        //TEMP DEBUG JUST CLEAR CACHE ALWAYS
-        CACHE.entrySet().removeIf(entry -> true);
+        //TEMP, no cache because synchronising is slower than building, the cache is not used
+        return buildBuffer(builder);
+        //Cache might be used if there was a VBO system to hold the buffers, but right now its still uploading and the cache takes
+        // CACHE.entrySet().removeIf(entry -> true);
 
-        synchronized (CACHE) {
-            final CacheEntry existing = CACHE.get(renderState);
-            if (existing != null) {
-                existing.lastAccessTick = currentTick();
-                return existing.buffer;
-            }
-        }
+        // synchronized (CACHE) {
+        //     final CacheEntry existing = CACHE.get(renderState);
+        //     if (existing != null) {
+        //         existing.lastAccessTick = currentTick();
+        //         return existing.buffer;
+        //     }
+        // }
 
         // Build outside the lock to avoid holding it during mesh construction
-        final SuperByteBuffer buffer = buildBuffer(builder);
+        // final SuperByteBuffer buffer = buildBuffer(builder);
 
-        synchronized (CACHE) {
-            // Double-check; another thread may have inserted while we were building
-            final CacheEntry raceEntry = CACHE.get(renderState);
-            if (raceEntry != null) {
-                raceEntry.lastAccessTick = currentTick();
-                return raceEntry.buffer;
-            }
+        // synchronized (CACHE) {
+        //     // Double-check; another thread may have inserted while we were building
+        //     final CacheEntry raceEntry = CACHE.get(renderState);
+        //     if (raceEntry != null) {
+        //         raceEntry.lastAccessTick = currentTick();
+        //         return raceEntry.buffer;
+        //     }
 
-            if (buffer != null) {
-                CACHE.put(renderState, new CacheEntry(buffer, currentTick()));
-                evictExcessEntries();
-            }
-            return buffer;
-        }
+        //     if (buffer != null) {
+        //         CACHE.put(renderState, new CacheEntry(buffer, currentTick()));
+        //         evictExcessEntries();
+        //     }
+        //     return buffer;
+        // }
     }
 
     /**
@@ -125,7 +128,7 @@ public final class HeadlampVertexBufferCache {
     }
 
     private static long currentTick() {
-        return net.createmod.catnip.animation.AnimationTickHolder.getTicks();
+        return AnimationTickHolder.getTicks();
     }
 
     private static final class CacheEntry {

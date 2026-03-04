@@ -72,7 +72,7 @@ public class ChairBlock extends SeatBlock implements IWrenchable {
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(final ItemStack stack, final BlockState state, final Level level, final BlockPos pos, final Player player, final InteractionHand hand, final BlockHitResult hitResult) {
+    protected @NotNull ItemInteractionResult useItemOn(final @NotNull ItemStack stack, final @NotNull BlockState state, final @NotNull Level level, final @NotNull BlockPos pos, final Player player, final @NotNull InteractionHand hand, final @NotNull BlockHitResult hitResult) {
         if (player.isShiftKeyDown() || player instanceof FakePlayer)
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 
@@ -110,18 +110,18 @@ public class ChairBlock extends SeatBlock implements IWrenchable {
     }
 
     @Override
-    protected void createBlockStateDefinition(final StateDefinition.Builder<Block, BlockState> pBuilder) {
+    protected void createBlockStateDefinition(final StateDefinition.@NotNull Builder<Block, BlockState> pBuilder) {
         super.createBlockStateDefinition(pBuilder);
         pBuilder.add(FACING, LEFT_ARM, RIGHT_ARM, CORNER, BACK_FLAT, FORCED_BACK_FLAT, INVERTED_CORNER);
     }
 
     @Override
-    public BlockState getStateForPlacement(final BlockPlaceContext pContext) {
+    public @NotNull BlockState getStateForPlacement(final @NotNull BlockPlaceContext pContext) {
         return calculateShape(super.getStateForPlacement(pContext).setValue(FACING, pContext.getHorizontalDirection().getOpposite()), pContext.getLevel(), pContext.getClickedPos());
     }
 
     @Override
-    public BlockState updateShape(final BlockState pState, final Direction pDirection, final BlockState pNeighborState, final LevelAccessor pLevel, final BlockPos pCurrentPos, final BlockPos pNeighborPos) {
+    public @NotNull BlockState updateShape(final @NotNull BlockState pState, final @NotNull Direction pDirection, final @NotNull BlockState pNeighborState, final @NotNull LevelAccessor pLevel, final @NotNull BlockPos pCurrentPos, final @NotNull BlockPos pNeighborPos) {
         final BlockState blockState = super.updateShape(pState, pDirection, pNeighborState, pLevel, pCurrentPos, pNeighborPos);
         return calculateShape(blockState, pLevel, pCurrentPos);
     }
@@ -184,7 +184,7 @@ public class ChairBlock extends SeatBlock implements IWrenchable {
     }
 
     @Override
-    protected BlockState rotate(final BlockState state, final Rotation rotation) {
+    protected @NotNull BlockState rotate(final @NotNull BlockState state, final @NotNull Rotation rotation) {
         return super.rotate(state, rotation)
                 .setValue(FACING, rotation.rotate(state.getValue(FACING)));
     }

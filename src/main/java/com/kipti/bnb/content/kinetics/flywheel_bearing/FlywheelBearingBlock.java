@@ -14,6 +14,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import org.jetbrains.annotations.NotNull;
 
 public class FlywheelBearingBlock extends DirectionalKineticBlock implements IBE<FlywheelBearingBlockEntity>, ICogWheel {
 
@@ -22,7 +23,7 @@ public class FlywheelBearingBlock extends DirectionalKineticBlock implements IBE
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(final ItemStack stack, final BlockState state, final Level level, final BlockPos pos, final Player player, final InteractionHand hand, final BlockHitResult hitResult) {
+    protected @NotNull ItemInteractionResult useItemOn(final @NotNull ItemStack stack, final @NotNull BlockState state, final @NotNull Level level, final @NotNull BlockPos pos, final Player player, final @NotNull InteractionHand hand, final @NotNull BlockHitResult hitResult) {
         if (!player.mayBuild())
             return ItemInteractionResult.FAIL;
         if (player.isShiftKeyDown())

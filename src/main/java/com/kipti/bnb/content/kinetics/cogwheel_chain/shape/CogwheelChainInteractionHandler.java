@@ -63,13 +63,13 @@ public class CogwheelChainInteractionHandler {
                 .orElse(false);
     }
 
-    public static void put(final net.minecraft.world.level.Level level,
+    public static void put(final Level level,
                            final BlockPos controllerPos,
                            final List<CogwheelChainShape> shapes) {
         loadedChains.get(level).put(controllerPos, shapes);
     }
 
-    public static void invalidate(final net.minecraft.world.level.Level level, final BlockPos controllerPos) {
+    public static void invalidate(final Level level, final BlockPos controllerPos) {
         loadedChains.get(level).invalidate(controllerPos);
     }
 

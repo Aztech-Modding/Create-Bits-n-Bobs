@@ -2,7 +2,7 @@ package com.kipti.bnb.content.kinetics.cogwheel_chain.behaviour;
 
 import com.cake.azimuth.behaviour.SuperBlockEntityBehaviour;
 import com.cake.azimuth.behaviour.render.BlockEntityBehaviourRenderer;
-import com.cake.struts.girder_strut.IBlockEntityRelighter;
+import com.cake.struts.content.IAntiClippedShadowLighter;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChain;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.render.ChainQuadBuilder;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.render.CogwheelChainRenderGeometryBuilder;
@@ -40,7 +40,7 @@ public class CogwheelChainBehaviourRenderer extends BlockEntityBehaviourRenderer
         if (!(behaviour instanceof final CogwheelChainBehaviour chainBehaviour))
             return;
 
-        final Function<Vector3f, Integer> lighter = IBlockEntityRelighter.createGlobalLighter(be);
+        final Function<Vector3f, Integer> lighter = IAntiClippedShadowLighter.createGlobalLighter(be);
         final CogwheelChain chain = chainBehaviour.getControlledChain();
 
         if (chain != null) {

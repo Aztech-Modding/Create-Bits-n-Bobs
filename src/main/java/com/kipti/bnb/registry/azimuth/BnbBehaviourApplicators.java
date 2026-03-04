@@ -4,7 +4,6 @@ import com.cake.azimuth.registration.BehaviourApplicators;
 import com.cake.azimuth.registration.VisualWrapperInterest;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.behaviour.CogwheelChainBehaviour;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChainCandidate;
-import com.simibubi.create.content.kinetics.simpleRelays.ICogWheel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
@@ -26,7 +25,7 @@ public class BnbBehaviourApplicators {
 
     private static boolean isSomeCogwheelBlockEntity(final BlockEntityType<?> type) {
         for (final Block block : type.getValidBlocks()) {
-            if (!(block instanceof ICogWheel)) {
+            if (!(CogwheelChainCandidate.isValidCandidate(block))) {
                 continue;
             }
             return true;

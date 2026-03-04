@@ -36,7 +36,7 @@ public class DoubleOrientedBlockModel extends BakedModelWrapper<BakedModel> {
     }
 
     @Override
-    public @NotNull ModelData getModelData(final BlockAndTintGetter level, final BlockPos pos, final BlockState state, final ModelData modelData) {
+    public @NotNull ModelData getModelData(final @NotNull BlockAndTintGetter level, final @NotNull BlockPos pos, final BlockState state, final @NotNull ModelData modelData) {
         final DoubleOrientedModelData data = new DoubleOrientedModelData();
 
         final Direction up = state.getValue(GenericNixieDisplayBlock.FACING);
@@ -50,7 +50,7 @@ public class DoubleOrientedBlockModel extends BakedModelWrapper<BakedModel> {
     }
 
     @Override
-    public @NotNull List<BakedQuad> getQuads(@Nullable final BlockState state, @Nullable final Direction side, final RandomSource rand, final ModelData data, @Nullable final RenderType renderType) {
+    public @NotNull List<BakedQuad> getQuads(@Nullable final BlockState state, @Nullable final Direction side, final @NotNull RandomSource rand, final ModelData data, @Nullable final RenderType renderType) {
         if (data.has(DOUBLE_ORIENTED_PROPERTY)) {
             final DoubleOrientedModelData doubleOrientedModelData = data.get(DOUBLE_ORIENTED_PROPERTY);
 

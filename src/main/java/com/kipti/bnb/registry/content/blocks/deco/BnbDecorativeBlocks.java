@@ -1,5 +1,8 @@
 package com.kipti.bnb.registry.content.blocks.deco;
 
+import com.cake.struts.content.StrutModelBuilder;
+import com.cake.struts.content.block.StrutBlockItem;
+import com.kipti.bnb.content.decoration.strut.BnbStrutBlock;
 import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.decoration.grating.GratingBlock;
 import com.kipti.bnb.content.decoration.grating.GratingPanelBlock;
@@ -12,9 +15,6 @@ import com.kipti.bnb.content.decoration.weathered_girder.WeatheredGirderEncasedS
 import com.kipti.bnb.foundation.BnbBlockStateGen;
 import com.kipti.bnb.registry.client.BnbSpriteShifts;
 import com.kipti.bnb.registry.datagen.BnbCreativeTabs;
-import com.cake.struts.girder_strut.GirderStrutBlock;
-import com.cake.struts.girder_strut.GirderStrutBlockItem;
-import com.cake.struts.girder_strut.GirderStrutModelBuilder;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllTags;
 import com.simibubi.create.foundation.block.connected.SimpleCTBehaviour;
@@ -68,7 +68,7 @@ public class BnbDecorativeBlocks {
                     .onRegister(CreateRegistrate.blockModel(() -> WeatheredConnectedGirderModel::new))
                     .register();
 
-        public static final BlockEntry<GirderStrutBlock> WEATHERED_GIRDER_STRUT = REGISTRATE.block("weathered_girder_strut", p -> new GirderStrutBlock(p, BnbStrutModels.WEATHERED))
+        public static final BlockEntry<BnbStrutBlock> WEATHERED_GIRDER_STRUT = REGISTRATE.block("weathered_girder_strut", p -> new BnbStrutBlock(p, BnbStrutDefinitions.WEATHERED_MODEL))
             .initialProperties(SharedProperties::softMetal)
             .transform(pickaxeOnly())
             .properties(p -> p.noOcclusion())
@@ -76,17 +76,17 @@ public class BnbDecorativeBlocks {
                     (state) -> p.models().getExistingFile(CreateBitsnBobs.asResource(
                             "block/girder_strut/weathered_girder_strut_attachment")
                     )))
-            .onRegister(CreateRegistrate.blockModel(() -> GirderStrutModelBuilder::new))
+            .onRegister(CreateRegistrate.blockModel(() -> StrutModelBuilder::new))
             .onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "block.bits_n_bobs.girder_strut"))
             .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
-            .item(GirderStrutBlockItem::new)
+            .item(StrutBlockItem::new)
             .model((c, p) ->
                     p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/girder_strut/weathered_girder_item"))
             )
             .build()
             .register();
 
-    public static final BlockEntry<GirderStrutBlock> GIRDER_STRUT = REGISTRATE.block("girder_strut", p -> new GirderStrutBlock(p, BnbStrutModels.NORMAL))
+        public static final BlockEntry<BnbStrutBlock> GIRDER_STRUT = REGISTRATE.block("girder_strut", p -> new BnbStrutBlock(p, BnbStrutDefinitions.NORMAL_MODEL))
             .initialProperties(SharedProperties::softMetal)
             .transform(pickaxeOnly())
             .properties(p -> p.noOcclusion())
@@ -94,16 +94,16 @@ public class BnbDecorativeBlocks {
                     (state) -> p.models().getExistingFile(CreateBitsnBobs.asResource(
                             "block/girder_strut/girder_strut_attachment")
                     )))
-            .onRegister(CreateRegistrate.blockModel(() -> GirderStrutModelBuilder::new))
+            .onRegister(CreateRegistrate.blockModel(() -> StrutModelBuilder::new))
             .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
-            .item(GirderStrutBlockItem::new)
+            .item(StrutBlockItem::new)
             .model((c, p) ->
                     p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/girder_strut/girder_item"))
             )
             .build()
             .register();
 
-    public static final BlockEntry<GirderStrutBlock> WOODEN_GIRDER_STRUT = REGISTRATE.block("wooden_girder_strut", p -> new GirderStrutBlock(p, BnbStrutModels.WOODEN))
+        public static final BlockEntry<BnbStrutBlock> WOODEN_GIRDER_STRUT = REGISTRATE.block("wooden_girder_strut", p -> new BnbStrutBlock(p, BnbStrutDefinitions.WOODEN_MODEL))
             .initialProperties(SharedProperties::wooden)
             .transform(axeOnly())
             .properties(p -> p.noOcclusion()
@@ -112,16 +112,16 @@ public class BnbDecorativeBlocks {
                     (state) -> p.models().getExistingFile(CreateBitsnBobs.asResource(
                             "block/girder_strut/wooden_girder_strut_attachment")
                     )))
-            .onRegister(CreateRegistrate.blockModel(() -> GirderStrutModelBuilder::new))
+            .onRegister(CreateRegistrate.blockModel(() -> StrutModelBuilder::new))
             .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
-            .item(GirderStrutBlockItem::new)
+            .item(StrutBlockItem::new)
             .model((c, p) ->
                     p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/girder_strut/wooden_girder_item"))
             )
             .build()
             .register();
 
-    public static final BlockEntry<GirderStrutBlock> CABLE_GIRDER_STRUT = REGISTRATE.block("cable_girder_strut", p -> new GirderStrutBlock(p, BnbStrutModels.CABLE))
+        public static final BlockEntry<BnbStrutBlock> CABLE_GIRDER_STRUT = REGISTRATE.block("cable_girder_strut", p -> new BnbStrutBlock(p, BnbStrutDefinitions.CABLE_MODEL, BnbStrutDefinitions.CABLE_INFO))
             .initialProperties(SharedProperties::softMetal)
             .transform(pickaxeOnly())
             .properties(p -> p.noOcclusion()
@@ -130,22 +130,14 @@ public class BnbDecorativeBlocks {
                     (state) -> p.models().getExistingFile(CreateBitsnBobs.asResource(
                             "block/girder_strut/cable_girder_strut_attachment")
                     )))
-            .onRegister(CreateRegistrate.blockModel(() -> GirderStrutModelBuilder::new))
+            .onRegister(CreateRegistrate.blockModel(() -> StrutModelBuilder::new))
             .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
-            .item(GirderStrutBlockItem::new)
+            .item(StrutBlockItem::new)
             .model((c, p) ->
                     p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/girder_strut/cable_girder_item"))
             )
             .build()
             .register();
-
-
-//    public static final BlockEntry<ColoredFallingBlock> CLINKER = REGISTRATE.block("clinker", (p) -> new ColoredFallingBlock(new ColorRGBA(0xd2d5d6), p))
-//            .properties(p -> p.mapColor(MapColor.COLOR_GRAY)
-//                    .sound(SoundType.GRAVEL))
-//            .transform(b -> b.tag(BlockTags.MINEABLE_WITH_SHOVEL))
-//            .simpleItem()
-//            .register();
 
     public static final BlockEntry<GratingBlock> INDUSTRIAL_GRATING = CreateBitsnBobs.REGISTRATE.block("industrial_grating", GratingBlock::new)
             .properties(p -> p.mapColor(MapColor.METAL)

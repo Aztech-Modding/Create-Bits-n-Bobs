@@ -99,7 +99,7 @@ public class LightBlock extends DirectionalBlock implements IWrenchable {
     }
 
     @Override
-    protected InteractionResult useWithoutItem(final BlockState state, final Level level, final BlockPos pos, final Player player, final BlockHitResult hitResult) {
+    protected @NotNull InteractionResult useWithoutItem(final @NotNull BlockState state, final @NotNull Level level, final @NotNull BlockPos pos, final Player player, final @NotNull BlockHitResult hitResult) {
         final ItemStack heldItem = player.getMainHandItem();
         if (!heldItem.isEmpty())
             return InteractionResult.PASS;

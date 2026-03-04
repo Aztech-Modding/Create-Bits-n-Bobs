@@ -40,7 +40,7 @@ public class LevelSimpleCache<K, V> {
     public static class CacheInvalidationEvents {
         @SubscribeEvent
         public static void onLevelUnload(final LevelEvent.Unload event) {
-            if (!event.getLevel().isClientSide() && event.getLevel() instanceof final Level level) {
+            if (event.getLevel() instanceof final Level level) {
                 for (final LevelSimpleCache<?, ?> cache : ALL_CACHES) {
                     cache.clearForLevel(level);
                 }

@@ -17,6 +17,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
 public final class HeadlampRenderCache {
@@ -29,7 +30,7 @@ public final class HeadlampRenderCache {
 
     private static final LruCache<QuadCacheKey, List<BakedQuad>> QUAD_CACHE = new LruCache<>(MAX_QUAD_CACHE_ENTRIES);
     private static final LruCache<TransformKey, Matrix4f> TRANSFORM_CACHE = new LruCache<>(MAX_TRANSFORM_CACHE_ENTRIES);
-    private static final Map<SpriteKey, TextureAtlasSprite> SPRITE_CACHE = new java.util.concurrent.ConcurrentHashMap<>();
+    private static final Map<SpriteKey, TextureAtlasSprite> SPRITE_CACHE = new ConcurrentHashMap<>();
 
     private HeadlampRenderCache() {
     }

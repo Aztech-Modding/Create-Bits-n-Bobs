@@ -198,7 +198,7 @@ public class HeadlampBlock extends LightBlock implements IBE<HeadlampBlockEntity
     }
 
     @Override
-    protected boolean propagatesSkylightDown(final BlockState state, final BlockGetter level, final BlockPos pos) {
+    protected boolean propagatesSkylightDown(final @NotNull BlockState state, final @NotNull BlockGetter level, final @NotNull BlockPos pos) {
         return true;
     }
 

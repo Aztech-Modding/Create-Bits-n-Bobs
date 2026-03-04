@@ -51,7 +51,8 @@ public class BnbTags {
 
         COGWHEEL_CHAIN_NO_SMALL_OFFSET,
 
-        CHAIRS;
+        CHAIRS,
+        EXTRA_COGWHEEL_CHAIN_CANDIDATES;
 
         public final TagKey<Block> tag;
 

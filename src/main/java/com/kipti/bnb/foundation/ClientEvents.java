@@ -1,6 +1,6 @@
 package com.kipti.bnb.foundation;
 
-import com.cake.struts.girder_strut.GirderStrutPlacementEffects;
+import com.cake.struts.content.StrutPlacementEffects;
 import com.kipti.bnb.content.decoration.weathered_girder.WeatheredGirderWrenchBehaviour;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.placement.CogwheelChainPlacementEffect;
 import com.kipti.bnb.content.trinkets.light.headlamp.rendering.pipeline.block_entity.HeadlampVertexBufferCache;
@@ -8,8 +8,6 @@ import com.kipti.bnb.foundation.generation.PonderflatGeneratorSettings;
 import com.kipti.bnb.foundation.generation.PonderflatLevelSource;
 import com.kipti.bnb.foundation.generation.editor.PonderflatEditor;
 import com.kipti.bnb.registry.worldgen.BnbWorldPresets;
-import net.createmod.catnip.data.Pair;
-import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.worldselection.WorldCreationContext;
 import net.minecraft.core.Holder;
@@ -17,7 +15,6 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.chunk.ChunkGenerator;
-import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -26,39 +23,13 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RegisterPresetEditorsEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 @EventBusSubscriber(Dist.CLIENT)
 public class ClientEvents {
-
-    static final List<Pair<Vec3, Vec3>> deferredDebugRenderOutlines = Collections.synchronizedList(new ArrayList<>());
 
     @SubscribeEvent
     public static void onTickPost(final ClientTickEvent.Post event) {
         WeatheredGirderWrenchBehaviour.tick();
         HeadlampVertexBufferCache.tick();
-
-        //Render deferred debug outlines
-        synchronized (deferredDebugRenderOutlines) {
-            for (final Pair<Vec3, Vec3> outline : deferredDebugRenderOutlines) {
-                Outliner.getInstance().showLine(outline, outline.getFirst(), outline.getSecond());
-            }
-        }
-    }
-
-    public static void pushNewDeferredDebugRenderOutline(final Pair<Vec3, Vec3> outline) {
-        //Synchronized list to avoid concurrent modification exceptions
-        synchronized (deferredDebugRenderOutlines) {
-            deferredDebugRenderOutlines.add(outline);
-        }
-    }
-
-    public static void clearDeferredDebugRenderOutlines() {
-        synchronized (deferredDebugRenderOutlines) {
-            deferredDebugRenderOutlines.clear();
-        }
     }
 
     @SubscribeEvent
@@ -66,7 +37,7 @@ public class ClientEvents {
         //If in a level, there is a player, and the player is holding a girder strut block item, update the preview
         final Minecraft mc = Minecraft.getInstance();
         if (mc.level != null && mc.player != null) {
-            GirderStrutPlacementEffects.tick(mc.player);
+            StrutPlacementEffects.tick(mc.player);
         }
     }
 

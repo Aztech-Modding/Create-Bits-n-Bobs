@@ -1,7 +1,7 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.behaviour;
 
 import com.cake.azimuth.behaviour.extensions.RenderedBehaviourExtension;
-import com.cake.struts.girder_strut.IBlockEntityRelighter;
+import com.cake.struts.content.IAntiClippedShadowLighter;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChain;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.render.ChainQuadBuilder;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.render.CogwheelChainRenderGeometryBuilder;
@@ -134,7 +134,7 @@ public class CogwheelChainBehaviourVisual extends RenderedBehaviourExtension.Beh
         }
 
         textureSquish = (float) (Math.ceil(totalChainDistance) / totalChainDistance);
-        final Function<Vector3f, Integer> lighter = IBlockEntityRelighter.createGlobalLighter(kineticBlockEntity);
+        final Function<Vector3f, Integer> lighter = IAntiClippedShadowLighter.createGlobalLighter(kineticBlockEntity);
 
         final CogwheelChainMesh mesh = new CogwheelChainMesh(
                 segments,

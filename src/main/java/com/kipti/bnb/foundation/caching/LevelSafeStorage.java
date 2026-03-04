@@ -52,7 +52,7 @@ public class LevelSafeStorage<T> {
     public static class StorageInvalidationEvents {
         @SubscribeEvent
         public static void onLevelUnload(final LevelEvent.Unload event) {
-            if (!event.getLevel().isClientSide() && event.getLevel() instanceof final Level level) {
+            if (event.getLevel() instanceof final Level level) {
                 for (final LevelSafeStorage<?> storage : ALL_STORAGES) {
                     storage.clearForLevel(level);
                 }

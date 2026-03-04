@@ -10,6 +10,8 @@ import net.createmod.catnip.render.SpriteShifter;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
 
+import java.util.Collections;
+import java.util.EnumMap;
 import java.util.Map;
 
 public class BnbSpriteShifts {
@@ -25,14 +27,14 @@ public class BnbSpriteShifts {
             INDUSTRIAL_GRATING = omni("industrial_grating");
 
     private static Map<DyeColor, SpriteShiftEntry> getHeadlampSpriteShifts(final boolean off) {
-        final Map<DyeColor, SpriteShiftEntry> map = new java.util.EnumMap<>(DyeColor.class);
+        final Map<DyeColor, SpriteShiftEntry> map = new EnumMap<>(DyeColor.class);
         for (final DyeColor color : DyeColor.values()) {
             map.put(color, get(
                     "block/headlight/headlight_off",
                     "block/headlight/headlight" + (off ? "_off" : "_on") + "_" + color.getName()
             ));
         }
-        return java.util.Collections.unmodifiableMap(map);
+        return Collections.unmodifiableMap(map);
     }
 
     /**

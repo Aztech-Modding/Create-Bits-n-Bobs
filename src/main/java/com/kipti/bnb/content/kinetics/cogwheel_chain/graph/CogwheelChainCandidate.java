@@ -6,6 +6,7 @@ import com.simibubi.create.content.kinetics.simpleRelays.ICogWheel;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 import javax.annotation.Nullable;
 
@@ -16,12 +17,20 @@ public record CogwheelChainCandidate(Direction.Axis axis, boolean isLarge, boole
             return cogwheelBlock.getRotationAxis(state);
         if (state.getBlock() instanceof final IExclusiveCogwheelChainBlock exclusiveBlock)
             return exclusiveBlock.getRotationAxis(state);
+        if (state.hasProperty(BlockStateProperties.AXIS))
+            return state.getValue(BlockStateProperties.AXIS);
+        if (state.hasProperty(BlockStateProperties.FACING))
+            return state.getValue(BlockStateProperties.FACING).getAxis();
         return Direction.Axis.Y;
     }
 
     public static boolean isValidCandidate(final BlockState state) {
         final Block block = state.getBlock();
-        return block instanceof ICogWheel || block instanceof IExclusiveCogwheelChainBlock;
+        return isValidCandidate(block);
+    }
+
+    public static boolean isValidCandidate(final Block block) {
+        return block instanceof ICogWheel || block instanceof IExclusiveCogwheelChainBlock || BnbTags.BnbBlockTags.EXTRA_COGWHEEL_CHAIN_CANDIDATES.matches(block);
     }
 
     public static boolean isLargeCogwheel(final BlockState state) {
