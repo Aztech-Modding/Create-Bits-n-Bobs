@@ -67,7 +67,6 @@
   "block.bits_n_bobs.flywheel_bearing": "Flywheel Bearing",
   "block.bits_n_bobs.girder_strut": "Girder Strut",
   "block.bits_n_bobs.girder_strut.tooltip.summary": "A type of girder used to span a distance _between two anchor points_.",
-  "block.bits_n_bobs.girder_strut_structure": "Girder Strut Structure",
   "block.bits_n_bobs.granite_tile_slab": "Granite Tile Slab",
   "block.bits_n_bobs.granite_tile_stairs": "Granite Tile Stairs",
   "block.bits_n_bobs.granite_tile_wall": "Granite Tile Wall",
