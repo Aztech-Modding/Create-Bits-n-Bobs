@@ -5,13 +5,17 @@
   "refmap": "${mod_id}.refmap.json",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "AllBlocksMixin",
     "AllCreatePonderScenesMixin",
     "AllPaletteStoneTypesMixin",
     "ComputerBehaviourMixin",
     "ContraptionColliderMixin",
     "DynamicComponentMixin",
+    "dyeable_pipes.AxisPipeBlockTransitionMixin",
+    "dyeable_pipes.EncasedPipeBlockTransitionMixin",
+    "dyeable_pipes.FluidPipeBlockTransitionMixin",
+    "dyeable_pipes.GlassFluidPipeBlockTransitionMixin",
     "RotationPropagatorMixin",
+    "dyeable_pipes.FluidPipeBlockMixin",
     "encasable_piston_poles.ContraptionColliderMixin",
     "encasable_piston_poles.MechanicalPistonBlockMixin",
     "encasable_piston_poles.PistonContraptionMixin",
@@ -29,7 +33,8 @@
     "CreateClientMixin",
     "FontAccessMixin",
     "GirderCTBehaviourMixin",
-    "GuiGameElementMixin"
+    "GuiGameElementMixin",
+    "dyeable_pipes.PipeAttachmentModelMixin"
   ],
   "server": [
   ],

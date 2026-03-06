@@ -3,6 +3,7 @@ package com.kipti.bnb;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.BnbCogwheelChainTypes;
 import com.kipti.bnb.network.BnbPackets;
 import com.kipti.bnb.registry.compat.BnbCreateStresses;
+import com.kipti.bnb.registry.content.BnbBehaviourApplicators;
 import com.kipti.bnb.registry.content.BnbBlockEntities;
 import com.kipti.bnb.registry.content.BnbBlocksBootstrap;
 import com.kipti.bnb.registry.content.BnbEntityTypes;
@@ -74,6 +75,8 @@ public class CreateBitsnBobs {
         modEventBus.addListener(CreateBitsnBobs::commonSetup);
 
         BnbConfigs.register(modLoadingContext, modContainer);
+
+        BnbBehaviourApplicators.register();
     }
 
     private static void commonSetup(final FMLCommonSetupEvent event) {
