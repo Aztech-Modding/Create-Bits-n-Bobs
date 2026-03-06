@@ -54,6 +54,24 @@ public class BnbSpriteShifts {
      */
     public static final Map<DyeColor, SpriteShiftEntry> HEADLAMP_OFF_SPRITE_SHIFTS = getHeadlampSpriteShifts(true);
 
+    /** Sprite shifts from the undyed Create pipe texture to the dyed BnB pipe texture for each dye color. */
+    public static final Map<DyeColor, SpriteShiftEntry> DYED_PIPES = getDyedPipeSpriteShifts(false);
+    /** Sprite shifts from the undyed Create connected pipe texture to the dyed BnB connected pipe texture for each dye color. */
+    public static final Map<DyeColor, SpriteShiftEntry> DYED_PIPES_CONNECTED = getDyedPipeSpriteShifts(true);
+
+    private static Map<DyeColor, SpriteShiftEntry> getDyedPipeSpriteShifts(final boolean connected) {
+        final Map<DyeColor, SpriteShiftEntry> map = new java.util.EnumMap<>(DyeColor.class);
+        for (final DyeColor color : DyeColor.values()) {
+            final String originalPath = connected ? "block/pipes_connected" : "block/pipes";
+            final String targetPath = "block/dyed_pipes/pipes_" + (connected ? "connected_" : "") + color.getName();
+            map.put(color, SpriteShifter.get(
+                    ResourceLocation.fromNamespaceAndPath("create", originalPath),
+                    CreateBitsnBobs.asResource(targetPath)
+            ));
+        }
+        return java.util.Collections.unmodifiableMap(map);
+    }
+
     private static CTSpriteShiftEntry omni(final String name) {
         return getCT(AllCTTypes.OMNIDIRECTIONAL, name);
     }

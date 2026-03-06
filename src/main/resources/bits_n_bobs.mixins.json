@@ -1,40 +1,44 @@
 {
-    "required":  true,
-    "minVersion":  "0.8",
-    "package":  "com.kipti.bnb.mixin",
-    "refmap":  "${mod_id}.refmap.json",
-    "compatibilityLevel":  "JAVA_21",
-    "mixins":  [
-                   "AllBlocksMixin",
-                   "AllCreatePonderScenesMixin",
-                   "AllPaletteStoneTypesMixin",
-                   "ComputerBehaviourMixin",
-                   "ContraptionColliderMixin",
-                   "DynamicComponentMixin",
-                   "RotationPropagatorMixin",
-                   "encasable_piston_poles.ContraptionColliderMixin",
-                   "encasable_piston_poles.MechanicalPistonBlockMixin",
-                   "encasable_piston_poles.PistonContraptionMixin",
-                   "encasable_piston_poles.PistonExtensionPoleBlockMixin",
-                   "flywheel_bearing.KineticNetworkMixin",
-                   "glowing_belts.BeltBlockMixin",
-                   "glowing_belts.BeltSlicerMixin",
-                   "presets.ChunkGeneratorsMixin",
-                   "presets.WorldDimensionsMixin",
-                   "presets.WorldPresetsBootstrapMixin",
-                   "presets.WorldPresetsMixin"
-               ],
-    "client":  [
-                   "BakedGlyphMixin",
-                   "CreateClientMixin",
-                   "FontAccessMixin",
-                   "GirderCTBehaviourMixin",
-                   "GuiGameElementMixin"
-               ],
-    "server":  [
-
-               ],
-    "injectors":  {
-                      "defaultRequire":  1
-                  }
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.kipti.bnb.mixin",
+  "refmap": "${mod_id}.refmap.json",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "AllCreatePonderScenesMixin",
+    "AllPaletteStoneTypesMixin",
+    "ComputerBehaviourMixin",
+    "ContraptionColliderMixin",
+    "DynamicComponentMixin",
+    "dyeable_pipes.AxisPipeBlockTransitionMixin",
+    "dyeable_pipes.EncasedPipeBlockTransitionMixin",
+    "dyeable_pipes.FluidPipeBlockTransitionMixin",
+    "dyeable_pipes.GlassFluidPipeBlockTransitionMixin",
+    "RotationPropagatorMixin",
+    "dyeable_pipes.FluidPipeBlockMixin",
+    "encasable_piston_poles.ContraptionColliderMixin",
+    "encasable_piston_poles.MechanicalPistonBlockMixin",
+    "encasable_piston_poles.PistonContraptionMixin",
+    "encasable_piston_poles.PistonExtensionPoleBlockMixin",
+    "flywheel_bearing.KineticNetworkMixin",
+    "glowing_belts.BeltBlockMixin",
+    "glowing_belts.BeltSlicerMixin",
+    "presets.ChunkGeneratorsMixin",
+    "presets.WorldDimensionsMixin",
+    "presets.WorldPresetsBootstrapMixin",
+    "presets.WorldPresetsMixin"
+  ],
+  "client": [
+    "BakedGlyphMixin",
+    "CreateClientMixin",
+    "FontAccessMixin",
+    "GirderCTBehaviourMixin",
+    "GuiGameElementMixin",
+    "dyeable_pipes.PipeAttachmentModelMixin"
+  ],
+  "server": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
 }
