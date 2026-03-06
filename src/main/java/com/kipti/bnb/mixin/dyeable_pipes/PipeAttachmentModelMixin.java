@@ -6,26 +6,26 @@ import com.simibubi.create.content.fluids.PipeAttachmentModel;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.model.BakedQuadHelper;
 import net.createmod.catnip.render.SpriteShiftEntry;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.IModelData;
-import net.minecraftforge.client.model.data.ModelDataMap;
-import net.minecraftforge.client.model.data.ModelProperty;
+import net.neoforged.neoforge.client.model.data.ModelData;
+import net.neoforged.neoforge.client.model.data.ModelProperty;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 @Mixin(PipeAttachmentModel.class)
 public class PipeAttachmentModelMixin {
@@ -35,29 +35,20 @@ public class PipeAttachmentModelMixin {
 
     @Inject(method = "gatherModelData", at = @At("TAIL"))
     private void bnb$gatherDyeColor(
-            final ModelDataMap.Builder builder,
-            final BlockAndTintGetter world,
-            final BlockPos pos,
-            final BlockState state,
-            final IModelData blockEntityData,
-            final CallbackInfo ci
+            final ModelData.Builder builder, final BlockAndTintGetter world, final BlockPos pos, final BlockState state, final ModelData blockEntityData, final CallbackInfoReturnable<ModelData.Builder> cir
     ) {
         final DyeablePipeBehaviour behaviour = BlockEntityBehaviour.get(world, pos, DyeablePipeBehaviour.TYPE);
         if (behaviour != null && behaviour.getColor() != null) {
-            builder.withInitial(BNB_PIPE_DYE_COLOR, behaviour.getColor());
+            builder.with(BNB_PIPE_DYE_COLOR, behaviour.getColor());
         }
     }
 
     @Inject(method = "getQuads", at = @At("RETURN"), cancellable = true)
     private void bnb$applyDyeSpriteShift(
-            final BlockState state,
-            final Direction side,
-            final Random rand,
-            final IModelData data,
-            final CallbackInfoReturnable<List<BakedQuad>> cir
+            final BlockState state, final Direction side, final RandomSource rand, final ModelData data, final RenderType renderType, final CallbackInfoReturnable<List<BakedQuad>> cir
     ) {
-        if (!data.hasProperty(BNB_PIPE_DYE_COLOR)) return;
-        final DyeColor color = data.getData(BNB_PIPE_DYE_COLOR);
+        if (!data.has(BNB_PIPE_DYE_COLOR)) return;
+        final DyeColor color = data.get(BNB_PIPE_DYE_COLOR);
         if (color == null) return;
 
         final List<BakedQuad> originalQuads = cir.getReturnValue();
@@ -75,7 +66,8 @@ public class PipeAttachmentModelMixin {
         final SpriteShiftEntry shiftEntry = bnb$findShiftEntry(quad.getSprite(), color);
         if (shiftEntry == null) return quad;
 
-        final int[] vertexData = quad.getVertices().clone();
+        final int[] originalVertexData = quad.getVertices();
+        final int[] vertexData = Arrays.copyOf(originalVertexData, originalVertexData.length);
         final int vertexCount = vertexData.length / BakedQuadHelper.VERTEX_STRIDE;
         for (int vertex = 0; vertex < vertexCount; vertex++) {
             final float u = BakedQuadHelper.getU(vertexData, vertex);
@@ -90,13 +82,17 @@ public class PipeAttachmentModelMixin {
     @Unique
     private static SpriteShiftEntry bnb$findShiftEntry(final TextureAtlasSprite sprite, final DyeColor color) {
         final SpriteShiftEntry pipesEntry = BnbSpriteShifts.DYED_PIPES.get(color);
-        if (pipesEntry != null && pipesEntry.getOriginal() != null && pipesEntry.getOriginal() == sprite) {
-            return pipesEntry;
+        if (pipesEntry != null) {
+            if (pipesEntry.getOriginal() == sprite) {
+                return pipesEntry;
+            }
         }
 
         final SpriteShiftEntry connectedEntry = BnbSpriteShifts.DYED_PIPES_CONNECTED.get(color);
-        if (connectedEntry != null && connectedEntry.getOriginal() != null && connectedEntry.getOriginal() == sprite) {
-            return connectedEntry;
+        if (connectedEntry != null) {
+            if (connectedEntry.getOriginal() == sprite) {
+                return connectedEntry;
+            }
         }
 
         return null;

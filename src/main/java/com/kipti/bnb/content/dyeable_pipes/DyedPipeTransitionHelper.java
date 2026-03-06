@@ -1,10 +1,12 @@
 package com.kipti.bnb.content.dyeable_pipes;
 
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
-import com.simibubi.create.foundation.utility.WorldAttached;
+import net.createmod.catnip.data.WorldAttached;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,6 +14,7 @@ import java.util.Map;
 public final class DyedPipeTransitionHelper {
 
     private static final WorldAttached<Map<BlockPos, DyeColor>> CACHED_DYES = new WorldAttached<>($ -> new HashMap<>());
+    private static final WorldAttached<Map<BlockPos, DyeColor>> PENDING_PLACEMENT_DYES = new WorldAttached<>($ -> new HashMap<>());
 
     private DyedPipeTransitionHelper() {
     }
@@ -35,6 +38,22 @@ public final class DyedPipeTransitionHelper {
         if (behaviour != null) {
             behaviour.setColor(cachedColor);
         }
+    }
+
+    public static void savePendingPlacementColor(final Level level, final BlockPos pos, final DyeColor color) {
+        PENDING_PLACEMENT_DYES.get(level).put(pos.immutable(), color);
+    }
+
+    @Nullable
+    public static DyeColor getPendingPlacementColor(final BlockAndTintGetter world, final BlockPos pos) {
+        if (!(world instanceof final Level level)) {
+            return null;
+        }
+        return PENDING_PLACEMENT_DYES.get(level).get(pos);
+    }
+
+    public static void consumePendingPlacementColor(final Level level, final BlockPos pos) {
+        PENDING_PLACEMENT_DYES.get(level).remove(pos.immutable());
     }
 
 }

@@ -1,6 +1,7 @@
 package com.kipti.bnb.mixin.dyeable_pipes;
 
 import com.kipti.bnb.content.dyeable_pipes.DyeablePipeBehaviour;
+import com.kipti.bnb.content.dyeable_pipes.DyedPipeTransitionHelper;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.simibubi.create.content.fluids.pipes.FluidPipeBlock;
@@ -8,14 +9,38 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.DyeItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(FluidPipeBlock.class)
 public class FluidPipeBlockMixin {
+
+    @Inject(method = "getStateForPlacement", at = @At("HEAD"))
+    private void bnb$cachePendingDyeOnPlacement(
+            final BlockPlaceContext context,
+            final CallbackInfoReturnable<BlockState> cir
+    ) {
+        if (context.getLevel().isClientSide()) {
+            return;
+        }
+
+        final ItemStack offhand = context.getPlayer() != null ? context.getPlayer().getOffhandItem() : ItemStack.EMPTY;
+        if (offhand.getItem() instanceof final DyeItem dyeItem) {
+            DyedPipeTransitionHelper.savePendingPlacementColor(
+                    context.getLevel(), context.getClickedPos(), dyeItem.getDyeColor()
+            );
+        }
+    }
 
     @WrapOperation(
             method = "updateBlockState",
@@ -82,21 +107,24 @@ public class FluidPipeBlockMixin {
             return true;
         }
 
-        final DyeablePipeBehaviour selfBehaviour = BlockEntityBehaviour.get(world, pos, DyeablePipeBehaviour.TYPE);
-        final DyeablePipeBehaviour neighbourBehaviour = BlockEntityBehaviour.get(world, neighbourPos, DyeablePipeBehaviour.TYPE);
-
-        if (selfBehaviour == null || neighbourBehaviour == null) {
-            return true;
-        }
-
-        final DyeColor selfColor = selfBehaviour.getColor();
-        final DyeColor neighbourColor = neighbourBehaviour.getColor();
+        final @Nullable DyeColor selfColor = bnb$getEffectiveColor(world, pos);
+        final @Nullable DyeColor neighbourColor = bnb$getEffectiveColor(world, neighbourPos);
 
         if (selfColor == null || neighbourColor == null) {
             return true;
         }
 
         return selfColor == neighbourColor;
+    }
+
+    @Unique
+    @Nullable
+    private static DyeColor bnb$getEffectiveColor(final BlockAndTintGetter world, final BlockPos pos) {
+        final DyeablePipeBehaviour behaviour = BlockEntityBehaviour.get(world, pos, DyeablePipeBehaviour.TYPE);
+        if (behaviour != null && behaviour.getColor() != null) {
+            return behaviour.getColor();
+        }
+        return DyedPipeTransitionHelper.getPendingPlacementColor(world, pos);
     }
 
 }

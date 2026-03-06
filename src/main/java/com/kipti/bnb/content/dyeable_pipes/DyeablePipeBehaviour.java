@@ -1,5 +1,6 @@
 package com.kipti.bnb.content.dyeable_pipes;
 
+import com.cake.azimuth.behaviour.SuperBlockEntityBehaviour;
 import com.simibubi.create.content.fluids.FluidPropagator;
 import com.simibubi.create.content.fluids.pipes.FluidPipeBlock;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
@@ -76,6 +77,10 @@ public class DyeablePipeBehaviour extends SuperBlockEntityBehaviour {
             return;
         }
 
+        final Level level = (Level) event.getLevel();
+        final BlockPos pos = event.getPos();
+        DyedPipeTransitionHelper.consumePendingPlacementColor(level, pos);
+
         final ItemStack offhand = player.getOffhandItem();
         if (offhand.getItem() instanceof final DyeItem dyeItem) {
             setColor(dyeItem.getDyeColor());
@@ -83,8 +88,8 @@ public class DyeablePipeBehaviour extends SuperBlockEntityBehaviour {
     }
 
     @Override
-    public void writeSafe(final CompoundTag nbt, final HolderLookup.Provider registries) {
-        super.writeSafe(nbt, registries);
+    public void write(final CompoundTag nbt, final HolderLookup.Provider registries, final boolean clientPacket) {
+        super.write(nbt, registries, clientPacket);
         if (color != null) {
             nbt.putInt("DyeColor", color.getId());
         }
@@ -93,10 +98,24 @@ public class DyeablePipeBehaviour extends SuperBlockEntityBehaviour {
     @Override
     public void read(final CompoundTag nbt, final HolderLookup.Provider registries, final boolean clientPacket) {
         super.read(nbt, registries, clientPacket);
+        final DyeColor previousColor = color;
         if (nbt.contains("DyeColor")) {
             color = DyeColor.byId(nbt.getInt("DyeColor"));
         } else {
             color = null;
+        }
+
+        if (clientPacket && previousColor != color) {
+            redraw();
+        }
+    }
+
+    private void redraw() {
+        blockEntity.requestModelDataUpdate();
+        if (hasLevel()) {
+            final Level level = getLevel();
+            final BlockPos pos = getPos();
+            level.sendBlockUpdated(pos, getBlockState(), getBlockState(), 16);
         }
     }
 
