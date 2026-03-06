@@ -13,7 +13,6 @@ import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockAndTintGetter;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -30,9 +29,9 @@ public class FluidPipeBlockMixin {
             final BlockPlaceContext context,
             final CallbackInfoReturnable<BlockState> cir
     ) {
-        if (context.getLevel().isClientSide()) {
-            return;
-        }
+//        if (context.getLevel().isClientSide()) {
+//            return;
+//        }
 
         final ItemStack offhand = context.getPlayer() != null ? context.getPlayer().getOffhandItem() : ItemStack.EMPTY;
         if (offhand.getItem() instanceof final DyeItem dyeItem) {
