@@ -1,14 +1,14 @@
 package com.kipti.bnb.content.dyeable_pipes;
 
-import com.cake.azimuth.behaviour.SuperBlockEntityBehaviour;
 import com.simibubi.create.content.fluids.FluidPropagator;
 import com.simibubi.create.content.fluids.pipes.FluidPipeBlock;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BehaviourType;
 import com.simibubi.create.foundation.utility.BlockHelper;
-import com.simibubi.create.foundation.utility.Iterate;
+import net.createmod.catnip.data.Iterate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -69,7 +69,7 @@ public class DyeablePipeBehaviour extends SuperBlockEntityBehaviour {
 
     @Override
     public void onBlockPlaced(final BlockEvent.EntityPlaceEvent event) {
-        if (event.getLevel().isClientSide) {
+        if (event.getLevel().isClientSide()) {
             return;
         }
         if (!(event.getEntity() instanceof final Player player)) {
@@ -83,16 +83,16 @@ public class DyeablePipeBehaviour extends SuperBlockEntityBehaviour {
     }
 
     @Override
-    public void write(final CompoundTag nbt, final boolean clientPacket) {
-        super.write(nbt, clientPacket);
+    public void writeSafe(final CompoundTag nbt, final HolderLookup.Provider registries) {
+        super.writeSafe(nbt, registries);
         if (color != null) {
             nbt.putInt("DyeColor", color.getId());
         }
     }
 
     @Override
-    public void read(final CompoundTag nbt, final boolean clientPacket) {
-        super.read(nbt, clientPacket);
+    public void read(final CompoundTag nbt, final HolderLookup.Provider registries, final boolean clientPacket) {
+        super.read(nbt, registries, clientPacket);
         if (nbt.contains("DyeColor")) {
             color = DyeColor.byId(nbt.getInt("DyeColor"));
         } else {

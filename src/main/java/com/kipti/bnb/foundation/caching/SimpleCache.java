@@ -16,7 +16,7 @@ public class SimpleCache<K, V> {
         this.capacity = capacity;
 
         // Thread-safe LRU Map
-        this.internalMap = Collections.synchronizedMap(new LinkedHashMap<K, V>(capacity, 0.75f, true) {
+        this.internalMap = Collections.synchronizedMap(new LinkedHashMap<>(capacity, 0.75f, true) {
             @Override
             protected boolean removeEldestEntry(final Map.Entry<K, V> eldest) {
                 return size() > SimpleCache.this.capacity;
