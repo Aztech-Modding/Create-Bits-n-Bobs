@@ -95,6 +95,13 @@ public class PipeAttachmentModelMixin {
             }
         }
 
+        final SpriteShiftEntry glassEntry = BnbSpriteShifts.DYED_GLASS_FLUID_PIPE.get(color);
+        if (glassEntry != null) {
+            if (glassEntry.getOriginal() == sprite) {
+                return glassEntry;
+            }
+        }
+
         return null;
     }
 

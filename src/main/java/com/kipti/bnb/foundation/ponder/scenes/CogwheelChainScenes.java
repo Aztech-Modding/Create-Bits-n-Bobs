@@ -1,7 +1,7 @@
 package com.kipti.bnb.foundation.ponder.scenes;
 
+import com.cake.azimuth.client.outlines.instructions.ExpandingOutlineInstruction;
 import com.kipti.bnb.foundation.ponder.instruction.ConveyChainRotationsInstruction;
-import com.kipti.bnb.foundation.ponder.instruction.ExpandingOutlineInstruction;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.foundation.ponder.CreateSceneBuilder;
 import net.createmod.catnip.math.Pointing;

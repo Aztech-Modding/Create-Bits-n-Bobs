@@ -5,7 +5,6 @@ import com.simibubi.create.content.fluids.FluidPropagator;
 import com.simibubi.create.content.fluids.pipes.FluidPipeBlock;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BehaviourType;
-import com.simibubi.create.foundation.utility.BlockHelper;
 import net.createmod.catnip.data.Iterate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -18,6 +17,7 @@ import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import org.jetbrains.annotations.Nullable;
@@ -141,8 +141,21 @@ public class DyeablePipeBehaviour extends SuperBlockEntityBehaviour {
         BlockState state = getBlockState();
 
         if (state.getBlock() instanceof final FluidPipeBlock pipeBlock) {
+            // Start from defaultBlockState (prevStateSides=0) instead of copying the current
+            // connections. If we copied them, Create's fallback at:
+            //   if (prevStateSides == 2) return prevState;
+            // would fire whenever dye filtering produces 0 valid connections, silently
+            // keeping the old (wrong) corner/straight shape. Starting fresh ensures
+            // the block always gets a shape consistent with what color filtering allows.
+            BlockState baseState = pipeBlock.defaultBlockState();
+            if (state.hasProperty(BlockStateProperties.WATERLOGGED)) {
+                baseState = baseState.setValue(
+                        BlockStateProperties.WATERLOGGED,
+                        state.getValue(BlockStateProperties.WATERLOGGED)
+                );
+            }
             final BlockState refreshedState = pipeBlock.updateBlockState(
-                    BlockHelper.copyProperties(state, pipeBlock.defaultBlockState()),
+                    baseState,
                     getPreferredDirection(state),
                     null,
                     level,

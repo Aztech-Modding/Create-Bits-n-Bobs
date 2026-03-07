@@ -54,22 +54,38 @@ public class BnbSpriteShifts {
      */
     public static final Map<DyeColor, SpriteShiftEntry> HEADLAMP_OFF_SPRITE_SHIFTS = getHeadlampSpriteShifts(true);
 
-    /** Sprite shifts from the undyed Create pipe texture to the dyed BnB pipe texture for each dye color. */
-    public static final Map<DyeColor, SpriteShiftEntry> DYED_PIPES = getDyedPipeSpriteShifts(false);
-    /** Sprite shifts from the undyed Create connected pipe texture to the dyed BnB connected pipe texture for each dye color. */
-    public static final Map<DyeColor, SpriteShiftEntry> DYED_PIPES_CONNECTED = getDyedPipeSpriteShifts(true);
+    private enum PipeDyeSpriteShiftType {
+        PIPES_CONNECTED("pipes_connected"), PIPES("pipes"), GLASS_FLUID_PIPE("glass_fluid_pipe");
 
-    private static Map<DyeColor, SpriteShiftEntry> getDyedPipeSpriteShifts(final boolean connected) {
-        final Map<DyeColor, SpriteShiftEntry> map = new java.util.EnumMap<>(DyeColor.class);
+        final String texture;
+
+        PipeDyeSpriteShiftType(final String texture) {
+            this.texture = texture;
+        }
+
+        public String getTexture() {
+            return texture;
+        }
+    }
+
+    public static final Map<DyeColor, SpriteShiftEntry> DYED_PIPES = getDyedPipeSpriteShifts(PipeDyeSpriteShiftType.PIPES);
+    public static final Map<DyeColor, SpriteShiftEntry> DYED_PIPES_CONNECTED = getDyedPipeSpriteShifts(PipeDyeSpriteShiftType.PIPES_CONNECTED);
+    /**
+     * Sprite shifts from the undyed Create connected pipe texture to the dyed BnB connected pipe texture for each dye color.
+     */
+    public static final Map<DyeColor, SpriteShiftEntry> DYED_GLASS_FLUID_PIPE = getDyedPipeSpriteShifts(PipeDyeSpriteShiftType.GLASS_FLUID_PIPE);
+
+    private static Map<DyeColor, SpriteShiftEntry> getDyedPipeSpriteShifts(final PipeDyeSpriteShiftType connected) {
+        final Map<DyeColor, SpriteShiftEntry> map = new EnumMap<>(DyeColor.class);
         for (final DyeColor color : DyeColor.values()) {
-            final String originalPath = connected ? "block/pipes_connected" : "block/pipes";
-            final String targetPath = "block/dyed_pipes/pipes_" + (connected ? "connected_" : "") + color.getName();
+            final String originalPath = "block/" + connected.getTexture();
+            final String targetPath = "block/dyed_pipes/" + connected.getTexture() + "_" + color.getName();
             map.put(color, SpriteShifter.get(
                     ResourceLocation.fromNamespaceAndPath("create", originalPath),
                     CreateBitsnBobs.asResource(targetPath)
             ));
         }
-        return java.util.Collections.unmodifiableMap(map);
+        return Collections.unmodifiableMap(map);
     }
 
     private static CTSpriteShiftEntry omni(final String name) {
