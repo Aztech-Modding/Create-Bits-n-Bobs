@@ -2,7 +2,10 @@ package com.kipti.bnb.foundation.ponder;
 
 import com.kipti.bnb.foundation.ponder.scenes.CogwheelChainScenes;
 import com.kipti.bnb.foundation.ponder.scenes.DyedPipeScenes;
+import com.kipti.bnb.foundation.ponder.scenes.LargeNixieTubeScenes;
+import com.kipti.bnb.foundation.ponder.scenes.NixieBoardScenes;
 import com.kipti.bnb.registry.content.blocks.BnbKineticBlocks;
+import com.kipti.bnb.registry.content.blocks.BnbTrinketBlocks;
 import com.simibubi.create.AllBlocks;
 import com.tterrag.registrate.util.entry.ItemProviderEntry;
 import com.tterrag.registrate.util.entry.RegistryEntry;
@@ -26,6 +29,12 @@ public class BnbPonderScenes {
 //                .addStoryBoard("chain_cog/pathing_behaviour", CogwheelChainScenes::cogwheelChainPathingBehaviour);
         HELPER.forComponents(AllBlocks.FLUID_PIPE)
                 .addStoryBoard("dyed_pipes/dyed_pipes", DyedPipeScenes::dyedPipes);
+
+        HELPER.forComponents(BnbTrinketBlocks.NIXIE_BOARD)
+                .addStoryBoard("nixie/nixie_board", NixieBoardScenes::nixieBoard);
+
+        HELPER.forComponents(BnbTrinketBlocks.LARGE_NIXIE_TUBE)
+                .addStoryBoard("nixie/large_nixie_tube", LargeNixieTubeScenes::largeNixieTube);
     }
 }
 

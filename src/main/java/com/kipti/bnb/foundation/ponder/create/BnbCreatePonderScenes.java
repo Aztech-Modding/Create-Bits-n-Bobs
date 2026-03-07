@@ -1,10 +1,8 @@
 package com.kipti.bnb.foundation.ponder.create;
 
 import com.kipti.bnb.registry.content.blocks.BnbKineticBlocks;
-import com.kipti.bnb.registry.content.blocks.BnbTrinketBlocks;
 import com.simibubi.create.infrastructure.ponder.AllCreatePonderTags;
 import com.simibubi.create.infrastructure.ponder.scenes.PulleyScenes;
-import com.simibubi.create.infrastructure.ponder.scenes.RedstoneScenes;
 import com.tterrag.registrate.util.entry.ItemProviderEntry;
 import com.tterrag.registrate.util.entry.RegistryEntry;
 import net.createmod.ponder.api.registration.PonderSceneRegistrationHelper;
@@ -14,9 +12,6 @@ public class BnbCreatePonderScenes {
 
     public static void register(final PonderSceneRegistrationHelper<ResourceLocation> helper) {
         final PonderSceneRegistrationHelper<ItemProviderEntry<?, ?>> HELPER = helper.withKeyFunction(RegistryEntry::getId);
-
-        HELPER.forComponents(BnbTrinketBlocks.NIXIE_BOARD, BnbTrinketBlocks.LARGE_NIXIE_TUBE)
-                .addStoryBoard("nixie_tube", RedstoneScenes::nixieTube);
 
         HELPER.forComponents(BnbKineticBlocks.CHAIN_PULLEY)
                 .addStoryBoard("rope_pulley/anchor", PulleyScenes::movement, AllCreatePonderTags.KINETIC_APPLIANCES, AllCreatePonderTags.MOVEMENT_ANCHOR)

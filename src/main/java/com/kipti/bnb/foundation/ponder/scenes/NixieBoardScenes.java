@@ -1,0 +1,397 @@
+package com.kipti.bnb.foundation.ponder.scenes;
+
+import com.kipti.bnb.content.trinkets.nixie.foundation.GenericNixieDisplayBlockEntity;
+import com.kipti.bnb.content.trinkets.nixie.foundation.GenericNixieDisplayBlockEntity.ConfigurableDisplayOptions;
+import com.kipti.bnb.content.trinkets.nixie.nixie_board.NixieBoardBlockNixie;
+import com.kipti.bnb.registry.content.blocks.BnbTrinketBlocks;
+import com.simibubi.create.AllBlocks;
+import com.simibubi.create.AllItems;
+import com.simibubi.create.foundation.ponder.CreateSceneBuilder;
+import com.simibubi.create.foundation.utility.BlockHelper;
+import net.createmod.catnip.math.Pointing;
+import net.createmod.ponder.api.PonderPalette;
+import net.createmod.ponder.api.element.WorldSectionElement;
+import net.createmod.ponder.api.scene.SceneBuilder;
+import net.createmod.ponder.api.scene.SceneBuildingUtil;
+import net.createmod.ponder.api.scene.Selection;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+
+public class NixieBoardScenes {
+
+    public static void nixieBoard(final SceneBuilder builder, final SceneBuildingUtil util) {
+        final CreateSceneBuilder scene = new CreateSceneBuilder(builder);
+        scene.title("nixie_board", "Using Nixie Boards");
+        scene.configureBasePlate(0, 0, 5);
+
+        // Positions in walk order (controller at x=3, then x=2, x=1)
+        final BlockPos frontRight = new BlockPos(3, 1, 1);
+        final BlockPos frontMiddle = new BlockPos(2, 1, 1);
+        final BlockPos frontLeft = new BlockPos(1, 1, 1);
+
+        final BlockPos backBottomRight = new BlockPos(3, 1, 3);
+        final BlockPos backBottomMiddle = new BlockPos(2, 1, 3);
+        final BlockPos backBottomLeft = new BlockPos(1, 1, 3);
+
+        final BlockPos backTopRight = new BlockPos(3, 2, 3);
+        final BlockPos backTopMiddle = new BlockPos(2, 2, 3);
+        final BlockPos backTopLeft = new BlockPos(1, 2, 3);
+
+        // Selections
+        final Selection frontRow = util.select().fromTo(1, 1, 1, 3, 1, 1);
+        final Selection backBottomRow = util.select().fromTo(1, 1, 3, 3, 1, 3);
+        final Selection backTopRow = util.select().fromTo(1, 2, 3, 3, 2, 3);
+
+        // === Initial Setup ===
+        resetAllNixies(scene,
+                frontRight, frontMiddle, frontLeft,
+                backBottomRight, backBottomMiddle, backBottomLeft,
+                backTopRight, backTopMiddle, backTopLeft);
+
+        // Fix front middle block to standalone shape
+        scene.addInstruction(ponderScene -> {
+            final BlockState state = ponderScene.getWorld().getBlockState(frontMiddle);
+            ponderScene.getWorld().setBlock(frontMiddle,
+                    setShape(state, false, false, false, false), Block.UPDATE_ALL);
+        });
+
+        // Fix back bottom row shapes (no TOP connection since top row hasn't appeared)
+        scene.addInstruction(ponderScene -> {
+            BlockState state = ponderScene.getWorld().getBlockState(backBottomRight);
+            ponderScene.getWorld().setBlock(backBottomRight,
+                    setShape(state, false, true, false, false), Block.UPDATE_ALL);
+
+            state = ponderScene.getWorld().getBlockState(backBottomMiddle);
+            ponderScene.getWorld().setBlock(backBottomMiddle,
+                    setShape(state, true, true, false, false), Block.UPDATE_ALL);
+
+            state = ponderScene.getWorld().getBlockState(backBottomLeft);
+            ponderScene.getWorld().setBlock(backBottomLeft,
+                    setShape(state, true, false, false, false), Block.UPDATE_ALL);
+
+            ponderScene.forEach(WorldSectionElement.class, WorldSectionElement::queueRedraw);
+        });
+
+        // Show base plate
+        scene.world().showSection(util.select().layer(0), Direction.UP);
+        scene.idle(10);
+
+        // === Stage 1: Show middle front board ===
+        scene.addKeyframe();
+        scene.world().showSection(util.select().position(2, 1, 1), Direction.DOWN);
+        scene.idle(15);
+
+        scene.overlay().showText(80)
+                .text("This is a Nixie Board. It can be used to display text")
+                .placeNearTarget()
+                .pointAt(util.vector().centerOf(2, 1, 1));
+        scene.idle(90);
+
+        // === Stage 2: Extend front row ===
+        scene.addKeyframe();
+        scene.world().showSection(util.select().position(1, 1, 1), Direction.EAST);
+        scene.world().showSection(util.select().position(3, 1, 1), Direction.WEST);
+
+        // Update connection shapes for all front row blocks
+        scene.addInstruction(ponderScene -> {
+            BlockState state = ponderScene.getWorld().getBlockState(frontRight);
+            ponderScene.getWorld().setBlock(frontRight,
+                    setShape(state, false, true, false, false), Block.UPDATE_ALL);
+
+            state = ponderScene.getWorld().getBlockState(frontMiddle);
+            ponderScene.getWorld().setBlock(frontMiddle,
+                    setShape(state, true, true, false, false), Block.UPDATE_ALL);
+
+            state = ponderScene.getWorld().getBlockState(frontLeft);
+            ponderScene.getWorld().setBlock(frontLeft,
+                    setShape(state, true, false, false, false), Block.UPDATE_ALL);
+
+            ponderScene.forEach(WorldSectionElement.class, WorldSectionElement::queueRedraw);
+        });
+        scene.idle(15);
+
+        scene.overlay().showOutline(PonderPalette.OUTPUT, "front_row", frontRow, 80);
+        scene.overlay().showText(80)
+                .text("The Nixie Board extends when connected to other neighbors")
+                .placeNearTarget()
+                .pointAt(util.vector().centerOf(2, 1, 1));
+        scene.idle(90);
+
+        // === Stage 3: Show back sections ===
+        scene.addKeyframe();
+        scene.world().showSection(backBottomRow, Direction.DOWN);
+        scene.idle(4);
+        scene.world().showSection(backTopRow, Direction.DOWN);
+
+        // Update back bottom row to add TOP connections, set back top row shapes
+        scene.addInstruction(ponderScene -> {
+            // Back bottom: add TOP=true
+            BlockState state = ponderScene.getWorld().getBlockState(backBottomRight);
+            ponderScene.getWorld().setBlock(backBottomRight,
+                    setShape(state, false, true, true, false), Block.UPDATE_ALL);
+
+            state = ponderScene.getWorld().getBlockState(backBottomMiddle);
+            ponderScene.getWorld().setBlock(backBottomMiddle,
+                    setShape(state, true, true, true, false), Block.UPDATE_ALL);
+
+            state = ponderScene.getWorld().getBlockState(backBottomLeft);
+            ponderScene.getWorld().setBlock(backBottomLeft,
+                    setShape(state, true, false, true, false), Block.UPDATE_ALL);
+
+            // Back top: BOTTOM=true
+            state = ponderScene.getWorld().getBlockState(backTopRight);
+            ponderScene.getWorld().setBlock(backTopRight,
+                    setShape(state, false, true, false, true), Block.UPDATE_ALL);
+
+            state = ponderScene.getWorld().getBlockState(backTopMiddle);
+            ponderScene.getWorld().setBlock(backTopMiddle,
+                    setShape(state, true, true, false, true), Block.UPDATE_ALL);
+
+            state = ponderScene.getWorld().getBlockState(backTopLeft);
+            ponderScene.getWorld().setBlock(backTopLeft,
+                    setShape(state, true, false, false, true), Block.UPDATE_ALL);
+
+            ponderScene.forEach(WorldSectionElement.class, WorldSectionElement::queueRedraw);
+        });
+        scene.idle(15);
+
+        scene.overlay().showText(80)
+                .text("Boards placed above or below will connect to form larger displays")
+                .placeNearTarget()
+                .pointAt(util.vector().centerOf(2, 1, 3));
+        scene.idle(90);
+
+        // === Stage 4: Set text with clipboard ===
+        scene.addKeyframe();
+        scene.overlay().showText(100)
+                .text("Clipboards, Display Links, or Name Tags can be used to change the displayed text")
+                .placeNearTarget()
+                .pointAt(util.vector().centerOf(2, 1, 1));
+        scene.idle(20);
+
+        // Front row
+        scene.overlay().showControls(util.vector().centerOf(2, 1, 1), Pointing.DOWN, 50)
+                .withItem(AllBlocks.CLIPBOARD.asStack());
+        scene.overlay().showOutline(PonderPalette.OUTPUT, "front_text", frontRow, 50);
+        scene.idle(10);
+        setNixieRowText(scene, "txt", 0, new int[]{0, 1, 2}, frontRight, frontMiddle, frontLeft);
+        scene.idle(40);
+
+        // Back bottom row
+        scene.overlay().showControls(util.vector().centerOf(2, 1, 3), Pointing.DOWN, 50)
+                .withItem(AllBlocks.CLIPBOARD.asStack());
+        scene.overlay().showOutline(PonderPalette.OUTPUT, "back_bottom_text", backBottomRow, 50);
+        scene.idle(10);
+        setNixieRowText(scene, "txt", 0, new int[]{0, 1, 2}, backBottomRight, backBottomMiddle, backBottomLeft);
+        scene.idle(40);
+
+        // Back top row
+        scene.overlay().showControls(util.vector().centerOf(2, 2, 3), Pointing.DOWN, 50)
+                .withItem(AllBlocks.CLIPBOARD.asStack());
+        scene.overlay().showOutline(PonderPalette.OUTPUT, "back_top_text", backTopRow, 50);
+        scene.idle(10);
+        setNixieRowText(scene, "txt", 0, new int[]{0, 1, 2}, backTopRight, backTopMiddle, backTopLeft);
+        scene.idle(40);
+
+        // === Stage 5: Wrench display types ===
+        scene.addKeyframe();
+
+        // DOUBLE_CHAR on back bottom row
+        scene.overlay().showControls(util.vector().centerOf(2, 1, 3), Pointing.DOWN, 50)
+                .withItem(AllItems.WRENCH.asStack());
+        scene.overlay().showOutline(PonderPalette.OUTPUT, "back_bottom_wrench", backBottomRow, 50);
+        scene.idle(10);
+        setDisplayOptionForRow(scene, ConfigurableDisplayOptions.DOUBLE_CHAR,
+                new int[]{0, 2, 4}, backBottomRight, backBottomMiddle, backBottomLeft);
+        setNixieRowText(scene, "txt", 0, new int[]{0, 2, 4}, backBottomRight, backBottomMiddle, backBottomLeft);
+        scene.idle(25);
+
+        scene.overlay().showText(60)
+                .text("A Wrench can be used to cycle the display mode")
+                .placeNearTarget()
+                .pointAt(util.vector().centerOf(2, 1, 3));
+        scene.idle(60);
+
+        // DOUBLE_CHAR on back top row
+        scene.overlay().showControls(util.vector().centerOf(2, 2, 3), Pointing.DOWN, 50)
+                .withItem(AllItems.WRENCH.asStack());
+        scene.overlay().showOutline(PonderPalette.OUTPUT, "back_top_wrench1", backTopRow, 50);
+        scene.idle(10);
+        setDisplayOptionForRow(scene, ConfigurableDisplayOptions.DOUBLE_CHAR,
+                new int[]{0, 2, 4}, backTopRight, backTopMiddle, backTopLeft);
+        setNixieRowText(scene, "txt", 0, new int[]{0, 2, 4}, backTopRight, backTopMiddle, backTopLeft);
+        scene.idle(15);
+
+        // DOUBLE_CHAR_DOUBLE_LINES on back top row
+        scene.overlay().showControls(util.vector().centerOf(2, 2, 3), Pointing.DOWN, 50)
+                .withItem(AllItems.WRENCH.asStack());
+        scene.overlay().showOutline(PonderPalette.OUTPUT, "back_top_wrench2", backTopRow, 50);
+        scene.idle(10);
+        setDisplayOptionForRow(scene, ConfigurableDisplayOptions.DOUBLE_CHAR_DOUBLE_LINES,
+                new int[]{0, 2, 5}, backTopRight, backTopMiddle, backTopLeft);
+        setNixieRowText(scene, "txt", 0, new int[]{0, 2, 5}, backTopRight, backTopMiddle, backTopLeft);
+        scene.idle(20);
+
+        scene.overlay().showText(70)
+                .text("Different display modes support more characters and multiple lines")
+                .placeNearTarget()
+                .pointAt(util.vector().centerOf(2, 2, 3));
+        scene.idle(70);
+
+        // === Stage 6: Fill text with clipboard ===
+        scene.addKeyframe();
+
+        // Back bottom: fill "txttxt" in DOUBLE_CHAR mode
+        scene.overlay().showControls(util.vector().centerOf(2, 1, 3), Pointing.DOWN, 50)
+                .withItem(AllBlocks.CLIPBOARD.asStack());
+        scene.overlay().showOutline(PonderPalette.OUTPUT, "back_bottom_fill", backBottomRow, 50);
+        scene.idle(10);
+        setNixieRowText(scene, "txttxt", 0, new int[]{0, 2, 4},
+                backBottomRight, backBottomMiddle, backBottomLeft);
+        scene.idle(40);
+
+        // Back top: fill "txt.txt" in DOUBLE_CHAR_DOUBLE_LINES on both lines
+        scene.overlay().showControls(util.vector().centerOf(2, 2, 3), Pointing.DOWN, 50)
+                .withItem(AllBlocks.CLIPBOARD.asStack());
+        scene.overlay().showOutline(PonderPalette.OUTPUT, "back_top_fill", backTopRow, 50);
+        scene.idle(10);
+        setNixieRowText(scene, "txt.txt", 0, new int[]{0, 2, 5},
+                backTopRight, backTopMiddle, backTopLeft);
+        setNixieRowText(scene, "txt.txt", 1, new int[]{0, 2, 5},
+                backTopRight, backTopMiddle, backTopLeft);
+        scene.idle(40);
+
+        // === Stage 7: Dye ===
+        scene.addKeyframe();
+        scene.overlay().showText(150)
+                .text("Dye can be used to change the color of all connected boards at once")
+                .placeNearTarget()
+                .pointAt(util.vector().centerOf(2, 1, 1));
+        scene.idle(10);
+
+        // Blue dye on front row
+        scene.overlay().showControls(util.vector().centerOf(2, 1, 1), Pointing.DOWN, 50)
+                .withItem(Items.BLUE_DYE.getDefaultInstance());
+        scene.overlay().showOutline(PonderPalette.BLUE, "front_dye", frontRow, 50);
+        scene.idle(10);
+        applyDyeToNixieBoards(scene, DyeColor.BLUE, frontRight, frontMiddle, frontLeft);
+        scene.idle(25);
+
+        // Purple dye on back bottom row
+        scene.overlay().showControls(util.vector().centerOf(2, 1, 3), Pointing.DOWN, 50)
+                .withItem(Items.PURPLE_DYE.getDefaultInstance());
+        scene.overlay().showOutline(PonderPalette.BLUE, "back_bottom_dye", backBottomRow, 50);
+        scene.idle(10);
+        applyDyeToNixieBoards(scene, DyeColor.PURPLE,
+                backBottomRight, backBottomMiddle, backBottomLeft);
+        scene.idle(25);
+
+        // Pink dye on back top row
+        scene.overlay().showControls(util.vector().centerOf(2, 2, 3), Pointing.DOWN, 50)
+                .withItem(Items.PINK_DYE.getDefaultInstance());
+        scene.overlay().showOutline(PonderPalette.BLUE, "back_top_dye", backTopRow, 50);
+        scene.idle(10);
+        applyDyeToNixieBoards(scene, DyeColor.PINK, backTopRight, backTopMiddle, backTopLeft);
+        scene.idle(40);
+
+        scene.markAsFinished();
+    }
+
+    // ── helpers ──────────────────────────────────────────────────────────────────
+
+    private static void resetAllNixies(final CreateSceneBuilder scene, final BlockPos... positions) {
+        scene.addInstruction(ponderScene -> {
+            for (final BlockPos pos : positions) {
+                final BlockEntity be = ponderScene.getWorld().getBlockEntity(pos);
+                if (be instanceof final GenericNixieDisplayBlockEntity nixie) {
+                    nixie.setDisplayOption(ConfigurableDisplayOptions.NONE);
+                    nixie.setPositionOffset(0);
+                    final String emptyJson = Component.Serializer.toJson(
+                            Component.empty(), ponderScene.getWorld().registryAccess());
+                    nixie.displayCustomText(emptyJson, 0, 0);
+                    nixie.displayCustomText(emptyJson, 0, 1);
+                }
+            }
+            ponderScene.forEach(WorldSectionElement.class, WorldSectionElement::queueRedraw);
+        });
+    }
+
+    private static void setNixieRowText(final CreateSceneBuilder scene, final String text,
+                                        final int line, final int[] offsets,
+                                        final BlockPos... positions) {
+        scene.addInstruction(ponderScene -> {
+            final String json = Component.Serializer.toJson(
+                    Component.literal(text), ponderScene.getWorld().registryAccess());
+            for (int i = 0; i < positions.length; i++) {
+                final BlockEntity be = ponderScene.getWorld().getBlockEntity(positions[i]);
+                if (be instanceof final GenericNixieDisplayBlockEntity nixie) {
+                    nixie.setPositionOffset(offsets[i]);
+                    nixie.displayCustomText(json, offsets[i], line);
+                }
+            }
+            ponderScene.forEach(WorldSectionElement.class, WorldSectionElement::queueRedraw);
+        });
+    }
+
+    private static void setDisplayOptionForRow(final CreateSceneBuilder scene,
+                                               final ConfigurableDisplayOptions option,
+                                               final int[] offsets,
+                                               final BlockPos... positions) {
+        scene.addInstruction(ponderScene -> {
+            for (int i = 0; i < positions.length; i++) {
+                final BlockEntity be = ponderScene.getWorld().getBlockEntity(positions[i]);
+                if (be instanceof final GenericNixieDisplayBlockEntity nixie) {
+                    nixie.setDisplayOption(option);
+                    nixie.setPositionOffset(offsets[i]);
+                }
+            }
+            ponderScene.forEach(WorldSectionElement.class, WorldSectionElement::queueRedraw);
+        });
+    }
+
+    private static void applyDyeToNixieBoards(final CreateSceneBuilder scene, final DyeColor color,
+                                              final BlockPos... positions) {
+        scene.addInstruction(ponderScene -> {
+            for (final BlockPos pos : positions) {
+                final BlockEntity oldBe = ponderScene.getWorld().getBlockEntity(pos);
+                final CompoundTag savedData = oldBe != null
+                        ? oldBe.saveWithFullMetadata(ponderScene.getWorld().registryAccess()) : null;
+
+                final BlockState state = ponderScene.getWorld().getBlockState(pos);
+                final Block dyedBlock = BnbTrinketBlocks.DYED_NIXIE_BOARD.get(color).get();
+                ponderScene.getWorld().setBlock(pos,
+                        BlockHelper.copyProperties(state, dyedBlock.defaultBlockState()),
+                        Block.UPDATE_ALL);
+
+                if (savedData != null) {
+                    final BlockEntity newBe = ponderScene.getWorld().getBlockEntity(pos);
+                    if (newBe != null) {
+                        newBe.loadWithComponents(savedData, ponderScene.getWorld().registryAccess());
+                    }
+                }
+            }
+            ponderScene.forEach(WorldSectionElement.class, WorldSectionElement::queueRedraw);
+        });
+    }
+
+    private static BlockState setShape(final BlockState state, final boolean left, final boolean right,
+                                       final boolean top, final boolean bottom) {
+        return state.setValue(NixieBoardBlockNixie.LEFT, left)
+                .setValue(NixieBoardBlockNixie.RIGHT, right)
+                .setValue(NixieBoardBlockNixie.TOP, top)
+                .setValue(NixieBoardBlockNixie.BOTTOM, bottom);
+    }
+
+    private static void queueRedraw(final CreateSceneBuilder scene) {
+        scene.addInstruction(ponderScene ->
+                ponderScene.forEach(WorldSectionElement.class, WorldSectionElement::queueRedraw));
+    }
+
+}

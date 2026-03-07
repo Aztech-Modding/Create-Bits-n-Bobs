@@ -5,6 +5,7 @@ import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.network.packets.from_client.PlaceCogwheelChainPacket;
 import com.kipti.bnb.network.packets.from_client.WrenchCogwheelChainPacket;
 import com.kipti.bnb.network.packets.to_client.ApplyHeadlampQueuedOperationsPacket;
+import com.kipti.bnb.network.packets.to_client.PeekCogwheelChainControllerHighlightPacket;
 import net.createmod.catnip.net.base.BasePacketPayload;
 import net.createmod.catnip.net.base.CatnipPacketRegistry;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -20,6 +21,7 @@ public enum BnbPackets implements BasePacketPayload.PacketTypeProvider {
 
     // S2C
     APPLY_HEADLAMP_QUEUED_OPERATIONS(ApplyHeadlampQueuedOperationsPacket.class, ApplyHeadlampQueuedOperationsPacket.STREAM_CODEC),
+    PEEK_COGWHEEL_CHAIN_CONTROLLER_HIGHLIGHT(PeekCogwheelChainControllerHighlightPacket.class, PeekCogwheelChainControllerHighlightPacket.STREAM_CODEC),
     ;
 
     private final CatnipPacketRegistry.PacketType<?> type;
