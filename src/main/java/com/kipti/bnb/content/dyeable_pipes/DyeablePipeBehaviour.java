@@ -43,6 +43,18 @@ public class DyeablePipeBehaviour extends SuperBlockEntityBehaviour {
         return color;
     }
 
+    /**
+     * Sets the color on the client side only, triggering an immediate visual refresh.
+     * Used by {@link DyeablePipeBlockItem} during placement for instant feedback.
+     */
+    public void applyColorClientOnly(@Nullable final DyeColor color) {
+        if (this.color == color) {
+            return;
+        }
+        this.color = color;
+        redraw();
+    }
+
     public void setColor(@Nullable final DyeColor color) {
         if (this.color == color) {
             return;

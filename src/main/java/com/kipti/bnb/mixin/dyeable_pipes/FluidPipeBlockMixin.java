@@ -9,37 +9,15 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.DyeItem;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(FluidPipeBlock.class)
 public class FluidPipeBlockMixin {
-
-    @Inject(method = "getStateForPlacement", at = @At("HEAD"))
-    private void bnb$cachePendingDyeOnPlacement(
-            final BlockPlaceContext context,
-            final CallbackInfoReturnable<BlockState> cir
-    ) {
-//        if (context.getLevel().isClientSide()) {
-//            return;
-//        }
-
-        final ItemStack offhand = context.getPlayer() != null ? context.getPlayer().getOffhandItem() : ItemStack.EMPTY;
-        if (offhand.getItem() instanceof final DyeItem dyeItem) {
-            DyedPipeTransitionHelper.savePendingPlacementColor(
-                    context.getLevel(), context.getClickedPos(), dyeItem.getDyeColor()
-            );
-        }
-    }
 
     @WrapOperation(
             method = "updateBlockState",
