@@ -1,5 +1,7 @@
 package com.kipti.bnb.foundation.ponder.scenes;
 
+import com.kipti.bnb.content.trinkets.nixie.foundation.DoubleOrientedDirections;
+import com.kipti.bnb.content.trinkets.nixie.foundation.GenericNixieDisplayBlock;
 import com.kipti.bnb.content.trinkets.nixie.foundation.GenericNixieDisplayBlockEntity;
 import com.kipti.bnb.content.trinkets.nixie.foundation.GenericNixieDisplayBlockEntity.ConfigurableDisplayOptions;
 import com.kipti.bnb.content.trinkets.nixie.nixie_board.NixieBoardBlockNixie;
@@ -13,6 +15,7 @@ import net.createmod.ponder.api.PonderPalette;
 import net.createmod.ponder.api.element.WorldSectionElement;
 import net.createmod.ponder.api.scene.SceneBuilder;
 import net.createmod.ponder.api.scene.SceneBuildingUtil;
+import net.createmod.ponder.foundation.PonderScene;
 import net.createmod.ponder.api.scene.Selection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -58,23 +61,23 @@ public class NixieBoardScenes {
         // Fix front middle block to standalone shape
         scene.addInstruction(ponderScene -> {
             final BlockState state = ponderScene.getWorld().getBlockState(frontMiddle);
-            ponderScene.getWorld().setBlock(frontMiddle,
-                    setShape(state, false, false, false, false), Block.UPDATE_ALL);
+            final BlockState connectedState = getConnectedState(ponderScene, state, frontMiddle);
+            ponderScene.getWorld().setBlock(frontMiddle, connectedState, Block.UPDATE_ALL);
         });
 
         // Fix back bottom row shapes (no TOP connection since top row hasn't appeared)
         scene.addInstruction(ponderScene -> {
             BlockState state = ponderScene.getWorld().getBlockState(backBottomRight);
-            ponderScene.getWorld().setBlock(backBottomRight,
-                    setShape(state, false, true, false, false), Block.UPDATE_ALL);
+            state = getConnectedState(ponderScene, state, backBottomRight);
+            ponderScene.getWorld().setBlock(backBottomRight, state, Block.UPDATE_ALL);
 
             state = ponderScene.getWorld().getBlockState(backBottomMiddle);
-            ponderScene.getWorld().setBlock(backBottomMiddle,
-                    setShape(state, true, true, false, false), Block.UPDATE_ALL);
+            state = getConnectedState(ponderScene, state, backBottomMiddle);
+            ponderScene.getWorld().setBlock(backBottomMiddle, state, Block.UPDATE_ALL);
 
             state = ponderScene.getWorld().getBlockState(backBottomLeft);
-            ponderScene.getWorld().setBlock(backBottomLeft,
-                    setShape(state, true, false, false, false), Block.UPDATE_ALL);
+            state = getConnectedState(ponderScene, state, backBottomLeft);
+            ponderScene.getWorld().setBlock(backBottomLeft, state, Block.UPDATE_ALL);
 
             ponderScene.forEach(WorldSectionElement.class, WorldSectionElement::queueRedraw);
         });
@@ -98,20 +101,21 @@ public class NixieBoardScenes {
         scene.addKeyframe();
         scene.world().showSection(util.select().position(1, 1, 1), Direction.EAST);
         scene.world().showSection(util.select().position(3, 1, 1), Direction.WEST);
+        scene.idle(20);
 
         // Update connection shapes for all front row blocks
         scene.addInstruction(ponderScene -> {
             BlockState state = ponderScene.getWorld().getBlockState(frontRight);
-            ponderScene.getWorld().setBlock(frontRight,
-                    setShape(state, false, true, false, false), Block.UPDATE_ALL);
+            state = getConnectedState(ponderScene, state, frontRight);
+            ponderScene.getWorld().setBlock(frontRight, state, Block.UPDATE_ALL);
 
             state = ponderScene.getWorld().getBlockState(frontMiddle);
-            ponderScene.getWorld().setBlock(frontMiddle,
-                    setShape(state, true, true, false, false), Block.UPDATE_ALL);
+            state = getConnectedState(ponderScene, state, frontMiddle);
+            ponderScene.getWorld().setBlock(frontMiddle, state, Block.UPDATE_ALL);
 
             state = ponderScene.getWorld().getBlockState(frontLeft);
-            ponderScene.getWorld().setBlock(frontLeft,
-                    setShape(state, true, false, false, false), Block.UPDATE_ALL);
+            state = getConnectedState(ponderScene, state, frontLeft);
+            ponderScene.getWorld().setBlock(frontLeft, state, Block.UPDATE_ALL);
 
             ponderScene.forEach(WorldSectionElement.class, WorldSectionElement::queueRedraw);
         });
@@ -127,36 +131,37 @@ public class NixieBoardScenes {
         // === Stage 3: Show back sections ===
         scene.addKeyframe();
         scene.world().showSection(backBottomRow, Direction.DOWN);
-        scene.idle(10);
+        scene.idle(20);
         scene.world().showSection(backTopRow, Direction.DOWN);
+        scene.idle(20);
 
-        // Update back bottom row to add TOP connections, set back top row shapes
+        // Update back bottom row and top row shapes
         scene.addInstruction(ponderScene -> {
-            // Back bottom: add TOP=true
+            // Back bottom: update to include TOP connections
             BlockState state = ponderScene.getWorld().getBlockState(backBottomRight);
-            ponderScene.getWorld().setBlock(backBottomRight,
-                    setShape(state, false, true, true, false), Block.UPDATE_ALL);
+            state = getConnectedState(ponderScene, state, backBottomRight);
+            ponderScene.getWorld().setBlock(backBottomRight, state, Block.UPDATE_ALL);
 
             state = ponderScene.getWorld().getBlockState(backBottomMiddle);
-            ponderScene.getWorld().setBlock(backBottomMiddle,
-                    setShape(state, true, true, true, false), Block.UPDATE_ALL);
+            state = getConnectedState(ponderScene, state, backBottomMiddle);
+            ponderScene.getWorld().setBlock(backBottomMiddle, state, Block.UPDATE_ALL);
 
             state = ponderScene.getWorld().getBlockState(backBottomLeft);
-            ponderScene.getWorld().setBlock(backBottomLeft,
-                    setShape(state, true, false, true, false), Block.UPDATE_ALL);
+            state = getConnectedState(ponderScene, state, backBottomLeft);
+            ponderScene.getWorld().setBlock(backBottomLeft, state, Block.UPDATE_ALL);
 
-            // Back top: BOTTOM=true
+            // Back top: update to include BOTTOM connections
             state = ponderScene.getWorld().getBlockState(backTopRight);
-            ponderScene.getWorld().setBlock(backTopRight,
-                    setShape(state, false, true, false, true), Block.UPDATE_ALL);
+            state = getConnectedState(ponderScene, state, backTopRight);
+            ponderScene.getWorld().setBlock(backTopRight, state, Block.UPDATE_ALL);
 
             state = ponderScene.getWorld().getBlockState(backTopMiddle);
-            ponderScene.getWorld().setBlock(backTopMiddle,
-                    setShape(state, true, true, false, true), Block.UPDATE_ALL);
+            state = getConnectedState(ponderScene, state, backTopMiddle);
+            ponderScene.getWorld().setBlock(backTopMiddle, state, Block.UPDATE_ALL);
 
             state = ponderScene.getWorld().getBlockState(backTopLeft);
-            ponderScene.getWorld().setBlock(backTopLeft,
-                    setShape(state, true, false, false, true), Block.UPDATE_ALL);
+            state = getConnectedState(ponderScene, state, backTopLeft);
+            ponderScene.getWorld().setBlock(backTopLeft, state, Block.UPDATE_ALL);
 
             ponderScene.forEach(WorldSectionElement.class, WorldSectionElement::queueRedraw);
         });
@@ -174,7 +179,7 @@ public class NixieBoardScenes {
                 .text("Clipboards, Display Links, or Name Tags can be used to change the displayed text")
                 .placeNearTarget()
                 .pointAt(util.vector().centerOf(2, 1, 1));
-        scene.idle(20);
+        scene.idle(25);
 
         // Front row
         scene.overlay().showControls(util.vector().centerOf(2, 1, 1), Pointing.LEFT, 50)
@@ -274,7 +279,7 @@ public class NixieBoardScenes {
                 .text("Dye can be used to change the color of all connected boards at once")
                 .placeNearTarget()
                 .pointAt(util.vector().centerOf(2, 1, 1));
-        scene.idle(20);
+        scene.idle(25);
 
         // Blue dye on front row
         scene.overlay().showControls(util.vector().centerOf(2, 1, 1), Pointing.LEFT, 50)
@@ -321,6 +326,38 @@ public class NixieBoardScenes {
             }
             ponderScene.forEach(WorldSectionElement.class, WorldSectionElement::queueRedraw);
         });
+    }
+
+    /**
+     * Calculates and updates block state connection properties based on neighboring blocks.
+     * This mimics the logic in NixieBoardBlockNixie.getConnectedState.
+     * Should be called from within a ponderScene lambda context.
+     * 
+     * @param ponderScene The scene context providing access to the world
+     * @param state The block state to update
+     * @param pos The block position to check connections from
+     * @return Updated block state with correct LEFT, RIGHT, TOP, BOTTOM connection flags
+     */
+    private static BlockState getConnectedState(final PonderScene ponderScene, final BlockState state, final BlockPos pos) {
+        final Direction left = DoubleOrientedDirections.getLeft(state);
+        final Direction right = left.getOpposite();
+        final Direction bottom = state.getValue(GenericNixieDisplayBlock.FACING).getOpposite();
+        final Direction top = state.getValue(GenericNixieDisplayBlock.FACING);
+
+        final boolean leftConnection = GenericNixieDisplayBlockEntity.areStatesComprableForConnection(
+                state, ponderScene.getWorld().getBlockState(pos.relative(left)));
+        final boolean rightConnection = GenericNixieDisplayBlockEntity.areStatesComprableForConnection(
+                state, ponderScene.getWorld().getBlockState(pos.relative(right)));
+        final boolean bottomConnection = GenericNixieDisplayBlockEntity.areStatesComprableForConnection(
+                state, ponderScene.getWorld().getBlockState(pos.relative(bottom)));
+        final boolean topConnection = GenericNixieDisplayBlockEntity.areStatesComprableForConnection(
+                state, ponderScene.getWorld().getBlockState(pos.relative(top)));
+
+        return state
+                .setValue(NixieBoardBlockNixie.LEFT, leftConnection)
+                .setValue(NixieBoardBlockNixie.RIGHT, rightConnection)
+                .setValue(NixieBoardBlockNixie.TOP, topConnection)
+                .setValue(NixieBoardBlockNixie.BOTTOM, bottomConnection);
     }
 
     private static void setNixieRowText(final CreateSceneBuilder scene, final String text,
@@ -379,14 +416,6 @@ public class NixieBoardScenes {
             }
             ponderScene.forEach(WorldSectionElement.class, WorldSectionElement::queueRedraw);
         });
-    }
-
-    private static BlockState setShape(final BlockState state, final boolean left, final boolean right,
-                                       final boolean top, final boolean bottom) {
-        return state.setValue(NixieBoardBlockNixie.LEFT, left)
-                .setValue(NixieBoardBlockNixie.RIGHT, right)
-                .setValue(NixieBoardBlockNixie.TOP, top)
-                .setValue(NixieBoardBlockNixie.BOTTOM, bottom);
     }
 
     private static void queueRedraw(final CreateSceneBuilder scene) {

@@ -85,7 +85,7 @@ public class LargeNixieTubeScenes {
         scene.idle(70);
 
         // ── Stage 3: Set text on front row ──────────────────────────────────────
-        scene.overlay().showControls(util.vector().blockSurface(FRONT_MIDDLE, Direction.NORTH), Pointing.UP, 30)
+        scene.overlay().showControls(util.vector().blockSurface(FRONT_MIDDLE, Direction.NORTH), Pointing.LEFT, 30)
                 .withItem(CLIPBOARD_WITH_CONTENT);
         scene.idle(5);
 
@@ -137,13 +137,13 @@ public class LargeNixieTubeScenes {
         scene.overlay().showText(60)
                 .text("Dye can be used to change the color of all connected tubes at once")
                 .placeNearTarget()
-                .pointAt(util.vector().centerOf(VERT_MIDDLE));
+                .pointAt(util.vector().centerOf(FRONT_MIDDLE));
         scene.idle(70);
 
         // Purple dye on front row
         scene.overlay().showOutline(PonderPalette.OUTPUT, "front_row_dye", frontRowSelection, 50);
         scene.idle(5);
-        scene.overlay().showControls(util.vector().blockSurface(FRONT_MIDDLE, Direction.NORTH), Pointing.LEFT, 30)
+        scene.overlay().showControls(util.vector().blockSurface(FRONT_MIDDLE, Direction.NORTH), Pointing.RIGHT, 30)
                 .withItem(Items.PURPLE_DYE.getDefaultInstance());
         scene.idle(5);
         applyDyeToNixieTubes(scene, DyeColor.PURPLE, FRONT_LEFT, FRONT_MIDDLE, FRONT_RIGHT);
