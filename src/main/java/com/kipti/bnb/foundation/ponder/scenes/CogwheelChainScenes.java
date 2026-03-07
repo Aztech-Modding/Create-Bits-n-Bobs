@@ -122,9 +122,6 @@ public class CogwheelChainScenes {
         //Hide the gearshift
         scene.world().setBlock(util.grid().at(1, 0, 4), Blocks.SNOW_BLOCK.defaultBlockState(), false);
 
-        //Start of the ponder
-        scene.addKeyframe();
-
         //Animate in the core 2 cogwheels
         scene.world().showSection(util.select().position(6, 1, 1), Direction.DOWN);
         scene.idle(5);
@@ -133,6 +130,7 @@ public class CogwheelChainScenes {
         scene.world().showSection(util.select().position(3, 2, 3).add(util.select().position(3, 1, 3)), Direction.NORTH);
         scene.idle(5);
 
+        scene.addKeyframe();
         scene.idle(20);
 
         scene.overlay().showText(70)
@@ -141,9 +139,6 @@ public class CogwheelChainScenes {
                 .pointAt(util.vector().of(5, 1.5, 2.5));
 
         scene.idle(80);
-
-        scene.addKeyframe();
-        scene.idle(5);
 
         scene.addInstruction(new ExpandingOutlineInstruction(PonderPalette.BLUE, new Vec3(3.5f, 1.5, 2.5), new Vec3(6.5f, 1.5, 2.5), 80, 20));
         scene.idle(20);
@@ -179,6 +174,7 @@ public class CogwheelChainScenes {
 
         scene.world().showSection(util.select().position(1, 1, 1), Direction.DOWN);
         scene.idle(20);
+        scene.addKeyframe();
 
         //Now go around and animate the chain item usage
 
@@ -187,29 +183,36 @@ public class CogwheelChainScenes {
         scene.overlay().showControls(util.vector().centerOf(6, 1, 1), Pointing.RIGHT, durationPerChain * 8)
                 .withItem(Items.CHAIN.getDefaultInstance());
         scene.idle(durationPerChain);
+
         scene.overlay().showControls(util.vector().centerOf(3, 2, 2), Pointing.UP, durationPerChain * 7)
                 .withItem(Items.CHAIN.getDefaultInstance());
         scene.idle(durationPerChain);
+
         scene.overlay().showControls(util.vector().centerOf(5, 3, 3), Pointing.RIGHT, durationPerChain * 6)
                 .withItem(Items.CHAIN.getDefaultInstance());
         scene.idle(durationPerChain);
-        scene.overlay().showControls(util.vector().centerOf(3, 2, 4), Pointing.LEFT, durationPerChain * 4)
+
+        scene.overlay().showControls(util.vector().centerOf(3, 2, 4), Pointing.LEFT, durationPerChain * 5)
                 .withItem(Items.CHAIN.getDefaultInstance());
         scene.idle(durationPerChain);
-        scene.overlay().showControls(util.vector().centerOf(6, 1, 5), Pointing.DOWN, durationPerChain * 5)
+
+        scene.overlay().showControls(util.vector().centerOf(6, 1, 5), Pointing.DOWN, durationPerChain * 4)
                 .withItem(Items.CHAIN.getDefaultInstance());
         scene.idle(durationPerChain);
+
         scene.overlay().showControls(util.vector().centerOf(1, 1, 6), Pointing.LEFT, durationPerChain * 3)
                 .withItem(Items.CHAIN.getDefaultInstance());
         scene.idle(durationPerChain);
+
         scene.overlay().showControls(util.vector().centerOf(1, 1, 4), Pointing.LEFT, durationPerChain * 2)
                 .withItem(Items.CHAIN.getDefaultInstance());
         scene.idle(durationPerChain);
+
         scene.overlay().showControls(util.vector().centerOf(1, 1, 1), Pointing.UP, durationPerChain)
                 .withItem(Items.CHAIN.getDefaultInstance());
+        scene.idle(durationPerChain + 5);
 
         scene.addKeyframe();
-        scene.idle(durationPerChain);
 
         //Restore the chain controller block so it can animate properly
         scene.world().restoreBlocks(util.select().position(1, 1, 6));

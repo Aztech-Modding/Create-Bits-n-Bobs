@@ -81,12 +81,12 @@ public class NixieBoardScenes {
 
         // Show base plate
         scene.world().showSection(util.select().layer(0), Direction.UP);
-        scene.idle(10);
+        scene.idle(20);
 
         // === Stage 1: Show middle front board ===
         scene.addKeyframe();
         scene.world().showSection(util.select().position(2, 1, 1), Direction.DOWN);
-        scene.idle(15);
+        scene.idle(30);
 
         scene.overlay().showText(80)
                 .text("This is a Nixie Board. It can be used to display text")
@@ -115,7 +115,7 @@ public class NixieBoardScenes {
 
             ponderScene.forEach(WorldSectionElement.class, WorldSectionElement::queueRedraw);
         });
-        scene.idle(15);
+        scene.idle(30);
 
         scene.overlay().showOutline(PonderPalette.OUTPUT, "front_row", frontRow, 80);
         scene.overlay().showText(80)
@@ -127,7 +127,7 @@ public class NixieBoardScenes {
         // === Stage 3: Show back sections ===
         scene.addKeyframe();
         scene.world().showSection(backBottomRow, Direction.DOWN);
-        scene.idle(4);
+        scene.idle(10);
         scene.world().showSection(backTopRow, Direction.DOWN);
 
         // Update back bottom row to add TOP connections, set back top row shapes
@@ -160,7 +160,7 @@ public class NixieBoardScenes {
 
             ponderScene.forEach(WorldSectionElement.class, WorldSectionElement::queueRedraw);
         });
-        scene.idle(15);
+        scene.idle(30);
 
         scene.overlay().showText(80)
                 .text("Boards placed above or below will connect to form larger displays")
@@ -177,26 +177,26 @@ public class NixieBoardScenes {
         scene.idle(20);
 
         // Front row
-        scene.overlay().showControls(util.vector().centerOf(2, 1, 1), Pointing.DOWN, 50)
+        scene.overlay().showControls(util.vector().centerOf(2, 1, 1), Pointing.LEFT, 50)
                 .withItem(AllBlocks.CLIPBOARD.asStack());
         scene.overlay().showOutline(PonderPalette.OUTPUT, "front_text", frontRow, 50);
-        scene.idle(10);
+        scene.idle(20);
         setNixieRowText(scene, "txt", 0, new int[]{0, 1, 2}, frontRight, frontMiddle, frontLeft);
         scene.idle(40);
 
         // Back bottom row
-        scene.overlay().showControls(util.vector().centerOf(2, 1, 3), Pointing.DOWN, 50)
+        scene.overlay().showControls(util.vector().centerOf(2, 1, 3), Pointing.LEFT, 50)
                 .withItem(AllBlocks.CLIPBOARD.asStack());
         scene.overlay().showOutline(PonderPalette.OUTPUT, "back_bottom_text", backBottomRow, 50);
-        scene.idle(10);
+        scene.idle(20);
         setNixieRowText(scene, "txt", 0, new int[]{0, 1, 2}, backBottomRight, backBottomMiddle, backBottomLeft);
         scene.idle(40);
 
         // Back top row
-        scene.overlay().showControls(util.vector().centerOf(2, 2, 3), Pointing.DOWN, 50)
+        scene.overlay().showControls(util.vector().centerOf(2, 2, 3), Pointing.LEFT, 50)
                 .withItem(AllBlocks.CLIPBOARD.asStack());
         scene.overlay().showOutline(PonderPalette.OUTPUT, "back_top_text", backTopRow, 50);
-        scene.idle(10);
+        scene.idle(20);
         setNixieRowText(scene, "txt", 0, new int[]{0, 1, 2}, backTopRight, backTopMiddle, backTopLeft);
         scene.idle(40);
 
@@ -204,14 +204,14 @@ public class NixieBoardScenes {
         scene.addKeyframe();
 
         // DOUBLE_CHAR on back bottom row
-        scene.overlay().showControls(util.vector().centerOf(2, 1, 3), Pointing.DOWN, 50)
+        scene.overlay().showControls(util.vector().centerOf(2, 1, 3), Pointing.LEFT, 50)
                 .withItem(AllItems.WRENCH.asStack());
         scene.overlay().showOutline(PonderPalette.OUTPUT, "back_bottom_wrench", backBottomRow, 50);
-        scene.idle(10);
+        scene.idle(20);
         setDisplayOptionForRow(scene, ConfigurableDisplayOptions.DOUBLE_CHAR,
                 new int[]{0, 2, 4}, backBottomRight, backBottomMiddle, backBottomLeft);
         setNixieRowText(scene, "txt", 0, new int[]{0, 2, 4}, backBottomRight, backBottomMiddle, backBottomLeft);
-        scene.idle(25);
+        scene.idle(40);
 
         scene.overlay().showText(60)
                 .text("A Wrench can be used to cycle the display mode")
@@ -220,24 +220,24 @@ public class NixieBoardScenes {
         scene.idle(60);
 
         // DOUBLE_CHAR on back top row
-        scene.overlay().showControls(util.vector().centerOf(2, 2, 3), Pointing.DOWN, 50)
+        scene.overlay().showControls(util.vector().centerOf(2, 2, 3), Pointing.LEFT, 50)
                 .withItem(AllItems.WRENCH.asStack());
         scene.overlay().showOutline(PonderPalette.OUTPUT, "back_top_wrench1", backTopRow, 50);
-        scene.idle(10);
+        scene.idle(20);
         setDisplayOptionForRow(scene, ConfigurableDisplayOptions.DOUBLE_CHAR,
                 new int[]{0, 2, 4}, backTopRight, backTopMiddle, backTopLeft);
         setNixieRowText(scene, "txt", 0, new int[]{0, 2, 4}, backTopRight, backTopMiddle, backTopLeft);
-        scene.idle(15);
+        scene.idle(30);
 
         // DOUBLE_CHAR_DOUBLE_LINES on back top row
-        scene.overlay().showControls(util.vector().centerOf(2, 2, 3), Pointing.DOWN, 50)
+        scene.overlay().showControls(util.vector().centerOf(2, 2, 3), Pointing.LEFT, 50)
                 .withItem(AllItems.WRENCH.asStack());
         scene.overlay().showOutline(PonderPalette.OUTPUT, "back_top_wrench2", backTopRow, 50);
-        scene.idle(10);
+        scene.idle(20);
         setDisplayOptionForRow(scene, ConfigurableDisplayOptions.DOUBLE_CHAR_DOUBLE_LINES,
                 new int[]{0, 2, 5}, backTopRight, backTopMiddle, backTopLeft);
         setNixieRowText(scene, "txt", 0, new int[]{0, 2, 5}, backTopRight, backTopMiddle, backTopLeft);
-        scene.idle(20);
+        scene.idle(30);
 
         scene.overlay().showText(70)
                 .text("Different display modes support more characters and multiple lines")
@@ -249,19 +249,19 @@ public class NixieBoardScenes {
         scene.addKeyframe();
 
         // Back bottom: fill "txttxt" in DOUBLE_CHAR mode
-        scene.overlay().showControls(util.vector().centerOf(2, 1, 3), Pointing.DOWN, 50)
+        scene.overlay().showControls(util.vector().centerOf(2, 1, 3), Pointing.LEFT, 50)
                 .withItem(AllBlocks.CLIPBOARD.asStack());
         scene.overlay().showOutline(PonderPalette.OUTPUT, "back_bottom_fill", backBottomRow, 50);
-        scene.idle(10);
+        scene.idle(20);
         setNixieRowText(scene, "txttxt", 0, new int[]{0, 2, 4},
                 backBottomRight, backBottomMiddle, backBottomLeft);
         scene.idle(40);
 
         // Back top: fill "txt.txt" in DOUBLE_CHAR_DOUBLE_LINES on both lines
-        scene.overlay().showControls(util.vector().centerOf(2, 2, 3), Pointing.DOWN, 50)
+        scene.overlay().showControls(util.vector().centerOf(2, 2, 3), Pointing.LEFT, 50)
                 .withItem(AllBlocks.CLIPBOARD.asStack());
         scene.overlay().showOutline(PonderPalette.OUTPUT, "back_top_fill", backTopRow, 50);
-        scene.idle(10);
+        scene.idle(20);
         setNixieRowText(scene, "txt.txt", 0, new int[]{0, 2, 5},
                 backTopRight, backTopMiddle, backTopLeft);
         setNixieRowText(scene, "txt.txt", 1, new int[]{0, 2, 5},
@@ -274,30 +274,30 @@ public class NixieBoardScenes {
                 .text("Dye can be used to change the color of all connected boards at once")
                 .placeNearTarget()
                 .pointAt(util.vector().centerOf(2, 1, 1));
-        scene.idle(10);
+        scene.idle(20);
 
         // Blue dye on front row
-        scene.overlay().showControls(util.vector().centerOf(2, 1, 1), Pointing.DOWN, 50)
+        scene.overlay().showControls(util.vector().centerOf(2, 1, 1), Pointing.LEFT, 50)
                 .withItem(Items.BLUE_DYE.getDefaultInstance());
         scene.overlay().showOutline(PonderPalette.BLUE, "front_dye", frontRow, 50);
-        scene.idle(10);
+        scene.idle(20);
         applyDyeToNixieBoards(scene, DyeColor.BLUE, frontRight, frontMiddle, frontLeft);
-        scene.idle(25);
+        scene.idle(40);
 
         // Purple dye on back bottom row
-        scene.overlay().showControls(util.vector().centerOf(2, 1, 3), Pointing.DOWN, 50)
+        scene.overlay().showControls(util.vector().centerOf(2, 1, 3), Pointing.LEFT, 50)
                 .withItem(Items.PURPLE_DYE.getDefaultInstance());
         scene.overlay().showOutline(PonderPalette.BLUE, "back_bottom_dye", backBottomRow, 50);
-        scene.idle(10);
+        scene.idle(20);
         applyDyeToNixieBoards(scene, DyeColor.PURPLE,
                 backBottomRight, backBottomMiddle, backBottomLeft);
-        scene.idle(25);
+        scene.idle(40);
 
         // Pink dye on back top row
-        scene.overlay().showControls(util.vector().centerOf(2, 2, 3), Pointing.DOWN, 50)
+        scene.overlay().showControls(util.vector().centerOf(2, 2, 3), Pointing.LEFT, 50)
                 .withItem(Items.PINK_DYE.getDefaultInstance());
         scene.overlay().showOutline(PonderPalette.BLUE, "back_top_dye", backTopRow, 50);
-        scene.idle(10);
+        scene.idle(20);
         applyDyeToNixieBoards(scene, DyeColor.PINK, backTopRight, backTopMiddle, backTopLeft);
         scene.idle(40);
 

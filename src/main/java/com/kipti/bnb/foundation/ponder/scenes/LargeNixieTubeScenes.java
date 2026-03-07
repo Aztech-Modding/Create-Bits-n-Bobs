@@ -4,7 +4,9 @@ import com.kipti.bnb.content.trinkets.nixie.foundation.GenericNixieDisplayBlockE
 import com.kipti.bnb.content.trinkets.nixie.foundation.GenericNixieDisplayBlockEntity.ConfigurableDisplayOptions;
 import com.kipti.bnb.registry.content.blocks.BnbTrinketBlocks;
 import com.simibubi.create.AllBlocks;
+import com.simibubi.create.AllDataComponents;
 import com.simibubi.create.AllItems;
+import com.simibubi.create.content.equipment.clipboard.ClipboardOverrides;
 import com.simibubi.create.foundation.ponder.CreateSceneBuilder;
 import com.simibubi.create.foundation.utility.BlockHelper;
 import net.createmod.catnip.math.Pointing;
@@ -18,12 +20,22 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 
 public class LargeNixieTubeScenes {
+
+    public static final ItemStack CLIPBOARD_WITH_CONTENT = getClipboardWithContent();
+
+    private static @NotNull ItemStack getClipboardWithContent() {
+        final ItemStack stack = AllBlocks.CLIPBOARD.asStack();
+        stack.set(AllDataComponents.CLIPBOARD_TYPE, ClipboardOverrides.ClipboardType.WRITTEN);
+        return stack;
+    }
 
     // Front row (facing UP, orientation NORTH): walk order controller→end
     private static final BlockPos FRONT_LEFT = new BlockPos(3, 1, 1);
@@ -45,60 +57,59 @@ public class LargeNixieTubeScenes {
 
         // Show base plate
         scene.world().showSection(util.select().layer(0), Direction.UP);
-        scene.idle(5);
+        scene.idle(20);
 
         // ── Stage 1: Show middle front tube ─────────────────────────────────────
         scene.addKeyframe();
         scene.world().showSection(util.select().position(FRONT_MIDDLE), Direction.DOWN);
-        scene.idle(15);
+        scene.idle(30);
         scene.overlay().showText(60)
-                .text("This is a Large Nixie Tube. It can be used to display text")
+                .text("This is a Large Nixie Tube, it can be used to display custom text and symbols")
                 .placeNearTarget()
                 .pointAt(util.vector().centerOf(FRONT_MIDDLE));
         scene.idle(70);
 
         // ── Stage 2: Extend front row ───────────────────────────────────────────
-        scene.addKeyframe();
         scene.world().showSection(util.select().position(FRONT_RIGHT), Direction.EAST);
         scene.world().showSection(util.select().position(FRONT_LEFT), Direction.WEST);
-        scene.idle(15);
+        scene.idle(30);
 
+        scene.addKeyframe();
         final Selection frontRowSelection = util.select().fromTo(1, 1, 1, 3, 1, 1);
-        scene.overlay().showOutline(PonderPalette.OUTPUT, "front_row", frontRowSelection, 60);
+        scene.overlay().showOutline(PonderPalette.OUTPUT, "front_row", frontRowSelection, 120);
+        scene.idle(5);
         scene.overlay().showText(60)
-                .text("Large Nixie Tubes can be combined with other Large Nixie Tubes")
+                .text("Large Nixie Tubes can be combined when in compatible rows")
                 .placeNearTarget()
                 .pointAt(util.vector().centerOf(FRONT_MIDDLE));
         scene.idle(70);
 
         // ── Stage 3: Set text on front row ──────────────────────────────────────
-        scene.addKeyframe();
-        scene.overlay().showControls(util.vector().centerOf(FRONT_MIDDLE), Pointing.DOWN, 50)
-                .withItem(AllBlocks.CLIPBOARD.asStack());
-        scene.overlay().showOutline(PonderPalette.OUTPUT, "front_row_text", frontRowSelection, 50);
-        scene.idle(10);
+        scene.overlay().showControls(util.vector().blockSurface(FRONT_MIDDLE, Direction.NORTH), Pointing.UP, 30)
+                .withItem(CLIPBOARD_WITH_CONTENT);
+        scene.idle(5);
 
         setNixieRowText(scene, "txt", 0, new int[]{0, 1, 2}, FRONT_LEFT, FRONT_MIDDLE, FRONT_RIGHT);
         scene.idle(40);
 
         // ── Stage 4: Show supporting beam and vertical tubes ────────────────────
-        scene.addKeyframe();
-        scene.world().showSection(util.select().fromTo(4, 1, 3, 4, 4, 3), Direction.SOUTH);
-        scene.idle(10);
+        scene.world().showSection(util.select().fromTo(4, 1, 3, 4, 4, 3), Direction.WEST);
+        scene.idle(20);
 
-        scene.world().showSection(util.select().position(VERT_BOTTOM), Direction.NORTH);
-        scene.idle(3);
-        scene.world().showSection(util.select().position(VERT_MIDDLE), Direction.NORTH);
-        scene.idle(3);
-        scene.world().showSection(util.select().position(VERT_TOP), Direction.NORTH);
-        scene.idle(15);
+        scene.world().showSection(util.select().position(VERT_BOTTOM), Direction.EAST);
+        scene.idle(5);
+        scene.world().showSection(util.select().position(VERT_MIDDLE), Direction.EAST);
+        scene.idle(5);
+        scene.world().showSection(util.select().position(VERT_TOP), Direction.EAST);
+        scene.idle(30);
 
         // ── Stage 5: Set text on vertical column ────────────────────────────────
         final Selection vertColumnSelection = util.select().fromTo(3, 2, 3, 3, 4, 3);
-        scene.overlay().showControls(util.vector().centerOf(VERT_MIDDLE), Pointing.DOWN, 50)
-                .withItem(AllBlocks.CLIPBOARD.asStack());
         scene.overlay().showOutline(PonderPalette.OUTPUT, "vert_col_text", vertColumnSelection, 50);
-        scene.idle(10);
+        scene.idle(5);
+        scene.overlay().showControls(util.vector().blockSurface(VERT_MIDDLE, Direction.WEST), Pointing.LEFT, 30)
+                .withItem(CLIPBOARD_WITH_CONTENT);
+        scene.idle(5);
 
         setNixieRowText(scene, "txt", 0, new int[]{0, 1, 2}, VERT_TOP, VERT_MIDDLE, VERT_BOTTOM);
         scene.idle(40);
@@ -109,12 +120,13 @@ public class LargeNixieTubeScenes {
                 .text("A Wrench can be used to change the display mode of the Nixie Tube")
                 .placeNearTarget()
                 .pointAt(util.vector().centerOf(VERT_MIDDLE));
-        scene.idle(10);
+        scene.idle(70);
 
-        scene.overlay().showControls(util.vector().centerOf(VERT_MIDDLE), Pointing.DOWN, 50)
-                .withItem(AllItems.WRENCH.asStack());
         scene.overlay().showOutline(PonderPalette.OUTPUT, "vert_col_wrench", vertColumnSelection, 50);
-        scene.idle(10);
+        scene.idle(5);
+        scene.overlay().showControls(util.vector().blockSurface(VERT_MIDDLE, Direction.WEST), Pointing.LEFT, 30)
+                .withItem(AllItems.WRENCH.asStack());
+        scene.idle(5);
 
         setDisplayOptionForRow(scene, ConfigurableDisplayOptions.ALWAYS_UP, new int[]{0, 1, 2}, VERT_TOP, VERT_MIDDLE, VERT_BOTTOM);
         setNixieRowText(scene, "txt", 0, new int[]{0, 1, 2}, VERT_TOP, VERT_MIDDLE, VERT_BOTTOM);
@@ -125,22 +137,24 @@ public class LargeNixieTubeScenes {
         scene.overlay().showText(60)
                 .text("Dye can be used to change the color of all connected tubes at once")
                 .placeNearTarget()
-                .pointAt(util.vector().centerOf(FRONT_MIDDLE));
-        scene.idle(10);
+                .pointAt(util.vector().centerOf(VERT_MIDDLE));
+        scene.idle(70);
 
         // Purple dye on front row
-        scene.overlay().showControls(util.vector().centerOf(FRONT_MIDDLE), Pointing.DOWN, 35)
+        scene.overlay().showOutline(PonderPalette.OUTPUT, "front_row_dye", frontRowSelection, 50);
+        scene.idle(5);
+        scene.overlay().showControls(util.vector().blockSurface(FRONT_MIDDLE, Direction.NORTH), Pointing.LEFT, 30)
                 .withItem(Items.PURPLE_DYE.getDefaultInstance());
-        scene.overlay().showOutline(PonderPalette.OUTPUT, "front_row_dye", frontRowSelection, 35);
-        scene.idle(10);
+        scene.idle(5);
         applyDyeToNixieTubes(scene, DyeColor.PURPLE, FRONT_LEFT, FRONT_MIDDLE, FRONT_RIGHT);
-        scene.idle(25);
+        scene.idle(40);
 
         // Blue dye on vertical column
-        scene.overlay().showControls(util.vector().centerOf(VERT_MIDDLE), Pointing.DOWN, 50)
-                .withItem(Items.BLUE_DYE.getDefaultInstance());
         scene.overlay().showOutline(PonderPalette.OUTPUT, "vert_col_dye", vertColumnSelection, 50);
-        scene.idle(10);
+        scene.idle(5);
+        scene.overlay().showControls(util.vector().blockSurface(VERT_MIDDLE, Direction.WEST), Pointing.LEFT, 30)
+                .withItem(Items.BLUE_DYE.getDefaultInstance());
+        scene.idle(5);
         applyDyeToNixieTubes(scene, DyeColor.BLUE, VERT_TOP, VERT_MIDDLE, VERT_BOTTOM);
         scene.idle(40);
 
