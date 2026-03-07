@@ -25,7 +25,7 @@ public class BnbCogwheelChainTypes {
                     .renderType(CogwheelChainType.ChainRenderInfo.BELT)
                     .renderTexture(CreateBitsnBobs.asResource("textures/block/chain_belt.png"))
                     .breakEffectsBlock(() -> Blocks.CHAIN)
-                    .setCogwheelPredicate((block) -> BnbKineticBlocks.LARGE_EMPTY_FLANGED_COGWHEEL.get() == block || BnbKineticBlocks.SMALL_EMPTY_FLANGED_COGWHEEL.get() == block) //TODO: tag
+                    .setCogwheelPredicate((block) -> BnbKineticBlocks.LARGE_FLANGED_COGWHEEL.get() == block || BnbKineticBlocks.SMALL_FLANGED_COGWHEEL.get() == block) //TODO: tag
                     .permitsAxisChange(false)
                     .build());
 
@@ -35,7 +35,7 @@ public class BnbCogwheelChainTypes {
                     .renderType(CogwheelChainType.ChainRenderInfo.ROPE)
                     .renderTexture(CreateBitsnBobs.asResource("textures/block/chain_rope.png"))
                     .breakEffectsBlock(() -> Blocks.CHAIN)
-                    .setCogwheelPredicate((block) -> BnbKineticBlocks.LARGE_EMPTY_FLANGED_COGWHEEL.get() == block || BnbKineticBlocks.SMALL_EMPTY_FLANGED_COGWHEEL.get() == block) //TODO: tag
+                    .setCogwheelPredicate((block) -> BnbKineticBlocks.LARGE_FLANGED_COGWHEEL.get() == block || BnbKineticBlocks.SMALL_FLANGED_COGWHEEL.get() == block) //TODO: tag
                     .build());
 
 

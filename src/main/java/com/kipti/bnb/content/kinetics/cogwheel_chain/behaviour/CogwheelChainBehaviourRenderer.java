@@ -136,7 +136,7 @@ public class CogwheelChainBehaviourRenderer extends BlockEntityBehaviourRenderer
                     .setNormal(pose, 0.0F, 1.0F, 0.0F);
         };
 
-        ChainQuadBuilder.buildSegmentFaces(destinationPoints, sourcePoints, chainRenderInfo, minV, maxV, flipInsideOutside, emitter);
+        ChainQuadBuilder.buildSegmentFaces(destinationPoints, sourcePoints, chainRenderInfo, minV, maxV, flipInsideOutside, emitter, true);
 
         ms.popPose();
     }

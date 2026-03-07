@@ -52,7 +52,7 @@ public class DyeablePipeBehaviour extends SuperBlockEntityBehaviour {
             return;
         }
         this.color = color;
-        redraw();
+        refreshRenderedModel();
     }
 
     public void setColor(@Nullable final DyeColor color) {
@@ -62,7 +62,11 @@ public class DyeablePipeBehaviour extends SuperBlockEntityBehaviour {
 
         this.color = color;
         refreshPipeState();
-        blockEntity.notifyUpdate();
+        if (hasLevel() && getLevel().isClientSide) {
+            refreshRenderedModel();
+        } else {
+            blockEntity.notifyUpdate();
+        }
     }
 
     @Override
@@ -118,11 +122,11 @@ public class DyeablePipeBehaviour extends SuperBlockEntityBehaviour {
         }
 
         if (clientPacket && previousColor != color) {
-            redraw();
+            refreshRenderedModel();
         }
     }
 
-    private void redraw() {
+    public void refreshRenderedModel() {
         blockEntity.requestModelDataUpdate();
         if (hasLevel()) {
             final Level level = getLevel();
@@ -132,14 +136,23 @@ public class DyeablePipeBehaviour extends SuperBlockEntityBehaviour {
     }
 
     private void refreshPipeState() {
-        if (!hasLevel() || !isServerLevel()) {
+        if (!hasLevel()) {
             return;
         }
 
-        final Level level = getLevel();
-        final BlockPos pos = getPos();
-        BlockState state = getBlockState();
+        refreshPipeState(getLevel(), getPos(), getBlockState());
+    }
 
+    public static void refreshPipeState(final Level level, final BlockPos pos, final BlockState state) {
+        refreshPipeState(level, pos, state, true);
+    }
+
+    /**
+     * Recalculates a pipe's connection shape based on its current dye color and neighbours.
+     * When {@code propagateToNeighbors} is false the refresh is limited to this block only,
+     * which avoids cascading neighbour updates (useful in ponder scenes).
+     */
+    public static void refreshPipeState(final Level level, final BlockPos pos, BlockState state, final boolean propagateToNeighbors) {
         if (state.getBlock() instanceof final FluidPipeBlock pipeBlock) {
             // Start from defaultBlockState (prevStateSides=0) instead of copying the current
             // connections. If we copied them, Create's fallback at:
@@ -162,13 +175,17 @@ public class DyeablePipeBehaviour extends SuperBlockEntityBehaviour {
                     pos
             );
             if (refreshedState != state) {
-                level.setBlock(pos, refreshedState, 3);
+                level.setBlock(pos, refreshedState, propagateToNeighbors ? 3 : 2);
                 state = refreshedState;
             }
         }
 
-        state.updateNeighbourShapes(level, pos, 3);
-        FluidPropagator.propagateChangedPipe(level, pos, state);
+        if (propagateToNeighbors) {
+            state.updateNeighbourShapes(level, pos, 3);
+            if (!level.isClientSide) {
+                FluidPropagator.propagateChangedPipe(level, pos, state);
+            }
+        }
     }
 
     private static Direction getPreferredDirection(final BlockState state) {

@@ -33,13 +33,14 @@ public final class ChainQuadBuilder {
      * Build and emit all 4 faces for a single chain segment, handling both CROSS and SQUARE vertex shapes,
      * UV mapping, and subdivision to avoid affine texture warping.
      *
-     * @param destinationPoints 4 corner points at the destination end of the segment (already reordered)
-     * @param sourcePoints      4 corner points at the source end of the segment
-     * @param chainRenderInfo   render shape/dimension info for the chain type
-     * @param minV              V texture coordinate at the source end
-     * @param maxV              V texture coordinate at the destination end
-     * @param flipInsideOutside whether to flip UV face indices for consistent inside/outside
-     * @param emitter           callback to emit each vertex
+     * @param destinationPoints         4 corner points at the destination end of the segment (already reordered)
+     * @param sourcePoints              4 corner points at the source end of the segment
+     * @param chainRenderInfo           render shape/dimension info for the chain type
+     * @param minV                      V texture coordinate at the source end
+     * @param maxV                      V texture coordinate at the destination end
+     * @param flipInsideOutside         whether to flip UV face indices for consistent inside/outside
+     * @param emitter                   callback to emit each vertex
+     * @param renderBackFacesExplicitly
      */
     public static void buildSegmentFaces(final List<Vec3> destinationPoints,
                                          final List<Vec3> sourcePoints,
@@ -47,14 +48,15 @@ public final class ChainQuadBuilder {
                                          final float minV,
                                          final float maxV,
                                          final boolean flipInsideOutside,
-                                         final VertexEmitter emitter) {
+                                         final VertexEmitter emitter,
+                                         final boolean renderBackFacesExplicitly) {
         // CROSS shapes only need 2 faces (one per cross plane). Faces 0&2 and 1&3 are the
         // same plane with reversed winding; emitting all 4 with backface culling off causes
         // each pixel to be rendered 4x, producing severe self-z-fighting.
         final int faceCount = chainRenderInfo.getVertexShape() == CogwheelChainType.VertexShape.CROSS ? 2 : 4;
         for (int faceIndex = 0; faceIndex < faceCount; faceIndex++) {
             if (chainRenderInfo.getVertexShape() == CogwheelChainType.VertexShape.CROSS) {
-                buildCrossShapeFace(destinationPoints, sourcePoints, faceIndex, minV, maxV, flipInsideOutside, emitter);
+                buildCrossShapeFace(destinationPoints, sourcePoints, faceIndex, minV, maxV, emitter, renderBackFacesExplicitly);
             } else {
                 buildDefaultShapeFace(destinationPoints, sourcePoints, chainRenderInfo, faceIndex, minV, maxV, flipInsideOutside, emitter);
             }
@@ -66,7 +68,8 @@ public final class ChainQuadBuilder {
                                             final int faceIndex,
                                             final float minV,
                                             final float maxV,
-                                            final boolean flipInsideOutside, final VertexEmitter emitter) {
+                                            final VertexEmitter emitter,
+                                            final boolean renderBackFacesExplicitly) {
         final float uOffset = (faceIndex % 2 == 1) ? 0 : 3 / 16f;
         final float uWidth = 3 / 16f;
 
@@ -79,7 +82,7 @@ public final class ChainQuadBuilder {
         final Vec3 posBR = sourcePoints.get(faceIndex);
         final Vec3 posTR = destinationPoints.get(faceIndex);
 
-        buildSubdividedQuad(posTL, posBL, posBR, posTR, uLeft, uRight, minV, maxV, flipInsideOutside, emitter);
+        buildSubdividedQuad(posTL, posBL, posBR, posTR, uLeft, uRight, minV, maxV, renderBackFacesExplicitly, emitter);
     }
 
     private static void buildDefaultShapeFace(final List<Vec3> destinationPoints,
@@ -132,7 +135,7 @@ public final class ChainQuadBuilder {
                                             final float uRight,
                                             final float minV,
                                             final float maxV,
-                                            final boolean flipInsideOutside, final VertexEmitter emitter) {
+                                            final boolean renderExplicitBackface, final VertexEmitter emitter) {
         for (int s = 0; s < SUBDIVISION_COUNT; s++) {
             final float t1 = (float) s / SUBDIVISION_COUNT;
             final float t2 = (float) (s + 1) / SUBDIVISION_COUNT;
@@ -164,7 +167,7 @@ public final class ChainQuadBuilder {
             emitter.emit((float) p3.x, (float) p3.y, (float) p3.z, uRight, vEnd, nx, ny, nz);
             emitter.emit((float) p4.x, (float) p4.y, (float) p4.z, uRight, vStart, nx, ny, nz);
 
-            if (flipInsideOutside) {
+            if (renderExplicitBackface) {
                 // Emit the same vertices in reverse order for the back face
                 emitter.emit((float) p4.x, (float) p4.y, (float) p4.z, uRight, vStart, -nx, -ny, -nz);
                 emitter.emit((float) p3.x, (float) p3.y, (float) p3.z, uRight, vEnd, -nx, -ny, -nz);

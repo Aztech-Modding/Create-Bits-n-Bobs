@@ -30,8 +30,8 @@ public class MigratingSimpleKineticBlockEntity extends SimpleKineticBlockEntity 
             final BlockState state = getBlockState();
             final boolean isCreateCogwheel = AllBlocks.COGWHEEL.has(state) ||
                     AllBlocks.LARGE_COGWHEEL.has(state);
-            final boolean isBnbCogwheel = BnbKineticBlocks.SMALL_EMPTY_FLANGED_COGWHEEL.has(state) ||
-                    BnbKineticBlocks.LARGE_EMPTY_FLANGED_COGWHEEL.has(state);
+            final boolean isBnbCogwheel = BnbKineticBlocks.SMALL_FLANGED_COGWHEEL.has(state) ||
+                    BnbKineticBlocks.LARGE_FLANGED_COGWHEEL.has(state);
 
             if (isCreateCogwheel || isBnbCogwheel) {
                 final CompoundTag tag = saveWithFullMetadata(levelSafe.registryAccess());

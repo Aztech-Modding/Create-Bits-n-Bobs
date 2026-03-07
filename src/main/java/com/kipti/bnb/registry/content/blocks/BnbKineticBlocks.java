@@ -28,7 +28,7 @@ import static com.simibubi.create.foundation.data.TagGen.axeOrPickaxe;
 
 public class BnbKineticBlocks {
 
-    public static final BlockEntry<EmptyFlangedGearBlock> SMALL_EMPTY_FLANGED_COGWHEEL = REGISTRATE.block("small_flanged_cogwheel", EmptyFlangedGearBlock::small)
+    public static final BlockEntry<EmptyFlangedGearBlock> SMALL_FLANGED_COGWHEEL = REGISTRATE.block("small_flanged_cogwheel", EmptyFlangedGearBlock::small)
             .lang("Flanged Cogwheel")
             .initialProperties(SharedProperties::stone)
             .properties(p -> p.sound(SoundType.WOOD)
@@ -43,7 +43,7 @@ public class BnbKineticBlocks {
             .tag(BnbTags.BnbBlockTags.COGWHEEL_CHAIN_NO_SMALL_OFFSET.tag)
             .register();
 
-    public static final BlockEntry<EmptyFlangedGearBlock> LARGE_EMPTY_FLANGED_COGWHEEL = REGISTRATE.block("large_flanged_cogwheel", EmptyFlangedGearBlock::large)
+    public static final BlockEntry<EmptyFlangedGearBlock> LARGE_FLANGED_COGWHEEL = REGISTRATE.block("large_flanged_cogwheel", EmptyFlangedGearBlock::large)
             .initialProperties(SharedProperties::stone)
             .properties(p -> p.sound(SoundType.WOOD)
                     .mapColor(MapColor.DIRT))

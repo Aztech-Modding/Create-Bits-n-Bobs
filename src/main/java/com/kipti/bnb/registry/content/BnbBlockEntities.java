@@ -93,7 +93,7 @@ public class BnbBlockEntities {
             .visual(() -> (context, blockEntity, partialTick) ->
                     new SingleAxisRotatingVisual<>(context, blockEntity, partialTick,
                             Models.partial(GenericBlockEntityRenderModels.REGISTRY.get(blockEntity.getBlockState().getBlock()))), true)
-            .validBlocks(BnbKineticBlocks.SMALL_EMPTY_FLANGED_COGWHEEL, BnbKineticBlocks.LARGE_EMPTY_FLANGED_COGWHEEL)
+            .validBlocks(BnbKineticBlocks.SMALL_FLANGED_COGWHEEL, BnbKineticBlocks.LARGE_FLANGED_COGWHEEL)
             .validBlocks(AllBlocks.COGWHEEL, AllBlocks.LARGE_COGWHEEL)
             .renderer(() -> KineticBlockEntityRenderer::new)
             .register();
@@ -102,7 +102,7 @@ public class BnbBlockEntities {
             .visual(() -> (context, blockEntity, partialTick) ->
                     new SingleAxisRotatingVisual<>(context, blockEntity, partialTick,
                             Models.partial(GenericBlockEntityRenderModels.REGISTRY.get(blockEntity.getBlockState().getBlock()))), true)
-            .validBlocks(BnbKineticBlocks.SMALL_EMPTY_FLANGED_COGWHEEL, BnbKineticBlocks.LARGE_EMPTY_FLANGED_COGWHEEL)
+            .validBlocks(BnbKineticBlocks.SMALL_FLANGED_COGWHEEL, BnbKineticBlocks.LARGE_FLANGED_COGWHEEL)
             .validBlocks(BnbEncasedBlocks.ENCASED_LARGE_FLANGED_COGWHEEL.toArray())
             .validBlocks(BnbEncasedBlocks.ENCASED_FLANGED_COGWHEEL.toArray())
             .renderer(() -> KineticBlockEntityRenderer::new)

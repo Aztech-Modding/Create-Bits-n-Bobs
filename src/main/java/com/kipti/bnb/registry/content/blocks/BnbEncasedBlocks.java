@@ -63,16 +63,16 @@ public class BnbEncasedBlocks {
     public static final EncasedBlockList<BnbEncasedEmptyFlangedGearBlock> ENCASED_FLANGED_COGWHEEL = new EncasedBlockList<>(casing ->
             REGISTRATE.block(casing.asId("encased_flanged_cogwheel"), p -> new BnbEncasedEmptyFlangedGearBlock(p, false, casing.getMaterial()))
                     .properties(p -> p.mapColor(MapColor.PODZOL))
-                    .transform(BnbBuilderTransformers.casingMaterialCogwheelBase(casing, BnbKineticBlocks.SMALL_EMPTY_FLANGED_COGWHEEL::get, false))
-                    .transform(EncasingRegistry.addVariantTo(BnbKineticBlocks.SMALL_EMPTY_FLANGED_COGWHEEL))
+                    .transform(BnbBuilderTransformers.casingMaterialCogwheelBase(casing, BnbKineticBlocks.SMALL_FLANGED_COGWHEEL::get, false))
+                    .transform(EncasingRegistry.addVariantTo(BnbKineticBlocks.SMALL_FLANGED_COGWHEEL))
                     .onRegister(GenericBlockEntityRenderModels.model(BnbPartialModels.ENCASED_FLANGED_COGWHEEL_BLOCK))
                     .tag(BnbTags.BnbBlockTags.COGWHEEL_CHAIN_NO_SMALL_OFFSET.tag)
                     .register());
     public static final EncasedBlockList<BnbEncasedEmptyFlangedGearBlock> ENCASED_LARGE_FLANGED_COGWHEEL = new EncasedBlockList<>(casing ->
             REGISTRATE.block(casing.asId("encased_large_flanged_cogwheel"), p -> new BnbEncasedEmptyFlangedGearBlock(p, true, casing.getMaterial()))
                     .properties(p -> p.mapColor(MapColor.PODZOL))
-                    .transform(BnbBuilderTransformers.casingMaterialCogwheelBase(casing, BnbKineticBlocks.LARGE_EMPTY_FLANGED_COGWHEEL::get, true))
-                    .transform(EncasingRegistry.addVariantTo(BnbKineticBlocks.LARGE_EMPTY_FLANGED_COGWHEEL))
+                    .transform(BnbBuilderTransformers.casingMaterialCogwheelBase(casing, BnbKineticBlocks.LARGE_FLANGED_COGWHEEL::get, true))
+                    .transform(EncasingRegistry.addVariantTo(BnbKineticBlocks.LARGE_FLANGED_COGWHEEL))
                     .onRegister(GenericBlockEntityRenderModels.model(BnbPartialModels.ENCASED_LARGE_FLANGED_COGWHEEL_BLOCK))
                     .tag(BnbTags.BnbBlockTags.COGWHEEL_CHAIN_NO_SMALL_OFFSET.tag)
                     .register());

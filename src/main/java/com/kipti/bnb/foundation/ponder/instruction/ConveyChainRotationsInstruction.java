@@ -80,7 +80,7 @@ public class ConveyChainRotationsInstruction extends PonderInstruction {
             final CogwheelChainBehaviour behaviour = controllerBehaviour.getSameBehaviourOrThrow(childKineticBlockEntity);
             modifyBlockEntityKineticRotation(level, childKineticBlockEntity, initialChainRotationFactor, behaviour.getChainRotationFactor(), rpm);
         }
-        modifyBlockEntityKineticRotation(level, kineticBlockEntity, -1, initialChainRotationFactor, rpm);
+        modifyBlockEntityKineticRotation(level, kineticBlockEntity, 1, 1, rpm);
     }
 
     private void modifyBlockEntityKineticRotation(final Level level, final KineticBlockEntity childCogwheelChainBlockEntity, final float initialFactor, final float factor, final float rpm) {

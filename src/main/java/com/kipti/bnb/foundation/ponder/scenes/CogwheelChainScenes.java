@@ -2,18 +2,18 @@ package com.kipti.bnb.foundation.ponder.scenes;
 
 import com.cake.azimuth.client.outlines.instructions.ExpandingOutlineInstruction;
 import com.kipti.bnb.foundation.ponder.instruction.ConveyChainRotationsInstruction;
-import com.simibubi.create.AllBlocks;
+import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.foundation.ponder.CreateSceneBuilder;
 import net.createmod.catnip.math.Pointing;
 import net.createmod.ponder.api.PonderPalette;
 import net.createmod.ponder.api.scene.SceneBuilder;
 import net.createmod.ponder.api.scene.SceneBuildingUtil;
+import net.createmod.ponder.api.scene.Selection;
+import net.createmod.ponder.foundation.instruction.BlockEntityDataInstruction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.Vec3;
-
-import static com.simibubi.create.content.kinetics.base.RotatedPillarKineticBlock.AXIS;
 
 public class CogwheelChainScenes {
 
@@ -23,27 +23,24 @@ public class CogwheelChainScenes {
         scene.configureBasePlate(0, 0, 7);
         scene.world().showSection(util.select().layer(0), Direction.UP);
 
-        scene.world().setBlock(new BlockPos(1, 1, 1), AllBlocks.COGWHEEL.getDefaultState(), false);
-        scene.world().setBlock(new BlockPos(2, 1, 2), AllBlocks.COGWHEEL.getDefaultState(), false);
-        scene.world().setBlock(new BlockPos(4, 1, 5), AllBlocks.COGWHEEL.getDefaultState(), false);
-        scene.world().setBlock(new BlockPos(4, 1, 2), AllBlocks.LARGE_COGWHEEL.getDefaultState(), false);
-        scene.world().setBlock(new BlockPos(2, 1, 4), AllBlocks.LARGE_COGWHEEL.getDefaultState(), false);
 
-        scene.world().setKineticSpeed(util.select().position(4, 0, 2), 16f);
-        scene.world().setKineticSpeed(util.select().position(4, 1, 2), 16f);
+        scene.world().setKineticSpeed(util.select().position(4, 0, 4), 16f);
+        scene.world().setKineticSpeed(util.select().position(4, 1, 4), 16f);
 
         scene.idle(5);
 
+
+        scene.world().showSection(util.select().position(4, 1, 4), Direction.DOWN);
+        scene.idle(5);
+        scene.world().showSection(util.select().position(5, 1, 1), Direction.DOWN);
+        scene.idle(5);
         scene.world().showSection(util.select().position(4, 1, 2), Direction.DOWN);
+        scene.idle(5);
+        scene.world().showSection(util.select().position(1, 1, 2), Direction.DOWN);
+        scene.idle(5);
+        hideChainFromController(util.select().position(1, 1, 5), scene);
+        scene.world().showSection(util.select().position(1, 1, 5), Direction.DOWN);
 
-        scene.idle(5);
-        scene.world().showSection(util.select().position(1, 1, 1), Direction.DOWN);
-        scene.idle(5);
-        scene.world().showSection(util.select().position(2, 1, 2), Direction.DOWN);
-        scene.idle(5);
-        scene.world().showSection(util.select().position(4, 1, 5), Direction.DOWN);
-        scene.idle(5);
-        scene.world().showSection(util.select().position(2, 1, 4), Direction.DOWN);
         scene.idle(20);
 
         scene.addKeyframe();
@@ -56,31 +53,28 @@ public class CogwheelChainScenes {
                 .pointAt(util.vector().blockSurface(util.grid().at(4, 1, 2), Direction.WEST));
 
         scene.idle(80);
-        scene.overlay().showControls(util.vector().centerOf(4, 1, 2), Pointing.RIGHT, 60)
+        scene.overlay().showControls(util.vector().centerOf(4, 1, 4), Pointing.DOWN, 60)
                 .withItem(Items.CHAIN.getDefaultInstance());
         scene.idle(10);
-        scene.overlay().showControls(util.vector().centerOf(2, 1, 2), Pointing.DOWN, 50)
+        scene.overlay().showControls(util.vector().centerOf(5, 1, 1), Pointing.DOWN, 50)
                 .withItem(Items.CHAIN.getDefaultInstance());
         scene.idle(10);
-        scene.overlay().showControls(util.vector().centerOf(1, 1, 1), Pointing.UP, 40)
+        scene.overlay().showControls(util.vector().centerOf(4, 1, 2), Pointing.UP, 40)
                 .withItem(Items.CHAIN.getDefaultInstance());
         scene.idle(10);
-        scene.overlay().showControls(util.vector().centerOf(2, 1, 4), Pointing.LEFT, 30)
+        scene.overlay().showControls(util.vector().centerOf(1, 1, 2), Pointing.UP, 30)
                 .withItem(Items.CHAIN.getDefaultInstance());
         scene.idle(10);
-        scene.overlay().showControls(util.vector().centerOf(4, 1, 5), Pointing.DOWN, 20)
+        scene.overlay().showControls(util.vector().centerOf(1, 1, 5), Pointing.LEFT, 20)
                 .withItem(Items.CHAIN.getDefaultInstance());
         scene.idle(5);
         scene.addKeyframe();
         scene.idle(20);
 
+        //Restore the chain data
         scene.world().restoreBlocks(util.select().layer(1));
 
-        scene.world().setKineticSpeed(util.select().position(4, 1, 2), 16f);
-        scene.world().setKineticSpeed(util.select().position(2, 1, 2), -32f);
-        scene.world().setKineticSpeed(util.select().position(1, 1, 1), 32f);
-        scene.world().setKineticSpeed(util.select().position(2, 1, 4), 16f);
-        scene.world().setKineticSpeed(util.select().position(4, 1, 5), 32f);
+        scene.addInstruction(new ConveyChainRotationsInstruction(new BlockPos(4, 1, 4), 32f));
         scene.idle(20);
 
         scene.addKeyframe();
@@ -88,10 +82,31 @@ public class CogwheelChainScenes {
         scene.overlay().showText(70)
                 .text("Gear ratios will be preserved across the chain")
                 .placeNearTarget()
-                .pointAt(util.vector().blockSurface(util.grid().at(1, 1, 1), Direction.UP));
+                .pointAt(util.vector().blockSurface(util.grid().at(1, 1, 2), Direction.UP));
+
+        scene.idle(80);
+
+        scene.overlay().showText(70)
+                .text("2x RPM")
+                .placeNearTarget()
+                .colored(PonderPalette.GREEN)
+                .pointAt(util.vector().blockSurface(util.grid().at(4, 1, 2), Direction.UP));
+
+        scene.overlay().showText(70)
+                .text("1x RPM")
+                .placeNearTarget()
+                .colored(PonderPalette.RED)
+                .pointAt(util.vector().blockSurface(util.grid().at(1, 1, 2), Direction.UP));
 
         scene.idle(80);
         scene.markAsFinished();
+    }
+
+    private static void hideChainFromController(final Selection selection, final CreateSceneBuilder scene) {
+        scene.addInstruction(new BlockEntityDataInstruction(selection, KineticBlockEntity.class, (tag) -> {
+            tag.remove("Chain");
+            return tag;
+        }, true));
     }
 
     public static void changingAxisCogwheelChain(final SceneBuilder builder, final SceneBuildingUtil util) {
@@ -100,18 +115,8 @@ public class CogwheelChainScenes {
         scene.configureBasePlate(0, 0, 6);
         scene.world().showSection(util.select().layer(0), Direction.UP);
 
-        //Turn the chain cogwheels into normal ones
-        scene.world().setBlock(new BlockPos(4, 1, 1), AllBlocks.LARGE_COGWHEEL.getDefaultState(), false);
-        scene.world().setBlock(new BlockPos(1, 2, 2), AllBlocks.LARGE_COGWHEEL.getDefaultState().setValue(AXIS, Direction.Axis.Z), false);
+        //Hide the controller
 
-        scene.world().setBlock(new BlockPos(2, 2, 4), AllBlocks.LARGE_COGWHEEL.getDefaultState().setValue(AXIS, Direction.Axis.Z), false);
-
-        scene.world().setBlock(new BlockPos(2, 1, 0), AllBlocks.COGWHEEL.getDefaultState(), false);
-        scene.world().setBlock(new BlockPos(0, 1, 1), AllBlocks.COGWHEEL.getDefaultState(), false);
-        scene.world().setBlock(new BlockPos(0, 1, 5), AllBlocks.COGWHEEL.getDefaultState(), false);
-
-        scene.world().setBlock(new BlockPos(4, 1, 5), AllBlocks.LARGE_COGWHEEL.getDefaultState(), false);
-        scene.world().setBlock(new BlockPos(4, 3, 3), AllBlocks.LARGE_COGWHEEL.getDefaultState(), false);
 
         //Power and place the initial two
         scene.world().setKineticSpeed(util.select().position(4, 1, 1), 16f);

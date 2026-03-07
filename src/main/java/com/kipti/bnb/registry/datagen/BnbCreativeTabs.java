@@ -32,7 +32,7 @@ public class BnbCreativeTabs {
             () -> CreativeModeTab.builder()
                     .title(Component.translatable("tab." + CreateBitsnBobs.MOD_ID + ".base"))
                     .withTabsBefore(AllCreativeModeTabs.PALETTES_CREATIVE_TAB.getId())
-                    .icon(BnbKineticBlocks.SMALL_EMPTY_FLANGED_COGWHEEL::asStack)
+                    .icon(BnbKineticBlocks.SMALL_FLANGED_COGWHEEL::asStack)
                     .displayItems((p, o) -> buildCreativeTabContents(p, o, () -> BnbCreativeTabs.BASE_CREATIVE_TAB)).build());
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> DECO_CREATIVE_TAB = REGISTER.register("bnb_deco",

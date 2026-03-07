@@ -220,7 +220,7 @@ public class CogwheelChainBehaviourVisual extends RenderedBehaviourExtension.Beh
                             final int light = lighter.apply(new Vector3f(x + baseX, y + baseY, z + baseZ));
                             builtVertices.add(new Vertex(x, y, z, u, v, nx, ny, nz, light));
                             bounds.include(x, y, z);
-                        });
+                        }, false);
             }
 
             this.vertices = builtVertices;
