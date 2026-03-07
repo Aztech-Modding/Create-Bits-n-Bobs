@@ -123,6 +123,7 @@ public class CogwheelChainScenes {
         scene.world().setBlock(util.grid().at(1, 0, 4), Blocks.SNOW_BLOCK.defaultBlockState(), false);
 
         //Start of the ponder
+        scene.addKeyframe();
 
         //Animate in the core 2 cogwheels
         scene.world().showSection(util.select().position(6, 1, 1), Direction.DOWN);
