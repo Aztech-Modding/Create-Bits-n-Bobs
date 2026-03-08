@@ -7,6 +7,15 @@
   "mixins": [
     "AllCreatePonderScenesMixin",
     "AllPaletteStoneTypesMixin",
+    "articulate.BezierConnectionMixin",
+    "articulate.CarriageBogeyMixin",
+    "articulate.DiscoveredLocationAccessorMixin",
+    "articulate.OrientedContraptionEntityMixin",
+    "articulate.TrackBlockEntityMixin",
+    "articulate.TrackBlockMixin",
+    "articulate.TrackEdgeMixin",
+    "articulate.TrackPlacementInfoAccessorMixin",
+    "articulate.TrackPlacementMixin",
     "ComputerBehaviourMixin",
     "ContraptionColliderMixin",
     "DynamicComponentMixin",
@@ -34,6 +43,8 @@
     "FontAccessMixin",
     "GirderCTBehaviourMixin",
     "GuiGameElementMixin",
+    "articulate.CarriageContraptionEntityRendererMixin",
+    "articulate.TrackBlockOutlineMixin",
     "dyeable_pipes.PipeAttachmentModelMixin"
   ],
   "server": [
