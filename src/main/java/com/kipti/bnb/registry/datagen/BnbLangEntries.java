@@ -31,6 +31,7 @@ public class BnbLangEntries {
 
         final String[] entries = {
                 "generator.bits_n_bobs.ponderous_planes", "Ponderflat",
+                "tooltip.bits_n_bobs.articulate.track_tilt", "Track Tilt: %s°",
                 "tooltip.bits_n_bobs.chain_drive_placing_hint", "Placing chain drive, create a complete loop to finish.",
                 //Tooltips
                 "block.bits_n_bobs.headlamp.tooltip.summary", "Can be dyed and placed _multiple times in same block_. Useful for trains or fancy signage too!",

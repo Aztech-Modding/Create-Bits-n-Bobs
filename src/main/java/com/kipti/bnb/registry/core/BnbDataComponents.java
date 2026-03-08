@@ -3,9 +3,11 @@ package com.kipti.bnb.registry.core;
 import com.cake.struts.registry.StrutDataComponents;
 import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.PlacingCogwheelChain;
+import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponentType;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.core.registries.Registries;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -24,6 +26,13 @@ public class BnbDataComponents {
     public static final DataComponentType<PlacingCogwheelChain> PARTIAL_COGWHEEL_CHAIN = register(
             "partial_cogwheel_chain",
             builder -> builder.persistent(PlacingCogwheelChain.CODEC).networkSynchronized(PlacingCogwheelChain.STREAM_CODEC)
+    );
+
+    public static final DataComponentType<Float> TRACK_TILT = register(
+            "track_tilt",
+            builder -> builder
+                    .persistent(Codec.FLOAT)
+                    .networkSynchronized(ByteBufCodecs.FLOAT)
     );
 
     private static <T> DataComponentType<T> register(final String name, final UnaryOperator<DataComponentType.Builder<T>> builder) {

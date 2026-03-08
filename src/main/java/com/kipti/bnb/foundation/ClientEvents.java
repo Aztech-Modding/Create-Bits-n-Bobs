@@ -1,6 +1,7 @@
 package com.kipti.bnb.foundation;
 
 import com.cake.struts.content.StrutPlacementEffects;
+import com.kipti.bnb.content.articulate.ArticulatedTrackPlacementHandler;
 import com.kipti.bnb.content.decoration.weathered_girder.WeatheredGirderWrenchBehaviour;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.placement.CogwheelChainPlacementEffect;
 import com.kipti.bnb.content.trinkets.light.headlamp.rendering.pipeline.block_entity.HeadlampVertexBufferCache;
@@ -20,6 +21,7 @@ import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.RegisterPresetEditorsEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 
@@ -30,6 +32,7 @@ public class ClientEvents {
     public static void onTickPost(final ClientTickEvent.Post event) {
         WeatheredGirderWrenchBehaviour.tick();
         HeadlampVertexBufferCache.tick();
+        ArticulatedTrackPlacementHandler.tick();
     }
 
     @SubscribeEvent
@@ -46,6 +49,13 @@ public class ClientEvents {
         final Minecraft mc = Minecraft.getInstance();
         if (mc.level != null && mc.player != null) {
             CogwheelChainPlacementEffect.tick(mc.player);
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onMouseScrolled(final InputEvent.MouseScrollingEvent event) {
+        if (ArticulatedTrackPlacementHandler.onScrolled(event.getScrollDeltaY())) {
+            event.setCanceled(true);
         }
     }
 

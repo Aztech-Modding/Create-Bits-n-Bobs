@@ -2,6 +2,7 @@ package com.kipti.bnb;
 
 import com.cake.struts.compat.flywheel.StrutsFlywheelCompatLoader;
 import com.cake.struts.content.StrutModelManipulator;
+import com.kipti.bnb.content.articulate.client.ArticulatedTrackModelSwapper;
 import com.kipti.bnb.content.trinkets.light.headlamp.rendering.pipeline.block_entity.HeadlampRenderCache;
 import com.kipti.bnb.content.trinkets.light.headlamp.rendering.pipeline.block_entity.HeadlampVertexBufferCache;
 import com.kipti.bnb.foundation.ponder.BnbPonderPlugin;
@@ -15,6 +16,7 @@ import net.createmod.catnip.config.ui.BaseConfigScreen;
 import net.createmod.ponder.foundation.PonderIndex;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
@@ -40,6 +42,7 @@ public class CreateBitsnBobsClient {
         container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
         eventBus.addListener(this::onClientSetup);
         eventBus.addListener(this::registerAdditionalModels);
+        eventBus.addListener(EventPriority.LOW, ArticulatedTrackModelSwapper::onModelBake);
     }
 
     private void onClientSetup(final FMLClientSetupEvent event) {

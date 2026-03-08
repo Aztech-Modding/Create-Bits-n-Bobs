@@ -85,16 +85,17 @@ public abstract class TrackPlacementMixin {
         }
 
         final double totalLength = articulate$getConnectionLength(access);
-        if (!ArticulatedTrackUtils.isValidTiltTransition(normalizedStartTilt, normalizedEndTilt, (float) totalLength)) {
-            access.articulate$setValid(false);
-            access.articulate$setMessage("track.too_steep");
-            cir.setReturnValue(info);
-            return;
-        }
+        final boolean tooSteep = !ArticulatedTrackUtils.isValidTiltTransition(normalizedStartTilt, normalizedEndTilt, (float) totalLength);
 
         final BezierConnection curve = access.articulate$getCurve();
         if (curve != null) {
-            // Real curve (not straight) -- set tilt on it and let normal placeTracks handle the rest
+            // Real curve exists — reject if too steep, otherwise apply tilt
+            if (tooSteep) {
+                access.articulate$setValid(false);
+                access.articulate$setMessage("track.too_steep");
+                cir.setReturnValue(info);
+                return;
+            }
             final double curveStartDistance = access.articulate$getEnd1Extent() * access.articulate$getAxis1().length();
             final double curveEndDistance = totalLength - access.articulate$getEnd2Extent() * access.articulate$getAxis2().length();
             final float curveStartTilt = totalLength <= 0d
@@ -108,8 +109,15 @@ public abstract class TrackPlacementMixin {
         }
 
         // Straight segment with non-zero tilt: create degenerate BezierConnection
-        // Tilt values are already normalized relative to canonical axis direction
-        articulate$handleTiltedStraightPlacement(level, info, state1, state2, simulate, normalizedStartTilt, normalizedEndTilt, totalLength);
+        // Create it even for too-steep transitions (for preview), but force simulate mode when invalid
+        articulate$handleTiltedStraightPlacement(level, info, state1, state2,
+                tooSteep || simulate, normalizedStartTilt, normalizedEndTilt, totalLength);
+
+        if (tooSteep) {
+            access.articulate$setValid(false);
+            access.articulate$setMessage("track.too_steep");
+        }
+
         cir.setReturnValue(info);
     }
 
@@ -169,12 +177,14 @@ public abstract class TrackPlacementMixin {
         final TrackPlacementInfoAccessorMixin access = (TrackPlacementInfoAccessorMixin) info;
         final BlockPos pos1 = access.articulate$getPos1();
         final BlockPos pos2 = access.articulate$getPos2();
-        final Vec3 end1 = access.articulate$getEnd1() != null ? access.articulate$getEnd1() : VecHelper.getCenterOf(pos1);
-        final Vec3 end2 = access.articulate$getEnd2() != null ? access.articulate$getEnd2() : VecHelper.getCenterOf(pos2);
-        final Vec3 normal1 = access.articulate$getNormal1() != null ? access.articulate$getNormal1() : new Vec3(0, 1, 0);
-        final Vec3 normal2 = access.articulate$getNormal2() != null ? access.articulate$getNormal2() : new Vec3(0, 1, 0);
-        final Vec3 normedAxis1 = access.articulate$getAxis1().normalize();
-        final Vec3 normedAxis2 = access.articulate$getAxis2().normalize();
+        final Vec3 axis1 = access.articulate$getAxis1();
+        final Vec3 axis2 = access.articulate$getAxis2();
+        final Vec3 end1 = articulate$resolveTrackCurveStart(level, pos1, state1, axis1, access.articulate$getEnd1());
+        final Vec3 end2 = articulate$resolveTrackCurveStart(level, pos2, state2, axis2, access.articulate$getEnd2());
+        final Vec3 normal1 = articulate$resolveTrackNormal(level, pos1, state1, access.articulate$getNormal1());
+        final Vec3 normal2 = articulate$resolveTrackNormal(level, pos2, state2, access.articulate$getNormal2());
+        final Vec3 normedAxis1 = axis1.normalize();
+        final Vec3 normedAxis2 = axis2.normalize();
         final boolean girder = articulate$heldGirder.get();
 
         // Create degenerate BezierConnection (parallel axes -> straight line with smooth tilt interpolation)
@@ -311,14 +321,46 @@ public abstract class TrackPlacementMixin {
 
     @Unique
     private static float articulate$resolveEndTilt(final Level level, final BlockPos pos) {
-        final BlockEntity blockEntity = level.getBlockEntity(pos);
-        if (blockEntity instanceof TrackBlockEntity) {
-            final float existingTilt = ArticulatedTrackBehaviour.getTiltDegrees(blockEntity);
-            if (Float.compare(existingTilt, 0f) != 0) {
-                return existingTilt;
+        final BlockState state = level.getBlockState(pos);
+        if (state.getBlock() instanceof ITrackBlock) {
+            final BlockEntity blockEntity = level.getBlockEntity(pos);
+            if (blockEntity instanceof TrackBlockEntity) {
+                return ArticulatedTrackBehaviour.getTiltDegrees(blockEntity);
             }
+            return 0f;
         }
+
         return articulate$heldTilt.get();
+    }
+
+    @Unique
+    private static Vec3 articulate$resolveTrackCurveStart(final Level level, final BlockPos pos, final BlockState state,
+                                                          final Vec3 axis, final Vec3 fallbackEnd) {
+        if (state.getBlock() instanceof final ITrackBlock trackBlock && axis != null) {
+            return trackBlock.getCurveStart(level, pos, state, axis);
+        }
+        if (fallbackEnd != null) {
+            return fallbackEnd;
+        }
+
+        if (state.getBlock() instanceof final ITrackBlock trackBlock) {
+            return Vec3.atBottomCenterOf(pos).add(0, trackBlock.getElevationAtCenter(level, pos, state), 0);
+        }
+
+        return VecHelper.getCenterOf(pos);
+    }
+
+    @Unique
+    private static Vec3 articulate$resolveTrackNormal(final Level level, final BlockPos pos, final BlockState state,
+                                                      final Vec3 fallbackNormal) {
+        if (state.getBlock() instanceof final ITrackBlock trackBlock) {
+            return trackBlock.getUpNormal(level, pos, state).normalize();
+        }
+        if (fallbackNormal != null) {
+            return fallbackNormal.normalize();
+        }
+
+        return new Vec3(0, 1, 0);
     }
 
     @Unique

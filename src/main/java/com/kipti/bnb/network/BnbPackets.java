@@ -2,6 +2,7 @@ package com.kipti.bnb.network;
 
 
 import com.kipti.bnb.CreateBitsnBobs;
+import com.kipti.bnb.network.packets.from_client.ArticulatedTrackTiltPacket;
 import com.kipti.bnb.network.packets.from_client.PlaceCogwheelChainPacket;
 import com.kipti.bnb.network.packets.from_client.WrenchCogwheelChainPacket;
 import com.kipti.bnb.network.packets.to_client.ApplyHeadlampQueuedOperationsPacket;
@@ -18,6 +19,7 @@ public enum BnbPackets implements BasePacketPayload.PacketTypeProvider {
     // C2S
     PLACE_COGWHEEL_CHAIN(PlaceCogwheelChainPacket.class, PlaceCogwheelChainPacket.STREAM_CODEC),
     WRENCH_COGWHEEL_CHAIN(WrenchCogwheelChainPacket.class, WrenchCogwheelChainPacket.STREAM_CODEC),
+    SET_TRACK_TILT(ArticulatedTrackTiltPacket.class, ArticulatedTrackTiltPacket.STREAM_CODEC),
 
     // S2C
     APPLY_HEADLAMP_QUEUED_OPERATIONS(ApplyHeadlampQueuedOperationsPacket.class, ApplyHeadlampQueuedOperationsPacket.STREAM_CODEC),

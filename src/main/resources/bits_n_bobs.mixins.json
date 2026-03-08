@@ -11,6 +11,7 @@
     "articulate.CarriageBogeyMixin",
     "articulate.DiscoveredLocationAccessorMixin",
     "articulate.OrientedContraptionEntityMixin",
+    "articulate.SmartBlockEntityAccessorMixin",
     "articulate.TrackBlockEntityMixin",
     "articulate.TrackBlockMixin",
     "articulate.TrackEdgeMixin",

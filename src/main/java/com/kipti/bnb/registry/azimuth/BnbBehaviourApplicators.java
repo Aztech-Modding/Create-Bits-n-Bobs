@@ -2,6 +2,7 @@ package com.kipti.bnb.registry.azimuth;
 
 import com.cake.azimuth.registration.BehaviourApplicators;
 import com.cake.azimuth.registration.VisualWrapperInterest;
+import com.kipti.bnb.content.articulate.ArticulatedTrackBehaviour;
 import com.kipti.bnb.content.dyeable_pipes.DyeablePipeBehaviour;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.behaviour.CogwheelChainBehaviour;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChainCandidate;
@@ -24,7 +25,12 @@ public class BnbBehaviourApplicators {
         VisualWrapperInterest.registerInterest(
                 BnbBehaviourApplicators::isSomeCogwheelBlockEntity
         );
+        registerArticulatedTrackBehaviours();
         registerDyeablePipeBehaviours();
+    }
+
+    private static void registerArticulatedTrackBehaviours() {
+        BehaviourApplicators.registerForType(AllBlockEntityTypes.TRACK, be -> List.of(new ArticulatedTrackBehaviour(be)));
     }
 
     private static void registerDyeablePipeBehaviours() {

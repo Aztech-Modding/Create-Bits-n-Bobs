@@ -123,8 +123,7 @@ public class GenericNixieDisplayBlockEntity extends SmartBlockEntity {
             return; // No change
         }
         currentDisplayOption = option;
-        if (level.isClientSide)
-            updateDisplayedStrings();
+        updateDisplayedStrings();
         notifyUpdate();
     }
 
@@ -277,6 +276,7 @@ public class GenericNixieDisplayBlockEntity extends SmartBlockEntity {
             customTextBottom = component.isValid() ? Optional.of(component) : Optional.empty();
         }
         customTextStart = nixiePositionInRow;
+        updateDisplayedStrings();
         notifyUpdate();
     }
 
