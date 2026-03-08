@@ -1,11 +1,11 @@
 package com.kipti.bnb.mixin.articulate;
 
+import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.articulate.ArticulatedTrackBehaviour;
 import com.kipti.bnb.content.articulate.ArticulatedTrackUtils;
 import com.kipti.bnb.registry.core.BnbDataComponents;
 import com.simibubi.create.content.trains.graph.TrackNodeLocation;
 import com.simibubi.create.content.trains.track.TrackBlock;
-import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -31,9 +31,6 @@ public abstract class TrackBlockMixin {
     private void articulate$forceBlockEntityForTilt(final Level level, final BlockPos pos, final BlockState state,
                                                     @Nullable final LivingEntity placer, final ItemStack stack,
                                                     final CallbackInfo ci) {
-        if (level.isClientSide()) {
-            return;
-        }
         final float tilt = stack.getOrDefault(BnbDataComponents.TRACK_TILT, 0f);
         if (Float.compare(tilt, 0f) == 0) {
             return;
@@ -43,15 +40,11 @@ public abstract class TrackBlockMixin {
         }
 
         level.setBlock(pos, state.setValue(TrackBlock.HAS_BE, true), Block.UPDATE_ALL);
-        final var newBE = level.getBlockEntity(pos);
-        if (newBE instanceof final SmartBlockEntity smartBE) {
-            smartBE.initialize();
-            ((SmartBlockEntityAccessorMixin) smartBE).articulate$setInitialized(true);
-        }
-        final ArticulatedTrackBehaviour behaviour = ArticulatedTrackBehaviour.get(newBE);
+        final ArticulatedTrackBehaviour behaviour = ArticulatedTrackBehaviour.get(level.getBlockEntity(pos));
         if (behaviour != null) {
             behaviour.setTiltDegrees(tilt);
-            behaviour.refreshRenderedModel();
+        } else {
+            CreateBitsnBobs.LOGGER.warn("Failed to set tilt for track at {}: no block entity found after setting HAS_BE to true", pos);
         }
     }
 

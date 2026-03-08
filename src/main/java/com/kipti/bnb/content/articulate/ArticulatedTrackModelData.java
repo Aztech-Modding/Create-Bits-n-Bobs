@@ -6,7 +6,4 @@ public final class ArticulatedTrackModelData {
 
     public static final ModelProperty<Float> TILT_PROPERTY = new ModelProperty<>();
 
-    private ArticulatedTrackModelData() {
-    }
-
 }

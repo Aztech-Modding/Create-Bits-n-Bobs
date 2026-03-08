@@ -1,12 +1,12 @@
 package com.kipti.bnb.mixin.articulate;
 
+import com.kipti.bnb.content.articulate.ArticulatedTrackLogic;
 import com.kipti.bnb.content.articulate.ArticulatedTrackUtils;
 import com.kipti.bnb.mixin_accessor.ArticulatedBezierConnection;
 import com.kipti.bnb.mixin_accessor.ArticulatedTrackEdge;
 import com.simibubi.create.content.trains.graph.TrackEdge;
 import com.simibubi.create.content.trains.graph.TrackNode;
 import com.simibubi.create.content.trains.track.BezierConnection;
-import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -47,10 +47,12 @@ public abstract class TrackEdgeMixin implements ArticulatedTrackEdge {
             return ((ArticulatedBezierConnection) this.turn).articulate$getTiltAt(t);
         }
 
-        final Vec3 travelDirection = this.getDirection(true);
-        final float startTilt = ArticulatedTrackUtils.extractCanonicalTiltDegrees(this.node1.getNormal(), travelDirection);
-        final float endTilt = ArticulatedTrackUtils.extractCanonicalTiltDegrees(this.node2.getNormal(), travelDirection);
-        return ArticulatedTrackUtils.interpolateTilt((float) Mth.clamp(t, 0.0d, 1.0d), startTilt, endTilt);
+        return ArticulatedTrackLogic.straightTiltProfile(
+                this.node1.getNormal(),
+                this.getDirection(true),
+                this.node2.getNormal(),
+                this.getDirection(false)
+        ).tiltAt(t);
     }
 
     @Inject(method = "canTravelTo", at = @At("RETURN"), cancellable = true)

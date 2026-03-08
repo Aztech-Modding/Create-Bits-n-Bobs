@@ -46,11 +46,23 @@ public interface TrackPlacementInfoAccessorMixin {
     @Accessor("axis2")
     Vec3 articulate$getAxis2();
 
+    @Accessor("axis1")
+    void articulate$setAxis1(Vec3 axis);
+
+    @Accessor("axis2")
+    void articulate$setAxis2(Vec3 axis);
+
     @Accessor("pos1")
     BlockPos articulate$getPos1();
 
     @Accessor("pos2")
     BlockPos articulate$getPos2();
+
+    @Accessor("pos1")
+    void articulate$setPos1(BlockPos pos);
+
+    @Accessor("pos2")
+    void articulate$setPos2(BlockPos pos);
 
     @Accessor("end1")
     Vec3 articulate$getEnd1();

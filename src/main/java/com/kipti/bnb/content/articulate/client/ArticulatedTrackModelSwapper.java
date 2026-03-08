@@ -8,15 +8,17 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ModelEvent;
 
 import java.util.Map;
 
+@EventBusSubscriber
 public final class ArticulatedTrackModelSwapper {
 
-    private ArticulatedTrackModelSwapper() {
-    }
-
+    @SubscribeEvent(priority = EventPriority.LOW)
     public static void onModelBake(final ModelEvent.ModifyBakingResult event) {
         final Map<ModelResourceLocation, BakedModel> models = event.getModels();
 

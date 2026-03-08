@@ -10,12 +10,10 @@
     "articulate.BezierConnectionMixin",
     "articulate.CarriageBogeyMixin",
     "articulate.DiscoveredLocationAccessorMixin",
-    "articulate.OrientedContraptionEntityMixin",
-    "articulate.SmartBlockEntityAccessorMixin",
-    "articulate.TrackBlockEntityMixin",
     "articulate.TrackBlockMixin",
     "articulate.TrackEdgeMixin",
     "articulate.TrackPlacementInfoAccessorMixin",
+    "articulate.TrackPlacementInfoMixin",
     "articulate.TrackPlacementMixin",
     "ComputerBehaviourMixin",
     "ContraptionColliderMixin",
@@ -45,11 +43,13 @@
     "GirderCTBehaviourMixin",
     "GuiGameElementMixin",
     "articulate.CarriageContraptionEntityRendererMixin",
+    "articulate.TrackPlacementClientMixin",
     "articulate.TrackBlockOutlineMixin",
-    "dyeable_pipes.PipeAttachmentModelMixin"
+    "dyeable_pipes.PipeAttachmentModelMixin",
+    "articulate.OrientedContraptionEntityMixin",
+    "articulate.TrackBlockEntityMixin"
   ],
-  "server": [
-  ],
+  "server": [],
   "injectors": {
     "defaultRequire": 1
   }
