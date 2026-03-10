@@ -1,11 +1,13 @@
 package com.kipti.bnb.foundation.command;
 
 import com.cake.azimuth.behaviour.SuperBlockEntityBehaviour;
+import com.kipti.bnb.content.pipes_screensaver.PipesScreensaver;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.behaviour.CogwheelChainBehaviour;
 import com.kipti.bnb.network.packets.to_client.PeekCogwheelChainControllerHighlightPacket;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.ArgumentBuilder;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.commands.CommandSourceStack;
@@ -29,6 +31,16 @@ public class BnbCommands {
                 .requires(source -> source.hasPermission(0))
                 .then(Commands.literal("peek")
                         .then(registerCogwheelChainControllerPeek())));
+        dispatcher.register(registerPipesCommand());
+    }
+
+    private static LiteralArgumentBuilder<CommandSourceStack> registerPipesCommand() {
+        return Commands.literal("pipes")
+                .requires(source -> source.hasPermission(2))
+                .then(Commands.literal("start")
+                        .executes(context -> PipesScreensaver.startDemo(context.getSource())))
+                .then(Commands.literal("stop")
+                        .executes(context -> PipesScreensaver.stopDemo(context.getSource())));
     }
 
     private static ArgumentBuilder<CommandSourceStack, ?> registerCogwheelChainControllerPeek() {
