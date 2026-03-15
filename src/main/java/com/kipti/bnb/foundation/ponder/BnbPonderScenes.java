@@ -1,5 +1,7 @@
 package com.kipti.bnb.foundation.ponder;
 
+import com.cake.azimuth.ponder.new_tooltip.NewPonderTooltipManager;
+import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.foundation.ponder.scenes.CogwheelChainScenes;
 import com.kipti.bnb.foundation.ponder.scenes.DyedPipeScenes;
 import com.kipti.bnb.foundation.ponder.scenes.NixieDisplayScenes;
@@ -26,8 +28,22 @@ public class BnbPonderScenes {
                 .addStoryBoard("chain_cog/flat", CogwheelChainScenes::flatCogwheelChain)
                 .addStoryBoard("chain_cog/axis_change", CogwheelChainScenes::changingAxisCogwheelChain);
 //                .addStoryBoard("chain_cog/pathing_behaviour", CogwheelChainScenes::cogwheelChainPathingBehaviour);
-        HELPER.forComponents(AllBlocks.FLUID_PIPE)
+
+
+        NewPonderTooltipManager.forItems(
+                AllBlocks.COGWHEEL.get().asItem(),
+                AllBlocks.LARGE_COGWHEEL.get().asItem()
+        ).addScenes(
+                ResourceLocation.fromNamespaceAndPath(CreateBitsnBobs.MOD_ID, "axis_change"),
+                ResourceLocation.fromNamespaceAndPath(CreateBitsnBobs.MOD_ID, "flat")
+        );
+
+        HELPER.forComponents(AllBlocks.FLUID_PIPE, AllBlocks.ENCASED_FLUID_PIPE, AllBlocks.GLASS_FLUID_PIPE)
                 .addStoryBoard("dyed_pipes/dyed_pipes", DyedPipeScenes::dyedPipes);
+
+        NewPonderTooltipManager.forItems(
+                AllBlocks.FLUID_PIPE.get().asItem()
+        ).addScenes(ResourceLocation.fromNamespaceAndPath(CreateBitsnBobs.MOD_ID, "dyed_pipes"));
 
         HELPER.forComponents(BnbTrinketBlocks.NIXIE_BOARD)
                 .addStoryBoard("nixie/nixie_board", NixieDisplayScenes::nixieBoard);
