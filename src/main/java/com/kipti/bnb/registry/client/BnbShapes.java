@@ -8,10 +8,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class BnbShapes {
 
-    public static final VoxelShaper HEADLAMP_INTERACTION = shape(0, 0, 0, 16, 7, 16)
-            .forDirectional();
-
-    public static final VoxelShaper GIRDER_STRUT = shape(3, 0, 3, 13, 1, 13)
+    public static final VoxelShaper CABLE_STRUT = shape(4, 0, 4, 14, 3, 14)
             .forDirectional();
 
     public static final VoxelShaper LIGHTBULB_SHAPE = shape(6, 0, 6, 10, 2, 10)

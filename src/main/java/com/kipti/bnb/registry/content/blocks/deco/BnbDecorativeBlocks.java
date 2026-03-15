@@ -7,6 +7,7 @@ import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.decoration.grating.GratingBlock;
 import com.kipti.bnb.content.decoration.grating.GratingPanelBlock;
 import com.kipti.bnb.content.decoration.grating.GratingPanelCTBehaviour;
+import com.kipti.bnb.content.decoration.strut.CableStrutBlock;
 import com.kipti.bnb.content.decoration.truss.AlternatingTrussBlock;
 import com.kipti.bnb.content.decoration.weathered_girder.WeatheredConnectedGirderModel;
 import com.kipti.bnb.content.decoration.weathered_girder.WeatheredGirderBlock;
@@ -121,7 +122,7 @@ public class BnbDecorativeBlocks {
             .build()
             .register();
 
-        public static final BlockEntry<BnbStrutBlock> CABLE_GIRDER_STRUT = REGISTRATE.block("cable_girder_strut", p -> new BnbStrutBlock(p, BnbStrutDefinitions.CABLE_MODEL, BnbStrutDefinitions.CABLE_INFO))
+        public static final BlockEntry<CableStrutBlock> CABLE_GIRDER_STRUT = REGISTRATE.block("cable_girder_strut", p -> new CableStrutBlock(p, BnbStrutDefinitions.CABLE_MODEL, BnbStrutDefinitions.CABLE_INFO))
             .initialProperties(SharedProperties::softMetal)
             .transform(pickaxeOnly())
             .properties(p -> p.noOcclusion()

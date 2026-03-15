@@ -114,7 +114,7 @@ public class DyedPipeScenes {
      */
     private static void stageUndyedCompatibility(final CreateSceneBuilder scene, final SceneBuildingUtil util) {
         scene.world().restoreBlocks(util.select().position(1, 1, 1));
-        scene.world().showSection(util.select().position(1, 1, 1), Direction.UP);
+        scene.world().showSection(util.select().position(1, 1, 1), Direction.DOWN);
         refreshPipes(scene, new BlockPos(1, 1, 1), new BlockPos(1, 1, 2), new BlockPos(2, 1, 1));
         scene.idle(10);
 
