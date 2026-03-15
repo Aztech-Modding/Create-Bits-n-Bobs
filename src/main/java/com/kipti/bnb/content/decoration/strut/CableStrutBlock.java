@@ -12,9 +12,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class CableStrutBlock extends BnbStrutBlock {
-    public CableStrutBlock(final Properties properties, final StrutModelType modelType) {
-        super(properties, modelType);
-    }
 
     public CableStrutBlock(final Properties properties, final StrutModelType modelType, @Nullable final CableStrutInfo cableRenderInfo) {
         super(properties, modelType, cableRenderInfo);
