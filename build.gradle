@@ -46,6 +46,7 @@ neoForge {
         }
         data {
             data()
+            programArguments.addAll '--existing-mod', 'create'
             programArguments.addAll '--mod', mod_id as String,
                     '--all',
                     '--output', file('src/generated/resources/').getAbsolutePath(),

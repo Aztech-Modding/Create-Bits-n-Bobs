@@ -2,20 +2,19 @@ package com.kipti.bnb.registry.content.blocks.deco;
 
 import com.cake.struts.content.StrutModelBuilder;
 import com.cake.struts.content.block.StrutBlockItem;
-import com.kipti.bnb.content.decoration.strut.BnbStrutBlock;
 import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.decoration.grating.GratingBlock;
 import com.kipti.bnb.content.decoration.grating.GratingPanelBlock;
 import com.kipti.bnb.content.decoration.grating.GratingPanelCTBehaviour;
+import com.kipti.bnb.content.decoration.strut.BnbStrutBlock;
 import com.kipti.bnb.content.decoration.strut.CableStrutBlock;
 import com.kipti.bnb.content.decoration.truss.AlternatingTrussBlock;
 import com.kipti.bnb.content.decoration.weathered_girder.WeatheredConnectedGirderModel;
 import com.kipti.bnb.content.decoration.weathered_girder.WeatheredGirderBlock;
 import com.kipti.bnb.content.decoration.weathered_girder.WeatheredGirderBlockStateGenerator;
 import com.kipti.bnb.content.decoration.weathered_girder.WeatheredGirderEncasedShaftBlock;
-import com.kipti.bnb.foundation.BnbBlockStateGen;
+import com.kipti.bnb.foundation.client.BnbBlockStateGen;
 import com.kipti.bnb.registry.client.BnbSpriteShifts;
-import com.kipti.bnb.registry.datagen.BnbCreativeTabs;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllTags;
 import com.simibubi.create.foundation.block.connected.SimpleCTBehaviour;
@@ -39,10 +38,6 @@ import static com.simibubi.create.foundation.data.TagGen.axeOnly;
 import static com.simibubi.create.foundation.data.TagGen.pickaxeOnly;
 
 public class BnbDecorativeBlocks {
-
-    static {
-        CreateBitsnBobs.REGISTRATE.setCreativeTab(BnbCreativeTabs.DECO_CREATIVE_TAB);
-    }
 
     public static final BlockEntry<WeatheredGirderBlock> WEATHERED_METAL_GIRDER = REGISTRATE.block("weathered_metal_girder", WeatheredGirderBlock::new)
             .initialProperties(SharedProperties::softMetal)
@@ -69,7 +64,7 @@ public class BnbDecorativeBlocks {
                     .onRegister(CreateRegistrate.blockModel(() -> WeatheredConnectedGirderModel::new))
                     .register();
 
-        public static final BlockEntry<BnbStrutBlock> WEATHERED_GIRDER_STRUT = REGISTRATE.block("weathered_girder_strut", p -> new BnbStrutBlock(p, BnbStrutDefinitions.WEATHERED_MODEL))
+    public static final BlockEntry<BnbStrutBlock> WEATHERED_GIRDER_STRUT = REGISTRATE.block("weathered_girder_strut", p -> new BnbStrutBlock(p, BnbStrutDefinitions.WEATHERED_MODEL))
             .initialProperties(SharedProperties::softMetal)
             .transform(pickaxeOnly())
             .properties(p -> p.noOcclusion())
@@ -87,7 +82,7 @@ public class BnbDecorativeBlocks {
             .build()
             .register();
 
-        public static final BlockEntry<BnbStrutBlock> GIRDER_STRUT = REGISTRATE.block("girder_strut", p -> new BnbStrutBlock(p, BnbStrutDefinitions.NORMAL_MODEL))
+    public static final BlockEntry<BnbStrutBlock> GIRDER_STRUT = REGISTRATE.block("girder_strut", p -> new BnbStrutBlock(p, BnbStrutDefinitions.NORMAL_MODEL))
             .initialProperties(SharedProperties::softMetal)
             .transform(pickaxeOnly())
             .properties(p -> p.noOcclusion())
@@ -104,7 +99,7 @@ public class BnbDecorativeBlocks {
             .build()
             .register();
 
-        public static final BlockEntry<BnbStrutBlock> WOODEN_GIRDER_STRUT = REGISTRATE.block("wooden_girder_strut", p -> new BnbStrutBlock(p, BnbStrutDefinitions.WOODEN_MODEL))
+    public static final BlockEntry<BnbStrutBlock> WOODEN_GIRDER_STRUT = REGISTRATE.block("wooden_girder_strut", p -> new BnbStrutBlock(p, BnbStrutDefinitions.WOODEN_MODEL))
             .initialProperties(SharedProperties::wooden)
             .transform(axeOnly())
             .properties(p -> p.noOcclusion()
@@ -122,7 +117,7 @@ public class BnbDecorativeBlocks {
             .build()
             .register();
 
-        public static final BlockEntry<CableStrutBlock> CABLE_GIRDER_STRUT = REGISTRATE.block("cable_girder_strut", p -> new CableStrutBlock(p, BnbStrutDefinitions.CABLE_MODEL, BnbStrutDefinitions.CABLE_INFO))
+    public static final BlockEntry<CableStrutBlock> CABLE_GIRDER_STRUT = REGISTRATE.block("cable_girder_strut", p -> new CableStrutBlock(p, BnbStrutDefinitions.CABLE_MODEL, BnbStrutDefinitions.CABLE_INFO))
             .initialProperties(SharedProperties::softMetal)
             .transform(pickaxeOnly())
             .properties(p -> p.noOcclusion()
@@ -164,13 +159,18 @@ public class BnbDecorativeBlocks {
                     .isViewBlocking((state, level, pos) -> false)
             )
             .transform(TagGen.pickaxeOnly())
-            .blockstate((c, p) -> BnbBlockStateGen.directionalUvLockBlock(c, p, (state) -> p.models()
-                    .withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/grating_panel"))
-                    .texture("panel", CreateBitsnBobs.asResource("block/industrial_grating"))
-            ))
+            .blockstate((c, p) ->
+                    BnbBlockStateGen.directionalMixedUvLockBlock(c, p,
+                            p.models().getExistingFile(CreateBitsnBobs.asResource("block/industrial_grating/panel")),
+                            p.models().getExistingFile(CreateBitsnBobs.asResource("block/industrial_grating/panel_side"))
+                    ))
             .onRegister(connectedTextures(() -> new GratingPanelCTBehaviour(BnbSpriteShifts.INDUSTRIAL_GRATING)))
             .addLayer(() -> RenderType::cutout)
-            .simpleItem()
+            .item()
+            .model((c, p) ->
+                    p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/industrial_grating/item"))
+            )
+            .build()
             .register();
 
     public static final BlockEntry<AlternatingTrussBlock> INDUSTRIAL_TRUSS = CreateBitsnBobs.REGISTRATE.block("industrial_truss", AlternatingTrussBlock::new)
@@ -187,10 +187,6 @@ public class BnbDecorativeBlocks {
             .addLayer(() -> RenderType::cutout)
             .simpleItem()
             .register();
-
-    static {
-        CreateBitsnBobs.REGISTRATE.setCreativeTab(BnbCreativeTabs.BASE_CREATIVE_TAB);
-    }
 
     public static void register() {
     }

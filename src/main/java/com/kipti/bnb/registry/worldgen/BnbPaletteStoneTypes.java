@@ -2,6 +2,7 @@ package com.kipti.bnb.registry.worldgen;
 
 import com.kipti.bnb.content.decoration.palette.BnbPaletteBlockPattern;
 import com.kipti.bnb.content.decoration.palette.BnbPalettesVariantEntry;
+import com.kipti.bnb.registry.datagen.BnbCreativeTabs;
 import com.simibubi.create.AllTags;
 import com.simibubi.create.Create;
 import com.simibubi.create.content.decoration.palettes.AllPaletteStoneTypes;
@@ -10,7 +11,6 @@ import com.tterrag.registrate.builders.BlockBuilder;
 import com.tterrag.registrate.util.nullness.NonNullFunction;
 import com.tterrag.registrate.util.nullness.NonNullSupplier;
 import com.tterrag.registrate.util.nullness.NonNullUnaryOperator;
-import com.kipti.bnb.registry.datagen.BnbCreativeTabs;
 import net.createmod.catnip.lang.Lang;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.tags.TagKey;
@@ -76,7 +76,7 @@ public enum BnbPaletteStoneTypes {
     }
 
     public static void register(final CreateRegistrate registrate) {
-        registrate.setCreativeTab(BnbCreativeTabs.DECO_CREATIVE_TAB);
+        registrate.setCreativeTab(BnbCreativeTabs.PALETTES_CREATIVE_TAB);
         for (final BnbPaletteStoneTypes paletteStoneVariants : values()) {
             paletteStoneVariants.baseBlock = paletteStoneVariants.factory.apply(registrate);
             final String id = Lang.asId(paletteStoneVariants.name());

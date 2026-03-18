@@ -14,12 +14,13 @@ import com.kipti.bnb.content.trinkets.light.headlamp.rendering.pipeline.block_en
 import com.kipti.bnb.content.trinkets.light.headlamp.rendering.pipeline.visual.HeadlampVisual;
 import com.kipti.bnb.content.trinkets.nixie.foundation.GenericNixieDisplayBlockEntity;
 import com.kipti.bnb.content.trinkets.nixie.foundation.GenericNixieDisplayBoardRenderer;
-import com.kipti.bnb.foundation.GenericBlockEntityRenderModels;
-import com.kipti.bnb.registry.content.blocks.BnbEncasedBlocks;
+import com.kipti.bnb.foundation.client.GenericBlockEntityRenderModels;
 import com.kipti.bnb.registry.content.blocks.BnbKineticBlocks;
-import com.kipti.bnb.registry.content.blocks.BnbSpecialEncasedBlocks;
 import com.kipti.bnb.registry.content.blocks.BnbTrinketBlocks;
 import com.kipti.bnb.registry.content.blocks.deco.BnbDecorativeBlocks;
+import com.kipti.bnb.registry.content.blocks.encased.BnbEncasedListBlocks;
+import com.kipti.bnb.registry.content.blocks.encased.BnbExtraEncasedBlocks;
+import com.kipti.bnb.registry.content.blocks.encased.BnbSpecialEncasedBlocks;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
@@ -51,21 +52,21 @@ public class BnbBlockEntities {
     public static final BlockEntityEntry<KineticBlockEntity> ENCASED_SHAFT = REGISTRATE
             .blockEntity("encased_shaft", KineticBlockEntity::new)
             .visual(() -> SingleAxisRotatingVisual::shaft, false)
-            .validBlocks(BnbDecorativeBlocks.WEATHERED_METAL_GIRDER_ENCASED_SHAFT, BnbSpecialEncasedBlocks.INDUSTRIAL_IRON_ENCASED_SHAFT, BnbSpecialEncasedBlocks.WEATHERED_IRON_ENCASED_SHAFT)
+            .validBlocks(BnbDecorativeBlocks.WEATHERED_METAL_GIRDER_ENCASED_SHAFT, BnbExtraEncasedBlocks.INDUSTRIAL_IRON_ENCASED_SHAFT, BnbExtraEncasedBlocks.WEATHERED_IRON_ENCASED_SHAFT, BnbSpecialEncasedBlocks.INDUSTRIAL_GRATING_PANEL)
             .renderer(() -> ShaftRenderer::new)
             .register();
 
     public static final BlockEntityEntry<SimpleKineticBlockEntity> ENCASED_COGWHEEL = REGISTRATE
             .blockEntity("encased_cogwheel", SimpleKineticBlockEntity::new)
             .visual(() -> EncasedCogVisual::small, false)
-            .validBlocks(BnbSpecialEncasedBlocks.INDUSTRIAL_IRON_ENCASED_COGWHEEL, BnbSpecialEncasedBlocks.WEATHERED_IRON_ENCASED_COGWHEEL)
+            .validBlocks(BnbExtraEncasedBlocks.INDUSTRIAL_IRON_ENCASED_COGWHEEL, BnbExtraEncasedBlocks.WEATHERED_IRON_ENCASED_COGWHEEL)
             .renderer(() -> EncasedCogRenderer::small)
             .register();
 
     public static final BlockEntityEntry<SimpleKineticBlockEntity> ENCASED_LARGE_COGWHEEL = REGISTRATE
             .blockEntity("encased_large_cogwheel", SimpleKineticBlockEntity::new)
             .visual(() -> EncasedCogVisual::large, false)
-            .validBlocks(BnbSpecialEncasedBlocks.INDUSTRIAL_IRON_ENCASED_LARGE_COGWHEEL, BnbSpecialEncasedBlocks.WEATHERED_IRON_ENCASED_LARGE_COGWHEEL)
+            .validBlocks(BnbExtraEncasedBlocks.INDUSTRIAL_IRON_ENCASED_LARGE_COGWHEEL, BnbExtraEncasedBlocks.WEATHERED_IRON_ENCASED_LARGE_COGWHEEL)
             .renderer(() -> EncasedCogRenderer::large)
             .register();
 
@@ -103,8 +104,8 @@ public class BnbBlockEntities {
                     new SingleAxisRotatingVisual<>(context, blockEntity, partialTick,
                             Models.partial(GenericBlockEntityRenderModels.REGISTRY.get(blockEntity.getBlockState().getBlock()))), true)
             .validBlocks(BnbKineticBlocks.SMALL_FLANGED_COGWHEEL, BnbKineticBlocks.LARGE_FLANGED_COGWHEEL)
-            .validBlocks(BnbEncasedBlocks.ENCASED_LARGE_FLANGED_COGWHEEL.toArray())
-            .validBlocks(BnbEncasedBlocks.ENCASED_FLANGED_COGWHEEL.toArray())
+            .validBlocks(BnbEncasedListBlocks.ENCASED_LARGE_FLANGED_COGWHEEL.toArray())
+            .validBlocks(BnbEncasedListBlocks.ENCASED_FLANGED_COGWHEEL.toArray())
             .renderer(() -> KineticBlockEntityRenderer::new)
             .register();
 

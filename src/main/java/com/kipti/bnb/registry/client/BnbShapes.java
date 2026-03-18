@@ -56,6 +56,13 @@ public class BnbShapes {
             LARGE_FLANGED_GEAR = shape(LARGE_FLANGED_GEAR_SHAPE).add(SIX_VOXEL_POLE.get(Direction.Axis.Y))
                     .forAxis();
 
+    public static final VoxelShaper ALTERNATING_TRUSS = shape(1, 0, 1, 15, 16, 15)
+            .add(cuboid(0, 0, 0, 3, 16, 3))
+            .add(cuboid(13, 0, 0, 16, 16, 3))
+            .add(cuboid(0, 0, 13, 3, 16, 16))
+            .add(cuboid(13, 0, 13, 16, 16, 16))
+            .forAxis();
+
     public static AllShapes.Builder shape(final VoxelShape shape) {
         return new AllShapes.Builder(shape);
     }

@@ -1,14 +1,18 @@
 package com.kipti.bnb.content.decoration.truss;
 
+import com.kipti.bnb.registry.client.BnbShapes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 
 public class AlternatingTrussBlock extends RotatedPillarBlock {
@@ -43,6 +47,11 @@ public class AlternatingTrussBlock extends RotatedPillarBlock {
         final BlockState neighborState = context.getLevel().getBlockState(context.getClickedPos().relative(positiveAxis));
         final boolean isAlternating = neighborState.getBlock() instanceof AlternatingTrussBlock && neighborState.getValue(ALTERNATING);
         return state.setValue(ALTERNATING, !isAlternating);
+    }
+
+    @Override
+    protected VoxelShape getShape(final BlockState p_60555_, final BlockGetter p_60556_, final BlockPos p_60557_, final CollisionContext p_60558_) {
+        return BnbShapes.ALTERNATING_TRUSS.get(p_60555_.getValue(AXIS));
     }
 }
 

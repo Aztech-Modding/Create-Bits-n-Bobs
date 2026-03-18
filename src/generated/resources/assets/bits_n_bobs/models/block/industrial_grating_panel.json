@@ -1,6 +1,0 @@
-{
-  "parent": "bits_n_bobs:block/grating_panel",
-  "textures": {
-    "panel": "bits_n_bobs:block/industrial_grating"
-  }
-}

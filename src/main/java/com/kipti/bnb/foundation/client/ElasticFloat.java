@@ -1,4 +1,4 @@
-package com.kipti.bnb.foundation;
+package com.kipti.bnb.foundation.client;
 
 /**
  * Lerped float type util

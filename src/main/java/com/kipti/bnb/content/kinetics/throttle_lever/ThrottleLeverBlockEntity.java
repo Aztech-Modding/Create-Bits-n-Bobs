@@ -1,6 +1,6 @@
 package com.kipti.bnb.content.kinetics.throttle_lever;
 
-import com.kipti.bnb.foundation.ElasticFloat;
+import com.kipti.bnb.foundation.client.ElasticFloat;
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
 import net.createmod.catnip.animation.AnimationTickHolder;
 import net.minecraft.core.BlockPos;

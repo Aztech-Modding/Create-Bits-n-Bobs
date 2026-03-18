@@ -15,9 +15,9 @@ public class GratingPanelCTBehaviour extends SimpleCTBehaviour {
 
     @Override
     public boolean connectsTo(final BlockState state, final BlockState other, final BlockAndTintGetter reader, final BlockPos pos, final BlockPos otherPos, final Direction face) {
-        if (!(other.getBlock() instanceof GratingPanelBlock))
+        if (!(other.getBlock() instanceof IGratingPanel))
             return false;
-        if (!(state.getBlock() instanceof GratingPanelBlock))
+        if (!(state.getBlock() instanceof IGratingPanel))
             return false;
         return other.getValue(GratingPanelBlock.FACING) == state.getValue(GratingPanelBlock.FACING);
     }

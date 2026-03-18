@@ -35,12 +35,12 @@ public class BnbCreativeTabs {
                     .icon(BnbKineticBlocks.SMALL_FLANGED_COGWHEEL::asStack)
                     .displayItems((p, o) -> buildCreativeTabContents(p, o, () -> BnbCreativeTabs.BASE_CREATIVE_TAB)).build());
 
-    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> DECO_CREATIVE_TAB = REGISTER.register("bnb_deco",
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> PALETTES_CREATIVE_TAB = REGISTER.register("bnb_palettes",
             () -> CreativeModeTab.builder()
                     .title(Component.translatable("tab." + CreateBitsnBobs.MOD_ID + ".deco"))
                     .withTabsBefore(BnbCreativeTabs.BASE_CREATIVE_TAB.getId())
                     .icon(() -> BnbPaletteStoneTypes.ASURINE.getVariants().registeredBlocks.getFirst().asStack())
-                    .displayItems((p, o) -> buildCreativeTabContents(p, o, () -> BnbCreativeTabs.DECO_CREATIVE_TAB)).build());
+                    .displayItems((p, o) -> buildCreativeTabContents(p, o, () -> BnbCreativeTabs.PALETTES_CREATIVE_TAB)).build());
 
     private static boolean matchesBlockFilter(final BlockItem item) {
         if (BnbTrinketBlocks.CHAIRS.contains(item.getBlock()) && !BnbTrinketBlocks.CHAIRS.get(DyeColor.RED).is(item.getBlock()))

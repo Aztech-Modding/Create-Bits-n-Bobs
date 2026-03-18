@@ -1,4 +1,4 @@
-package com.kipti.bnb.foundation;
+package com.kipti.bnb.foundation.client;
 
 import com.simibubi.create.api.registry.SimpleRegistry;
 import com.tterrag.registrate.util.nullness.NonNullConsumer;

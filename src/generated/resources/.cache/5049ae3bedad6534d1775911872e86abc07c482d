@@ -1,4 +1,4 @@
-// 1.21.1	2026-03-05T21:51:43.0683206	Registrate Provider for bits_n_bobs [Registries, Data Maps, Recipes, Advancements, Loot Tables, Tags (enchantments), Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider]
+// 1.21.1	2026-03-18T17:33:40.4427175	Registrate Provider for bits_n_bobs [Registries, Data Maps, Recipes, Advancements, Loot Tables, Tags (enchantments), Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider]
 bae96470ab6d0efb7a73bf4e5f0a82277358b272 assets/bits_n_bobs/blockstates/andesite_encased_flanged_cogwheel.json
 161eacda54e0ee43ba4ec50b5a179c7c27d6ab3a assets/bits_n_bobs/blockstates/andesite_encased_large_flanged_cogwheel.json
 70069cf32ef31f524297f96e15c560aa8e3e41ae assets/bits_n_bobs/blockstates/andesite_encased_piston_extension_pole.json
@@ -64,7 +64,8 @@ cb013e2235d64efae761a9e8fc035f11474e7f65 assets/bits_n_bobs/blockstates/gray_cha
 98c1742a3f1ee6f357a35cadd1559b1d5f6d364a assets/bits_n_bobs/blockstates/green_nixie_board.json
 c9918242c23e4e53c30dc1b1444149933848a3e9 assets/bits_n_bobs/blockstates/headlamp.json
 59f5e0ca86991fd3ab1437dc266fe9dfeff328b1 assets/bits_n_bobs/blockstates/industrial_grating.json
-86ce914324c2c9ae6f014d0a8958d5e8bebdfa40 assets/bits_n_bobs/blockstates/industrial_grating_panel.json
+74cecf97eda112ede8fd23666ed1c55df752c09d assets/bits_n_bobs/blockstates/industrial_grating_panel.json
+74cecf97eda112ede8fd23666ed1c55df752c09d assets/bits_n_bobs/blockstates/industrial_grating_panel_encased_shaft.json
 b10aa04ca7c75893dcba2d9257a1f13a2a8979f7 assets/bits_n_bobs/blockstates/industrial_iron_encased_cogwheel.json
 f90e093bc00a1a2c67dfc73c2d47c0dc50d1c840 assets/bits_n_bobs/blockstates/industrial_iron_encased_flanged_cogwheel.json
 e56b694d6df6d52fe0776e54f61754e49d419af9 assets/bits_n_bobs/blockstates/industrial_iron_encased_large_cogwheel.json
@@ -143,8 +144,8 @@ c0190afa39321b2f2c2ef4fc2365954911f2b89b assets/bits_n_bobs/blockstates/white_ch
 bbb308f65d8082773ca234d880ab5896c2390014 assets/bits_n_bobs/blockstates/yellow_chair.json
 4db90e28dfc8d1b622b3336685268b883059c3fb assets/bits_n_bobs/blockstates/yellow_large_nixie_tube.json
 98c1742a3f1ee6f357a35cadd1559b1d5f6d364a assets/bits_n_bobs/blockstates/yellow_nixie_board.json
-63693434bfe132023de36794c16074e9bccd56de assets/bits_n_bobs/lang/en_ud.json
-6630fe6355c710f57a8b4c87b9ac339471e0625d assets/bits_n_bobs/lang/en_us.json
+d562a6bcdacbef6833b26f657bb2e632a11a61fd assets/bits_n_bobs/lang/en_ud.json
+9931183a95d7dad1793c9a3f7d607285f0dc7bcf assets/bits_n_bobs/lang/en_us.json
 42e62dfae8361f2959305f50adfaaffafe2b3e5a assets/bits_n_bobs/models/block/andesite_encased_flanged_cogwheel.json
 77e1dc1a5410d8439303b65e92d739dbf9cad9ef assets/bits_n_bobs/models/block/andesite_encased_flanged_cogwheel_bottom.json
 189ffb75ff304fd545f38f215657c4e114a6d435 assets/bits_n_bobs/models/block/andesite_encased_flanged_cogwheel_top.json
@@ -412,7 +413,6 @@ dcbad3959bca05e359a7efbe7f95e6a859ba7538 assets/bits_n_bobs/models/block/granite
 f40a7104313c6eda16997b9fdcc6f6bd344a8dea assets/bits_n_bobs/models/block/granite_tile_stairs_outer.json
 924a41c2b86fc6b4a6fc6792df8628a78023127d assets/bits_n_bobs/models/block/granite_tile_stairs_outer_alternate.json
 d85b520fd548fca13ea32ea5273b5ad96831232c assets/bits_n_bobs/models/block/industrial_grating.json
-4649fc07403961847468a14851934e6175a32f55 assets/bits_n_bobs/models/block/industrial_grating_panel.json
 602e75c9a227a43c5974d97f47b478002d4aa0dc assets/bits_n_bobs/models/block/industrial_iron_encased_cogwheel.json
 0ce3a0848a12e86693e55d501252851b11cac36b assets/bits_n_bobs/models/block/industrial_iron_encased_cogwheel_bottom.json
 8a97464225ff0cca0d1b741b38d4371588ae876e assets/bits_n_bobs/models/block/industrial_iron_encased_cogwheel_top.json
@@ -586,7 +586,7 @@ ffd5057178e11ce2c87616a54d3bfb4185eef187 assets/bits_n_bobs/models/item/green_ch
 0c5ab6eb4618c5fb2fbb27d78a22add1362cdab9 assets/bits_n_bobs/models/item/headlamp.json
 e76e09c9479837b69987cb158319841b8eb20fc6 assets/bits_n_bobs/models/item/icon_lightbulb.json
 4492a18bbc1ac12985e4fbc64eb1e156aa45bfa2 assets/bits_n_bobs/models/item/industrial_grating.json
-f8ba4ee802ed7da826773a2d48d1febbf281a075 assets/bits_n_bobs/models/item/industrial_grating_panel.json
+0346f97f1bbe2fa0b861bf82c6651e09ca1587a1 assets/bits_n_bobs/models/item/industrial_grating_panel.json
 848d923f291238fa8437c9d867b95e5ca6fa32a3 assets/bits_n_bobs/models/item/industrial_iron_encased_cogwheel.json
 bf43aaf959aad5a96344e32f98e7c4690769ba5f assets/bits_n_bobs/models/item/industrial_iron_encased_flanged_cogwheel.json
 e0f138d6a877cdd228ed13e71f64f323c9d83e99 assets/bits_n_bobs/models/item/industrial_iron_encased_large_cogwheel.json
@@ -855,6 +855,7 @@ c9316aa1b1ea1700ab33eba2629cb0930a5e2497 data/bits_n_bobs/loot_table/blocks/gree
 e0d7a9338fec8c68d3b8e100c1356478a88c9ffa data/bits_n_bobs/loot_table/blocks/headlamp.json
 7b455e6341663752efb2c75bf4152bef332ba9d4 data/bits_n_bobs/loot_table/blocks/industrial_grating.json
 3a989209bb7a882fcc38f3c0be4fb796b18223b5 data/bits_n_bobs/loot_table/blocks/industrial_grating_panel.json
+7599fcc33935f42f0022d75c01bdbbfaddd4da13 data/bits_n_bobs/loot_table/blocks/industrial_grating_panel_encased_shaft.json
 96be55a9ea034c4e6565e5839e28f0f2965e3313 data/bits_n_bobs/loot_table/blocks/industrial_iron_encased_cogwheel.json
 a653ef94ad444f8c477172d861b607c06eaa636b data/bits_n_bobs/loot_table/blocks/industrial_iron_encased_flanged_cogwheel.json
 bbfe0b27b28cb218c5f4f299390c2e661c5670c0 data/bits_n_bobs/loot_table/blocks/industrial_iron_encased_large_cogwheel.json
@@ -1131,8 +1132,8 @@ f1f656352662478775cd9db2d1ca8f7aac574145 data/create/tags/item/stone_types/verid
 1a62100f1b509d1f48d00fcd9b3a518ef390899a data/c/tags/entity_type/teleporting_not_supported.json
 de30238a3ec01e43241a56c5c283d45aae3597b7 data/c/tags/item/ropes.json
 033f75b4c401f8616e1d2b8a61c46886cd9a5bc2 data/minecraft/tags/block/climbable.json
-3fdbda77f9c302fb81c66c59deb6e94379641b8e data/minecraft/tags/block/mineable/axe.json
-57fca06fb6c56a5f7a90e128813db675efcaa92c data/minecraft/tags/block/mineable/pickaxe.json
+e47ded10a609b09c13c49ead996c3e6dcab9f373 data/minecraft/tags/block/mineable/axe.json
+50cb6943d9e1f188d4822fcb8b98d36afaf8916d data/minecraft/tags/block/mineable/pickaxe.json
 ed62c06140a0397feee5c79128d399c64719a198 data/minecraft/tags/block/slabs.json
 10c05d7d5af60bb17cc6d8618bd4354ba3dd741a data/minecraft/tags/block/stairs.json
 b8e4b52b0eaeafeb7c3642ce0fe41d29e6b0dbb0 data/minecraft/tags/block/walls.json

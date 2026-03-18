@@ -1,4 +1,4 @@
-package com.kipti.bnb.foundation;
+package com.kipti.bnb.foundation.client;
 
 import com.cake.struts.content.StrutPlacementEffects;
 import com.kipti.bnb.content.decoration.weathered_girder.WeatheredGirderWrenchBehaviour;

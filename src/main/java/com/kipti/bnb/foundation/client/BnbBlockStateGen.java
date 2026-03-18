@@ -1,4 +1,4 @@
-package com.kipti.bnb.foundation;
+package com.kipti.bnb.foundation.client;
 
 import com.kipti.bnb.content.decoration.truss.AlternatingTrussBlock;
 import com.tterrag.registrate.providers.DataGenContext;
@@ -15,7 +15,7 @@ import java.util.function.Function;
 
 public class BnbBlockStateGen {
 
-    private static final int DEFAULT_ANGLE_OFFSET = 180;
+    public static final int DEFAULT_ANGLE_OFFSET = 180;
 
     public static <T extends Block> void directionalUvLockBlock(final DataGenContext<Block, T> ctx, final RegistrateBlockstateProvider prov, final Function<BlockState, ModelFile> modelFunc) {
         prov.getVariantBuilder(ctx.get())
@@ -72,6 +72,31 @@ public class BnbBlockStateGen {
                             .rotationY(dir.getAxis().isVertical() ? 0 : (((int) dir.toYRot()) + DEFAULT_ANGLE_OFFSET) % 360)
                             .build();
                 });
+    }
+
+    public static <T extends Block> void directionalMixedUvLockBlock(final DataGenContext<Block, T> ctx,
+                                                                     final RegistrateBlockstateProvider prov,
+                                                                     final ModelFile uvlockModel,
+                                                                     final ModelFile uvunlockModel) {
+        for (final Direction dir : Direction.values()) {//Specifically not using forAllStates cause uh
+            prov.getMultipartBuilder(ctx.get())
+                    .part()
+                    .modelFile(uvlockModel)
+                    .rotationX(dir == Direction.DOWN ? 180 : dir.getAxis().isHorizontal() ? 90 : 0)
+                    .rotationY(dir.getAxis().isVertical() ? 0 : (((int) dir.toYRot()) + BnbBlockStateGen.DEFAULT_ANGLE_OFFSET) % 360)
+                    .uvLock(true)
+                    .addModel()
+                    .condition(BlockStateProperties.FACING, dir)
+                    .end()
+                    .part()
+                    .modelFile(uvunlockModel)
+                    .rotationX(dir == Direction.DOWN ? 180 : dir.getAxis().isHorizontal() ? 90 : 0)
+                    .rotationY(dir.getAxis().isVertical() ? 0 : (((int) dir.toYRot()) + BnbBlockStateGen.DEFAULT_ANGLE_OFFSET) % 360)
+                    .uvLock(false)
+                    .addModel()
+                    .condition(BlockStateProperties.FACING, dir)
+                    .end();
+        }
     }
 }
 

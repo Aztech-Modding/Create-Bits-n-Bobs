@@ -1,12 +1,13 @@
-package com.kipti.bnb.registry.content.blocks;
+package com.kipti.bnb.registry.content.blocks.encased;
 
 import com.kipti.bnb.content.kinetics.encased_blocks.cogwheel_chain.BnbEncasedEmptyFlangedGearBlock;
 import com.kipti.bnb.content.kinetics.encased_blocks.piston_pole.EncasedPistonExtensionPoleBlock;
-import com.kipti.bnb.foundation.BnbBlockStateGen;
 import com.kipti.bnb.foundation.BnbBuilderTransformers;
 import com.kipti.bnb.foundation.EncasedBlockList;
-import com.kipti.bnb.foundation.GenericBlockEntityRenderModels;
+import com.kipti.bnb.foundation.client.BnbBlockStateGen;
+import com.kipti.bnb.foundation.client.GenericBlockEntityRenderModels;
 import com.kipti.bnb.registry.client.BnbPartialModels;
+import com.kipti.bnb.registry.content.blocks.BnbKineticBlocks;
 import com.kipti.bnb.registry.core.BnbTags;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.decoration.encasing.EncasableBlock;
@@ -27,7 +28,7 @@ import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import static com.kipti.bnb.CreateBitsnBobs.REGISTRATE;
 import static com.simibubi.create.foundation.data.TagGen.axeOrPickaxe;
 
-public class BnbEncasedBlocks {
+public class BnbEncasedListBlocks {
 
     public static final EncasedBlockList<EncasedPistonExtensionPoleBlock> ENCASED_PISTON_EXTENSION_POLE = new EncasedBlockList<>((casing) -> REGISTRATE
             .block(casing.asId("encased_piston_extension_pole"), (p) -> new EncasedPistonExtensionPoleBlock(p, casing.getMaterial()))

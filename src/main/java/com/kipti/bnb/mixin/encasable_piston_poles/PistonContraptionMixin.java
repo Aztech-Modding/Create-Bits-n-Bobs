@@ -1,7 +1,7 @@
 package com.kipti.bnb.mixin.encasable_piston_poles;
 
 import com.kipti.bnb.content.kinetics.encased_blocks.piston_pole.EncasedPistonExtensionPoleBlock;
-import com.kipti.bnb.registry.content.blocks.BnbEncasedBlocks;
+import com.kipti.bnb.registry.content.blocks.encased.BnbEncasedListBlocks;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.simibubi.create.AllBlocks;
@@ -34,12 +34,12 @@ public class PistonContraptionMixin extends TranslatingContraption {
     @WrapOperation(method = "collectExtensions", at = @At(value = "INVOKE", ordinal = 1, target = "Lcom/simibubi/create/content/contraptions/piston/PistonExtensionPoleBlock$PlacementHelper;matchesAxis(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction$Axis;)Z"))
     private boolean collectExtensions(final PistonExtensionPoleBlock.PlacementHelper instance, final BlockState state, final Direction.Axis axis, final Operation<Boolean> original) {
         return original.call(instance, state, axis) ||
-                (BnbEncasedBlocks.ENCASED_PISTON_EXTENSION_POLE.isIn(state) && state.getValue(EncasedPistonExtensionPoleBlock.FACING).getAxis() == axis && !state.getValue(EncasedPistonExtensionPoleBlock.EMPTY));
+                (BnbEncasedListBlocks.ENCASED_PISTON_EXTENSION_POLE.isIn(state) && state.getValue(EncasedPistonExtensionPoleBlock.FACING).getAxis() == axis && !state.getValue(EncasedPistonExtensionPoleBlock.EMPTY));
     }
 
     @WrapOperation(method = "collectExtensions", at = @At(value = "NEW", ordinal = 4, target = "(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/nbt/CompoundTag;)Lnet/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate$StructureBlockInfo;"))
     private StructureTemplate.StructureBlockInfo collectExtensions(final BlockPos pos, BlockState state, final CompoundTag nbt, final Operation<StructureTemplate.StructureBlockInfo> original) {
-        if (BnbEncasedBlocks.ENCASED_PISTON_EXTENSION_POLE.isIn(state))
+        if (BnbEncasedListBlocks.ENCASED_PISTON_EXTENSION_POLE.isIn(state))
             state = BlockHelper.copyProperties(state, AllBlocks.PISTON_EXTENSION_POLE.getDefaultState());
         return original.call(pos, state, nbt);
     }
@@ -47,7 +47,7 @@ public class PistonContraptionMixin extends TranslatingContraption {
     @Inject(method = "customBlockPlacement", at = @At("HEAD"), cancellable = true)
     protected void customBlockPlacement(final LevelAccessor world, final BlockPos pos, final BlockState state, final CallbackInfoReturnable<Boolean> cir) {
         final BlockState existingState = world.getBlockState(pos);
-        if (BnbEncasedBlocks.ENCASED_PISTON_EXTENSION_POLE.isIn(existingState) && state.is(AllBlocks.PISTON_EXTENSION_POLE)) {
+        if (BnbEncasedListBlocks.ENCASED_PISTON_EXTENSION_POLE.isIn(existingState) && state.is(AllBlocks.PISTON_EXTENSION_POLE)) {
             if (existingState.getValue(EncasedPistonExtensionPoleBlock.EMPTY)) {
                 world.setBlock(pos, existingState.setValue(EncasedPistonExtensionPoleBlock.EMPTY, false), Block.UPDATE_CLIENTS);
                 cir.setReturnValue(true);
@@ -58,7 +58,7 @@ public class PistonContraptionMixin extends TranslatingContraption {
     @Inject(method = "customBlockRemoval", at = @At("HEAD"), cancellable = true)
     protected void customBlockRemoval(final LevelAccessor world, final BlockPos pos, final BlockState state, final CallbackInfoReturnable<Boolean> cir) {
         final BlockState existingState = world.getBlockState(pos);
-        if (BnbEncasedBlocks.ENCASED_PISTON_EXTENSION_POLE.isIn(existingState) && state.is(AllBlocks.PISTON_EXTENSION_POLE)) {
+        if (BnbEncasedListBlocks.ENCASED_PISTON_EXTENSION_POLE.isIn(existingState) && state.is(AllBlocks.PISTON_EXTENSION_POLE)) {
             if (!existingState.getValue(EncasedPistonExtensionPoleBlock.EMPTY)) {
                 world.setBlock(pos, existingState.setValue(EncasedPistonExtensionPoleBlock.EMPTY, true), Block.UPDATE_CLIENTS);
                 cir.setReturnValue(true);

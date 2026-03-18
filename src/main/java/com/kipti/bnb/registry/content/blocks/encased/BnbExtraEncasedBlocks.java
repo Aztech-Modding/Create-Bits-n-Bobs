@@ -1,4 +1,4 @@
-package com.kipti.bnb.registry.content.blocks;
+package com.kipti.bnb.registry.content.blocks.encased;
 
 import com.kipti.bnb.content.kinetics.encased_blocks.BnbEncasedCogwheelBlock;
 import com.kipti.bnb.content.kinetics.encased_blocks.BnbEncasedShaftBlock;
@@ -11,7 +11,7 @@ import net.minecraft.world.level.material.MapColor;
 import static com.kipti.bnb.CreateBitsnBobs.REGISTRATE;
 import static com.simibubi.create.foundation.data.TagGen.axeOrPickaxe;
 
-public class BnbSpecialEncasedBlocks {
+public class BnbExtraEncasedBlocks {
 
     public static final BlockEntry<BnbEncasedShaftBlock> INDUSTRIAL_IRON_ENCASED_SHAFT = REGISTRATE
             .block("industrial_iron_encased_shaft", p -> new BnbEncasedShaftBlock(p, AllBlocks.INDUSTRIAL_IRON_BLOCK))

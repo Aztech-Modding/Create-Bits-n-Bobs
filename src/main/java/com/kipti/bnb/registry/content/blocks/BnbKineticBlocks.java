@@ -4,7 +4,7 @@ import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.kinetics.chain_pulley.ChainPulleyBlock;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.block.EmptyFlangedGearBlock;
 import com.kipti.bnb.content.kinetics.flywheel_bearing.FlywheelBearingBlock;
-import com.kipti.bnb.foundation.GenericBlockEntityRenderModels;
+import com.kipti.bnb.foundation.client.GenericBlockEntityRenderModels;
 import com.kipti.bnb.registry.client.BnbPartialModels;
 import com.kipti.bnb.registry.core.BnbTags;
 import com.simibubi.create.AllTags;

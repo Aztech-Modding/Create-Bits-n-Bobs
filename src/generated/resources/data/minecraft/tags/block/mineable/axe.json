@@ -21,6 +21,7 @@
     "bits_n_bobs:green_chair",
     "bits_n_bobs:red_chair",
     "bits_n_bobs:black_chair",
+    "bits_n_bobs:wooden_girder_strut",
     "bits_n_bobs:andesite_encased_piston_extension_pole",
     "bits_n_bobs:brass_encased_piston_extension_pole",
     "bits_n_bobs:industrial_iron_encased_piston_extension_pole",
@@ -30,7 +31,6 @@
     "bits_n_bobs:industrial_iron_encased_cogwheel",
     "bits_n_bobs:weathered_iron_encased_cogwheel",
     "bits_n_bobs:industrial_iron_encased_large_cogwheel",
-    "bits_n_bobs:weathered_iron_encased_large_cogwheel",
-    "bits_n_bobs:wooden_girder_strut"
+    "bits_n_bobs:weathered_iron_encased_large_cogwheel"
   ]
 }
