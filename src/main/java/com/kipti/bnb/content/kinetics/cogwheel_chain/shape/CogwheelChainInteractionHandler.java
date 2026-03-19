@@ -1,12 +1,11 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.shape;
 
-import com.cake.azimuth.behaviour.SuperBlockEntityBehaviour;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.behaviour.CogwheelChainBehaviour;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChain;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.world.CogwheelChainWorld;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.foundation.utility.RaycastHelper;
-import net.createmod.catnip.data.WorldAttached;
 import net.createmod.catnip.render.DefaultSuperRenderTypeBuffer;
 import net.createmod.catnip.render.SuperRenderTypeBuffer;
 import net.minecraft.client.Minecraft;
@@ -26,7 +25,6 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RenderHighlightEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 
-import java.util.List;
 import java.util.Map.Entry;
 
 /**
@@ -34,9 +32,6 @@ import java.util.Map.Entry;
  */
 @EventBusSubscriber(Dist.CLIENT)
 public class CogwheelChainInteractionHandler {
-
-    private static final WorldAttached<LevelChainShapeStore> loadedChains =
-            new WorldAttached<>($ -> new LevelChainShapeStore());
 
     public static BlockPos selectedController;
     public static float selectedChainPosition;
@@ -58,19 +53,7 @@ public class CogwheelChainInteractionHandler {
             return true;
         }
 
-        return SuperBlockEntityBehaviour.getOptional(level, selectedController, CogwheelChainBehaviour.TYPE)
-                .map(behaviour -> !behaviour.isController())
-                .orElse(false);
-    }
-
-    public static void put(final Level level,
-                           final BlockPos controllerPos,
-                           final List<CogwheelChainShape> shapes) {
-        loadedChains.get(level).put(controllerPos, shapes);
-    }
-
-    public static void invalidate(final Level level, final BlockPos controllerPos) {
-        loadedChains.get(level).invalidate(controllerPos);
+        return !CogwheelChainWorld.get(level).containsChain(selectedController);
     }
 
     public static void clientTick() {
@@ -88,8 +71,8 @@ public class CogwheelChainInteractionHandler {
             return;
         }
 
-        final LevelChainShapeStore levelStore = loadedChains.get(level);
-        levelStore.validate(level);
+        final CogwheelChainWorld chainWorld = CogwheelChainWorld.get(level);
+        chainWorld.validate(level);
 
         final Vec3 origin = player.getEyePosition();
         final double range = player.getAttributeValue(Attributes.BLOCK_INTERACTION_RANGE) + 1;
@@ -104,13 +87,12 @@ public class CogwheelChainInteractionHandler {
         float bestChainPosition = 0.0f;
         Vec3 bestVec = null;
 
-        for (final Entry<BlockPos, List<CogwheelChainShape>> entry : levelStore.entries()) {
-            final List<CogwheelChainShape> chainShapes = entry.getValue();
-            if (chainShapes.isEmpty()) continue;
+        for (final Entry<BlockPos, CogwheelChain> entry : chainWorld.entries()) {
+            final CogwheelChainWholeShape shape = CogwheelChainWholeShape.buildShape(entry.getValue());
+            if (shape == null) continue;
 
             final BlockPos controllerPos = entry.getKey();
             final Vec3 controllerBase = Vec3.atLowerCornerOf(controllerPos);
-            final CogwheelChainShape shape = chainShapes.getFirst();
 
             final Vec3 localFrom = origin.subtract(controllerBase);
             final Vec3 localTo = target.subtract(controllerBase);
