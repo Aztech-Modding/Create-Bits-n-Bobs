@@ -9,7 +9,7 @@
   "bits_n_bobs.ponder.chain_cog_flat.text_2": "Gear ratios will be preserved across the chain",
   "bits_n_bobs.ponder.chain_cog_flat.text_3": "2x RPM",
   "bits_n_bobs.ponder.chain_cog_flat.text_4": "1x RPM",
-  "bits_n_bobs.ponder.dyed_pipes.header": "Dyeing pipes (Bits 'n' Bobs)",
+  "bits_n_bobs.ponder.dyed_pipes.header": "Dyeing pipes",
   "bits_n_bobs.ponder.dyed_pipes.text_1": "Pipes with no dye color automatically connect when touching.",
   "bits_n_bobs.ponder.dyed_pipes.text_2": "Dyed pipes will only automatically connect to pipes of the same color.",
   "bits_n_bobs.ponder.dyed_pipes.text_3": "However, pipes with no dye color will connect to dyed pipes of any color.",

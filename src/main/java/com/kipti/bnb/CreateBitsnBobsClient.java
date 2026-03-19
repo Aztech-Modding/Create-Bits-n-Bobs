@@ -1,5 +1,6 @@
 package com.kipti.bnb;
 
+import com.cake.azimuth.ponder.PonderForeignLabelRegistry;
 import com.cake.struts.compat.flywheel.StrutsFlywheelCompatLoader;
 import com.cake.struts.content.StrutModelManipulator;
 import com.kipti.bnb.content.trinkets.light.headlamp.rendering.pipeline.block_entity.HeadlampRenderCache;
@@ -48,6 +49,7 @@ public class CreateBitsnBobsClient {
 
     private static void clientInit() {
         PonderIndex.addPlugin(new BnbPonderPlugin());
+        PonderForeignLabelRegistry.register("bits_n_bobs", "BITS N BOBS");
 
         BnbPartialModels.register();
         BnbSpriteShifts.register();
