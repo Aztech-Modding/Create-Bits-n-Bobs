@@ -49,7 +49,7 @@ public class CreateBitsnBobsClient {
 
     private static void clientInit() {
         PonderIndex.addPlugin(new BnbPonderPlugin());
-        PonderForeignLabelRegistry.register("bits_n_bobs", "BITS N BOBS");
+        PonderForeignLabelRegistry.register("bits_n_bobs", "BITS N BOBS");//TODO: localized component
 
         BnbPartialModels.register();
         BnbSpriteShifts.register();
