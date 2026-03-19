@@ -17,7 +17,7 @@ public class DyedPipeScenes {
 
     public static void dyedPipes(final SceneBuilder builder, final SceneBuildingUtil util) {
         final CreateSceneBuilder scene = new CreateSceneBuilder(builder);
-        scene.title("dyed_pipes", "Dyeing pipes (Bits 'n' Bobs)");
+        scene.title("dyed_pipes", "Dyeing pipes");
         scene.configureBasePlate(0, 0, 4);
 
         stageUndyedPipes(scene, util);

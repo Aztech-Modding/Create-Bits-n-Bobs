@@ -14,7 +14,8 @@ public class GratingPanelCTBehaviour extends SimpleCTBehaviour {
     }
 
     @Override
-    public boolean connectsTo(final BlockState state, final BlockState other, final BlockAndTintGetter reader, final BlockPos pos, final BlockPos otherPos, final Direction face) {
+    public boolean connectsTo(final BlockState state, final BlockState other, final BlockAndTintGetter reader, final BlockPos pos,
+                              final BlockPos otherPos, final Direction face) {
         if (!(other.getBlock() instanceof IGratingPanel))
             return false;
         if (!(state.getBlock() instanceof IGratingPanel))
@@ -22,5 +23,22 @@ public class GratingPanelCTBehaviour extends SimpleCTBehaviour {
         return other.getValue(GratingPanelBlock.FACING) == state.getValue(GratingPanelBlock.FACING);
     }
 
+    /**
+     * Normal isbeingblocked but cuts out the face ceck cause the obstructed face will probably be the shaft
+     *
+     */
+    @Override
+    protected boolean isBeingBlocked(final BlockState state, final BlockAndTintGetter reader, final BlockPos pos, final BlockPos otherPos, final Direction face) {
+        final BlockPos blockingPos = otherPos.relative(face);
+        final BlockState blockState = reader.getBlockState(pos);
+        if (face.getAxis()
+                .choose(pos.getX(), pos.getY(), pos.getZ()) != face.getAxis()
+                .choose(otherPos.getX(), otherPos.getY(), otherPos.getZ()))
+            return false;
+
+        return connectsTo(state,
+                getCTBlockState(reader, blockState, face.getOpposite(), pos.relative(face), blockingPos), reader, pos,
+                blockingPos, face);
+    }
 }
 
