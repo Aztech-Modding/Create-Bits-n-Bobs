@@ -25,6 +25,9 @@ public class BnbSpriteShifts {
 
     public static final CTSpriteShiftEntry
             INDUSTRIAL_GRATING = omni("industrial_grating");
+    public static final CTSpriteShiftEntry
+            INDUSTRIAL_GRATING_CUTOUT = omni("industrial_grating_cutout");
+
 
     private static Map<DyeColor, SpriteShiftEntry> getHeadlampSpriteShifts(final boolean off) {
         final Map<DyeColor, SpriteShiftEntry> map = new EnumMap<>(DyeColor.class);

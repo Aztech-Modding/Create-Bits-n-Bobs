@@ -1,9 +1,9 @@
 package com.kipti.bnb.registry.content.blocks.encased;
 
 import com.kipti.bnb.CreateBitsnBobs;
+import com.kipti.bnb.content.decoration.grating.GratingBlockStateGen;
 import com.kipti.bnb.content.decoration.grating.GratingEncasedShaftBlock;
 import com.kipti.bnb.content.decoration.grating.GratingPanelCTBehaviour;
-import com.kipti.bnb.foundation.client.BnbBlockStateGen;
 import com.kipti.bnb.registry.client.BnbSpriteShifts;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.decoration.encasing.EncasingRegistry;
@@ -26,12 +26,9 @@ public class BnbSpecialEncasedBlocks {
                     .isViewBlocking((state, level, pos) -> false)
             )
             .transform(TagGen.pickaxeOnly())
-            .blockstate((c, p) ->
-                    BnbBlockStateGen.directionalMixedUvLockBlock(c, p,
-                            p.models().getExistingFile(CreateBitsnBobs.asResource("block/industrial_grating/panel")),
-                            p.models().getExistingFile(CreateBitsnBobs.asResource("block/industrial_grating/panel_side"))
-                    ))
+            .blockstate(GratingBlockStateGen::gratingEncasedShaftBlock)
             .onRegister(connectedTextures(() -> new GratingPanelCTBehaviour(BnbSpriteShifts.INDUSTRIAL_GRATING)))
+            .onRegister(connectedTextures(() -> new GratingPanelCTBehaviour(BnbSpriteShifts.INDUSTRIAL_GRATING_CUTOUT)))
             .addLayer(() -> RenderType::cutout)
             .transform(EncasingRegistry.addVariantTo(AllBlocks.SHAFT))
             .register();
