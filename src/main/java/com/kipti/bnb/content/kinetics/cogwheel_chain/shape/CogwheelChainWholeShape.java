@@ -1,6 +1,9 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.shape;
 
+import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChain;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.RenderedChainPathNode;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.render.CogwheelChainRenderGeometryBuilder;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.types.CogwheelChainType;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.core.BlockPos;
@@ -30,6 +33,21 @@ public class CogwheelChainWholeShape extends CogwheelChainShape {
     private final Vec3[] vAtVertex;
     private final boolean closedLoop;
     private final int segmentCount;
+
+    @Nullable
+    public static CogwheelChainWholeShape buildShape(final CogwheelChain chain) {
+        final List<RenderedChainPathNode> nodes = chain.getChainPathNodes();
+        if (nodes.size() < 2) return null;
+
+        final CogwheelChainType.ChainRenderInfo renderInfo = chain.getChainType().getRenderType();
+        final double baseRadius = Math.max(renderInfo.getWidth(), renderInfo.getHeight()) / 32.0;
+
+        final List<Vec3> path = new ArrayList<>(nodes.size());
+        for (final RenderedChainPathNode node : nodes) {
+            path.add(node.getPosition());
+        }
+        return new CogwheelChainWholeShape(path, baseRadius);
+    }
 
     public CogwheelChainWholeShape(final List<Vec3> pointsLocal, final double baseRadius) {
         this.points = pointsLocal;
