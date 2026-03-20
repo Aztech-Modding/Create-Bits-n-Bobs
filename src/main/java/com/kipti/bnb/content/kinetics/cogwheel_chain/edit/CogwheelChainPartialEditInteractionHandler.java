@@ -66,18 +66,7 @@ public class CogwheelChainPartialEditInteractionHandler {
     private static boolean onRightClick() {
         final LocalPlayer player = Minecraft.getInstance().player;
         final ClientLevel level = Minecraft.getInstance().level;
-        if (player == null || level == null)
-            return false;
-
-        if (CogwheelChainPlacementInteraction.currentBuildingChain != null)
-            return false;
-
-        final ItemStack chainItemInHand = CogwheelChainPlacementInteraction.getChainItemInHand(player);
-        if (chainItemInHand == null)
-            return false;
-
-        final CogwheelChainType heldChainType = CogwheelChainType.COGWHEEL_TYPE_BY_ITEM.get(chainItemInHand.getItem());
-        if (heldChainType == null)
+        if (!isValidEditState(player, level))
             return false;
 
         if (player.isShiftKeyDown()) {
@@ -85,21 +74,44 @@ public class CogwheelChainPartialEditInteractionHandler {
             return false;
         }
 
-        final HitResult hitResult = Minecraft.getInstance().hitResult;
-        if (hitResult == null || hitResult.getType() != HitResult.Type.BLOCK)
+        final ItemStack chainItemInHand = CogwheelChainPlacementInteraction.getChainItemInHand(player);
+        final CogwheelChainType heldChainType = getHeldChainType(chainItemInHand);
+        if (heldChainType == null)
             return false;
 
-        final BlockHitResult bhr = (BlockHitResult) hitResult;
-        final BlockPos hitPos = bhr.getBlockPos();
+        final BlockHitResult blockHit = getTargetedBlock();
+        if (blockHit == null)
+            return false;
+
+        final BlockPos hitPos = blockHit.getBlockPos();
         final BlockState targetedState = level.getBlockState(hitPos);
-
-        if (!CogwheelChainCandidate.isValidCandidate(targetedState))
-            return false;
-
-        if (!heldChainType.getCogwheelPredicate().test(targetedState.getBlock()))
+        if (!isValidCogwheelTarget(targetedState, heldChainType))
             return false;
 
         return handleChainEdit(level, hitPos, targetedState, heldChainType, chainItemInHand, player);
+    }
+
+    private static boolean isValidEditState(final LocalPlayer player, final ClientLevel level) {
+        return player != null && level != null
+                && CogwheelChainPlacementInteraction.currentBuildingChain == null;
+    }
+
+    private static @Nullable CogwheelChainType getHeldChainType(final ItemStack chainItemInHand) {
+        if (chainItemInHand == null)
+            return null;
+        return CogwheelChainType.COGWHEEL_TYPE_BY_ITEM.get(chainItemInHand.getItem());
+    }
+
+    private static @Nullable BlockHitResult getTargetedBlock() {
+        final HitResult hitResult = Minecraft.getInstance().hitResult;
+        if (hitResult == null || hitResult.getType() != HitResult.Type.BLOCK)
+            return null;
+        return (BlockHitResult) hitResult;
+    }
+
+    private static boolean isValidCogwheelTarget(final BlockState state, final CogwheelChainType chainType) {
+        return CogwheelChainCandidate.isValidCandidate(state)
+                && chainType.getCogwheelPredicate().test(state.getBlock());
     }
 
     private static boolean handleChainEdit(final ClientLevel level,
@@ -158,23 +170,31 @@ public class CogwheelChainPartialEditInteractionHandler {
         double bestDistance = Double.MAX_VALUE;
 
         for (final BlockPos controllerPos : chainWorld.getControllerPositions()) {
-            final CogwheelChain chain = chainWorld.getChain(controllerPos);
-            if (chain == null)
+            if (!isMatchingChainController(chainWorld, controllerPos, chainType, proposedNode))
                 continue;
 
-            if (chain.getChainType() != chainType)
-                continue;
-
-            if (canInsertIntoChain(chain, controllerPos, proposedNode)) {
-                final double distance = controllerPos.getCenter().distanceTo(newCogwheelPos.getCenter());
-                if (distance < bestDistance) {
-                    bestDistance = distance;
-                    bestController = controllerPos;
-                }
+            final double distance = controllerPos.getCenter().distanceTo(newCogwheelPos.getCenter());
+            if (distance < bestDistance) {
+                bestDistance = distance;
+                bestController = controllerPos;
             }
         }
 
         return bestController;
+    }
+
+    private static boolean isMatchingChainController(final CogwheelChainWorld chainWorld,
+                                                      final BlockPos controllerPos,
+                                                      final CogwheelChainType chainType,
+                                                      final PlacingCogwheelNode proposedNode) {
+        final CogwheelChain chain = chainWorld.getChain(controllerPos);
+        if (chain == null)
+            return false;
+
+        if (chain.getChainType() != chainType)
+            return false;
+
+        return canInsertIntoChain(chain, controllerPos, proposedNode);
     }
 
     private static boolean canInsertIntoChain(final CogwheelChain chain,

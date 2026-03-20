@@ -21,12 +21,12 @@ import java.util.List;
  *
  * <p>Only {@link #controllerPos} and {@link #dist} are serialized.</p>
  */
-public class CogwheelChainAttachments {
+public class CogwheelChainAttachment {
 
     private final BlockPos controllerPos;
     private float dist;
 
-    public CogwheelChainAttachments(final BlockPos controllerPos, final float dist) {
+    public CogwheelChainAttachment(final BlockPos controllerPos, final float dist) {
         this.controllerPos = controllerPos.immutable();
         this.dist = Math.max(0, dist);
     }
@@ -108,14 +108,14 @@ public class CogwheelChainAttachments {
         tag.putFloat("Dist", this.dist);
     }
 
-    public static CogwheelChainAttachments read(final CompoundTag tag) {
+    public static CogwheelChainAttachment read(final CompoundTag tag) {
         final BlockPos pos = new BlockPos(
                 tag.getInt("ControllerX"),
                 tag.getInt("ControllerY"),
                 tag.getInt("ControllerZ")
         );
         final float dist = tag.getFloat("Dist");
-        return new CogwheelChainAttachments(pos, dist);
+        return new CogwheelChainAttachment(pos, dist);
     }
 
     public BlockPos getControllerPos() {

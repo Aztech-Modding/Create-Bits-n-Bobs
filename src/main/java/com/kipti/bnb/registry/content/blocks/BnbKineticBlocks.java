@@ -3,6 +3,7 @@ package com.kipti.bnb.registry.content.blocks;
 import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.kinetics.chain_pulley.ChainPulleyBlock;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.block.EmptyFlangedGearBlock;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.carriage.CogwheelChainCarriageBlock;
 import com.kipti.bnb.content.kinetics.flywheel_bearing.FlywheelBearingBlock;
 import com.kipti.bnb.foundation.client.GenericBlockEntityRenderModels;
 import com.kipti.bnb.registry.client.BnbPartialModels;
@@ -107,6 +108,18 @@ public class BnbKineticBlocks {
                     .model((c, p) ->
                             p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/flywheel_bearing/item"))
                     )
+                    .build()
+                    .register();
+
+    public static final BlockEntry<CogwheelChainCarriageBlock> COGWHEEL_CHAIN_CARRIAGE =
+            REGISTRATE.block("cogwheel_chain_carriage", CogwheelChainCarriageBlock::new)
+                    .transform(axeOrPickaxe())
+                    .properties(p -> p.noOcclusion())
+                    .blockstate((c, p) -> p.simpleBlock(c.get(),
+                            p.models().getExistingFile(CreateBitsnBobs.asResource("block/cogwheel_chain_carriage/block"))))
+                    .item()
+                    .model((c, p) ->
+                            p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/cogwheel_chain_carriage/item")))
                     .build()
                     .register();
 

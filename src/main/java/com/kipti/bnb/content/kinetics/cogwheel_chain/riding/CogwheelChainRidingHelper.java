@@ -1,6 +1,6 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.riding;
 
-import com.kipti.bnb.content.kinetics.cogwheel_chain.attachment.CogwheelChainAttachments;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.attachment.CogwheelChainAttachment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -15,9 +15,9 @@ import net.minecraft.world.phys.Vec3;
  * <p>All state is static and only meaningful on the logical client.
  * Call {@link #clientTick(LocalPlayer)} from client tick events.</p>
  */
-public final class CogwheelChainRidingHelper {
+public class CogwheelChainRidingHelper {
 
-    private static CogwheelChainAttachments currentAttachment;
+    private static CogwheelChainAttachment currentAttachment;
     private static boolean isRiding;
     private static int catchingUp;
 
@@ -25,20 +25,17 @@ public final class CogwheelChainRidingHelper {
     private static final double MAX_DROP_DISTANCE = 1.0;
     private static final int CATCH_UP_TICKS = 20;
 
-    private CogwheelChainRidingHelper() {
-    }
-
     /**
      * Begins riding the given chain attachment. Sets up tracking state,
      * displays the dismount hint, and plays a mounting sound.
      */
-    public static void embark(CogwheelChainAttachments attachment) {
+    public static void embark(final CogwheelChainAttachment attachment) {
         currentAttachment = attachment;
         isRiding = true;
         catchingUp = CATCH_UP_TICKS;
 
-        Minecraft mc = Minecraft.getInstance();
-        Component hint = Component.translatable(
+        final Minecraft mc = Minecraft.getInstance();
+        final Component hint = Component.translatable(
                 "mount.onboard", mc.options.keyShift.getTranslatedKeyMessage());
         mc.gui.setOverlayMessage(hint, false);
         mc.getSoundManager()
@@ -62,10 +59,10 @@ public final class CogwheelChainRidingHelper {
      * Per-tick update called from a client tick event. Advances the attachment
      * along the chain, moves the player to follow, and checks disembark conditions.
      */
-    public static void clientTick(LocalPlayer player) {
+    public static void clientTick(final LocalPlayer player) {
         if (!isRiding || currentAttachment == null) return;
 
-        Minecraft mc = Minecraft.getInstance();
+        final Minecraft mc = Minecraft.getInstance();
         if (mc.isPaused()) return;
 
         if (player.isShiftKeyDown()) {
@@ -80,7 +77,7 @@ public final class CogwheelChainRidingHelper {
 
         currentAttachment.tick(mc.level);
 
-        Vec3 targetPosition = currentAttachment.getCurrentPosition(mc.level);
+        final Vec3 targetPosition = currentAttachment.getCurrentPosition(mc.level);
         if (targetPosition.equals(Vec3.ZERO)) {
             disembark();
             return;
@@ -101,9 +98,9 @@ public final class CogwheelChainRidingHelper {
         return isRiding;
     }
 
-    private static void applyMovement(LocalPlayer player, Vec3 targetPosition) {
-        Vec3 playerHangPosition = computeHangPosition(player);
-        Vec3 diff = targetPosition.subtract(playerHangPosition);
+    private static void applyMovement(final LocalPlayer player, final Vec3 targetPosition) {
+        final Vec3 playerHangPosition = computeHangPosition(player);
+        final Vec3 diff = targetPosition.subtract(playerHangPosition);
 
         if (catchingUp > 0) {
             catchingUp--;
@@ -119,13 +116,13 @@ public final class CogwheelChainRidingHelper {
                 .add(diff.scale(0.25)));
     }
 
-    private static Vec3 computeHangPosition(LocalPlayer player) {
-        double chainYOffset = 0.5 * player.getScale();
+    private static Vec3 computeHangPosition(final LocalPlayer player) {
+        final double chainYOffset = 0.5 * player.getScale();
         return player.position()
                 .add(0, player.getBoundingBox().getYsize() + chainYOffset, 0);
     }
 
-    private static boolean isOutOfRange(Vec3 diff) {
+    private static boolean isOutOfRange(final Vec3 diff) {
         return diff.length() > MAX_DRIFT_DISTANCE || diff.y < -MAX_DROP_DISTANCE;
     }
 }

@@ -23,6 +23,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
@@ -181,22 +182,42 @@ public class CogwheelChainPartialEditDisplayHandler {
     private static InsertionNeighbours findInsertionNeighbours(final List<PathedCogwheelNode> existingNodes,
                                                                 final BlockPos controllerPos,
                                                                 final BlockPos proposedPos) {
-        final BlockState proposedState =
-                Minecraft.getInstance().level != null ? Minecraft.getInstance().level.getBlockState(proposedPos) : null;
-        if (proposedState == null)
+        final PlacingCogwheelNode proposedNode = createProposedNode(proposedPos);
+        if (proposedNode == null)
             return null;
 
+        final int bestIndex = findBestInsertionIndex(existingNodes, controllerPos, proposedPos, proposedNode);
+        if (bestIndex == -1)
+            return null;
+
+        final PlacingCogwheelNode nodeA = toWorldNode(existingNodes.get(bestIndex), controllerPos);
+        final PlacingCogwheelNode nodeB = toWorldNode(existingNodes.get((bestIndex + 1) % existingNodes.size()), controllerPos);
+
+        return new InsertionNeighbours(nodeA, nodeB, bestIndex);
+    }
+
+    private static @Nullable PlacingCogwheelNode createProposedNode(final BlockPos proposedPos) {
+        final ClientLevel level = Minecraft.getInstance().level;
+        if (level == null)
+            return null;
+
+        final BlockState proposedState = level.getBlockState(proposedPos);
         final CogwheelChainCandidate candidate = CogwheelChainCandidate.getForBlock(proposedState);
         if (candidate == null)
             return null;
 
-        final PlacingCogwheelNode proposedNode = new PlacingCogwheelNode(
+        return new PlacingCogwheelNode(
                 proposedPos,
                 candidate.axis(),
                 candidate.isLarge(),
                 candidate.hasSmallCogwheelOffset()
         );
+    }
 
+    private static int findBestInsertionIndex(final List<PathedCogwheelNode> existingNodes,
+                                               final BlockPos controllerPos,
+                                               final BlockPos proposedPos,
+                                               final PlacingCogwheelNode proposedNode) {
         double bestDistance = Double.MAX_VALUE;
         int bestIndex = -1;
 
@@ -210,23 +231,18 @@ public class CogwheelChainPartialEditDisplayHandler {
             final boolean connectsFromA = !CogwheelChainPathfinder.getValidPathSteps(nodeA, proposedNode).isEmpty();
             final boolean connectsToB = !CogwheelChainPathfinder.getValidPathSteps(proposedNode, nodeB).isEmpty();
 
-            if (connectsFromA && connectsToB) {
-                final double distance = nodeA.center().distanceTo(proposedPos.getCenter())
-                        + proposedPos.getCenter().distanceTo(nodeB.center());
-                if (distance < bestDistance) {
-                    bestDistance = distance;
-                    bestIndex = i;
-                }
+            if (!connectsFromA || !connectsToB)
+                continue;
+
+            final double distance = nodeA.center().distanceTo(proposedPos.getCenter())
+                    + proposedPos.getCenter().distanceTo(nodeB.center());
+            if (distance < bestDistance) {
+                bestDistance = distance;
+                bestIndex = i;
             }
         }
 
-        if (bestIndex == -1)
-            return null;
-
-        final PlacingCogwheelNode nodeA = toWorldNode(existingNodes.get(bestIndex), controllerPos);
-        final PlacingCogwheelNode nodeB = toWorldNode(existingNodes.get((bestIndex + 1) % existingNodes.size()), controllerPos);
-
-        return new InsertionNeighbours(nodeA, nodeB, bestIndex);
+        return bestIndex;
     }
 
     private static PlacingCogwheelNode toWorldNode(final PathedCogwheelNode pathed, final BlockPos controllerPos) {

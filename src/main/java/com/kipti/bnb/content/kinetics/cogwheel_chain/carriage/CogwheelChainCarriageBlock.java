@@ -1,10 +1,8 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.carriage;
 
-import com.kipti.bnb.content.kinetics.cogwheel_chain.attachment.CogwheelChainAttachmentHelper;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.attachment.CogwheelChainAttachments;
+import com.kipti.bnb.registry.content.BnbBlockEntities;
 import com.simibubi.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -14,7 +12,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -23,8 +20,6 @@ import org.jetbrains.annotations.NotNull;
  *
  * <p>Right-click with an empty hand to attach to the nearest chain and begin
  * assembly, or to disassemble an already-running contraption.</p>
- *
- * <p>TODO: Register this block and its block entity in the BnB registrate system.</p>
  */
 public class CogwheelChainCarriageBlock extends Block implements IBE<CogwheelChainCarriageBlockEntity> {
 
@@ -34,12 +29,12 @@ public class CogwheelChainCarriageBlock extends Block implements IBE<CogwheelCha
 
     @Override
     protected @NotNull ItemInteractionResult useItemOn(final @NotNull ItemStack stack,
-                                                        final @NotNull BlockState state,
-                                                        final @NotNull Level level,
-                                                        final @NotNull BlockPos pos,
-                                                        final Player player,
-                                                        final @NotNull InteractionHand hand,
-                                                        final @NotNull BlockHitResult hitResult) {
+                                                       final @NotNull BlockState state,
+                                                       final @NotNull Level level,
+                                                       final @NotNull BlockPos pos,
+                                                       final Player player,
+                                                       final @NotNull InteractionHand hand,
+                                                       final @NotNull BlockHitResult hitResult) {
         if (!player.mayBuild())
             return ItemInteractionResult.FAIL;
         if (player.isShiftKeyDown())
@@ -50,31 +45,9 @@ public class CogwheelChainCarriageBlock extends Block implements IBE<CogwheelCha
             return ItemInteractionResult.SUCCESS;
 
         this.withBlockEntityDo(level, pos, be -> {
-            if (be.isAssembled()) {
-                be.disassemble();
-            } else {
-                this.tryAttachToChain(level, pos, player, be);
-            }
+            be.assembleNextTick = true;
         });
         return ItemInteractionResult.SUCCESS;
-    }
-
-    private void tryAttachToChain(final Level level,
-                                   final BlockPos pos,
-                                   final Player player,
-                                   final CogwheelChainCarriageBlockEntity blockEntity) {
-        final Vec3 blockCenter = Vec3.atCenterOf(pos);
-        final CogwheelChainAttachments attachment =
-                CogwheelChainAttachmentHelper.findNearestAttachment(level, blockCenter);
-
-        if (attachment == null || !attachment.isValid(level)) {
-            player.displayClientMessage(
-                    Component.translatable("bits_n_bobs.cogwheel_chain_carriage.no_chain_nearby"), true);
-            return;
-        }
-
-        blockEntity.setAttachment(attachment);
-        blockEntity.assembleNextTick = true;
     }
 
     @Override
@@ -93,7 +66,6 @@ public class CogwheelChainCarriageBlock extends Block implements IBE<CogwheelCha
 
     @Override
     public BlockEntityType<? extends CogwheelChainCarriageBlockEntity> getBlockEntityType() {
-        // TODO: Return BnbBlockEntities.COGWHEEL_CHAIN_CARRIAGE.get() after registration
-        throw new UnsupportedOperationException("Block entity type not yet registered in BnbBlockEntities");
+        return BnbBlockEntities.COGWHEEL_CHAIN_CARRIAGE.get();
     }
 }

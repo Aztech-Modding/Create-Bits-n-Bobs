@@ -1,6 +1,5 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.shape;
 
-import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChain;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.world.CogwheelChainWorld;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -16,7 +15,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -24,8 +22,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RenderHighlightEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
-
-import java.util.Map.Entry;
 
 /**
  * Client-side selection and outline handling for cogwheel chains.
@@ -63,57 +59,33 @@ public class CogwheelChainInteractionHandler {
             return;
         }
 
-        final Level level = mc.level;
         final LocalPlayer player = mc.player;
-
         if (!isActive(player.getMainHandItem())) {
             clearSelection();
             return;
         }
 
-        final CogwheelChainWorld chainWorld = CogwheelChainWorld.get(level);
-        chainWorld.validate(level);
-
         final Vec3 origin = player.getEyePosition();
         final double range = player.getAttributeValue(Attributes.BLOCK_INTERACTION_RANGE) + 1;
         final Vec3 target = RaycastHelper.getTraceTarget(player, range, origin);
-        final HitResult hitResult = mc.hitResult;
+        final double vanillaDistSq = mc.hitResult != null
+                ? mc.hitResult.getLocation().distanceToSqr(origin)
+                : Double.MAX_VALUE;
 
-        double bestDistance = hitResult != null ? hitResult.getLocation()
-                .distanceToSqr(origin) : Double.MAX_VALUE;
+        final CogwheelChainWorld chainWorld = CogwheelChainWorld.get(mc.level);
+        chainWorld.validate(mc.level);
 
-        BlockPos bestController = null;
-        CogwheelChainShape bestShape = null;
-        float bestChainPosition = 0.0f;
-        Vec3 bestVec = null;
-
-        for (final Entry<BlockPos, CogwheelChain> entry : chainWorld.entries()) {
-            final CogwheelChainWholeShape shape = CogwheelChainWholeShape.buildShape(entry.getValue());
-            if (shape == null) continue;
-
-            final BlockPos controllerPos = entry.getKey();
-            final Vec3 controllerBase = Vec3.atLowerCornerOf(controllerPos);
-
-            final Vec3 localFrom = origin.subtract(controllerBase);
-            final Vec3 localTo = target.subtract(controllerBase);
-            final Vec3 intersect = shape.intersect(localFrom, localTo);
-            if (intersect == null) continue;
-
-            final Vec3 worldHit = intersect.add(controllerBase);
-            final double distance = worldHit.distanceToSqr(origin);
-            if (distance >= bestDistance) continue;
-
-            bestDistance = distance;
-            bestController = controllerPos;
-            bestShape = shape;
-            bestChainPosition = shape.getChainPosition(intersect);
-            bestVec = shape.getVec(controllerPos, bestChainPosition);
+        final ChainDriveShapeHelper.ChainShapeHit hit = ChainDriveShapeHelper.findClosestRayHit(
+                mc.level, origin, target, vanillaDistSq);
+        if (hit == null) {
+            clearSelection();
+            return;
         }
 
-        selectedController = bestController;
-        selectedShape = bestShape;
-        selectedChainPosition = bestChainPosition;
-        selectedBakedPosition = bestVec;
+        selectedController = hit.controllerPos();
+        selectedShape = hit.shape();
+        selectedChainPosition = hit.chainPosition();
+        selectedBakedPosition = hit.bakedPosition();
     }
 
     private static boolean isActive(final ItemStack mainHand) {

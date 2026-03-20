@@ -2,6 +2,8 @@ package com.kipti.bnb.content.kinetics.cogwheel_chain.graph;
 
 import com.cake.azimuth.behaviour.SuperBlockEntityBehaviour;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.behaviour.CogwheelChainBehaviour;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.segment.CogwheelChainSegment;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.segment.CogwheelChainSegmentBuilder;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.BnbCogwheelChainTypes;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.CogwheelChainType;
 import com.kipti.bnb.registry.core.BnbRegistries;
@@ -33,6 +35,7 @@ public class CogwheelChain {
 
     private List<PathedCogwheelNode> cogwheelNodes;
     private List<RenderedChainPathNode> renderedNodes;
+    private List<CogwheelChainSegment> cachedSegments;
     private CogwheelChainType type;
     private Item returnedItem;
     private boolean flipInsideOutside;
@@ -55,6 +58,7 @@ public class CogwheelChain {
         }
         renderedNodes.clear();
         renderedNodes.addAll(CogwheelChainGeometryBuilder.buildFullChainFromPathNodes(cogwheelNodes));
+        this.cachedSegments = null;
         if (tag.contains("chain_type")) {
             final ResourceLocation typeId = ResourceLocation.parse(tag.getString("chain_type"));
             final CogwheelChainType foundType = BnbRegistries.COGWHEEL_CHAIN_TYPES.get(typeId);
@@ -89,6 +93,7 @@ public class CogwheelChain {
     public CogwheelChain(final List<PathedCogwheelNode> path, final CogwheelChainType type, final Item returnedItem) {
         this.cogwheelNodes = path;
         this.renderedNodes = CogwheelChainGeometryBuilder.buildFullChainFromPathNodes(path);
+        this.cachedSegments = null;
         this.type = type;
         this.returnedItem = returnedItem;
         updateInsideOutsideFlip();
@@ -249,6 +254,17 @@ public class CogwheelChain {
     }
 
     /**
+     * Returns a lazily computed and cached list of {@link CogwheelChainSegment} instances
+     * representing the typed, distance-annotated geometry of this chain.
+     */
+    public List<CogwheelChainSegment> getSegments() {
+        if (this.cachedSegments == null) {
+            this.cachedSegments = CogwheelChainSegmentBuilder.buildSegments(this.renderedNodes);
+        }
+        return this.cachedSegments;
+    }
+
+    /**
      * All nodes in the chain, there are typically multiple, as the path wraps around cogwheels
      */
     public List<RenderedChainPathNode> getChainPathNodes() {
@@ -284,6 +300,7 @@ public class CogwheelChain {
         }
         cogwheelNodes = newNodes;
         renderedNodes = CogwheelChainGeometryBuilder.buildFullChainFromPathNodes(cogwheelNodes);
+        this.cachedSegments = null;
     }
 }
 

@@ -17,7 +17,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Per-level in-memory tracker of all loaded cogwheel chain drives.
- * Acts strictly as a data store and query layer.
  */
 public class CogwheelChainWorld {
 

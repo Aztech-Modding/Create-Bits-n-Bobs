@@ -2,6 +2,7 @@ package com.kipti.bnb.content.kinetics.cogwheel_chain.attachment;
 
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChain;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.segment.CogwheelChainSegment;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.shape.ChainDriveShapeHelper;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.shape.CogwheelChainWholeShape;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.world.CogwheelChainWorld;
 import net.minecraft.core.BlockPos;
@@ -27,7 +28,7 @@ public class CogwheelChainAttachmentHelper {
      * @return the attachment with the smallest distance, or {@code null} if no chains exist
      */
     @Nullable
-    public static CogwheelChainAttachments findNearestAttachment(final Level level, final Vec3 worldPos) {
+    public static CogwheelChainAttachment findNearestAttachment(final Level level, final Vec3 worldPos) {
         final CogwheelChainWorld chainWorld = CogwheelChainWorld.get(level);
 
         double bestDistSq = Double.MAX_VALUE;
@@ -58,7 +59,7 @@ public class CogwheelChainAttachmentHelper {
         }
 
         if (bestController == null) return null;
-        return new CogwheelChainAttachments(bestController, bestChainDist);
+        return new CogwheelChainAttachment(bestController, bestChainDist);
     }
 
     /**
@@ -68,52 +69,29 @@ public class CogwheelChainAttachmentHelper {
      *
      * @param origin      ray origin in world space
      * @param direction   ray direction (does not need to be normalized)
-     * @param maxDistance  maximum reach of the ray in blocks
+     * @param maxDistance maximum reach of the ray in blocks
      * @return the closest intersecting attachment, or {@code null} if none within range
      */
     @Nullable
-    public static CogwheelChainAttachments findNearestAttachment(final Level level,
-                                                                  final Vec3 origin,
-                                                                  final Vec3 direction,
-                                                                  final double maxDistance) {
-        final CogwheelChainWorld chainWorld = CogwheelChainWorld.get(level);
+    public static CogwheelChainAttachment findNearestAttachment(final Level level,
+                                                                final Vec3 origin,
+                                                                final Vec3 direction,
+                                                                final double maxDistance) {
         final Vec3 normalizedDir = direction.normalize();
         final Vec3 target = origin.add(normalizedDir.scale(maxDistance));
 
-        double bestDistSq = Double.MAX_VALUE;
-        BlockPos bestController = null;
-        float bestChainPosition = 0;
-
-        for (final Map.Entry<BlockPos, CogwheelChain> entry : chainWorld.entries()) {
-            final BlockPos controllerPos = entry.getKey();
-            final CogwheelChain chain = entry.getValue();
-
-            final CogwheelChainWholeShape shape = CogwheelChainWholeShape.buildShape(chain);
-            if (shape == null) continue;
-
-            final Vec3 controllerBase = Vec3.atLowerCornerOf(controllerPos);
-            final Vec3 localFrom = origin.subtract(controllerBase);
-            final Vec3 localTo = target.subtract(controllerBase);
-            final Vec3 intersect = shape.intersect(localFrom, localTo);
-            if (intersect == null) continue;
-
-            final Vec3 worldHit = intersect.add(controllerBase);
-            final double distSq = worldHit.distanceToSqr(origin);
-            if (distSq < bestDistSq) {
-                bestDistSq = distSq;
-                bestController = controllerPos;
-                bestChainPosition = shape.getChainPosition(intersect);
-            }
+        final ChainDriveShapeHelper.ChainShapeHit hit = ChainDriveShapeHelper.findClosestRayHit(
+                level, origin, target, maxDistance * maxDistance);
+        if (hit == null) {
+            return null;
         }
-
-        if (bestController == null) return null;
-        return new CogwheelChainAttachments(bestController, bestChainPosition);
+        return new CogwheelChainAttachment(hit.controllerPos(), hit.chainPosition());
     }
 
     private static float projectOntoSegment(final Vec3 worldPos,
-                                             final Vec3 from,
-                                             final Vec3 to,
-                                             final CogwheelChainSegment segment) {
+                                            final Vec3 from,
+                                            final Vec3 to,
+                                            final CogwheelChainSegment segment) {
         final Vec3 ab = to.subtract(from);
         final Vec3 ap = worldPos.subtract(from);
         final double lenSq = ab.lengthSqr();
@@ -122,9 +100,9 @@ public class CogwheelChainAttachmentHelper {
     }
 
     private static Vec3 interpolateWorld(final Vec3 from,
-                                          final Vec3 to,
-                                          final CogwheelChainSegment segment,
-                                          final float chainDist) {
+                                         final Vec3 to,
+                                         final CogwheelChainSegment segment,
+                                         final float chainDist) {
         final float t = segment.length() > 0
                 ? Mth.clamp((chainDist - segment.startDist()) / segment.length(), 0, 1)
                 : 0;

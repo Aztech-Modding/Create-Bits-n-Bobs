@@ -44,7 +44,10 @@ public class BnbPartialModels {
 
     LARGE_STONE_COG_SHAFTLESS = block("large_stone_cog_shaftless"),
 
-    THROTTLE_LEVER_HANDLE = block("throttle_lever/handle");
+    THROTTLE_LEVER_HANDLE = block("throttle_lever/handle"),
+
+    COGWHEEL_CHAIN_CARRIAGE_SHOE_ARM = block("cogwheel_chain_carriage/shoe_arm"),
+    COGWHEEL_CHAIN_CARRIAGE_SHOE = block("cogwheel_chain_carriage/shoe");
 
 
     public static final Map<Direction, PartialModel> WEATHERED_METAL_GIRDER_BRACKETS = new EnumMap<>(Direction.class);

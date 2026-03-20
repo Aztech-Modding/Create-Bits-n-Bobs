@@ -1,6 +1,9 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.carriage;
 
-import com.kipti.bnb.content.kinetics.cogwheel_chain.attachment.CogwheelChainAttachments;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.attachment.CogwheelChainAttachment;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.attachment.CogwheelChainAttachmentHelper;
+import com.simibubi.create.AllSoundEvents;
+import com.simibubi.create.content.contraptions.AssemblyException;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import net.minecraft.core.BlockPos;
@@ -8,33 +11,27 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 /**
- * Block entity for the cogwheel chain carriage. Manages the chain attachment
- * state and triggers contraption assembly/disassembly.
+ * Block entity for the cogwheel chain carriage. Stores a chain attachment
+ * resolved at activation time and uses it to assemble a contraption.
  *
- * <p>When a player activates the carriage block, the attachment is resolved
- * and {@link #assembleNextTick} is set. On the next server tick the entity
- * attempts to build a contraption from the blocks below.</p>
- *
- * <p>TODO: Register in BnbBlockEntities.</p>
+ * <p>The attachment is not ticked here — the block entity is stationary.
+ * Once assembled, the {@link CogwheelChainCarriageContraptionEntity} owns
+ * the attachment and drives movement along the chain.</p>
  */
 public class CogwheelChainCarriageBlockEntity extends SmartBlockEntity {
 
-    private static final String ATTACHMENT_TAG = "ChainAttachment";
-    private static final String ASSEMBLED_TAG = "Assembled";
-
-    @Nullable
-    private CogwheelChainAttachments attachment;
+    private @Nullable AssemblyException lastException;
     public boolean assembleNextTick;
-    private boolean assembled;
 
     public CogwheelChainCarriageBlockEntity(final BlockEntityType<?> type,
-                                             final BlockPos pos,
-                                             final BlockState state) {
+                                            final BlockPos pos,
+                                            final BlockState state) {
         super(type, pos, state);
     }
 
@@ -52,80 +49,54 @@ public class CogwheelChainCarriageBlockEntity extends SmartBlockEntity {
             this.assembleNextTick = false;
             this.assemble();
         }
-
-        if (this.assembled && this.attachment != null) {
-            this.tickAttachment();
-        }
     }
 
-    private void tickAttachment() {
-        if (!this.attachment.isValid(this.level)) {
-            this.disassemble();
-            return;
-        }
-        this.attachment.tick(this.level);
-    }
-
-    /**
-     * Assembles blocks below into a contraption that rides along the chain.
-     *
-     * <p>TODO: Create and spawn {@code CogwheelChainCarriageContraptionEntity}.
-     * Follow Create's assembly pattern: build contraption, remove blocks from
-     * world, create controlled contraption entity, add to level.</p>
-     */
     private void assemble() {
-        if (this.attachment == null)
+        final CogwheelChainAttachment attachment = CogwheelChainAttachmentHelper.findNearestAttachment(this.level, this.getBlockPos().getCenter());
+        if (attachment == null) {
+            this.lastException = new AssemblyException("bits_n_bobs.no_chain_to_attatch_to");
             return;
-        if (!this.attachment.isValid(this.level))
+        }
+
+        final CogwheelChainCarriageContraption contraption =
+                new CogwheelChainCarriageContraption(attachment);
+        try {
+            if (!contraption.assemble(this.level, this.worldPosition)) {
+                return;
+            }
+            this.lastException = null;
+        } catch (final AssemblyException e) {
+            this.lastException = e;
+            this.sendData();
             return;
+        }
 
-        this.assembled = true;
-        this.sendData();
-    }
+        contraption.removeBlocksFromWorld(this.level, BlockPos.ZERO);
 
-    /**
-     * Disassembles the contraption and detaches from the chain.
-     */
-    public void disassemble() {
-        this.assembled = false;
-        this.attachment = null;
-        this.assembleNextTick = false;
-        this.sendData();
-    }
+        final CogwheelChainCarriageContraptionEntity entity =
+                CogwheelChainCarriageContraptionEntity.create(this.level, contraption);
 
-    public void setAttachment(final CogwheelChainAttachments attachment) {
-        this.attachment = attachment;
-        this.sendData();
+        final Vec3 anchor = Vec3.atBottomCenterOf(this.worldPosition);
+        entity.setPos(anchor.x, anchor.y, anchor.z);
+
+        this.level.addFreshEntity(entity);
+        AllSoundEvents.CONTRAPTION_ASSEMBLE.playOnServer(this.level, this.worldPosition);
     }
 
     @Nullable
-    public CogwheelChainAttachments getAttachment() {
-        return this.attachment;
-    }
-
-    public boolean isAssembled() {
-        return this.assembled;
+    public AssemblyException getLastException() {
+        return this.lastException;
     }
 
     @Override
     protected void write(final CompoundTag tag, final HolderLookup.Provider registries, final boolean clientPacket) {
         super.write(tag, registries, clientPacket);
-        tag.putBoolean(ASSEMBLED_TAG, this.assembled);
-        if (this.attachment != null) {
-            final CompoundTag attachmentTag = new CompoundTag();
-            this.attachment.write(attachmentTag);
-            tag.put(ATTACHMENT_TAG, attachmentTag);
-        }
+        AssemblyException.write(tag, registries, this.lastException);
     }
 
     @Override
     protected void read(final CompoundTag tag, final HolderLookup.Provider registries, final boolean clientPacket) {
         super.read(tag, registries, clientPacket);
-        this.assembled = tag.getBoolean(ASSEMBLED_TAG);
-        if (tag.contains(ATTACHMENT_TAG)) {
-            this.attachment = CogwheelChainAttachments.read(tag.getCompound(ATTACHMENT_TAG));
-        } else {
-            this.attachment = null;
-        }
+        this.lastException = AssemblyException.read(tag, registries);
     }
 }
