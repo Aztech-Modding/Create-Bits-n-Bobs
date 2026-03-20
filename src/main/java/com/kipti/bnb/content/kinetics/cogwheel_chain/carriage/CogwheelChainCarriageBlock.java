@@ -80,7 +80,7 @@ public class CogwheelChainCarriageBlock extends HorizontalDirectionalBlock imple
     @Override
     public @Nullable BlockState getStateForPlacement(final BlockPlaceContext p_49820_) {
         return super.getStateForPlacement(p_49820_)
-                .setValue(FACING, p_49820_.getNearestLookingDirection());
+                .setValue(FACING, p_49820_.getHorizontalDirection());
     }
 
     @Override
