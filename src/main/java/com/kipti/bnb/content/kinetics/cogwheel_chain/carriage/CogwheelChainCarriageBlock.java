@@ -10,9 +10,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.Nullable;
@@ -37,6 +39,11 @@ public class CogwheelChainCarriageBlock extends HorizontalDirectionalBlock imple
         return CODEC;
     }
 
+    @Override
+    protected void createBlockStateDefinition(final StateDefinition.Builder<Block, BlockState> p_49915_) {
+        super.createBlockStateDefinition(p_49915_);
+        p_49915_.add(FACING);
+    }
 
     @Override
     protected @NotNull ItemInteractionResult useItemOn(final @NotNull ItemStack stack,
