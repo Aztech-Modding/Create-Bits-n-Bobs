@@ -18,10 +18,10 @@ import java.util.List;
  * Represents an attachment point on a cogwheel chain, parametrized by cumulative distance
  * from the chain origin. The attachment follows the chain's linear movement as the
  * driving cogwheels rotate.
- *
- * <p>Only {@link #controllerPos} and {@link #dist} are serialized.</p>
  */
 public class CogwheelChainAttachment {
+
+    private static final float DIRECTION_SAMPLING_RANGE = 0.1f; //Range ahead of the current pos to sample for the direction
 
     private final BlockPos controllerPos;
     private float dist;
@@ -46,11 +46,25 @@ public class CogwheelChainAttachment {
         final float totalLength = this.getTotalLength(level);
         if (totalLength <= 0) return;
 
-        final float chainRotationFactor = behaviour.getChainRotationFactor();
-        final float rpm = kbe.getSpeed();
-        final float distPerTick = (float) (Math.PI * 2.0 * chainRotationFactor * rpm / (60.0 * 20.0));
+        final float distPerTick = getDistPerTick(kbe, behaviour);
 
         this.dist = wrapDist(this.dist + distPerTick, totalLength);
+    }
+
+    private static float getDistPerTick(final KineticBlockEntity kbe, final CogwheelChainBehaviour behaviour) {
+        final float chainRotationFactor = behaviour.getChainRotationFactor();
+        final float rpm = kbe.getSpeed();
+        return (float) -(Math.PI * 2.0 * chainRotationFactor * rpm / (60.0 * 20.0));
+    }
+
+    public float getDistPerTick(final Level level) {
+        final CogwheelChainBehaviour behaviour = SuperBlockEntityBehaviour.get(
+                level, this.controllerPos, CogwheelChainBehaviour.TYPE);
+        if (behaviour == null) return 0;
+
+        if (!(level.getBlockEntity(this.controllerPos) instanceof final KineticBlockEntity kbe)) return 0;
+
+        return getDistPerTick(kbe, behaviour);
     }
 
     /**
@@ -71,9 +85,9 @@ public class CogwheelChainAttachment {
         if (segments.isEmpty()) return Vec3.ZERO;
 
         final float totalLength = segments.getLast().endDist();
-        final float pos = wrapDist(this.dist + offset, totalLength);
+        final float dist = wrapDist(this.dist + offset, totalLength);
 
-        return this.resolvePositionOnSegments(segments, pos);
+        return this.resolvePositionOnSegments(segments, dist);
     }
 
     /**
@@ -82,16 +96,20 @@ public class CogwheelChainAttachment {
      */
     @Nullable
     public CogwheelChainSegment getCurrentCogwheelChainSegment(final Level level) {
-        final CogwheelChain chain = CogwheelChainWorld.get(level).getChain(this.controllerPos);
-        if (chain == null) return null;
-
-        final List<CogwheelChainSegment> segments = chain.getSegments();
+        final List<CogwheelChainSegment> segments = this.getCurrentCogwheelChainSegments(level);
+        if (segments == null) return null;
         if (segments.isEmpty()) return null;
 
         final float totalLength = segments.getLast().endDist();
-        final float pos = wrapDist(this.dist, totalLength);
+        final float dist = wrapDist(this.dist, totalLength);
 
-        return findSegmentAtDist(segments, pos);
+        return findSegmentAtDist(segments, dist);
+    }
+
+    private @Nullable List<CogwheelChainSegment> getCurrentCogwheelChainSegments(final Level level) {
+        final CogwheelChain chain = CogwheelChainWorld.get(level).getChain(this.controllerPos);
+        if (chain == null) return null;
+        return chain.getSegments();
     }
 
     /**
@@ -136,16 +154,14 @@ public class CogwheelChainAttachment {
      */
     @Nullable
     public CogwheelChainSegment getSegmentAtOffset(final Level level, final float offset) {
-        final CogwheelChain chain = CogwheelChainWorld.get(level).getChain(this.controllerPos);
-        if (chain == null) return null;
-
-        final List<CogwheelChainSegment> segments = chain.getSegments();
+        final List<CogwheelChainSegment> segments = this.getCurrentCogwheelChainSegments(level);
+        if (segments == null) return null;
         if (segments.isEmpty()) return null;
 
         final float totalLength = segments.getLast().endDist();
-        final float pos = wrapDist(this.dist + offset, totalLength);
+        final float dist = wrapDist(this.dist + offset, totalLength);
 
-        return findSegmentAtDist(segments, pos);
+        return findSegmentAtDist(segments, dist);
     }
 
     private float getTotalLength(final Level level) {
@@ -189,4 +205,32 @@ public class CogwheelChainAttachment {
         final float wrapped = dist % totalLength;
         return wrapped < 0 ? wrapped + totalLength : wrapped;
     }
+
+    private static Vec3 getSmoothedCurrentDirection(final List<CogwheelChainSegment> segments, final float dist) {
+        final float backDist = dist - 0.1f;
+        final float frontDist = dist + 0.1f;
+
+        final CogwheelChainSegment backSegment = findSegmentAtDist(segments, backDist);
+        final CogwheelChainSegment frontSegment = findSegmentAtDist(segments, frontDist);
+        if (backSegment == null || frontSegment == null) return Vec3.ZERO;
+
+        final Vec3 backDirection = backSegment.toPosition().subtract(backSegment.fromPosition()).normalize();
+        final Vec3 frontDirection = frontSegment.toPosition().subtract(frontSegment.fromPosition()).normalize();
+
+        final float pointOfChange = (backSegment.endDist() + frontSegment.startDist()) / 2f;
+        final float lerpFrom = (pointOfChange - backDist) / (frontDist - backDist);
+
+        return frontDirection.lerp(backDirection, lerpFrom);
+    }
+
+    public Vec3 getCurrentDirection(final Level level, final float offset) {
+        final @Nullable List<CogwheelChainSegment> segments = this.getCurrentCogwheelChainSegments(level);
+        if (segments == null) return Vec3.ZERO;
+        return getSmoothedCurrentDirection(segments, this.dist + offset);
+    }
+
+    public Vec3 getCurrentDirection(final Level level) {
+        return this.getCurrentDirection(level, this.dist);
+    }
+
 }

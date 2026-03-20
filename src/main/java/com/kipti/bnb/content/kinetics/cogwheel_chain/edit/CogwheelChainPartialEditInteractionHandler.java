@@ -1,16 +1,11 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.edit;
 
-import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChainCandidate;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChainPathfinder;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.PathedCogwheelNode;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.PlacingCogwheelNode;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.*;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.placement.CogwheelChainPlacementInteraction;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.CogwheelChainType;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.world.CogwheelChainWorld;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChain;
 import com.kipti.bnb.network.packets.from_client.PartialEditCogwheelChainPacket;
 import net.createmod.catnip.platform.CatnipServices;
-import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
@@ -22,11 +17,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.EventPriority;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.InputEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -40,7 +30,7 @@ import java.util.List;
  * {@link PartialEditCogwheelChainPacket} to the server to rebuild the chain
  * with the new cogwheel included.
  */
-@EventBusSubscriber(Dist.CLIENT)
+//@EventBusSubscriber(Dist.CLIENT)
 public class CogwheelChainPartialEditInteractionHandler {
 
     private static @Nullable BlockPos editingControllerPos = null;
@@ -48,17 +38,18 @@ public class CogwheelChainPartialEditInteractionHandler {
     private static @Nullable CogwheelChainType editingChainType = null;
     private static @Nullable Item editingChainItemType = null;
 
-    @SubscribeEvent(priority = EventPriority.HIGH)
-    public static void onClickInput(final InputEvent.InteractionKeyMappingTriggered event) {
-        final Minecraft mc = Minecraft.getInstance();
-        if (mc.screen != null)
-            return;
-
-        final KeyMapping key = event.getKeyMapping();
-        if (key == mc.options.keyUse && onRightClick()) {
-            event.setCanceled(true);
-        }
-    }
+    //TODO: fix cognitive decline from claude
+//    @SubscribeEvent(priority = EventPriority.HIGH)
+//    public static void onClickInput(final InputEvent.InteractionKeyMappingTriggered event) {
+//        final Minecraft mc = Minecraft.getInstance();
+//        if (mc.screen != null)
+//            return;
+//
+//        final KeyMapping key = event.getKeyMapping();
+//        if (key == mc.options.keyUse && onRightClick()) {
+//            event.setCanceled(true);
+//        }
+//    }
 
     /**
      * @return {@code true} if the interaction was handled by this handler
@@ -150,9 +141,9 @@ public class CogwheelChainPartialEditInteractionHandler {
     }
 
     private static @Nullable BlockPos findNearbyChainController(final ClientLevel level,
-                                                                 final BlockPos newCogwheelPos,
-                                                                 final CogwheelChainType chainType,
-                                                                 final BlockState newBlockState) {
+                                                                final BlockPos newCogwheelPos,
+                                                                final CogwheelChainType chainType,
+                                                                final BlockState newBlockState) {
         final CogwheelChainCandidate candidate = CogwheelChainCandidate.getForBlock(newBlockState);
         if (candidate == null)
             return null;
@@ -184,9 +175,9 @@ public class CogwheelChainPartialEditInteractionHandler {
     }
 
     private static boolean isMatchingChainController(final CogwheelChainWorld chainWorld,
-                                                      final BlockPos controllerPos,
-                                                      final CogwheelChainType chainType,
-                                                      final PlacingCogwheelNode proposedNode) {
+                                                     final BlockPos controllerPos,
+                                                     final CogwheelChainType chainType,
+                                                     final PlacingCogwheelNode proposedNode) {
         final CogwheelChain chain = chainWorld.getChain(controllerPos);
         if (chain == null)
             return false;

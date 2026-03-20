@@ -43,6 +43,15 @@ public class GratingBlockStateGen {
                     .addModel()
                     .condition(BlockStateProperties.FACING, dir)
                     .condition(GratingEncasedShaftBlock.AXIS, dir.getAxis())
+                    .end()
+                    .part()
+                    .modelFile(prov.models().getExistingFile(CreateBitsnBobs.asResource("block/industrial_grating/panel_side_cutout")))
+                    .rotationX(dir == Direction.DOWN ? 180 : dir.getAxis().isHorizontal() ? 90 : 0)
+                    .rotationY(dir.getAxis().isVertical() ? 0 : (((int) dir.toYRot()) + BnbBlockStateGen.DEFAULT_ANGLE_OFFSET) % 360)
+                    .uvLock(true)
+                    .addModel()
+                    .condition(BlockStateProperties.FACING, dir)
+                    .condition(GratingEncasedShaftBlock.AXIS, dir.getAxis())
                     .end();
         }
     }

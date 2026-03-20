@@ -2,9 +2,9 @@ package com.kipti.bnb.registry.content;
 
 import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.carriage.CogwheelChainCarriageContraptionEntity;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.carriage.CogwheelChainCarriageRenderer;
 import com.kipti.bnb.content.kinetics.flywheel_bearing.contraption.InertControlledContraptionEntity;
 import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.carriage.CogwheelChainCarriageRenderer;
 import com.simibubi.create.content.contraptions.render.ContraptionEntityRenderer;
 import com.simibubi.create.content.contraptions.render.ContraptionVisual;
 import com.simibubi.create.foundation.data.CreateEntityBuilder;
@@ -31,6 +31,7 @@ public class BnbEntityTypes {
     public static final EntityEntry<CogwheelChainCarriageContraptionEntity> COGWHEEL_CHAIN_CARRIAGE_CONTRAPTION =
             contraption("cogwheel_chain_carriage_contraption", CogwheelChainCarriageContraptionEntity::new,
                     () -> CogwheelChainCarriageRenderer::new, 20, 40, false)
+                    .visual(() -> ContraptionVisual::new)
                     .register();
 
     private static <T extends Entity> CreateEntityBuilder<T, ?> contraption(final String name, final EntityType.EntityFactory<T> factory,

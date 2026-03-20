@@ -2,34 +2,36 @@ package com.kipti.bnb.content.kinetics.cogwheel_chain.carriage;
 
 import com.kipti.bnb.content.kinetics.cogwheel_chain.attachment.CogwheelChainAttachment;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.segment.CogwheelChainSegment;
+import com.kipti.bnb.network.packets.to_client.CogwheelChainCarriageUpdateDistPacket;
 import com.kipti.bnb.registry.content.BnbEntityTypes;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
-import com.simibubi.create.content.contraptions.StructureTransform;
+import com.simibubi.create.content.contraptions.OrientedContraptionEntity;
 import net.createmod.catnip.math.AngleHelper;
-import net.createmod.catnip.math.VecHelper;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
+import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
-/**
- * Entity that carries a {@link CogwheelChainCarriageContraption} along a cogwheel chain.
- * Movement is driven by the chain's linear speed; the entity cannot traverse segments
- * with vertical displacement.
- *
- * <p>Yaw is derived from the vector between the front and back shoe positions
- * (at ±{@value CogwheelChainCarriageContraption#FRONT_SHOE_OFFSET} blocks from center).</p>
- */
-public class CogwheelChainCarriageContraptionEntity extends AbstractContraptionEntity {
+public class CogwheelChainCarriageContraptionEntity extends OrientedContraptionEntity {
 
-    private float prevYaw;
-    private float yaw;
+    public static final float SHOE_OFFSET = 0.5f;
+
+    private static final double CLIENT_CHASING_RATE_CHANGE = 0.015;
+    private static final double CLIENT_CHASING_MAX = 0.1;
+
+    double chainAttachmentDist = 0f;
+    /**
+     * The client will chase the chain attachment dist (previous from server + predicted velocity) by moderating its own velocity + or - 10%
+     */
+    double clientChasingChainAttachmentDist = 0f;
+    double currentClientChasingRate = 1.0f;
+
+    Vec3 lastFrontShoeDir = Vec3.ZERO;
+    Vec3 lastBackShoeDir = Vec3.ZERO;
+
+    Vec3 frontShoeDir = Vec3.ZERO;
+    Vec3 backShoeDir = Vec3.ZERO;
 
     public CogwheelChainCarriageContraptionEntity(final EntityType<?> type, final Level level) {
         super(type, level);
@@ -55,27 +57,67 @@ public class CogwheelChainCarriageContraptionEntity extends AbstractContraptionE
 
     @Override
     protected void tickContraption() {
+        super.tickContraption();
         if (!this.level().isClientSide) {
             this.tickServer();
-        } else {
+        }
+
+        if (!this.getAttachment().isValid(this.level())) return;
+
+        this.tickCommon();
+        if (this.level().isClientSide) {
             this.tickClient();
         }
+        this.tickActors();
+        if (!this.level().isClientSide) {
+            this.tickServerSync();
+        }
+    }
+
+    private void tickServerSync() {
+        if (this.tickCount % 60 == 0) {
+            CatnipServices.NETWORK.sendToClientsTrackingEntity(this, new CogwheelChainCarriageUpdateDistPacket(this.getId(), this.chainAttachmentDist));
+        }
+    }
+
+    private void tickClient() {
+        final CogwheelChainAttachment attachment = this.getAttachment();
+        final float velocity = attachment.getDistPerTick(this.level());
+
+        this.clientChasingChainAttachmentDist += velocity * this.currentClientChasingRate;
+        if (this.clientChasingChainAttachmentDist > this.chainAttachmentDist) {
+            this.currentClientChasingRate -= CLIENT_CHASING_RATE_CHANGE;
+        } else if (this.clientChasingChainAttachmentDist < this.chainAttachmentDist) {
+            this.currentClientChasingRate += CLIENT_CHASING_RATE_CHANGE;
+        }
+
+        this.currentClientChasingRate = Math.max(1.0 - CLIENT_CHASING_MAX, Math.min(1.0 + CLIENT_CHASING_MAX, this.currentClientChasingRate));
+
+        this.lastFrontShoeDir = this.frontShoeDir;
+        this.lastBackShoeDir = this.backShoeDir;
+
+        this.frontShoeDir = attachment.getCurrentDirection(this.level(), SHOE_OFFSET);
+        this.backShoeDir = attachment.getCurrentDirection(this.level(), -SHOE_OFFSET);
     }
 
     private void tickServer() {
         final Level level = this.level();
-
         if (!this.getAttachment().isValid(level)) {
             this.disassemble();
             this.discard();
-            return;
         }
+    }
 
-        final float previousDist = this.getAttachment().getDist();
-        this.getAttachment().tick(level);
+    private void tickCommon() {
+        final Level level = this.level();
+
+        final CogwheelChainAttachment dist = this.getAttachment();
+        final float previousDist = dist.getDist();
+        dist.tick(level);
+        this.chainAttachmentDist = dist.getDist();
 
         if (this.isVerticalSegmentBlocked(level)) {
-            this.getAttachment().setDist(previousDist);
+            dist.setDist(previousDist);
             this.notifyVerticalBlock(level);
             return;
         }
@@ -85,10 +127,8 @@ public class CogwheelChainCarriageContraptionEntity extends AbstractContraptionE
     }
 
     private boolean isVerticalSegmentBlocked(final Level level) {
-        final CogwheelChainSegment frontSegment = this.getAttachment().getSegmentAtOffset(
-                level, CogwheelChainCarriageContraption.FRONT_SHOE_OFFSET);
-        final CogwheelChainSegment backSegment = this.getAttachment().getSegmentAtOffset(
-                level, CogwheelChainCarriageContraption.BACK_SHOE_OFFSET);
+        final CogwheelChainSegment frontSegment = this.getAttachment().getSegmentAtOffset(level, SHOE_OFFSET);
+        final CogwheelChainSegment backSegment = this.getAttachment().getSegmentAtOffset(level, -SHOE_OFFSET);
 
         final boolean frontBlocked = frontSegment != null && frontSegment.hasVerticalDisplacement();
         final boolean backBlocked = backSegment != null && backSegment.hasVerticalDisplacement();
@@ -101,89 +141,54 @@ public class CogwheelChainCarriageContraptionEntity extends AbstractContraptionE
     }
 
     private void updatePositionFromChain(final Level level) {
-        final Vec3 newPos = this.getAttachment().getCurrentPosition(level);
-        this.setPos(newPos.x, newPos.y, newPos.z);
+        final CogwheelChainAttachment attachment = this.getAttachment();
+        final Vec3 newPos = attachment
+                .getCurrentPosition(level, SHOE_OFFSET)
+                .lerp(
+                        attachment.getCurrentPosition(level, -SHOE_OFFSET), 0.5
+                );
+        this.setPos(newPos.x, newPos.y - 0.5, newPos.z);
     }
 
     private void updateYawFromChain(final Level level) {
         final Vec3 frontPos = this.getAttachment().getCurrentPosition(
-                level, CogwheelChainCarriageContraption.FRONT_SHOE_OFFSET);
+                level, SHOE_OFFSET);
         final Vec3 backPos = this.getAttachment().getCurrentPosition(
-                level, CogwheelChainCarriageContraption.BACK_SHOE_OFFSET);
+                level, -SHOE_OFFSET);
         final Vec3 direction = frontPos.subtract(backPos);
 
         if (direction.horizontalDistanceSqr() > 1e-8) {
-            final float targetYaw = (float) Math.toDegrees(Math.atan2(direction.x, direction.z));
             this.prevYaw = this.yaw;
-            this.yaw = targetYaw;
+            this.yaw = (float) Math.toDegrees(Math.atan2(direction.z, direction.x)) - 90;
         }
     }
 
-    private void tickClient() {
-        this.prevYaw = this.yaw;
-    }
-
-    @Override
-    public Vec3 applyRotation(final Vec3 localPos, final float partialTicks) {
-        final float interpolatedYaw = this.getInterpolatedYaw(partialTicks);
-        return VecHelper.rotate(localPos, -interpolatedYaw, Direction.Axis.Y);
-    }
-
-    @Override
-    public Vec3 reverseRotation(final Vec3 localPos, final float partialTicks) {
-        final float interpolatedYaw = this.getInterpolatedYaw(partialTicks);
-        return VecHelper.rotate(localPos, interpolatedYaw, Direction.Axis.Y);
-    }
-
-    @Override
-    public ContraptionRotationState getRotationState() {
-        final ContraptionRotationState state = new ContraptionRotationState();
-        state.yRotation = -this.yaw;
-        return state;
-    }
-
-    @Override
-    protected StructureTransform makeStructureTransform() {
-        final BlockPos offset = BlockPos.containing(this.getAnchorVec().add(0.5, 0.5, 0.5));
-        return new StructureTransform(offset, 0, -this.yaw, 0);
-    }
-
-    @Override
-    protected float getStalledAngle() {
-        return this.yaw;
-    }
-
-    @Override
-    protected void handleStallInformation(final double x, final double y, final double z,
-                                          final float angle) {
-        this.yaw = angle;
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void applyLocalTransforms(final PoseStack matrixStack, final float partialTicks) {
-        final float interpolatedYaw = this.getInterpolatedYaw(partialTicks);
-        matrixStack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(interpolatedYaw));
-    }
-
-    @Override
-    protected void writeAdditional(final CompoundTag compound,
-                                   final HolderLookup.Provider registries,
-                                   final boolean spawnPacket) {
-        super.writeAdditional(compound, registries, spawnPacket);
-        compound.putFloat("Yaw", this.yaw);
-    }
-
-    @Override
-    protected void readAdditional(final CompoundTag compound, final boolean spawnData) {
-        super.readAdditional(compound, spawnData);
-        this.yaw = compound.getFloat("Yaw");
-        this.prevYaw = this.yaw;
-    }
-
     public float getInterpolatedYaw(final float partialTicks) {
-        return partialTicks == 1.0f
-                ? this.yaw
-                : AngleHelper.angleLerp(partialTicks, this.prevYaw, this.yaw);
+        return AngleHelper.angleLerp(partialTicks, this.prevYaw, this.yaw);
     }
+
+    @Override
+    protected void writeAdditional(final CompoundTag compound, final HolderLookup.Provider registries, final boolean spawnPacket) {
+        super.writeAdditional(compound, registries, spawnPacket);
+        compound.putDouble("ChainAttachmentDist", this.chainAttachmentDist);
+    }
+
+    @Override
+    protected void readAdditional(final CompoundTag compound, final boolean spawnPacket) {
+        super.readAdditional(compound, spawnPacket);
+        this.chainAttachmentDist = compound.getDouble("ChainAttachmentDist");
+    }
+
+    public void setDistFromServer(final double dist) {
+        this.chainAttachmentDist = dist;
+    }
+
+    public Vec3 getFrontShoeDir(final float partialTicks) {
+        return this.lastFrontShoeDir.lerp(this.frontShoeDir, partialTicks);
+    }
+
+    public Vec3 getBackShoeDir(final float partialTicks) {
+        return this.lastBackShoeDir.lerp(this.backShoeDir, partialTicks);
+    }
+
 }

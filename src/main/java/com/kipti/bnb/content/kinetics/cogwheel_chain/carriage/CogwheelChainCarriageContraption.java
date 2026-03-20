@@ -11,20 +11,9 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 
-/**
- * Contraption that rides along a cogwheel chain drive. The carriage collects
- * blocks at its anchor position into a rigid body constrained to the chain's
- * horizontal segments.
- *
- * <p>Two logical "shoe" attachment points at {@value #FRONT_SHOE_OFFSET} and
- * {@value #BACK_SHOE_OFFSET} blocks from the center define the carriage footprint
- * on the chain and are used to enforce the vertical-displacement constraint.</p>
- *
- */
-public class CogwheelChainCarriageContraption extends Contraption {
+import java.util.Queue;
 
-    public static final float FRONT_SHOE_OFFSET = 0.5f;
-    public static final float BACK_SHOE_OFFSET = -0.5f;
+public class CogwheelChainCarriageContraption extends Contraption {
 
     private CogwheelChainAttachment carriageAttachment;
 
@@ -40,8 +29,17 @@ public class CogwheelChainCarriageContraption extends Contraption {
         if (this.carriageAttachment == null || !this.carriageAttachment.isValid(level)) {
             return false;
         }
+        if (!this.searchMovedStructure(level, pos, null))
+            return false;
+        this.startMoving(level);
+        this.expandBoundsAroundAxis(Direction.Axis.Y);
+        return !this.blocks.isEmpty();
+    }
 
-        return this.searchMovedStructure(level, pos, null);
+    @Override
+    protected boolean addToInitialFrontier(final Level world, final BlockPos pos, final Direction forcedDirection, final Queue<BlockPos> frontier) throws AssemblyException {
+        frontier.add(pos.relative(Direction.DOWN));
+        return true;
     }
 
     @Override

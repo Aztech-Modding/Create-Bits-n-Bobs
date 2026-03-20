@@ -48,6 +48,8 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
     private Vec3i controllerOffset = null;
 
     private int chainsToRefund = 0;
+    @Nullable
+    private BlockPos registeredControllerPos = null;
 
     public CogwheelChainBehaviour(final SmartBlockEntity be) {
         super(be);
@@ -90,7 +92,20 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
     }
 
     @Override
+    public void initialize() {
+        super.initialize();
+        this.syncControllerRegistration();
+    }
+
+    @Override
+    public void unload() {
+        this.unregisterController();
+        super.unload();
+    }
+
+    @Override
     public void destroy() {
+        this.unregisterController();
         super.destroy();
     }
 
@@ -182,15 +197,11 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
             } else {
                 controlledChain = new CogwheelChain(compound.getCompound("Chain"));
             }
-            if (controlledChain != null && hasLevel()) {
-                CogwheelChainWorld.get(getLevel()).put(getPos(), controlledChain);
-            }
+            this.controllerOffset = null;
         } else {
-            if (controlledChain != null && hasLevel()) {
-                CogwheelChainWorld.get(getLevel()).remove(getPos());
-            }
             controlledChain = null;
         }
+        this.syncControllerRegistration();
     }
 
     @Override
@@ -264,9 +275,8 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
 
     public void setAsController(final CogwheelChain cogwheelChain) {
         this.controlledChain = cogwheelChain;
-        if (hasLevel()) {
-            CogwheelChainWorld.get(getLevel()).put(getPos(), cogwheelChain);
-        }
+        this.controllerOffset = null;
+        this.syncControllerRegistration();
     }
 
     @Override
@@ -301,9 +311,7 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
     }
 
     public void setController(final Vec3i offset) {
-        if (this.controlledChain != null && hasLevel()) {
-            CogwheelChainWorld.get(getLevel()).remove(getPos());
-        }
+        this.unregisterController();
         this.controlledChain = null;
         this.controllerOffset = offset;
     }
@@ -340,6 +348,7 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
             final Vec3i transformedOffset = transform.applyWithoutOffset(new BlockPos(controllerOffset));
             setController(transformedOffset);
         }
+        this.syncControllerRegistration();
     }
 
     public boolean isPartOfChain() {
@@ -381,12 +390,45 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
     }
 
     public void disconnectFromChain() {
-        if (this.controlledChain != null && hasLevel()) {
-            CogwheelChainWorld.get(getLevel()).remove(getPos());
-        }
+        this.unregisterController();
         this.controlledChain = null;
         this.controllerOffset = null;
         this.chainsToRefund = 0;
         sendData();
+    }
+
+    private void syncControllerRegistration() {
+        if (this.controlledChain == null) {
+            this.unregisterController();
+            return;
+        }
+        this.registerController();
+    }
+
+    private void registerController() {
+        if (!this.hasLevel() || this.controlledChain == null) {
+            return;
+        }
+        final BlockPos currentPos = this.getPos().immutable();
+        final CogwheelChainWorld chainWorld = CogwheelChainWorld.get(this.getLevel());
+        if (this.registeredControllerPos != null && !this.registeredControllerPos.equals(currentPos)) {
+            chainWorld.remove(this.registeredControllerPos);
+        }
+        chainWorld.put(currentPos, this.controlledChain);
+        this.registeredControllerPos = currentPos;
+    }
+
+    private void unregisterController() {
+        if (!this.hasLevel()) {
+            this.registeredControllerPos = null;
+            return;
+        }
+        final CogwheelChainWorld chainWorld = CogwheelChainWorld.get(this.getLevel());
+        if (this.registeredControllerPos != null) {
+            chainWorld.remove(this.registeredControllerPos);
+            this.registeredControllerPos = null;
+            return;
+        }
+        chainWorld.remove(this.getPos());
     }
 }
