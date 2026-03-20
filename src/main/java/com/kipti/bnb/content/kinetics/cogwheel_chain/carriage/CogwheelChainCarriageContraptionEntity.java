@@ -18,7 +18,7 @@ public class CogwheelChainCarriageContraptionEntity extends OrientedContraptionE
     public static final float SHOE_OFFSET = 0.5f;
 
     private static final double CLIENT_CHASING_RATE_CHANGE = 0.015;
-    private static final double CLIENT_CHASING_MAX = 0.1;
+    private static final double CLIENT_CHASING_MAX = 0.3;
 
     double chainAttachmentDist = 0f;
     /**
