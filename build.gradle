@@ -25,7 +25,7 @@ repositories {
     maven { url 'https://maven.createmod.net' }
     maven {
         name = 'azmod-maven'
-        url = uri("https://maven.azmod.net/${findProperty('azmodRepository') ?: 'releases'}")
+        url = uri("https://maven.azmod.net/${findProperty('azmod_repository') ?: 'releases'}")
     }
     // Add your extra repos from broken build
     maven { url = 'https://maven.squiddev.cc' } // CC: Tweaked
@@ -67,7 +67,7 @@ sourceSets.main.resources {
 dependencies {
     implementation "net.neoforged:neoforge:${neo_version}"
     implementation("com.cake.azimuth:azimuth:${azimuth_version}")
-    implementation("com.cake.struts:struts:${struts_version}+mc${minecraft_version}")
+    implementation("com.cake.struts:struts:${struts_version}")
     compileOnly("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
     implementation("net.createmod.ponder:Ponder-NeoForge-${minecraft_version}:${ponder_version}")
     compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${minecraft_version}:${flywheel_version}")

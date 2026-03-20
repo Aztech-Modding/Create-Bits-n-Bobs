@@ -79,7 +79,7 @@ public class CogwheelChainCarriageRenderer extends ContraptionEntityRenderer<Cog
 
         TransformStack.of(ms)
                 .center()
-                .rotateY((float) Math.toRadians(this.getDirYRot(dir) - entity.getViewYRot(partialTicks)))
+                .rotateY((float) Math.toRadians(this.getDirYRot(dir) - entity.getViewYRot(partialTicks) - entity.getInitialYaw()))
                 .uncenter();
 
         CachedBuffers.partial(BnbPartialModels.COGWHEEL_CHAIN_CARRIAGE_SHOE, blockState)

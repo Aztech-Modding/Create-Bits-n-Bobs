@@ -10,12 +10,14 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 import java.util.Queue;
 
 public class CogwheelChainCarriageContraption extends Contraption {
 
     private CogwheelChainAttachment carriageAttachment;
+    private Direction facing;
 
     public CogwheelChainCarriageContraption(final CogwheelChainAttachment centerAttachment) {
         this.carriageAttachment = centerAttachment;
@@ -29,6 +31,7 @@ public class CogwheelChainCarriageContraption extends Contraption {
         if (this.carriageAttachment == null || !this.carriageAttachment.isValid(level)) {
             return false;
         }
+        this.facing = level.getBlockState(pos).getValue(BlockStateProperties.HORIZONTAL_FACING);
         if (!this.searchMovedStructure(level, pos, null))
             return false;
         this.startMoving(level);
@@ -65,6 +68,7 @@ public class CogwheelChainCarriageContraption extends Contraption {
             final CompoundTag attachmentTag = new CompoundTag();
             this.carriageAttachment.write(attachmentTag);
             tag.put("CenterAttachment", attachmentTag);
+            tag.putInt("AnchorFacing", this.facing.ordinal());
         }
 
         return tag;
@@ -74,6 +78,7 @@ public class CogwheelChainCarriageContraption extends Contraption {
     public void readNBT(final Level level, final CompoundTag nbt, final boolean spawnData) {
         if (nbt.contains("CenterAttachment")) {
             this.carriageAttachment = CogwheelChainAttachment.read(nbt.getCompound("CenterAttachment"));
+            this.facing = Direction.values()[nbt.getInt("AnchorFacing")];
         }
         super.readNBT(level, nbt, spawnData);
     }
