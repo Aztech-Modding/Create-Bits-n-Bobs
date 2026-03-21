@@ -1,11 +1,15 @@
 package com.kipti.bnb.network.packets.to_client;
 
-import com.kipti.bnb.content.kinetics.cogwheel_chain.riding.CogwheelChainSkyhookRenderer;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.riding.PlayerSkyhookRendererBridge;
 import com.kipti.bnb.network.BnbPackets;
+import io.netty.buffer.ByteBuf;
 import net.createmod.catnip.net.base.ClientboundPacketPayload;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.core.UUIDUtil;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -15,27 +19,17 @@ public record CogwheelChainRidingBroadcastPacket(
         Collection<UUID> ridingPlayerUUIDs
 ) implements ClientboundPacketPayload {
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, CogwheelChainRidingBroadcastPacket> STREAM_CODEC =
-            StreamCodec.of(
-                    (buf, packet) -> {
-                        buf.writeVarInt(packet.ridingPlayerUUIDs.size());
-                        for (UUID uuid : packet.ridingPlayerUUIDs) {
-                            buf.writeUUID(uuid);
-                        }
-                    },
-                    buf -> {
-                        int size = buf.readVarInt();
-                        HashSet<UUID> uuids = new HashSet<>();
-                        for (int i = 0; i < size; i++) {
-                            uuids.add(buf.readUUID());
-                        }
-                        return new CogwheelChainRidingBroadcastPacket(uuids);
-                    }
+    public static final StreamCodec<ByteBuf, CogwheelChainRidingBroadcastPacket> STREAM_CODEC =
+            StreamCodec.composite(
+                    ByteBufCodecs.collection(HashSet::new, UUIDUtil.STREAM_CODEC),
+                    CogwheelChainRidingBroadcastPacket::ridingPlayerUUIDs,
+                    CogwheelChainRidingBroadcastPacket::new
             );
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public void handle(final LocalPlayer player) {
-        CogwheelChainSkyhookRenderer.updatePlayerList(this.ridingPlayerUUIDs);
+        PlayerSkyhookRendererBridge.updateBnbHangingPlayers(this.ridingPlayerUUIDs);
     }
 
     @Override

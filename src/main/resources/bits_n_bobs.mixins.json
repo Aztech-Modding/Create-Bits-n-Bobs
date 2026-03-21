@@ -37,7 +37,8 @@
     "FontAccessMixin",
     "GirderCTBehaviourMixin",
     "GuiGameElementMixin",
-    "HumanoidModelMixin",
+    "PlayerSkyhookRendererAccessor",
+    "PlayerSkyhookRendererMixin",
     "dyeable_pipes.PipeAttachmentModelMixin"
   ],
   "server": [

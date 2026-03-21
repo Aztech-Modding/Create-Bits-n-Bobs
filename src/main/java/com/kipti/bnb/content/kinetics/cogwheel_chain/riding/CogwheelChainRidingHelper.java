@@ -34,7 +34,6 @@ public class CogwheelChainRidingHelper {
      * displays the dismount hint, and plays a mounting sound.
      */
     public static void embark(final CogwheelChainAttachment attachment) {
-        if (attachment.equals(currentAttachment)) return;
         currentAttachment = attachment;
         isRiding = true;
         catchingUp = CATCH_UP_TICKS;
