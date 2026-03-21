@@ -1,4 +1,4 @@
-package com.kipti.bnb.content.kinetics.cogwheel_chain.carriage;
+package com.kipti.bnb.content.kinetics.cogwheel_carriage.contraption;
 
 import com.kipti.bnb.registry.client.BnbPartialModels;
 import com.kipti.bnb.registry.content.blocks.BnbKineticBlocks;
@@ -59,6 +59,10 @@ public class CogwheelChainCarriageRenderer extends ContraptionEntityRenderer<Cog
         ms.pushPose();
         entity.applyLocalTransforms(ms, partialTicks);
 
+        TransformStack.of(ms)
+                .center()
+                .rotateToFace(entity.getInitialOrientation().getOpposite())
+                .uncenter();
         CachedBuffers.partial(BnbPartialModels.COGWHEEL_CHAIN_CARRIAGE_SHOE_ARM, blockState)
                 .light(packedLight)
                 .renderInto(ms, vertexConsumer);
@@ -75,11 +79,16 @@ public class CogwheelChainCarriageRenderer extends ContraptionEntityRenderer<Cog
         ms.pushPose();
         entity.applyLocalTransforms(ms, partialTicks);
 
+        TransformStack.of(ms)
+                .center()
+                .rotateToFace(entity.getInitialOrientation().getOpposite())
+                .uncenter();
+
         ms.translate(0, 0, zOffset);
 
         TransformStack.of(ms)
                 .center()
-                .rotateY((float) Math.toRadians(this.getDirYRot(dir) - entity.getViewYRot(partialTicks) - entity.getInitialYaw()))
+                .rotateY((float) Math.toRadians(this.getDirYRot(dir) - entity.getViewYRot(partialTicks)))
                 .uncenter();
 
         CachedBuffers.partial(BnbPartialModels.COGWHEEL_CHAIN_CARRIAGE_SHOE, blockState)

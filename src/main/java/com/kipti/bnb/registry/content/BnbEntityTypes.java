@@ -1,8 +1,8 @@
 package com.kipti.bnb.registry.content;
 
 import com.kipti.bnb.CreateBitsnBobs;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.carriage.CogwheelChainCarriageContraptionEntity;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.carriage.CogwheelChainCarriageRenderer;
+import com.kipti.bnb.content.kinetics.cogwheel_carriage.contraption.CogwheelChainCarriageContraptionEntity;
+import com.kipti.bnb.content.kinetics.cogwheel_carriage.contraption.CogwheelChainCarriageRenderer;
 import com.kipti.bnb.content.kinetics.flywheel_bearing.contraption.InertControlledContraptionEntity;
 import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
 import com.simibubi.create.content.contraptions.render.ContraptionEntityRenderer;

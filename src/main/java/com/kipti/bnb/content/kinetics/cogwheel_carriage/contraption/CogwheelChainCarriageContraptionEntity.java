@@ -1,4 +1,4 @@
-package com.kipti.bnb.content.kinetics.cogwheel_chain.carriage;
+package com.kipti.bnb.content.kinetics.cogwheel_carriage.contraption;
 
 import com.kipti.bnb.content.kinetics.cogwheel_chain.attachment.CogwheelChainAttachment;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.segment.CogwheelChainSegment;
@@ -17,21 +17,23 @@ public class CogwheelChainCarriageContraptionEntity extends OrientedContraptionE
 
     public static final float SHOE_OFFSET = 0.5f;
 
-    private static final double CLIENT_CHASING_RATE_CHANGE = 0.015;
-    private static final double CLIENT_CHASING_MAX = 0.3;
+    protected static final double CLIENT_CHASING_RATE_CHANGE = 0.015;
+    protected static final double CLIENT_CHASING_MAX = 0.3;
 
-    double chainAttachmentDist = 0f;
+    protected boolean disassembleNextTick = false;
+
+    protected double chainAttachmentDist = 0f;
     /**
      * The client will chase the chain attachment dist (previous from server + predicted velocity) by moderating its own velocity + or - 10%
      */
-    double clientChasingChainAttachmentDist = 0f;
-    double currentClientChasingRate = 1.0f;
+    protected double clientChasingChainAttachmentDist = 0f;
+    protected double currentClientChasingRate = 1.0f;
 
-    Vec3 lastFrontShoeDir = Vec3.ZERO;
-    Vec3 lastBackShoeDir = Vec3.ZERO;
+    protected Vec3 lastFrontShoeDir = Vec3.ZERO;
+    protected Vec3 lastBackShoeDir = Vec3.ZERO;
 
-    Vec3 frontShoeDir = Vec3.ZERO;
-    Vec3 backShoeDir = Vec3.ZERO;
+    protected Vec3 frontShoeDir = Vec3.ZERO;
+    protected Vec3 backShoeDir = Vec3.ZERO;
 
     public CogwheelChainCarriageContraptionEntity(final EntityType<?> type, final Level level) {
         super(type, level);
@@ -43,14 +45,18 @@ public class CogwheelChainCarriageContraptionEntity extends OrientedContraptionE
     public static CogwheelChainCarriageContraptionEntity create(final Level level,
                                                                 final CogwheelChainCarriageContraption contraption) {
         final CogwheelChainCarriageContraptionEntity entity =
-                new CogwheelChainCarriageContraptionEntity(BnbEntityTypes.COGWHEEL_CHAIN_CARRIAGE_CONTRAPTION.get(), level);
+                new CogwheelChainCarriageContraptionEntity(
+                        BnbEntityTypes.COGWHEEL_CHAIN_CARRIAGE_CONTRAPTION.get(),
+                        level
+                );
         entity.setContraption(contraption);
         return entity;
     }
 
     public CogwheelChainAttachment getAttachment() {
         if (!(this.contraption instanceof final CogwheelChainCarriageContraption cccc)) {
-            throw new IllegalStateException("A CogwheelChainCarriageContraptionEntity must have a CogwheelChainCarriageContraption contraption!");
+            throw new IllegalStateException(
+                    "A CogwheelChainCarriageContraptionEntity must have a CogwheelChainCarriageContraption contraption!");
         }
         return cccc.getCarriageAttachment();
     }
@@ -76,7 +82,13 @@ public class CogwheelChainCarriageContraptionEntity extends OrientedContraptionE
 
     private void tickServerSync() {
         if (this.tickCount % 60 == 0) {
-            CatnipServices.NETWORK.sendToClientsTrackingEntity(this, new CogwheelChainCarriageUpdateDistPacket(this.getId(), this.chainAttachmentDist));
+            CatnipServices.NETWORK.sendToClientsTrackingEntity(
+                    this,
+                    new CogwheelChainCarriageUpdateDistPacket(
+                            this.getId(),
+                            this.chainAttachmentDist
+                    )
+            );
         }
     }
 
@@ -91,7 +103,10 @@ public class CogwheelChainCarriageContraptionEntity extends OrientedContraptionE
             this.currentClientChasingRate += CLIENT_CHASING_RATE_CHANGE;
         }
 
-        this.currentClientChasingRate = Math.max(1.0 - CLIENT_CHASING_MAX, Math.min(1.0 + CLIENT_CHASING_MAX, this.currentClientChasingRate));
+        this.currentClientChasingRate = Math.max(
+                1.0 - CLIENT_CHASING_MAX,
+                Math.min(1.0 + CLIENT_CHASING_MAX, this.currentClientChasingRate)
+        );
 
         this.lastFrontShoeDir = this.frontShoeDir;
         this.lastBackShoeDir = this.backShoeDir;
@@ -102,7 +117,7 @@ public class CogwheelChainCarriageContraptionEntity extends OrientedContraptionE
 
     private void tickServer() {
         final Level level = this.level();
-        if (!this.getAttachment().isValid(level)) {
+        if (!this.getAttachment().isValid(level) || this.disassembleNextTick) {
             this.disassemble();
             this.discard();
         }
@@ -168,7 +183,9 @@ public class CogwheelChainCarriageContraptionEntity extends OrientedContraptionE
     }
 
     @Override
-    protected void writeAdditional(final CompoundTag compound, final HolderLookup.Provider registries, final boolean spawnPacket) {
+    protected void writeAdditional(final CompoundTag compound,
+                                   final HolderLookup.Provider registries,
+                                   final boolean spawnPacket) {
         super.writeAdditional(compound, registries, spawnPacket);
         compound.putDouble("ChainAttachmentDist", this.chainAttachmentDist);
     }
@@ -189,6 +206,10 @@ public class CogwheelChainCarriageContraptionEntity extends OrientedContraptionE
 
     public Vec3 getBackShoeDir(final float partialTicks) {
         return this.lastBackShoeDir.lerp(this.backShoeDir, partialTicks);
+    }
+
+    public void disassembleNextTick() {
+        this.disassembleNextTick = true;
     }
 
 }

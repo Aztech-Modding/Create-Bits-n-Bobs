@@ -1,8 +1,9 @@
-package com.kipti.bnb.content.kinetics.cogwheel_chain.carriage;
+package com.kipti.bnb.content.kinetics.cogwheel_carriage.contraption;
 
 import com.kipti.bnb.content.kinetics.cogwheel_chain.attachment.CogwheelChainAttachment;
 import com.kipti.bnb.registry.content.BnbContraptionTypes;
 import com.simibubi.create.api.contraption.ContraptionType;
+import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
 import com.simibubi.create.content.contraptions.AssemblyException;
 import com.simibubi.create.content.contraptions.Contraption;
 import net.minecraft.core.BlockPos;
@@ -40,7 +41,18 @@ public class CogwheelChainCarriageContraption extends Contraption {
     }
 
     @Override
-    protected boolean addToInitialFrontier(final Level world, final BlockPos pos, final Direction forcedDirection, final Queue<BlockPos> frontier) throws AssemblyException {
+    public void onEntityInitialize(final Level world, final AbstractContraptionEntity contraptionEntity) {
+        super.onEntityInitialize(world, contraptionEntity);
+        if (contraptionEntity instanceof final CogwheelChainCarriageContraptionEntity cccce) {
+            cccce.setInitialOrientation(this.facing);
+        }
+    }
+
+    @Override
+    protected boolean addToInitialFrontier(final Level world,
+                                           final BlockPos pos,
+                                           final Direction forcedDirection,
+                                           final Queue<BlockPos> frontier) throws AssemblyException {
         frontier.add(pos.relative(Direction.DOWN));
         return true;
     }

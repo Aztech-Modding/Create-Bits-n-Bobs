@@ -1,4 +1,4 @@
-package com.kipti.bnb.content.kinetics.cogwheel_chain.carriage;
+package com.kipti.bnb.content.kinetics.cogwheel_carriage.block;
 
 import com.kipti.bnb.registry.content.BnbBlockEntities;
 import com.mojang.serialization.MapCodec;

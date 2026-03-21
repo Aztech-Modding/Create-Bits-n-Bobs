@@ -1,5 +1,7 @@
-package com.kipti.bnb.content.kinetics.cogwheel_chain.carriage;
+package com.kipti.bnb.content.kinetics.cogwheel_carriage.block;
 
+import com.kipti.bnb.content.kinetics.cogwheel_carriage.contraption.CogwheelChainCarriageContraption;
+import com.kipti.bnb.content.kinetics.cogwheel_carriage.contraption.CogwheelChainCarriageContraptionEntity;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.attachment.CogwheelChainAttachment;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.attachment.CogwheelChainAttachmentHelper;
 import com.simibubi.create.AllSoundEvents;

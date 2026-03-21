@@ -4,7 +4,7 @@ import com.cake.struts.content.block.StrutBlockEntity;
 import com.cake.struts.content.block.StrutBlockEntityRenderer;
 import com.kipti.bnb.content.kinetics.chain_pulley.ChainPulleyBlockEntity;
 import com.kipti.bnb.content.kinetics.chain_pulley.ChainPulleyRenderer;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.carriage.CogwheelChainCarriageBlockEntity;
+import com.kipti.bnb.content.kinetics.cogwheel_carriage.block.CogwheelChainCarriageBlockEntity;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.migration.MigratingSimpleKineticBlockEntity;
 import com.kipti.bnb.content.kinetics.flywheel_bearing.FlywheelBearingBlockEntity;
 import com.kipti.bnb.content.kinetics.flywheel_bearing.FlywheelBearingBlockEntityRenderer;

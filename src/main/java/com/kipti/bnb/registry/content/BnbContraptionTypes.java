@@ -1,7 +1,7 @@
 package com.kipti.bnb.registry.content;
 
 import com.kipti.bnb.CreateBitsnBobs;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.carriage.CogwheelChainCarriageContraption;
+import com.kipti.bnb.content.kinetics.cogwheel_carriage.contraption.CogwheelChainCarriageContraption;
 import com.simibubi.create.api.contraption.ContraptionType;
 import com.simibubi.create.api.registry.CreateBuiltInRegistries;
 import com.simibubi.create.content.contraptions.Contraption;

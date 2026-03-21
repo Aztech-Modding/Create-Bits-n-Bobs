@@ -2,6 +2,7 @@ package com.kipti.bnb.network;
 
 
 import com.kipti.bnb.CreateBitsnBobs;
+import com.kipti.bnb.network.packets.from_client.CogwheelChainCarriageQueueDisassemblyPacket;
 import com.kipti.bnb.network.packets.from_client.PartialEditCogwheelChainPacket;
 import com.kipti.bnb.network.packets.from_client.PlaceCogwheelChainPacket;
 import com.kipti.bnb.network.packets.from_client.WrenchCogwheelChainPacket;
@@ -21,16 +22,30 @@ public enum BnbPackets implements BasePacketPayload.PacketTypeProvider {
     PLACE_COGWHEEL_CHAIN(PlaceCogwheelChainPacket.class, PlaceCogwheelChainPacket.STREAM_CODEC),
     WRENCH_COGWHEEL_CHAIN(WrenchCogwheelChainPacket.class, WrenchCogwheelChainPacket.STREAM_CODEC),
     PARTIAL_EDIT_COGWHEEL_CHAIN(PartialEditCogwheelChainPacket.class, PartialEditCogwheelChainPacket.STREAM_CODEC),
+    COGWHEEL_CHAIN_CARRIAGE_QUEUE_DISASSEMBLE(
+            CogwheelChainCarriageQueueDisassemblyPacket.class,
+            CogwheelChainCarriageQueueDisassemblyPacket.STREAM_CODEC
+    ),
 
     // S2C
-    APPLY_HEADLAMP_QUEUED_OPERATIONS(ApplyHeadlampQueuedOperationsPacket.class, ApplyHeadlampQueuedOperationsPacket.STREAM_CODEC),
-    PEEK_COGWHEEL_CHAIN_CONTROLLER_HIGHLIGHT(PeekCogwheelChainControllerHighlightPacket.class, PeekCogwheelChainControllerHighlightPacket.STREAM_CODEC),
-    COGWHEEL_CHAIN_CARRIAGE_UPDATE_DIST(CogwheelChainCarriageUpdateDistPacket.class, CogwheelChainCarriageUpdateDistPacket.STREAM_CODEC),
+    APPLY_HEADLAMP_QUEUED_OPERATIONS(
+            ApplyHeadlampQueuedOperationsPacket.class,
+            ApplyHeadlampQueuedOperationsPacket.STREAM_CODEC
+    ),
+    PEEK_COGWHEEL_CHAIN_CONTROLLER_HIGHLIGHT(
+            PeekCogwheelChainControllerHighlightPacket.class,
+            PeekCogwheelChainControllerHighlightPacket.STREAM_CODEC
+    ),
+    COGWHEEL_CHAIN_CARRIAGE_UPDATE_DIST(
+            CogwheelChainCarriageUpdateDistPacket.class,
+            CogwheelChainCarriageUpdateDistPacket.STREAM_CODEC
+    ),
     ;
 
     private final CatnipPacketRegistry.PacketType<?> type;
 
-    <T extends BasePacketPayload> BnbPackets(final Class<T> clazz, final StreamCodec<? super RegistryFriendlyByteBuf, T> codec) {
+    <T extends BasePacketPayload> BnbPackets(final Class<T> clazz,
+                                             final StreamCodec<? super RegistryFriendlyByteBuf, T> codec) {
         final String name = this.name().toLowerCase(Locale.ROOT);
         this.type = new CatnipPacketRegistry.PacketType<>(
                 new CustomPacketPayload.Type<>(CreateBitsnBobs.asResource(name)),
