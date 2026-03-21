@@ -8,18 +8,20 @@ pluginManagement {
 plugins {
     id 'org.gradle.toolchains.foojay-resolver-convention' version '0.9.0'
 }
-
-if (findProperty("bits_n_bobs_use_local_builds")) { //Use user level properties for this
+def azimuthBuild = file('../Azimuth')
+if (azimuthBuild.exists()) {
+    //Use user level properties for this
     includeBuild('../Azimuth') {
         dependencySubstitution {
             substitute module('com.cake.azimuth:azimuth') using project(':')
         }
     }
-
+}
+def strutYourStuffBuild = file('../Strut-Your-Stuff')
+if (strutYourStuffBuild.exists()) {
     includeBuild('../Strut-Your-Stuff') {
         dependencySubstitution {
             substitute module('com.cake.struts:struts') using project(':')
         }
     }
-
 }

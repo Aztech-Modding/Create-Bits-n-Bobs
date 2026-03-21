@@ -3,11 +3,13 @@ package com.kipti.bnb.network;
 
 import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.network.packets.from_client.CogwheelChainCarriageQueueDisassemblyPacket;
+import com.kipti.bnb.network.packets.from_client.CogwheelChainRidingPacket;
 import com.kipti.bnb.network.packets.from_client.PartialEditCogwheelChainPacket;
 import com.kipti.bnb.network.packets.from_client.PlaceCogwheelChainPacket;
 import com.kipti.bnb.network.packets.from_client.WrenchCogwheelChainPacket;
 import com.kipti.bnb.network.packets.to_client.ApplyHeadlampQueuedOperationsPacket;
 import com.kipti.bnb.network.packets.to_client.CogwheelChainCarriageUpdateDistPacket;
+import com.kipti.bnb.network.packets.to_client.CogwheelChainRidingBroadcastPacket;
 import com.kipti.bnb.network.packets.to_client.PeekCogwheelChainControllerHighlightPacket;
 import net.createmod.catnip.net.base.BasePacketPayload;
 import net.createmod.catnip.net.base.CatnipPacketRegistry;
@@ -26,6 +28,7 @@ public enum BnbPackets implements BasePacketPayload.PacketTypeProvider {
             CogwheelChainCarriageQueueDisassemblyPacket.class,
             CogwheelChainCarriageQueueDisassemblyPacket.STREAM_CODEC
     ),
+    COGWHEEL_CHAIN_RIDING(CogwheelChainRidingPacket.class, CogwheelChainRidingPacket.STREAM_CODEC),
 
     // S2C
     APPLY_HEADLAMP_QUEUED_OPERATIONS(
@@ -39,6 +42,10 @@ public enum BnbPackets implements BasePacketPayload.PacketTypeProvider {
     COGWHEEL_CHAIN_CARRIAGE_UPDATE_DIST(
             CogwheelChainCarriageUpdateDistPacket.class,
             CogwheelChainCarriageUpdateDistPacket.STREAM_CODEC
+    ),
+    COGWHEEL_CHAIN_RIDING_BROADCAST(
+            CogwheelChainRidingBroadcastPacket.class,
+            CogwheelChainRidingBroadcastPacket.STREAM_CODEC
     ),
     ;
 

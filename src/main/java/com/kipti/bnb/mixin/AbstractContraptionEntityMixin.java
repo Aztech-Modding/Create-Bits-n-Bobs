@@ -10,7 +10,7 @@ import java.util.UUID;
 
 /**
  * Backports Create's seat-mapping snapshot fix so contraption passenger updates
- * cannot encode against a live map that is still being mutated.
+ * cannot encode against a live map that is still being mutated. //TODO: Remove once create is bumped
  */
 @Mixin(AbstractContraptionEntity.class)
 public class AbstractContraptionEntityMixin {

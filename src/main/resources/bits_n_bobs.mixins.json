@@ -5,6 +5,7 @@
   "refmap": "${mod_id}.refmap.json",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "ServerGamePacketListenerImplAccessor",
     "AbstractContraptionEntityMixin",
     "AllCreatePonderScenesMixin",
     "AllPaletteStoneTypesMixin",
@@ -36,6 +37,8 @@
     "FontAccessMixin",
     "GirderCTBehaviourMixin",
     "GuiGameElementMixin",
+    "PlayerSkyhookRendererAccessor",
+    "PlayerSkyhookRendererMixin",
     "dyeable_pipes.PipeAttachmentModelMixin"
   ],
   "server": [
