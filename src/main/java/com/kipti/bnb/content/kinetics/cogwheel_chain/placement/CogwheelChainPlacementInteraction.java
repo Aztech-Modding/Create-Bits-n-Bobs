@@ -60,7 +60,10 @@ public class CogwheelChainPlacementInteraction {
             return true;
         }
 
-        //If it is a chain targeting a cogwheel
+        if (CogwheelChainInteractionHandler.onUse()) {
+            return true;
+        }
+
         final ItemStack chainItemInHand = getChainItemInHand(player);
 
         if (chainItemInHand == null) {

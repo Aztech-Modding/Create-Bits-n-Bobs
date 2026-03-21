@@ -1,12 +1,17 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.shape;
 
+import com.kipti.bnb.content.kinetics.cogwheel_chain.attachment.CogwheelChainAttachment;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.riding.CogwheelChainRidingHelper;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.world.CogwheelChainWorld;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.AllItems;
+import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.foundation.utility.RaycastHelper;
+import net.createmod.catnip.outliner.Outliner;
 import net.createmod.catnip.render.DefaultSuperRenderTypeBuffer;
 import net.createmod.catnip.render.SuperRenderTypeBuffer;
+import net.createmod.catnip.theme.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -15,6 +20,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -86,6 +92,14 @@ public class CogwheelChainInteractionHandler {
         selectedShape = hit.shape();
         selectedChainPosition = hit.chainPosition();
         selectedBakedPosition = hit.bakedPosition();
+
+        if (!player.isShiftKeyDown() && !CogwheelChainRidingHelper.isRiding()) {
+            Outliner.getInstance()
+                    .chaseAABB("CogwheelChainPointSelection", new AABB(selectedBakedPosition, selectedBakedPosition))
+                    .colored(Color.WHITE)
+                    .lineWidth(1 / 6f)
+                    .disableLineNormals();
+        }
     }
 
     private static boolean isActive(final ItemStack mainHand) {
@@ -93,7 +107,30 @@ public class CogwheelChainInteractionHandler {
         if (mc.player == null) {
             return false;
         }
-        return AllItems.WRENCH.isIn(mainHand);
+        return AllItems.WRENCH.isIn(mainHand) || mc.player.isHolding(AllItemTags.CHAIN_RIDEABLE::matches);
+    }
+
+    /**
+     * Attempts to mount the player onto the currently selected chain.
+     * Called from input event handlers when the player right-clicks while holding a CHAIN_RIDEABLE item.
+     *
+     * @return {@code true} if the player successfully began riding
+     */
+    public static boolean onUse() {
+        final Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null || mc.level == null) return false;
+        if (selectedController == null) return false;
+        if (!mc.player.isHolding(AllItemTags.CHAIN_RIDEABLE::matches)) return false;
+        if (mc.player.isShiftKeyDown()) return false;
+
+        final CogwheelChainAttachment attachment = new CogwheelChainAttachment(
+                selectedController,
+                selectedChainPosition
+        );
+        if (!attachment.isValid(mc.level)) return false;
+
+        CogwheelChainRidingHelper.embark(attachment);
+        return true;
     }
 
     public static void drawCustomBlockSelection(final PoseStack ms, final MultiBufferSource buffer, final Vec3 camera) {
@@ -105,7 +142,11 @@ public class CogwheelChainInteractionHandler {
 
         final VertexConsumer vb = buffer.getBuffer(RenderType.lines());
         ms.pushPose();
-        ms.translate(selectedController.getX() - camera.x, selectedController.getY() - camera.y, selectedController.getZ() - camera.z);
+        ms.translate(
+                selectedController.getX() - camera.x,
+                selectedController.getY() - camera.y,
+                selectedController.getZ() - camera.z
+        );
         selectedShape.drawOutline(selectedController, ms, vb);
         ms.popPose();
     }
@@ -114,7 +155,6 @@ public class CogwheelChainInteractionHandler {
     public static void onClientTick(final ClientTickEvent.Post event) {
         clientTick();
     }
-
 
     @SubscribeEvent
     public static void onRenderWorld(final RenderLevelStageEvent event) {

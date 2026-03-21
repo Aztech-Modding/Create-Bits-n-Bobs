@@ -1,6 +1,10 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.riding;
 
 import com.kipti.bnb.content.kinetics.cogwheel_chain.attachment.CogwheelChainAttachment;
+import com.kipti.bnb.network.packets.from_client.CogwheelChainRidingPacket;
+import com.simibubi.create.AllTags.AllItemTags;
+import net.createmod.catnip.animation.AnimationTickHolder;
+import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -30,6 +34,7 @@ public class CogwheelChainRidingHelper {
      * displays the dismount hint, and plays a mounting sound.
      */
     public static void embark(final CogwheelChainAttachment attachment) {
+        if (attachment.equals(currentAttachment)) return;
         currentAttachment = attachment;
         isRiding = true;
         catchingUp = CATCH_UP_TICKS;
@@ -46,6 +51,10 @@ public class CogwheelChainRidingHelper {
      * Stops riding and clears all tracking state.
      */
     public static void disembark() {
+        if (currentAttachment != null) {
+            CatnipServices.NETWORK.sendToServer(
+                    new CogwheelChainRidingPacket(currentAttachment.getControllerPos(), true));
+        }
         currentAttachment = null;
         isRiding = false;
         catchingUp = 0;
@@ -64,6 +73,11 @@ public class CogwheelChainRidingHelper {
 
         final Minecraft mc = Minecraft.getInstance();
         if (mc.isPaused()) return;
+
+        if (!player.isHolding(AllItemTags.CHAIN_RIDEABLE::matches)) {
+            disembark();
+            return;
+        }
 
         if (player.isShiftKeyDown()) {
             disembark();
@@ -84,6 +98,11 @@ public class CogwheelChainRidingHelper {
         }
 
         applyMovement(player, targetPosition);
+
+        if (AnimationTickHolder.getTicks() % 10 == 0) {
+            CatnipServices.NETWORK.sendToServer(
+                    new CogwheelChainRidingPacket(currentAttachment.getControllerPos(), false));
+        }
     }
 
     /**
@@ -112,8 +131,8 @@ public class CogwheelChainRidingHelper {
         }
 
         player.setDeltaMovement(player.getDeltaMovement()
-                .scale(0.75)
-                .add(diff.scale(0.25)));
+                                        .scale(0.75)
+                                        .add(diff.scale(0.25)));
     }
 
     private static Vec3 computeHangPosition(final LocalPlayer player) {
