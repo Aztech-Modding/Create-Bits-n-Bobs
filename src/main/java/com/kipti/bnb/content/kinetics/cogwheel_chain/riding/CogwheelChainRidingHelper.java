@@ -1,6 +1,7 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.riding;
 
 import com.kipti.bnb.content.kinetics.cogwheel_chain.attachment.CogwheelChainAttachment;
+import com.kipti.bnb.mixin.ChainConveyorRidingHandlerAccessor;
 import com.kipti.bnb.network.packets.from_client.CogwheelChainRidingPacket;
 import com.simibubi.create.AllTags.AllItemTags;
 import net.createmod.catnip.animation.AnimationTickHolder;
@@ -34,6 +35,7 @@ public class CogwheelChainRidingHelper {
      * displays the dismount hint, and plays a mounting sound.
      */
     public static void embark(final CogwheelChainAttachment attachment) {
+        disembarkFromAnyPreviousRide();
         currentAttachment = attachment;
         isRiding = true;
         catchingUp = CATCH_UP_TICKS;
@@ -50,13 +52,19 @@ public class CogwheelChainRidingHelper {
      * Stops riding and clears all tracking state.
      */
     public static void disembark() {
-        if (currentAttachment != null) {
-            CatnipServices.NETWORK.sendToServer(
-                    new CogwheelChainRidingPacket(currentAttachment.getControllerPos(), true));
+        if (!isRiding && currentAttachment == null) {
+            return;
         }
+
+        final CogwheelChainAttachment attachment = currentAttachment;
         currentAttachment = null;
         isRiding = false;
         catchingUp = 0;
+
+        if (attachment != null) {
+            CatnipServices.NETWORK.sendToServer(
+                    new CogwheelChainRidingPacket(attachment.getControllerPos(), true));
+        }
 
         Minecraft.getInstance()
                 .getSoundManager()
@@ -64,11 +72,25 @@ public class CogwheelChainRidingHelper {
     }
 
     /**
+     * Stops any existing BnB or Create chain ride before a new ride begins.
+     */
+    public static void disembarkFromAnyPreviousRide() {
+        if (ChainConveyorRidingHandlerAccessor.bits_n_bobs$getRidingChainConveyor() != null) {
+            ChainConveyorRidingHandlerAccessor.bits_n_bobs$invokeStopRiding();
+        }
+
+        if (isRiding || currentAttachment != null) {
+            disembark();
+        }
+    }
+
+    /**
      * Per-tick update called from a client tick event. Advances the attachment
      * along the chain, moves the player to follow, and checks disembark conditions.
      */
     public static void clientTick(final LocalPlayer player) {
-        if (!isRiding || currentAttachment == null) return;
+        final CogwheelChainAttachment attachment = currentAttachment;
+        if (!isRiding || attachment == null) return;
 
         final Minecraft mc = Minecraft.getInstance();
         if (mc.isPaused()) return;
@@ -83,24 +105,27 @@ public class CogwheelChainRidingHelper {
             return;
         }
 
-        if (!currentAttachment.isValid(mc.level)) {
+        if (!attachment.isValid(mc.level)) {
             disembark();
             return;
         }
 
-        currentAttachment.tick(mc.level);
+        attachment.tick(mc.level);
 
-        final Vec3 targetPosition = currentAttachment.getCurrentPosition(mc.level);
+        final Vec3 targetPosition = attachment.getCurrentPosition(mc.level);
         if (targetPosition.equals(Vec3.ZERO)) {
             disembark();
             return;
         }
 
         applyMovement(player, targetPosition);
+        if (!isCurrentAttachment(attachment)) {
+            return;
+        }
 
         if (AnimationTickHolder.getTicks() % 10 == 0) {
             CatnipServices.NETWORK.sendToServer(
-                    new CogwheelChainRidingPacket(currentAttachment.getControllerPos(), false));
+                    new CogwheelChainRidingPacket(attachment.getControllerPos(), false));
         }
     }
 
@@ -114,6 +139,10 @@ public class CogwheelChainRidingHelper {
 
     public static boolean isRiding() {
         return isRiding;
+    }
+
+    private static boolean isCurrentAttachment(final CogwheelChainAttachment attachment) {
+        return isRiding && currentAttachment == attachment;
     }
 
     private static void applyMovement(final LocalPlayer player, final Vec3 targetPosition) {

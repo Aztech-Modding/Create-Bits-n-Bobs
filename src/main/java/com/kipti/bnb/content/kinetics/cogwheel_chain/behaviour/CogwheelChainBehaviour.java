@@ -95,6 +95,9 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
     public void initialize() {
         super.initialize();
         this.syncControllerRegistration();
+        if (this.isPartOfChain() && this.getBlockEntity() instanceof final KineticBlockEntity kbe) {
+            kbe.updateSpeed = true;
+        }
     }
 
     @Override
@@ -395,6 +398,7 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
         this.controlledChain = null;
         this.controllerOffset = null;
         this.chainsToRefund = 0;
+        this.repropagateKinetics();
         this.sendData();
     }
 

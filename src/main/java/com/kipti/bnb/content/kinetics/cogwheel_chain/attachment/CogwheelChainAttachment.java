@@ -31,6 +31,21 @@ public class CogwheelChainAttachment {
         this.dist = Math.max(0, dist);
     }
 
+    public boolean isWrappedDistFurther(final Level level,
+                                        final float clientChasingChainAttachmentDist,
+                                        final float chainAttachmentDist,
+                                        final float signum) {
+        final float length = this.getTotalLength(level);
+        //Find the closest distance (i.e. straight or wrapped dist) then whichever is first in the signum direction
+        final float straightDist = Math.abs(clientChasingChainAttachmentDist - chainAttachmentDist);
+        final float wrappedDist = length - straightDist;
+        if (signum > 0) {
+            return straightDist < wrappedDist ? clientChasingChainAttachmentDist > chainAttachmentDist : clientChasingChainAttachmentDist < chainAttachmentDist;
+        } else {
+            return straightDist < wrappedDist ? clientChasingChainAttachmentDist < chainAttachmentDist : clientChasingChainAttachmentDist > chainAttachmentDist;
+        }
+    }
+
     /**
      * Advances {@link #dist} by the chain's linear speed for one tick.
      * Speed is derived from the controller cogwheel's angular velocity and radius,
@@ -116,7 +131,15 @@ public class CogwheelChainAttachment {
      * Returns {@code true} if the chain still exists at the controller position.
      */
     public boolean isValid(final Level level) {
-        return CogwheelChainWorld.get(level).containsChain(this.controllerPos);
+        if (CogwheelChainWorld.get(level).containsChain(this.controllerPos)) {
+            return true;
+        }
+        if (!level.isLoaded(this.controllerPos)) {
+            return true;
+        }
+        final CogwheelChainBehaviour behaviour = SuperBlockEntityBehaviour.get(
+                level, this.controllerPos, CogwheelChainBehaviour.TYPE);
+        return behaviour != null && behaviour.isController();
     }
 
     public void write(final CompoundTag tag) {
@@ -200,7 +223,7 @@ public class CogwheelChainAttachment {
         return segments.get(lo);
     }
 
-    private static float wrapDist(final float dist, final float totalLength) {
+    public static float wrapDist(final float dist, final float totalLength) {
         if (totalLength <= 0) return 0;
         final float wrapped = dist % totalLength;
         return wrapped < 0 ? wrapped + totalLength : wrapped;
@@ -233,4 +256,17 @@ public class CogwheelChainAttachment {
         return this.getCurrentDirection(level, this.dist);
     }
 
+    public float wrapDist(final Level level, final float dist) {
+        return wrapDist(dist, this.getTotalLength(level));
+    }
+
+    public float getMinWrappedDist(final Level level,
+                                   final float clientChasingChainAttachmentDist,
+                                   final float chainAttachmentDist) {
+        final float length = this.getTotalLength(level);
+        return Math.min(
+                Math.abs(clientChasingChainAttachmentDist - chainAttachmentDist),
+                length - Math.abs(clientChasingChainAttachmentDist - chainAttachmentDist)
+        );
+    }
 }

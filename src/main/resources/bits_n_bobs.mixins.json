@@ -33,6 +33,8 @@
   ],
   "client": [
     "BakedGlyphMixin",
+    "ChainConveyorRidingHandlerAccessor",
+    "ChainConveyorRidingHandlerMixin",
     "CreateClientMixin",
     "FontAccessMixin",
     "GirderCTBehaviourMixin",

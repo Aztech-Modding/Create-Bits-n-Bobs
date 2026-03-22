@@ -208,6 +208,7 @@
   "message.bits_n_bobs.girder_strut.missing_anchors": "You need %s more Girder Struts",
   "tab.bits_n_bobs.base": "Bits 'n' Bobs",
   "tab.bits_n_bobs.deco": "Bits 'n' Bobs' Block Palettes",
+  "tooltip.bits_n_bobs.chain_drive_partial_edit_hint": "Inserting cogwheel into chain drive",
   "tooltip.bits_n_bobs.chain_drive_placing_hint": "Placing chain drive, create a complete loop to finish.",
   "tooltip.bits_n_bobs.flywheel_bearing.angular_mass": "Angular Mass:",
   "tooltip.bits_n_bobs.flywheel_bearing.angular_mass.absurdly_heavy": "(absurdly heavy)",

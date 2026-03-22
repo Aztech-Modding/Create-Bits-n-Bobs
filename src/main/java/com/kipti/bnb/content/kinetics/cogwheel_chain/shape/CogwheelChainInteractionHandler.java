@@ -1,6 +1,8 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.shape;
 
+import com.kipti.bnb.content.kinetics.cogwheel_chain.edit.CogwheelChainPartialEditInteractionHandler;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.attachment.CogwheelChainAttachment;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.placement.CogwheelChainPlacementInteraction;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.riding.CogwheelChainRidingHelper;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.world.CogwheelChainWorld;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -18,7 +20,6 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -42,6 +43,7 @@ public class CogwheelChainInteractionHandler {
 
     private static void clearSelection() {
         selectedController = null;
+        selectedChainPosition = 0;
         selectedShape = null;
         selectedBakedPosition = null;
     }
@@ -66,7 +68,7 @@ public class CogwheelChainInteractionHandler {
         }
 
         final LocalPlayer player = mc.player;
-        if (!isActive(player.getMainHandItem())) {
+        if (!isActive(player)) {
             clearSelection();
             return;
         }
@@ -102,12 +104,15 @@ public class CogwheelChainInteractionHandler {
         }
     }
 
-    private static boolean isActive(final ItemStack mainHand) {
-        final Minecraft mc = Minecraft.getInstance();
-        if (mc.player == null) {
-            return false;
-        }
-        return AllItems.WRENCH.isIn(mainHand) || mc.player.isHolding(AllItemTags.CHAIN_RIDEABLE::matches);
+    private static boolean isActive(final LocalPlayer player) {
+        return AllItems.WRENCH.isIn(player.getMainHandItem())
+                || AllItems.WRENCH.isIn(player.getOffhandItem())
+                || player.isHolding(AllItemTags.CHAIN_RIDEABLE::matches)
+                || CogwheelChainPlacementInteraction.isChainDriveItem(player.getMainHandItem())
+                || CogwheelChainPlacementInteraction.isChainDriveItem(player.getOffhandItem())
+                || CogwheelChainPlacementInteraction.isCompatibleCogwheelItem(player.getMainHandItem())
+                || CogwheelChainPlacementInteraction.isCompatibleCogwheelItem(player.getOffhandItem())
+                || CogwheelChainPartialEditInteractionHandler.hasActiveEditContext();
     }
 
     /**

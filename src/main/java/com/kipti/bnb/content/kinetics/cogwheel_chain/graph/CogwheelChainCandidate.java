@@ -57,6 +57,10 @@ public record CogwheelChainCandidate(Direction.Axis axis, boolean isLarge, boole
         return new CogwheelChainCandidate(getAxis(state), isLargeCogwheel(state), hasSmallCogwheelOffset(state));
     }
 
+    public static @Nullable CogwheelChainCandidate getForBlock(final Block block) {
+        return getForBlock(block.defaultBlockState());
+    }
+
     public boolean isConsistentWithNode(final ICogwheelNode node) {
         if (node.isLarge() != isLarge)
             return false;

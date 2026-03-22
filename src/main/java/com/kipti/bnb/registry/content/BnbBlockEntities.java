@@ -5,6 +5,7 @@ import com.cake.struts.content.block.StrutBlockEntityRenderer;
 import com.kipti.bnb.content.kinetics.chain_pulley.ChainPulleyBlockEntity;
 import com.kipti.bnb.content.kinetics.chain_pulley.ChainPulleyRenderer;
 import com.kipti.bnb.content.kinetics.cogwheel_carriage.block.CogwheelChainCarriageBlockEntity;
+import com.kipti.bnb.content.kinetics.cogwheel_carriage.block.CogwheelChainCarriageRenderer;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.migration.MigratingSimpleKineticBlockEntity;
 import com.kipti.bnb.content.kinetics.flywheel_bearing.FlywheelBearingBlockEntity;
 import com.kipti.bnb.content.kinetics.flywheel_bearing.FlywheelBearingBlockEntityRenderer;
@@ -37,7 +38,10 @@ import static com.kipti.bnb.CreateBitsnBobs.REGISTRATE;
 
 public class BnbBlockEntities {
 
-    public static final BlockEntityEntry<HeadlampBlockEntity> HEADLAMP = REGISTRATE.blockEntity("headlamp", HeadlampBlockEntity::new)
+    public static final BlockEntityEntry<HeadlampBlockEntity> HEADLAMP = REGISTRATE.blockEntity(
+                    "headlamp",
+                    HeadlampBlockEntity::new
+            )
             .visual(() -> HeadlampVisual::new)
             .validBlock(BnbTrinketBlocks.HEADLAMP)
             .renderer(() -> HeadlampBlockEntityRenderer::new)
@@ -45,33 +49,49 @@ public class BnbBlockEntities {
 
     public static final BlockEntityEntry<StrutBlockEntity> GIRDER_STRUT = REGISTRATE
             .blockEntity("girder_strut", StrutBlockEntity::new)
-            .validBlocks(BnbDecorativeBlocks.GIRDER_STRUT, BnbDecorativeBlocks.WEATHERED_GIRDER_STRUT,
-                    BnbDecorativeBlocks.WOODEN_GIRDER_STRUT, BnbDecorativeBlocks.CABLE_GIRDER_STRUT)
+            .validBlocks(
+                    BnbDecorativeBlocks.GIRDER_STRUT, BnbDecorativeBlocks.WEATHERED_GIRDER_STRUT,
+                    BnbDecorativeBlocks.WOODEN_GIRDER_STRUT, BnbDecorativeBlocks.CABLE_GIRDER_STRUT
+            )
             .renderer(() -> StrutBlockEntityRenderer::new)
             .register();
 
     public static final BlockEntityEntry<KineticBlockEntity> ENCASED_SHAFT = REGISTRATE
             .blockEntity("encased_shaft", KineticBlockEntity::new)
             .visual(() -> SingleAxisRotatingVisual::shaft, false)
-            .validBlocks(BnbDecorativeBlocks.WEATHERED_METAL_GIRDER_ENCASED_SHAFT, BnbExtraEncasedBlocks.INDUSTRIAL_IRON_ENCASED_SHAFT, BnbExtraEncasedBlocks.WEATHERED_IRON_ENCASED_SHAFT, BnbSpecialEncasedBlocks.INDUSTRIAL_GRATING_PANEL)
+            .validBlocks(
+                    BnbDecorativeBlocks.WEATHERED_METAL_GIRDER_ENCASED_SHAFT,
+                    BnbExtraEncasedBlocks.INDUSTRIAL_IRON_ENCASED_SHAFT,
+                    BnbExtraEncasedBlocks.WEATHERED_IRON_ENCASED_SHAFT,
+                    BnbSpecialEncasedBlocks.INDUSTRIAL_GRATING_PANEL
+            )
             .renderer(() -> ShaftRenderer::new)
             .register();
 
     public static final BlockEntityEntry<SimpleKineticBlockEntity> ENCASED_COGWHEEL = REGISTRATE
             .blockEntity("encased_cogwheel", SimpleKineticBlockEntity::new)
             .visual(() -> EncasedCogVisual::small, false)
-            .validBlocks(BnbExtraEncasedBlocks.INDUSTRIAL_IRON_ENCASED_COGWHEEL, BnbExtraEncasedBlocks.WEATHERED_IRON_ENCASED_COGWHEEL)
+            .validBlocks(
+                    BnbExtraEncasedBlocks.INDUSTRIAL_IRON_ENCASED_COGWHEEL,
+                    BnbExtraEncasedBlocks.WEATHERED_IRON_ENCASED_COGWHEEL
+            )
             .renderer(() -> EncasedCogRenderer::small)
             .register();
 
     public static final BlockEntityEntry<SimpleKineticBlockEntity> ENCASED_LARGE_COGWHEEL = REGISTRATE
             .blockEntity("encased_large_cogwheel", SimpleKineticBlockEntity::new)
             .visual(() -> EncasedCogVisual::large, false)
-            .validBlocks(BnbExtraEncasedBlocks.INDUSTRIAL_IRON_ENCASED_LARGE_COGWHEEL, BnbExtraEncasedBlocks.WEATHERED_IRON_ENCASED_LARGE_COGWHEEL)
+            .validBlocks(
+                    BnbExtraEncasedBlocks.INDUSTRIAL_IRON_ENCASED_LARGE_COGWHEEL,
+                    BnbExtraEncasedBlocks.WEATHERED_IRON_ENCASED_LARGE_COGWHEEL
+            )
             .renderer(() -> EncasedCogRenderer::large)
             .register();
 
-    public static final BlockEntityEntry<GenericNixieDisplayBlockEntity> GENERIC_NIXIE_DISPLAY = REGISTRATE.blockEntity("generic_nixie_display", GenericNixieDisplayBlockEntity::new)
+    public static final BlockEntityEntry<GenericNixieDisplayBlockEntity> GENERIC_NIXIE_DISPLAY = REGISTRATE.blockEntity(
+                    "generic_nixie_display",
+                    GenericNixieDisplayBlockEntity::new
+            )
             .validBlocks(BnbTrinketBlocks.NIXIE_BOARD, BnbTrinketBlocks.LARGE_NIXIE_TUBE)
             .validBlocks(BnbTrinketBlocks.DYED_NIXIE_BOARD.toArray())
             .validBlocks(BnbTrinketBlocks.DYED_LARGE_NIXIE_TUBE.toArray())
@@ -91,19 +111,33 @@ public class BnbBlockEntities {
             .renderer(() -> ChainPulleyRenderer::new)
             .register();
 
-    public static final BlockEntityEntry<MigratingSimpleKineticBlockEntity> MIGRATING_SIMPLE_KINETIC = REGISTRATE.blockEntity("migrating_simple_kinetic", MigratingSimpleKineticBlockEntity::new)
-            .visual(() -> (context, blockEntity, partialTick) ->
-                    new SingleAxisRotatingVisual<>(context, blockEntity, partialTick,
-                            Models.partial(GenericBlockEntityRenderModels.REGISTRY.get(blockEntity.getBlockState().getBlock()))), true)
+    public static final BlockEntityEntry<MigratingSimpleKineticBlockEntity> MIGRATING_SIMPLE_KINETIC = REGISTRATE.blockEntity(
+                    "migrating_simple_kinetic",
+                    MigratingSimpleKineticBlockEntity::new
+            )
+            .visual(
+                    () -> (context, blockEntity, partialTick) ->
+                            new SingleAxisRotatingVisual<>(
+                                    context, blockEntity, partialTick,
+                                    Models.partial(GenericBlockEntityRenderModels.REGISTRY.get(blockEntity.getBlockState().getBlock()))
+                            ), true
+            )
             .validBlocks(BnbKineticBlocks.SMALL_FLANGED_COGWHEEL, BnbKineticBlocks.LARGE_FLANGED_COGWHEEL)
             .validBlocks(AllBlocks.COGWHEEL, AllBlocks.LARGE_COGWHEEL)
             .renderer(() -> KineticBlockEntityRenderer::new)
             .register();
 
-    public static final BlockEntityEntry<SimpleKineticBlockEntity> SIMPLE_KINETIC = REGISTRATE.blockEntity("simple_kinetic", SimpleKineticBlockEntity::new)
-            .visual(() -> (context, blockEntity, partialTick) ->
-                    new SingleAxisRotatingVisual<>(context, blockEntity, partialTick,
-                            Models.partial(GenericBlockEntityRenderModels.REGISTRY.get(blockEntity.getBlockState().getBlock()))), true)
+    public static final BlockEntityEntry<SimpleKineticBlockEntity> SIMPLE_KINETIC = REGISTRATE.blockEntity(
+                    "simple_kinetic",
+                    SimpleKineticBlockEntity::new
+            )
+            .visual(
+                    () -> (context, blockEntity, partialTick) ->
+                            new SingleAxisRotatingVisual<>(
+                                    context, blockEntity, partialTick,
+                                    Models.partial(GenericBlockEntityRenderModels.REGISTRY.get(blockEntity.getBlockState().getBlock()))
+                            ), true
+            )
             .validBlocks(BnbKineticBlocks.SMALL_FLANGED_COGWHEEL, BnbKineticBlocks.LARGE_FLANGED_COGWHEEL)
             .validBlocks(BnbEncasedListBlocks.ENCASED_LARGE_FLANGED_COGWHEEL.toArray())
             .validBlocks(BnbEncasedListBlocks.ENCASED_FLANGED_COGWHEEL.toArray())
@@ -119,6 +153,7 @@ public class BnbBlockEntities {
     public static final BlockEntityEntry<CogwheelChainCarriageBlockEntity> COGWHEEL_CHAIN_CARRIAGE = REGISTRATE
             .blockEntity("cogwheel_chain_carriage", CogwheelChainCarriageBlockEntity::new)
             .validBlock(BnbKineticBlocks.COGWHEEL_CHAIN_CARRIAGE)
+            .renderer(() -> CogwheelChainCarriageRenderer::new)
             .register();
 
     public static void register() {

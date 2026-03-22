@@ -32,6 +32,7 @@ public class BnbLangEntries {
         final String[] entries = {
                 "generator.bits_n_bobs.ponderous_planes", "Ponderflat",
                 "tooltip.bits_n_bobs.chain_drive_placing_hint", "Placing chain drive, create a complete loop to finish.",
+                "tooltip.bits_n_bobs.chain_drive_partial_edit_hint", "Inserting cogwheel into chain drive",
                 //Tooltips
                 "block.bits_n_bobs.headlamp.tooltip.summary", "Can be dyed and placed _multiple times in same block_. Useful for trains or fancy signage too!",
                 "block.bits_n_bobs.headlamp.tooltip.condition1", commonRightClickWithEmptyHand,

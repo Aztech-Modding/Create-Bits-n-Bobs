@@ -11,15 +11,15 @@ import net.minecraft.world.level.Level;
 
 public record CogwheelChainCarriageUpdateDistPacket(
         int entityId,
-        double dist
+        float dist
 ) implements ClientboundPacketPayload {
 
     public static final StreamCodec<RegistryFriendlyByteBuf, CogwheelChainCarriageUpdateDistPacket> STREAM_CODEC = StreamCodec.of(
             (buf, packet) -> {
                 buf.writeInt(packet.entityId);
-                buf.writeDouble(packet.dist);
+                buf.writeFloat(packet.dist);
             },
-            buf -> new CogwheelChainCarriageUpdateDistPacket(buf.readInt(), buf.readDouble())
+            buf -> new CogwheelChainCarriageUpdateDistPacket(buf.readInt(), buf.readFloat())
     );
 
     @Override

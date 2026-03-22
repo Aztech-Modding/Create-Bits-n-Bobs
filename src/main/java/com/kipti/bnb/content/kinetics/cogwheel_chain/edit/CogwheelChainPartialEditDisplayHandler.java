@@ -1,12 +1,10 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.edit;
 
+import com.kipti.bnb.content.kinetics.cogwheel_chain.edit.CogwheelChainPartialEditInteractionHandler.ProposedPlacement;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChain;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChainCandidate;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChainPathfinder;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.PathedCogwheelNode;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.PlacingCogwheelChain;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.PlacingCogwheelNode;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.types.CogwheelChainType;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.placement.ChainPlacementPathDisplayHelper;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.placement.CogwheelChainPlacementInteraction;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.world.CogwheelChainWorld;
 import com.simibubi.create.content.equipment.blueprint.BlueprintOverlayRenderer;
 import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorBlockEntity;
@@ -15,9 +13,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.DustParticleOptions;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -26,231 +30,183 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-
 /**
- * Renders placement preview outlines and cost overlays during a partial chain edit.
- * <p>
- * When the player has entered partial edit mode via
- * {@link CogwheelChainPartialEditInteractionHandler}, this handler renders:
- * <ul>
- *   <li>Block outlines on the proposed cogwheel position</li>
- *   <li>Connection lines between the proposed cogwheel and its chain neighbours</li>
- *   <li>Cost difference overlay via {@link BlueprintOverlayRenderer}</li>
- * </ul>
+ * pepee poopoo
  */
 @EventBusSubscriber(Dist.CLIENT)
 public class CogwheelChainPartialEditDisplayHandler {
 
     private static final float PARTICLE_DENSITY = 0.1f;
-    private static final int OUTLINE_COLOUR = 0xEBA832;
+    private static final int VALID_COLOUR = 0x95CD41;
+    private static final int INVALID_COLOUR = 0xFF5D5;
 
     @SubscribeEvent
     public static void onClientTick(final ClientTickEvent.Post event) {
         final Minecraft mc = Minecraft.getInstance();
-        if (mc.isPaused() || mc.player == null || mc.level == null)
-            return;
-
         tick(mc.player);
     }
 
     private static void tick(final LocalPlayer player) {
-        final BlockPos controllerPos = CogwheelChainPartialEditInteractionHandler.getEditingControllerPos();
-        final BlockPos proposedPos = CogwheelChainPartialEditInteractionHandler.getProposedCogwheelPos();
-        final CogwheelChainType chainType = CogwheelChainPartialEditInteractionHandler.getEditingChainType();
-
-        if (controllerPos == null || proposedPos == null || chainType == null)
+        final CogwheelChainPartialEditContext editContext = CogwheelChainPartialEditInteractionHandler.getCurrentEditContext();
+        if (editContext == null) {
             return;
+        }
 
         final ClientLevel level = Minecraft.getInstance().level;
-        if (level == null)
+        if (level == null) {
             return;
+        }
+
+        if (CogwheelChainPlacementInteraction.getCompatibleCogwheelItemInHand(
+                player,
+                editContext.chainType()
+        ) == null) {
+            CogwheelChainPartialEditInteractionHandler.clearEditState();
+            return;
+        }
 
         final CogwheelChainWorld chainWorld = CogwheelChainWorld.get(level);
-        final CogwheelChain existingChain = chainWorld.getChain(controllerPos);
+        final CogwheelChain existingChain = chainWorld.getChain(editContext.controllerPos());
         if (existingChain == null) {
             CogwheelChainPartialEditInteractionHandler.clearEditState();
             return;
         }
 
-        renderProposedCogwheelOutline(level, proposedPos);
-        renderConnectionSegments(existingChain, controllerPos, proposedPos);
-        renderCostOverlay(player, existingChain, controllerPos, proposedPos);
-    }
-
-    private static void renderProposedCogwheelOutline(final ClientLevel level, final BlockPos pos) {
-        final AtomicInteger counter = new AtomicInteger(0);
-        level.getBlockState(pos).getShape(level, pos).forAllEdges((fx, fy, fz, tx, ty, tz) -> {
-            Outliner.getInstance().showLine(
-                            "partial_edit_outline_" + pos + "_" + counter.getAndIncrement(),
-                            new Vec3(fx, fy, fz).add(Vec3.atLowerCornerOf(pos)),
-                            new Vec3(tx, ty, tz).add(Vec3.atLowerCornerOf(pos)))
-                    .colored(OUTLINE_COLOUR)
-                    .lineWidth(1 / 16f);
-        });
-    }
-
-    private static void renderConnectionSegments(final CogwheelChain chain,
-                                                  final BlockPos controllerPos,
-                                                  final BlockPos proposedPos) {
-        final List<PathedCogwheelNode> existingNodes = chain.getChainPathCogwheelNodes();
-        final InsertionNeighbours neighbours = findInsertionNeighbours(existingNodes, controllerPos, proposedPos);
-        if (neighbours == null)
+        final ProposedPlacement placement = resolveProposedPlacement(player, level, editContext);
+        CogwheelChainPartialEditInteractionHandler.setProposedPlacement(placement);
+        if (placement == null) {
             return;
-
-        final Vec3 proposedCenter = proposedPos.getCenter();
-        final Vec3 neighbourACenter = neighbours.nodeA().center();
-        final Vec3 neighbourBCenter = neighbours.nodeB().center();
-
-        Outliner.getInstance().showLine(
-                        "partial_edit_segment_from",
-                        neighbourACenter,
-                        proposedCenter)
-                .colored(OUTLINE_COLOUR)
-                .lineWidth(2f / 16f);
-
-        Outliner.getInstance().showLine(
-                        "partial_edit_segment_to",
-                        proposedCenter,
-                        neighbourBCenter)
-                .colored(OUTLINE_COLOUR)
-                .lineWidth(2f / 16f);
-
-        final ClientLevel level = Minecraft.getInstance().level;
-        if (level != null) {
-            renderParticlesBetween(level, neighbourACenter, proposedCenter);
-            renderParticlesBetween(level, proposedCenter, neighbourBCenter);
         }
+
+        final CogwheelChainPartialEditInsertionPlan insertionPlan = CogwheelChainPartialEditInsertionPlanner.planWithCandidate(
+                existingChain,
+                editContext,
+                placement.pos(),
+                placement.candidate()
+        );
+        renderProposedCogwheelOutline(placement.pos(), insertionPlan != null ? VALID_COLOUR : INVALID_COLOUR);
+        if (insertionPlan != null) {
+            renderValidConnectionSegments(insertionPlan);
+            renderCostOverlay(player, editContext, insertionPlan);
+            return;
+        }
+
+        renderInvalidConnectionSegments(level, editContext, placement.pos());
+    }
+
+    private static @Nullable ProposedPlacement resolveProposedPlacement(final LocalPlayer player,
+                                                                        final ClientLevel level,
+                                                                        final CogwheelChainPartialEditContext editContext) {
+        final HitResult genericHit = Minecraft.getInstance().hitResult;
+        if (!(genericHit instanceof final BlockHitResult blockHit) || blockHit.getType() == HitResult.Type.MISS)
+            return null;
+
+        final ItemStack heldCogwheel = CogwheelChainPlacementInteraction.getCompatibleCogwheelItemInHand(
+                player,
+                editContext.chainType()
+        );
+        if (heldCogwheel == null || !(heldCogwheel.getItem() instanceof final BlockItem blockItem))
+            return null;
+
+        final BlockPos hitPos = blockHit.getBlockPos();
+        final BlockState hitState = level.getBlockState(hitPos);
+        final BlockPos placementPos;
+        if (hitState.canBeReplaced()) {
+            placementPos = hitPos;
+        } else {
+            placementPos = hitPos.relative(blockHit.getDirection());
+            if (!level.getBlockState(placementPos).canBeReplaced())
+                return null;
+        }
+
+        final Block cogwheelBlock = blockItem.getBlock();
+        final CogwheelChainCandidate baseCandidate = CogwheelChainCandidate.getForBlock(cogwheelBlock);
+        if (baseCandidate == null)
+            return null;
+
+        final Direction.Axis axis = blockHit.getDirection().getAxis();
+        final CogwheelChainCandidate candidate = new CogwheelChainCandidate(
+                axis, baseCandidate.isLarge(), baseCandidate.hasSmallCogwheelOffset());
+
+        return new ProposedPlacement(placementPos, candidate, blockHit.getDirection());
+    }
+
+    private static void renderProposedCogwheelOutline(final BlockPos pos, final int colour) {
+        Outliner.getInstance().showAABB(
+                        "partial_edit_outline",
+                        new AABB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1)
+                )
+                .colored(colour)
+                .lineWidth(1 / 16f);
+    }
+
+    private static void renderValidConnectionSegments(final CogwheelChainPartialEditInsertionPlan insertionPlan) {
+        final int[] displaySides = ChainPlacementPathDisplayHelper.getPathDisplaySides(insertionPlan.rebuiltChain());
+        renderConnectionSegment(
+                "partial_edit_segment_from",
+                ChainPlacementPathDisplayHelper.getDisplayedSegment(
+                        insertionPlan.rebuiltChain(),
+                        insertionPlan.insertionIndex() - 1,
+                        displaySides
+                ),
+                VALID_COLOUR
+        );
+        renderConnectionSegment(
+                "partial_edit_segment_to",
+                ChainPlacementPathDisplayHelper.getDisplayedSegment(
+                        insertionPlan.rebuiltChain(),
+                        insertionPlan.insertionIndex(),
+                        displaySides
+                ),
+                VALID_COLOUR
+        );
+    }
+
+    private static void renderConnectionSegment(final String key,
+                                                final ChainPlacementPathDisplayHelper.DisplayedSegment segment,
+                                                final int colour) {
+        Outliner.getInstance().showLine(key, segment.from(), segment.to())
+                .colored(colour)
+                .lineWidth(2f / 16f);
+    }
+
+    private static void renderInvalidConnectionSegments(final ClientLevel level,
+                                                        final CogwheelChainPartialEditContext editContext,
+                                                        final BlockPos proposedPos) {
+        final Vec3 startCenter = editContext.startNode().center();
+        final Vec3 proposedCenter = proposedPos.getCenter();
+        final Vec3 endCenter = editContext.endNode().center();
+        renderConnectionSegment(
+                "partial_edit_segment_from",
+                new ChainPlacementPathDisplayHelper.DisplayedSegment(startCenter, proposedCenter),
+                INVALID_COLOUR
+        );
+        renderConnectionSegment(
+                "partial_edit_segment_to",
+                new ChainPlacementPathDisplayHelper.DisplayedSegment(proposedCenter, endCenter),
+                INVALID_COLOUR
+        );
+        renderParticlesBetween(level, startCenter, proposedCenter);
+        renderParticlesBetween(level, proposedCenter, endCenter);
     }
 
     private static void renderCostOverlay(final LocalPlayer player,
-                                           final CogwheelChain existingChain,
-                                           final BlockPos controllerPos,
-                                           final BlockPos proposedPos) {
-        final CogwheelChainType chainType = CogwheelChainPartialEditInteractionHandler.getEditingChainType();
-        final Item chainItem = CogwheelChainPartialEditInteractionHandler.getEditingChainItemType();
-        if (chainType == null || chainItem == null)
+                                          final CogwheelChainPartialEditContext editContext,
+                                          final CogwheelChainPartialEditInsertionPlan insertionPlan) {
+        if (player.hasInfiniteMaterials() || insertionPlan.costDelta() == 0) {
             return;
+        }
 
-        if (player.hasInfiniteMaterials())
-            return;
-
-        final int newCost = estimateNewCost(existingChain, controllerPos, proposedPos);
-        final int oldCost = existingChain.getChainsRequired();
-        final int costDifference = Math.max(newCost - oldCost, 0);
-
-        final boolean hasEnough = ChainConveyorBlockEntity.getChainsFromInventory(
-                player, chainItem.getDefaultInstance(), costDifference, true
+        final boolean hasEnough = insertionPlan.costDelta() < 0 || ChainConveyorBlockEntity.getChainsFromInventory(
+                player,
+                editContext.chainItemType().getDefaultInstance(),
+                insertionPlan.costDelta(),
+                true
         );
-
-        BlueprintOverlayRenderer.displayChainRequirements(chainItem, costDifference, hasEnough);
-    }
-
-    private static int estimateNewCost(final CogwheelChain existingChain,
-                                        final BlockPos controllerPos,
-                                        final BlockPos proposedPos) {
-        final List<PathedCogwheelNode> existingNodes = existingChain.getChainPathCogwheelNodes();
-        double totalLength = 0;
-
-        final List<PlacingCogwheelNode> worldNodes = new ArrayList<>();
-        for (final PathedCogwheelNode pathed : existingNodes) {
-            final BlockPos worldPos = controllerPos.offset(pathed.localPos());
-            worldNodes.add(new PlacingCogwheelNode(worldPos, pathed.rotationAxis(), pathed.isLarge(), pathed.hasSmallCogwheelOffset()));
-        }
-
-        final InsertionNeighbours neighbours = findInsertionNeighbours(existingNodes, controllerPos, proposedPos);
-        if (neighbours == null)
-            return existingChain.getChainsRequired();
-
-        for (int i = 0; i < worldNodes.size(); i++) {
-            final PlacingCogwheelNode nodeA = worldNodes.get(i);
-            final PlacingCogwheelNode nodeB = worldNodes.get((i + 1) % worldNodes.size());
-
-            if (i == neighbours.insertIndex()) {
-                totalLength += nodeA.center().distanceTo(proposedPos.getCenter());
-                totalLength += proposedPos.getCenter().distanceTo(nodeB.center());
-            } else {
-                totalLength += nodeA.center().distanceTo(nodeB.center());
-            }
-        }
-
-        return PlacingCogwheelChain.getChainsRequiredForLength(totalLength);
-    }
-
-    private static InsertionNeighbours findInsertionNeighbours(final List<PathedCogwheelNode> existingNodes,
-                                                                final BlockPos controllerPos,
-                                                                final BlockPos proposedPos) {
-        final PlacingCogwheelNode proposedNode = createProposedNode(proposedPos);
-        if (proposedNode == null)
-            return null;
-
-        final int bestIndex = findBestInsertionIndex(existingNodes, controllerPos, proposedPos, proposedNode);
-        if (bestIndex == -1)
-            return null;
-
-        final PlacingCogwheelNode nodeA = toWorldNode(existingNodes.get(bestIndex), controllerPos);
-        final PlacingCogwheelNode nodeB = toWorldNode(existingNodes.get((bestIndex + 1) % existingNodes.size()), controllerPos);
-
-        return new InsertionNeighbours(nodeA, nodeB, bestIndex);
-    }
-
-    private static @Nullable PlacingCogwheelNode createProposedNode(final BlockPos proposedPos) {
-        final ClientLevel level = Minecraft.getInstance().level;
-        if (level == null)
-            return null;
-
-        final BlockState proposedState = level.getBlockState(proposedPos);
-        final CogwheelChainCandidate candidate = CogwheelChainCandidate.getForBlock(proposedState);
-        if (candidate == null)
-            return null;
-
-        return new PlacingCogwheelNode(
-                proposedPos,
-                candidate.axis(),
-                candidate.isLarge(),
-                candidate.hasSmallCogwheelOffset()
-        );
-    }
-
-    private static int findBestInsertionIndex(final List<PathedCogwheelNode> existingNodes,
-                                               final BlockPos controllerPos,
-                                               final BlockPos proposedPos,
-                                               final PlacingCogwheelNode proposedNode) {
-        double bestDistance = Double.MAX_VALUE;
-        int bestIndex = -1;
-
-        for (int i = 0; i < existingNodes.size(); i++) {
-            final PathedCogwheelNode pathedA = existingNodes.get(i);
-            final PathedCogwheelNode pathedB = existingNodes.get((i + 1) % existingNodes.size());
-
-            final PlacingCogwheelNode nodeA = toWorldNode(pathedA, controllerPos);
-            final PlacingCogwheelNode nodeB = toWorldNode(pathedB, controllerPos);
-
-            final boolean connectsFromA = !CogwheelChainPathfinder.getValidPathSteps(nodeA, proposedNode).isEmpty();
-            final boolean connectsToB = !CogwheelChainPathfinder.getValidPathSteps(proposedNode, nodeB).isEmpty();
-
-            if (!connectsFromA || !connectsToB)
-                continue;
-
-            final double distance = nodeA.center().distanceTo(proposedPos.getCenter())
-                    + proposedPos.getCenter().distanceTo(nodeB.center());
-            if (distance < bestDistance) {
-                bestDistance = distance;
-                bestIndex = i;
-            }
-        }
-
-        return bestIndex;
-    }
-
-    private static PlacingCogwheelNode toWorldNode(final PathedCogwheelNode pathed, final BlockPos controllerPos) {
-        return new PlacingCogwheelNode(
-                controllerPos.offset(pathed.localPos()),
-                pathed.rotationAxis(),
-                pathed.isLarge(),
-                pathed.hasSmallCogwheelOffset()
+        BlueprintOverlayRenderer.displayChainRequirements(
+                editContext.chainItemType(),
+                insertionPlan.costDelta(),
+                hasEnough
         );
     }
 
@@ -269,15 +225,14 @@ public class CogwheelChainPartialEditDisplayHandler {
 
             final Vec3 lerped = from.add(dir.scale(t));
             level.addParticle(
-                    new DustParticleOptions(new Vector3f(0xEB / 256f, 0xA8 / 256f, 0x32 / 256f), 1), true,
+                    new DustParticleOptions(
+                            new Vector3f(1.0f, 0x5D / 255f, 0x5D / 255f),
+                            1
+                    ),
+                    true,
                     lerped.x, lerped.y, lerped.z, 0, 0, 0
             );
         }
     }
 
-    /**
-     * The two chain nodes between which the proposed cogwheel would be inserted.
-     */
-    private record InsertionNeighbours(PlacingCogwheelNode nodeA, PlacingCogwheelNode nodeB, int insertIndex) {
-    }
 }
