@@ -17,17 +17,17 @@ public class CogwheelChainCarriageContraptionEntity extends OrientedContraptionE
 
     public static final float SHOE_OFFSET = 0.5f;
 
-    protected static final double CLIENT_CHASING_RATE_CHANGE = 0.015;
-    protected static final double CLIENT_CHASING_MAX = 0.3;
+    protected static final float CLIENT_CHASING_RATE_CHANGE = 0.015f;
+    protected static final float CLIENT_CHASING_MAX = 0.3f;
+    private static final float MAX_CLIENT_SERVER_DIFF = 0.5f;
 
     protected boolean disassembleNextTick = false;
 
-    protected double chainAttachmentDist = 0f;
     /**
      * The client will chase the chain attachment dist (previous from server + predicted velocity) by moderating its own velocity + or - 10%
      */
-    protected double clientChasingChainAttachmentDist = 0f;
-    protected double currentClientChasingRate = 1.0f;
+    protected float clientChasingChainAttachmentDist = 0f;
+    protected float currentClientChasingRate = 1.0f;
 
     protected Vec3 lastFrontShoeDir = Vec3.ZERO;
     protected Vec3 lastBackShoeDir = Vec3.ZERO;
@@ -86,7 +86,7 @@ public class CogwheelChainCarriageContraptionEntity extends OrientedContraptionE
                     this,
                     new CogwheelChainCarriageUpdateDistPacket(
                             this.getId(),
-                            this.chainAttachmentDist
+                            this.getAttachment().getDist()
                     )
             );
         }
@@ -96,17 +96,32 @@ public class CogwheelChainCarriageContraptionEntity extends OrientedContraptionE
         final CogwheelChainAttachment attachment = this.getAttachment();
         final float velocity = attachment.getDistPerTick(this.level());
 
-        this.clientChasingChainAttachmentDist += velocity * this.currentClientChasingRate;
-        if (this.clientChasingChainAttachmentDist > this.chainAttachmentDist) {
-            this.currentClientChasingRate -= CLIENT_CHASING_RATE_CHANGE;
-        } else if (this.clientChasingChainAttachmentDist < this.chainAttachmentDist) {
-            this.currentClientChasingRate += CLIENT_CHASING_RATE_CHANGE;
-        }
-
-        this.currentClientChasingRate = Math.max(
-                1.0 - CLIENT_CHASING_MAX,
-                Math.min(1.0 + CLIENT_CHASING_MAX, this.currentClientChasingRate)
+        this.clientChasingChainAttachmentDist = attachment.wrapDist(
+                this.level(),
+                this.clientChasingChainAttachmentDist + velocity * this.currentClientChasingRate
         );
+
+        final float serverDist = this.getAttachment().getDist();
+        final float clientServerDiff = attachment.getMinWrappedDist(
+                this.level(), this.clientChasingChainAttachmentDist,
+                serverDist
+        );
+        if (clientServerDiff > MAX_CLIENT_SERVER_DIFF) {
+            System.out.println("Client is too far from of server! Correcting. Diff: " + clientServerDiff);
+            this.clientChasingChainAttachmentDist = serverDist;
+        }
+//        System.out.println(clientServerDiff);
+
+        if (attachment.isWrappedDistFurther(
+                this.level(),
+                this.clientChasingChainAttachmentDist,
+                serverDist,
+                Math.signum(velocity)
+        )) {
+            this.currentClientChasingRate = this.currentClientChasingRate * 0.8f + (1.0f - CLIENT_CHASING_MAX) * 0.2f;
+        } else {
+            this.currentClientChasingRate = this.currentClientChasingRate * 0.8f + (1.0f + CLIENT_CHASING_MAX) * 0.2f;
+        }
 
         this.lastFrontShoeDir = this.frontShoeDir;
         this.lastBackShoeDir = this.backShoeDir;
@@ -126,13 +141,12 @@ public class CogwheelChainCarriageContraptionEntity extends OrientedContraptionE
     private void tickCommon() {
         final Level level = this.level();
 
-        final CogwheelChainAttachment dist = this.getAttachment();
-        final float previousDist = dist.getDist();
-        dist.tick(level);
-        this.chainAttachmentDist = dist.getDist();
+        final CogwheelChainAttachment attachment = this.getAttachment();
+        final float previousDist = attachment.getDist();
+        attachment.tick(level);
 
-        if (this.isVerticalSegmentBlocked(level)) {
-            dist.setDist(previousDist);
+        if (this.isVerticalSegmentBlocked(level, attachment.getDist(), previousDist)) {
+            attachment.setDist(previousDist);
             this.notifyVerticalBlock(level);
             return;
         }
@@ -141,14 +155,14 @@ public class CogwheelChainCarriageContraptionEntity extends OrientedContraptionE
         this.updateYawFromChain(level);
     }
 
-    private boolean isVerticalSegmentBlocked(final Level level) {
-        final CogwheelChainSegment frontSegment = this.getAttachment().getSegmentAtOffset(level, SHOE_OFFSET);
-        final CogwheelChainSegment backSegment = this.getAttachment().getSegmentAtOffset(level, -SHOE_OFFSET);
+    private boolean isVerticalSegmentBlocked(final Level level, final float dist, final float previousDist) {
+        final float velocity = dist - previousDist;
+        final CogwheelChainSegment advancingSegment = this.getAttachment().getSegmentAtOffset(level, velocity);
+        final CogwheelChainSegment currentSegment = this.getAttachment().getSegmentAtOffset(level, previousDist - dist);
 
-        final boolean frontBlocked = frontSegment != null && frontSegment.hasVerticalDisplacement();
-        final boolean backBlocked = backSegment != null && backSegment.hasVerticalDisplacement();
+        if (advancingSegment == null || currentSegment == null) return false;
 
-        return frontBlocked || backBlocked;
+        return advancingSegment.hasVerticalDisplacement() && currentSegment.hasVerticalDisplacement();
     }
 
     private void notifyVerticalBlock(final Level level) {
@@ -187,17 +201,17 @@ public class CogwheelChainCarriageContraptionEntity extends OrientedContraptionE
                                    final HolderLookup.Provider registries,
                                    final boolean spawnPacket) {
         super.writeAdditional(compound, registries, spawnPacket);
-        compound.putDouble("ChainAttachmentDist", this.chainAttachmentDist);
+        compound.putDouble("ChainAttachmentDist", this.getAttachment().getDist());
     }
 
     @Override
     protected void readAdditional(final CompoundTag compound, final boolean spawnPacket) {
         super.readAdditional(compound, spawnPacket);
-        this.chainAttachmentDist = compound.getDouble("ChainAttachmentDist");
+        this.getAttachment().setDist(compound.getFloat("ChainAttachmentDist"));
     }
 
-    public void setDistFromServer(final double dist) {
-        this.chainAttachmentDist = dist;
+    public void setDistFromServer(final float dist) {
+        this.getAttachment().setDist(dist);
     }
 
     public Vec3 getFrontShoeDir(final float partialTicks) {
