@@ -44,7 +44,10 @@ public class CogwheelChainCarriageContraption extends Contraption {
     public void onEntityInitialize(final Level world, final AbstractContraptionEntity contraptionEntity) {
         super.onEntityInitialize(world, contraptionEntity);
         if (contraptionEntity instanceof final CogwheelChainCarriageContraptionEntity cccce) {
-            cccce.setInitialOrientation(this.facing);
+            cccce.setInitialOrientation(Direction.fromAxisAndDirection(
+                    this.facing.getAxis(),
+                    Direction.AxisDirection.NEGATIVE
+            ));
         }
     }
 

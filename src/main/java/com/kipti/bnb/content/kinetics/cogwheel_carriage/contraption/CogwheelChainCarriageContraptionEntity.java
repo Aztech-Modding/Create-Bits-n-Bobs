@@ -26,7 +26,7 @@ public class CogwheelChainCarriageContraptionEntity extends OrientedContraptionE
     /**
      * The client will chase the chain attachment dist (previous from server + predicted velocity) by moderating its own velocity + or - 10%
      */
-    protected float clientChasingChainAttachmentDist = 0f;
+    protected float clientChasingChainAttachmentDist = 0.0f;
     protected float currentClientChasingRate = 1.0f;
 
     protected Vec3 lastFrontShoeDir = Vec3.ZERO;
@@ -235,6 +235,9 @@ public class CogwheelChainCarriageContraptionEntity extends OrientedContraptionE
     protected void readAdditional(final CompoundTag compound, final boolean spawnPacket) {
         super.readAdditional(compound, spawnPacket);
         this.getAttachment().setDist(compound.getFloat("ChainAttachmentDist"));
+        if (spawnPacket) {
+            this.clientChasingChainAttachmentDist = compound.getFloat("ChainAttachmentDist");
+        }
     }
 
     public void setDistFromServer(final float dist) {
