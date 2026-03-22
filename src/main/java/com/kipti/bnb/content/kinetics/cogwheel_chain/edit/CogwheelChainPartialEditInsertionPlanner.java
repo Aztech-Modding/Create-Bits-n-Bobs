@@ -2,10 +2,10 @@ package com.kipti.bnb.content.kinetics.cogwheel_chain.edit;
 
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChain;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChainCandidate;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChainPathfinder;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.PathedCogwheelNode;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.PlacingCogwheelChain;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.PlacingCogwheelNode;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.placement.ChainInteractionFailedException;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.segment.CogwheelChainSegment;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
@@ -32,7 +32,11 @@ public class CogwheelChainPartialEditInsertionPlanner {
             return null;
         if (!editContext.chainType().getCogwheelPredicate().test(proposedState.getBlock()))
             return null;
-        return planWithCandidate(existingChain, editContext, proposedPos, candidate);
+        try {
+            return planWithCandidate(existingChain, editContext, proposedPos, candidate);
+        } catch (final ChainInteractionFailedException ignored) {
+            return null;
+        }
     }
 
     /**
@@ -42,7 +46,8 @@ public class CogwheelChainPartialEditInsertionPlanner {
     public static @Nullable CogwheelChainPartialEditInsertionPlan planWithCandidate(final CogwheelChain existingChain,
                                                                                     final CogwheelChainPartialEditContext editContext,
                                                                                     final BlockPos proposedPos,
-                                                                                    final CogwheelChainCandidate candidate) {
+                                                                                    final CogwheelChainCandidate candidate)
+            throws ChainInteractionFailedException {
         if (existingChain.getChainType() != editContext.chainType())
             return null;
         if (editContext.segment().type() != CogwheelChainSegment.SegmentType.BETWEEN_NODES)
@@ -56,9 +61,10 @@ public class CogwheelChainPartialEditInsertionPlanner {
 
         final PlacingCogwheelNode proposedNode = new PlacingCogwheelNode(
                 proposedPos, candidate.axis(), candidate.isLarge(), candidate.hasSmallCogwheelOffset());
-        if (!hasValidPath(resolvedSegment.startNode(), proposedNode)
-                || !hasValidPath(proposedNode, resolvedSegment.endNode()))
-            return null;
+        PlacingCogwheelChain.validateConnection(
+                resolvedSegment.startNode(), proposedNode, null, editContext.chainType());
+        PlacingCogwheelChain.validateConnection(
+                proposedNode, resolvedSegment.endNode(), resolvedSegment.startNode(), editContext.chainType());
 
         final List<PlacingCogwheelNode> rebuiltNodes = new ArrayList<>(resolvedSegment.existingWorldNodes());
         rebuiltNodes.add(resolvedSegment.insertionIndex(), proposedNode);
@@ -166,10 +172,6 @@ public class CogwheelChainPartialEditInsertionPlanner {
             }
         }
         return false;
-    }
-
-    private static boolean hasValidPath(final PlacingCogwheelNode from, final PlacingCogwheelNode to) {
-        return !CogwheelChainPathfinder.getValidPathSteps(from, to).isEmpty();
     }
 
     private record ResolvedSegment(PlacingCogwheelChain existingChain,

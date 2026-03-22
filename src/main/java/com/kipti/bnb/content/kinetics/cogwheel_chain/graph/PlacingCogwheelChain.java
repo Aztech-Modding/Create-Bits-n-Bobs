@@ -96,43 +96,56 @@ public class PlacingCogwheelChain {
             throw new ChainInteractionFailedException("invalid_cogwheel_type." + type.getTranslationKey());
         }
 
-        //For each node, check if this is already in the list
         for (int i = 1; i < this.visitedNodes.size(); i++) {
             if (this.visitedNodes.get(i).pos().equals(newPos)) {
                 throw new ChainInteractionFailedException("cannot_revisit_node");
             }
         }
-        final Direction.Axis axis = candidate.axis();
-        final boolean isLarge = candidate.isLarge();
-        final boolean hasSmallCogwheelOffset = candidate.hasSmallCogwheelOffset();
 
-        final PlacingCogwheelNode newNode = new PlacingCogwheelNode(newPos, axis, isLarge, hasSmallCogwheelOffset);
+        final PlacingCogwheelNode newNode = new PlacingCogwheelNode(
+                newPos, candidate.axis(), candidate.isLarge(), candidate.hasSmallCogwheelOffset()
+        );
 
-        final boolean isWithinBounds = !this.exceedsMaxBounds(newNode);
-        if (!isWithinBounds) {
+        if (this.exceedsMaxBounds(newNode)) {
             throw new ChainInteractionFailedException("out_of_bounds");
         }
 
-        final int differenceOnAxis = Math.abs(newPos.get(axis) - lastNode.pos().get(axis));
-        final @Nullable PlacingCogwheelNode lastLastNode = this.getSize() >= 2 ? this.visitedNodes.get(this.visitedNodes.size() - 2) : null;
+        final @Nullable PlacingCogwheelNode previous = this.getSize() >= 2
+                ? this.visitedNodes.get(this.visitedNodes.size() - 2) : null;
 
-        final boolean isFlat = true;
-        final boolean isSameAxis = axis == lastNode.rotationAxis();
-        final double totalRadius = (isLarge ? 1 : 0.5) + (lastNode.isLarge() ? 1 : 0.5);
-        final boolean isAdjacent = isFlat && newPos.distSqr(lastNode.pos()) <= totalRadius * totalRadius;
-        final boolean isValidFlat = isSameAxis && isFlat && !isAdjacent;
-        final boolean isAxisChangePermitted = type.permitsAxisChanges();
-        final boolean isValidAxisChange = isAxisChangePermitted && this.isValidLargeCogAxisConnection(
-                lastNode,
-                newPos,
-                axis,
-                isLarge
+        validateConnection(lastNode, newNode, previous, type);
+
+        this.visitedNodes.add(newNode);
+        return true;
+    }
+
+    /**
+     * Validates the geometric and pathfinding connection between two cogwheel nodes.
+     * Throws {@link ChainInteractionFailedException} if the connection is invalid.
+     *
+     * @param from      the node to connect from
+     * @param to        the node to connect to
+     * @param previous  the node before {@code from} in the chain, or null if none
+     * @param chainType the chain type governing axis-change rules
+     */
+    public static void validateConnection(final PlacingCogwheelNode from,
+                                          final PlacingCogwheelNode to,
+                                          final @Nullable PlacingCogwheelNode previous,
+                                          final CogwheelChainType chainType) throws ChainInteractionFailedException {
+        final Direction.Axis axis = to.rotationAxis();
+        final boolean isSameAxis = axis == from.rotationAxis();
+        final double totalRadius = (to.isLarge() ? 1 : 0.5) + (from.isLarge() ? 1 : 0.5);
+        final boolean isAdjacent = to.pos().distSqr(from.pos()) <= totalRadius * totalRadius;
+        final boolean isValidFlat = isSameAxis && !isAdjacent;
+        final boolean isAxisChangePermitted = chainType.permitsAxisChanges();
+        final boolean isValidAxisChange = isAxisChangePermitted && isValidLargeCogAxisConnection(
+                from, to.pos(), axis, to.isLarge()
         );
 
         final boolean isValidCandidate = isValidFlat || isValidAxisChange;
 
         if (!isValidCandidate) {
-            if (!isFlat && !isAxisChangePermitted) {
+            if (!isSameAxis && !isAxisChangePermitted) {
                 throw new ChainInteractionFailedException("axis_change_forbidden_by_type");
             }
 
@@ -143,38 +156,32 @@ public class PlacingCogwheelChain {
             if (!isSameAxis) {
                 throw new ChainInteractionFailedException("not_valid_axis_change");
             }
-            //Else it wasn't accepted because it wasn't flat
+
             throw new ChainInteractionFailedException("not_flat_connection");
         }
 
-        //Final validity check, look by pathfinding if this cogwheel can connect to the last one
-
-        //Check there is a side which it can connect backwards by, and that that connection can go back
-        final List<Integer> backwardsConnections = CogwheelChainPathfinder.getValidPathSteps(lastNode, newNode);
+        final List<Integer> backwardsConnections = CogwheelChainPathfinder.getValidPathSteps(from, to);
         if (backwardsConnections.isEmpty()) {
             throw new ChainInteractionFailedException("no_cogwheel_connection");
         }
 
-        if (lastLastNode != null) {
+        if (previous != null) {
             boolean hasPathBack = false;
             for (final Integer side : backwardsConnections) {
                 hasPathBack = hasPathBack ||
-                        CogwheelChainPathfinder.isValidPathStep(lastLastNode, 1, lastNode, side) ||
-                        CogwheelChainPathfinder.isValidPathStep(lastLastNode, -1, lastNode, side);
+                        CogwheelChainPathfinder.isValidPathStep(previous, 1, from, side) ||
+                        CogwheelChainPathfinder.isValidPathStep(previous, -1, from, side);
             }
             if (!hasPathBack) {
                 throw new ChainInteractionFailedException("no_path_to_cogwheel");
             }
         }
-
-        this.visitedNodes.add(newNode);
-        return true;
     }
 
-    private boolean isValidLargeCogAxisConnection(final PlacingCogwheelNode lastNode,
-                                                  final BlockPos newPos,
-                                                  final Direction.Axis axis,
-                                                  final boolean isLarge) {
+    static boolean isValidLargeCogAxisConnection(final PlacingCogwheelNode lastNode,
+                                                 final BlockPos newPos,
+                                                 final Direction.Axis axis,
+                                                 final boolean isLarge) {
         if (!lastNode.isLarge() || !isLarge) {
             return false;
         }
