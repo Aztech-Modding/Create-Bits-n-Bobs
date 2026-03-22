@@ -98,7 +98,7 @@ public class CogwheelChainCarriageContraptionEntity extends OrientedContraptionE
 
         this.clientChasingChainAttachmentDist = attachment.wrapDist(
                 this.level(),
-                this.clientChasingChainAttachmentDist + velocity * this.currentClientChasingRate
+                this.clientChasingChainAttachmentDist + (velocity * this.currentClientChasingRate)
         );
 
         final float serverDist = this.getAttachment().getDist();
@@ -106,28 +106,48 @@ public class CogwheelChainCarriageContraptionEntity extends OrientedContraptionE
                 this.level(), this.clientChasingChainAttachmentDist,
                 serverDist
         );
-        if (clientServerDiff > MAX_CLIENT_SERVER_DIFF) {
-            System.out.println("Client is too far from of server! Correcting. Diff: " + clientServerDiff);
-            this.clientChasingChainAttachmentDist = serverDist;
-        }
-//        System.out.println(clientServerDiff);
 
-        if (attachment.isWrappedDistFurther(
-                this.level(),
-                this.clientChasingChainAttachmentDist,
-                serverDist,
-                Math.signum(velocity)
-        )) {
-            this.currentClientChasingRate = this.currentClientChasingRate * 0.8f + (1.0f - CLIENT_CHASING_MAX) * 0.2f;
+        if (clientServerDiff > MAX_CLIENT_SERVER_DIFF) { //Quiet so we dont fill the hard drive of anyone with a shitty internet with 5 million logs
+//            CreateBitsnBobs.LOGGER.info("Client too far from server! Correcting. Diff: {}", clientServerDiff);
+            this.clientChasingChainAttachmentDist = (this.clientChasingChainAttachmentDist + serverDist) / 2f;
+        }
+
+        if (Math.abs(velocity) < 0.0001f) {
+            if (clientServerDiff > 0.25f) { // Use a kind of big epsilon here since being 0.25f blocks off maybe doesent matter
+                final float diff = serverDist - this.clientChasingChainAttachmentDist;
+                this.clientChasingChainAttachmentDist = attachment.wrapDist(
+                        this.level(),
+                        this.clientChasingChainAttachmentDist + Math.clamp(diff, -0.015f, 0.015f)
+                );
+            }
+            this.currentClientChasingRate = 1.0f;
         } else {
-            this.currentClientChasingRate = this.currentClientChasingRate * 0.8f + (1.0f + CLIENT_CHASING_MAX) * 0.2f;
+            final boolean isAhead = attachment.isWrappedDistFurther(
+                    this.level(),
+                    this.clientChasingChainAttachmentDist,
+                    serverDist,
+                    Math.signum(velocity)
+            );
+
+            final float errorAdjustment = Math.min(clientServerDiff * 2.0f, CLIENT_CHASING_MAX);
+
+            float targetRate = 1.0f;
+
+            if (clientServerDiff > 0.005f) {
+                targetRate = isAhead ? (1.0f - errorAdjustment) : (1.0f + errorAdjustment);
+            }
+
+            final float lerpResistance = 0.85f;
+            this.currentClientChasingRate = this.currentClientChasingRate * lerpResistance + targetRate * (1.0f - lerpResistance);
         }
 
         this.lastFrontShoeDir = this.frontShoeDir;
         this.lastBackShoeDir = this.backShoeDir;
 
-        this.frontShoeDir = attachment.getCurrentDirection(this.level(), SHOE_OFFSET);
-        this.backShoeDir = attachment.getCurrentDirection(this.level(), -SHOE_OFFSET);
+        final float offset = this.getChainRenderOffset(this.level(), attachment);
+
+        this.frontShoeDir = attachment.getCurrentDirection(this.level(), SHOE_OFFSET + offset);
+        this.backShoeDir = attachment.getCurrentDirection(this.level(), -SHOE_OFFSET + offset);
     }
 
     private void tickServer() {
@@ -171,19 +191,26 @@ public class CogwheelChainCarriageContraptionEntity extends OrientedContraptionE
 
     private void updatePositionFromChain(final Level level) {
         final CogwheelChainAttachment attachment = this.getAttachment();
+        final float offset = this.getChainRenderOffset(level, attachment);
         final Vec3 newPos = attachment
-                .getCurrentPosition(level, SHOE_OFFSET)
+                .getCurrentPosition(level, SHOE_OFFSET + offset)
                 .lerp(
-                        attachment.getCurrentPosition(level, -SHOE_OFFSET), 0.5
+                        attachment.getCurrentPosition(level, -SHOE_OFFSET + offset), 0.5
                 );
         this.setPos(newPos.x, newPos.y - 0.5, newPos.z);
     }
 
+    private float getChainRenderOffset(final Level level, final CogwheelChainAttachment attachment) {
+        return level.isClientSide ? this.clientChasingChainAttachmentDist - attachment.getDist() : 0;
+    }
+
     private void updateYawFromChain(final Level level) {
-        final Vec3 frontPos = this.getAttachment().getCurrentPosition(
-                level, SHOE_OFFSET);
-        final Vec3 backPos = this.getAttachment().getCurrentPosition(
-                level, -SHOE_OFFSET);
+        final CogwheelChainAttachment attachment = this.getAttachment();
+        final float offset = this.getChainRenderOffset(level, attachment);
+        final Vec3 frontPos = attachment.getCurrentPosition(
+                level, SHOE_OFFSET + offset);
+        final Vec3 backPos = attachment.getCurrentPosition(
+                level, -SHOE_OFFSET + offset);
         final Vec3 direction = frontPos.subtract(backPos);
 
         if (direction.horizontalDistanceSqr() > 1e-8) {
