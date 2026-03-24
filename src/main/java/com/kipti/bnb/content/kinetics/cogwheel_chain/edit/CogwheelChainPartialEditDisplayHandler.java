@@ -3,6 +3,7 @@ package com.kipti.bnb.content.kinetics.cogwheel_chain.edit;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.edit.CogwheelChainPartialEditInteractionHandler.ProposedPlacement;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChain;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChainCandidate;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.placement.ChainInteractionFailedException;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.placement.ChainPlacementPathDisplayHelper;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.placement.CogwheelChainPlacementInteraction;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.world.CogwheelChainWorld;
@@ -15,11 +16,13 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -30,6 +33,8 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * pepee poopoo
  */
@@ -38,7 +43,7 @@ public class CogwheelChainPartialEditDisplayHandler {
 
     private static final float PARTICLE_DENSITY = 0.1f;
     private static final int VALID_COLOUR = 0x95CD41;
-    private static final int INVALID_COLOUR = 0xFF5D5;
+    private static final int INVALID_COLOUR = 0xFF5D5D;
 
     @SubscribeEvent
     public static void onClientTick(final ClientTickEvent.Post event) {
@@ -78,19 +83,26 @@ public class CogwheelChainPartialEditDisplayHandler {
             return;
         }
 
-        final CogwheelChainPartialEditInsertionPlan insertionPlan = CogwheelChainPartialEditInsertionPlanner.planWithCandidate(
-                existingChain,
-                editContext,
-                placement.pos(),
-                placement.candidate()
-        );
-        renderProposedCogwheelOutline(placement.pos(), insertionPlan != null ? VALID_COLOUR : INVALID_COLOUR);
+        CogwheelChainPartialEditInsertionPlan insertionPlan = null;
+        ChainInteractionFailedException validationFailure = null;
+        try {
+            insertionPlan = CogwheelChainPartialEditInsertionPlanner.planWithCandidate(
+                    existingChain, editContext, placement.pos(), placement.candidate()
+            );
+        } catch (final ChainInteractionFailedException e) {
+            validationFailure = e;
+        }
+
+        renderProposedCogwheelOutline(level, placement.pos(), placement.placementState(), insertionPlan != null ? VALID_COLOUR : INVALID_COLOUR);
         if (insertionPlan != null) {
             renderValidConnectionSegments(insertionPlan);
             renderCostOverlay(player, editContext, insertionPlan);
             return;
         }
 
+        if (validationFailure != null) {
+            player.displayClientMessage(validationFailure.getComponent(), true);
+        }
         renderInvalidConnectionSegments(level, editContext, placement.pos());
     }
 
@@ -128,16 +140,24 @@ public class CogwheelChainPartialEditDisplayHandler {
         final CogwheelChainCandidate candidate = new CogwheelChainCandidate(
                 axis, baseCandidate.isLarge(), baseCandidate.hasSmallCogwheelOffset());
 
-        return new ProposedPlacement(placementPos, candidate, blockHit.getDirection());
+        final BlockPlaceContext placeContext = new BlockPlaceContext(
+                new UseOnContext(level, player, InteractionHand.MAIN_HAND, heldCogwheel,
+                        new BlockHitResult(Vec3.atCenterOf(placementPos), blockHit.getDirection(), placementPos, false)));
+        final BlockState placementState = cogwheelBlock.getStateForPlacement(placeContext);
+        if (placementState == null) return null;
+
+        return new ProposedPlacement(placementPos, candidate, blockHit.getDirection(), placementState);
     }
 
-    private static void renderProposedCogwheelOutline(final BlockPos pos, final int colour) {
-        Outliner.getInstance().showAABB(
-                        "partial_edit_outline",
-                        new AABB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1)
-                )
-                .colored(colour)
-                .lineWidth(1 / 16f);
+    private static void renderProposedCogwheelOutline(final ClientLevel level, final BlockPos pos,
+                                                       final BlockState placementState, final int colour) {
+        final AtomicInteger counter = new AtomicInteger(0);
+        placementState.getShape(level, pos).forAllEdges((fx, fy, fz, tx, ty, tz) ->
+                Outliner.getInstance().showLine("partial_edit_outline_" + counter.getAndIncrement(),
+                                new Vec3(fx, fy, fz).add(Vec3.atLowerCornerOf(pos)),
+                                new Vec3(tx, ty, tz).add(Vec3.atLowerCornerOf(pos)))
+                        .colored(colour)
+                        .lineWidth(1 / 16f));
     }
 
     private static void renderValidConnectionSegments(final CogwheelChainPartialEditInsertionPlan insertionPlan) {

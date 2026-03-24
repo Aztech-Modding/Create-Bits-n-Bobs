@@ -1,7 +1,7 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.shape;
 
-import com.kipti.bnb.content.kinetics.cogwheel_chain.edit.CogwheelChainPartialEditInteractionHandler;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.attachment.CogwheelChainAttachment;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.edit.CogwheelChainPartialEditInteractionHandler;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.placement.CogwheelChainPlacementInteraction;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.riding.CogwheelChainRidingHelper;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.world.CogwheelChainWorld;
@@ -108,8 +108,6 @@ public class CogwheelChainInteractionHandler {
         return AllItems.WRENCH.isIn(player.getMainHandItem())
                 || AllItems.WRENCH.isIn(player.getOffhandItem())
                 || player.isHolding(AllItemTags.CHAIN_RIDEABLE::matches)
-                || CogwheelChainPlacementInteraction.isChainDriveItem(player.getMainHandItem())
-                || CogwheelChainPlacementInteraction.isChainDriveItem(player.getOffhandItem())
                 || CogwheelChainPlacementInteraction.isCompatibleCogwheelItem(player.getMainHandItem())
                 || CogwheelChainPlacementInteraction.isCompatibleCogwheelItem(player.getOffhandItem())
                 || CogwheelChainPartialEditInteractionHandler.hasActiveEditContext();

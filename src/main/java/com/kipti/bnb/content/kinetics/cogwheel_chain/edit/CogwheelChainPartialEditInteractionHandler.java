@@ -22,6 +22,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -233,7 +234,8 @@ public class CogwheelChainPartialEditInteractionHandler {
         return currentEditContext.chainItemType();
     }
 
-    public record ProposedPlacement(BlockPos pos, CogwheelChainCandidate candidate, Direction hitDirection) {
+    public record ProposedPlacement(BlockPos pos, CogwheelChainCandidate candidate, Direction hitDirection,
+                                    BlockState placementState) {
 
         public ProposedPlacement {
             pos = pos.immutable();

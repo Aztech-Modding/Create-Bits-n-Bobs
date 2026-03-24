@@ -19,6 +19,7 @@ public class BnbLangEntries {
                 "no_cogwheel_connection", "Connections with cogwheels must be at right angles!",
                 "no_path_to_cogwheel", "No valid path to cogwheel!",
                 "config_forbids", "Server has disabled chain drives!",
+                "axis_change_forbidden_by_type", "This chain type does not allow axis changes!",
 
                 //Pathfinding errors, should not happen, since the validation in chain placement, but in case
                 "pathfinding_failed_at_node", "Couldn't find valid path between two nodes! (Try inserting more nodes?)",
