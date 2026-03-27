@@ -4,72 +4,6 @@
     {
       "type": "java",
       "request": "launch",
-      "name": "Client",
-      "presentation": {
-        "group": "Mod Development - Create-Bits-n-Bobs",
-        "order": 0
-      },
-      "projectName": "Create-Bits-n-Bobs",
-      "mainClass": "net.neoforged.devlaunch.Main",
-      "args": [
-        "@C:\\onedriveisevil\\azt\\Create-Bits-n-Bobs\\build\\moddev\\clientRunProgramArgs.txt"
-      ],
-      "vmArgs": [
-        "@C:\\onedriveisevil\\azt\\Create-Bits-n-Bobs\\build\\moddev\\clientRunVmArgs.txt",
-        "-Dfml.modFolders\u003dbits_n_bobs%%C:\\onedriveisevil\\azt\\Create-Bits-n-Bobs\\bin\\main"
-      ],
-      "cwd": "${workspaceFolder}\\run",
-      "env": {},
-      "console": "internalConsole",
-      "shortenCommandLine": "none"
-    },
-    {
-      "type": "java",
-      "request": "launch",
-      "name": "Data",
-      "presentation": {
-        "group": "Mod Development - Create-Bits-n-Bobs",
-        "order": 1
-      },
-      "projectName": "Create-Bits-n-Bobs",
-      "mainClass": "net.neoforged.devlaunch.Main",
-      "args": [
-        "@C:\\onedriveisevil\\azt\\Create-Bits-n-Bobs\\build\\moddev\\dataRunProgramArgs.txt"
-      ],
-      "vmArgs": [
-        "@C:\\onedriveisevil\\azt\\Create-Bits-n-Bobs\\build\\moddev\\dataRunVmArgs.txt",
-        "-Dfml.modFolders\u003dbits_n_bobs%%C:\\onedriveisevil\\azt\\Create-Bits-n-Bobs\\bin\\main"
-      ],
-      "cwd": "${workspaceFolder}\\run",
-      "env": {},
-      "console": "internalConsole",
-      "shortenCommandLine": "none"
-    },
-    {
-      "type": "java",
-      "request": "launch",
-      "name": "Server",
-      "presentation": {
-        "group": "Mod Development - Create-Bits-n-Bobs",
-        "order": 2
-      },
-      "projectName": "Create-Bits-n-Bobs",
-      "mainClass": "net.neoforged.devlaunch.Main",
-      "args": [
-        "@C:\\onedriveisevil\\azt\\Create-Bits-n-Bobs\\build\\moddev\\serverRunProgramArgs.txt"
-      ],
-      "vmArgs": [
-        "@C:\\onedriveisevil\\azt\\Create-Bits-n-Bobs\\build\\moddev\\serverRunVmArgs.txt",
-        "-Dfml.modFolders\u003dbits_n_bobs%%C:\\onedriveisevil\\azt\\Create-Bits-n-Bobs\\bin\\main"
-      ],
-      "cwd": "${workspaceFolder}\\run",
-      "env": {},
-      "console": "internalConsole",
-      "shortenCommandLine": "none"
-    },
-    {
-      "type": "java",
-      "request": "launch",
       "name": "Create-Bits-n-Bobs - Client",
       "presentation": {
         "group": "NG - Create-Bits-n-Bobs",
@@ -345,6 +279,72 @@
         "MOD_CLASSES": "Create-Bits-n-Bobs%%C:\\onedriveisevil\\azt\\Create-Bits-n-Bobs\\bin\\main"
       },
       "shortenCommandLine": "argfile"
+    },
+    {
+      "type": "java",
+      "request": "launch",
+      "name": "Client",
+      "presentation": {
+        "group": "Mod Development - Create-Bits-n-Bobs",
+        "order": 0
+      },
+      "projectName": "Create-Bits-n-Bobs",
+      "mainClass": "net.neoforged.devlaunch.Main",
+      "args": [
+        "@C:\\onedriveisevil\\azt\\Create-Bits-n-Bobs\\build\\moddev\\clientRunProgramArgs.txt"
+      ],
+      "vmArgs": [
+        "@C:\\onedriveisevil\\azt\\Create-Bits-n-Bobs\\build\\moddev\\clientRunVmArgs.txt",
+        "-Dfml.modFolders\u003dbits_n_bobs%%C:\\onedriveisevil\\azt\\Create-Bits-n-Bobs\\bin\\main"
+      ],
+      "cwd": "${workspaceFolder}\\run",
+      "env": {},
+      "console": "internalConsole",
+      "shortenCommandLine": "none"
+    },
+    {
+      "type": "java",
+      "request": "launch",
+      "name": "Data",
+      "presentation": {
+        "group": "Mod Development - Create-Bits-n-Bobs",
+        "order": 1
+      },
+      "projectName": "Create-Bits-n-Bobs",
+      "mainClass": "net.neoforged.devlaunch.Main",
+      "args": [
+        "@C:\\onedriveisevil\\azt\\Create-Bits-n-Bobs\\build\\moddev\\dataRunProgramArgs.txt"
+      ],
+      "vmArgs": [
+        "@C:\\onedriveisevil\\azt\\Create-Bits-n-Bobs\\build\\moddev\\dataRunVmArgs.txt",
+        "-Dfml.modFolders\u003dbits_n_bobs%%C:\\onedriveisevil\\azt\\Create-Bits-n-Bobs\\bin\\main"
+      ],
+      "cwd": "${workspaceFolder}\\run",
+      "env": {},
+      "console": "internalConsole",
+      "shortenCommandLine": "none"
+    },
+    {
+      "type": "java",
+      "request": "launch",
+      "name": "Server",
+      "presentation": {
+        "group": "Mod Development - Create-Bits-n-Bobs",
+        "order": 2
+      },
+      "projectName": "Create-Bits-n-Bobs",
+      "mainClass": "net.neoforged.devlaunch.Main",
+      "args": [
+        "@C:\\onedriveisevil\\azt\\Create-Bits-n-Bobs\\build\\moddev\\serverRunProgramArgs.txt"
+      ],
+      "vmArgs": [
+        "@C:\\onedriveisevil\\azt\\Create-Bits-n-Bobs\\build\\moddev\\serverRunVmArgs.txt",
+        "-Dfml.modFolders\u003dbits_n_bobs%%C:\\onedriveisevil\\azt\\Create-Bits-n-Bobs\\bin\\main"
+      ],
+      "cwd": "${workspaceFolder}\\run",
+      "env": {},
+      "console": "internalConsole",
+      "shortenCommandLine": "none"
     }
   ]
 }

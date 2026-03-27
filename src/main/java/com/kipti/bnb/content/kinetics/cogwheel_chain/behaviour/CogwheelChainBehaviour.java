@@ -133,7 +133,8 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
 
     public ItemStack destroyChain(final boolean dropItemsInWorld, final boolean effects) {
         if (this.getLevel() == null || !this.isPartOfChain()) return ItemStack.EMPTY;
-        this.repropagateKinetics();
+
+        this.detachKinetics();
 
         //Try drop chains from the current block for convenience
         int chainsToReturn = this.chainsToRefund;
@@ -175,7 +176,6 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
                         controller.controlledChain.destroy(this.getLevel(), controllerPos);
                     });
         }
-        this.detachKinetics();
         return drops;
     }
 
@@ -462,12 +462,12 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
         return false;
     }
 
-    public void disconnectFromChain() {
+    public void disconnectFromChain() {//TODO: investage why flip = destroy
         this.unregisterController();
         this.controlledChain = null;
         this.controllerOffset = null;
         this.chainsToRefund = 0;
-        this.repropagateKinetics();
+        this.detachKinetics();
         this.sendData();
     }
 
@@ -505,4 +505,5 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
         }
         chainWorld.remove(this.getPos());
     }
+
 }

@@ -21,7 +21,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
@@ -114,7 +113,7 @@ public class CogwheelChainPartialEditInteractionHandler {
     }
 
     private static @Nullable InteractionHand resolveHeldCogwheelHand(final LocalPlayer player,
-                                                                      final CogwheelChainType chainType) {
+                                                                     final CogwheelChainType chainType) {
         if (CogwheelChainPlacementInteraction.isCompatibleCogwheelItem(player.getMainHandItem(), chainType))
             return InteractionHand.MAIN_HAND;
         if (CogwheelChainPlacementInteraction.isCompatibleCogwheelItem(player.getOffhandItem(), chainType))
@@ -123,7 +122,7 @@ public class CogwheelChainPartialEditInteractionHandler {
     }
 
     private static @Nullable CogwheelChainPartialEditContext resolveSelectedEditContext(final LocalPlayer player,
-                                                                                         final ClientLevel level) {
+                                                                                        final ClientLevel level) {
         final BlockPos controllerPos = CogwheelChainInteractionHandler.selectedController;
         if (controllerPos == null || !level.isLoaded(controllerPos))
             return null;
@@ -166,8 +165,8 @@ public class CogwheelChainPartialEditInteractionHandler {
     }
 
     private static @Nullable SelectedSegmentNodes resolveSelectedSegmentNodes(final CogwheelChain chain,
-                                                                                final BlockPos controllerPos,
-                                                                                final CogwheelChainSegment selectedSegment) {
+                                                                              final BlockPos controllerPos,
+                                                                              final CogwheelChainSegment selectedSegment) {
         final List<PathedCogwheelNode> existingNodes = chain.getChainPathCogwheelNodes();
         if (existingNodes.size() < 2)
             return null;
@@ -187,7 +186,10 @@ public class CogwheelChainPartialEditInteractionHandler {
             return new SelectedSegmentNodes(
                     startNodeIndex,
                     endNodeIndex,
-                    CogwheelChainPartialEditInsertionPlanner.toWorldNode(existingNodes.get(startNodeIndex), controllerPos),
+                    CogwheelChainPartialEditInsertionPlanner.toWorldNode(
+                            existingNodes.get(startNodeIndex),
+                            controllerPos
+                    ),
                     CogwheelChainPartialEditInsertionPlanner.toWorldNode(existingNodes.get(endNodeIndex), controllerPos)
             );
         }

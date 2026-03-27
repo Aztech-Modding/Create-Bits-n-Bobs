@@ -3,19 +3,18 @@ package com.kipti.bnb.content.kinetics.cogwheel_chain.edit;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.edit.CogwheelChainPartialEditInteractionHandler.ProposedPlacement;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChain;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChainCandidate;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.placement.ChainDriveDisplayRenderer;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.placement.ChainInteractionFailedException;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.placement.ChainPlacementPathDisplayHelper;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.placement.CogwheelChainPlacementInteraction;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.world.CogwheelChainWorld;
 import com.simibubi.create.content.equipment.blueprint.BlueprintOverlayRenderer;
 import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorBlockEntity;
-import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
@@ -31,19 +30,17 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3f;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import static com.kipti.bnb.content.kinetics.cogwheel_chain.placement.ChainDriveDisplayRenderer.*;
 
 /**
- * pepee poopoo
+ * Client-side display handler for cogwheel chain partial edit previews.
+ * <p>
+ * Renders either outliner (shape + connections) for valid insertions,
+ * or red particles for invalid ones. Only one mode is ever active.
  */
 @EventBusSubscriber(Dist.CLIENT)
 public class CogwheelChainPartialEditDisplayHandler {
-
-    private static final float PARTICLE_DENSITY = 0.1f;
-    private static final int VALID_COLOUR = 0x95CD41;
-    private static final int INVALID_COLOUR = 0xFF5D5D;
 
     @SubscribeEvent
     public static void onClientTick(final ClientTickEvent.Post event) {
@@ -93,9 +90,8 @@ public class CogwheelChainPartialEditDisplayHandler {
             validationFailure = e;
         }
 
-        renderProposedCogwheelOutline(level, placement.pos(), placement.placementState(), insertionPlan != null ? VALID_COLOUR : INVALID_COLOUR);
         if (insertionPlan != null) {
-            renderValidConnectionSegments(insertionPlan);
+            renderValidPlacement(level, placement, insertionPlan);
             renderCostOverlay(player, editContext, insertionPlan);
             return;
         }
@@ -103,7 +99,45 @@ public class CogwheelChainPartialEditDisplayHandler {
         if (validationFailure != null) {
             player.displayClientMessage(validationFailure.getComponent(), true);
         }
-        renderInvalidConnectionSegments(level, editContext, placement.pos());
+        renderInvalidPlacement(level, editContext, placement);
+    }
+
+    private static void renderValidPlacement(final ClientLevel level,
+                                              final ProposedPlacement placement,
+                                              final CogwheelChainPartialEditInsertionPlan insertionPlan) {
+        ChainDriveDisplayRenderer.renderBlockOutline(level, placement.pos(), placement.placementState(), VALID_COLOUR, "partial_edit_preview");
+
+        final int[] displaySides = ChainPlacementPathDisplayHelper.getPathDisplaySides(insertionPlan.rebuiltChain());
+        ChainDriveDisplayRenderer.renderConnectionSegment(
+                "partial_edit_segment_from",
+                ChainPlacementPathDisplayHelper.getDisplayedSegment(
+                        insertionPlan.rebuiltChain(),
+                        insertionPlan.insertionIndex() - 1,
+                        displaySides
+                ),
+                VALID_COLOUR
+        );
+        ChainDriveDisplayRenderer.renderConnectionSegment(
+                "partial_edit_segment_to",
+                ChainPlacementPathDisplayHelper.getDisplayedSegment(
+                        insertionPlan.rebuiltChain(),
+                        insertionPlan.insertionIndex(),
+                        displaySides
+                ),
+                VALID_COLOUR
+        );
+    }
+
+    private static void renderInvalidPlacement(final ClientLevel level,
+                                                final CogwheelChainPartialEditContext editContext,
+                                                final ProposedPlacement placement) {
+        ChainDriveDisplayRenderer.renderBlockOutline(level, placement.pos(), placement.placementState(), INVALID_COLOUR, "partial_edit_preview");
+
+        final Vec3 startCenter = editContext.startNode().center();
+        final Vec3 proposedCenter = placement.pos().getCenter();
+        final Vec3 endCenter = editContext.endNode().center();
+        ChainDriveDisplayRenderer.renderParticlesBetween(level, startCenter, proposedCenter, INVALID_COLOUR);
+        ChainDriveDisplayRenderer.renderParticlesBetween(level, proposedCenter, endCenter, INVALID_COLOUR);
     }
 
     private static @Nullable ProposedPlacement resolveProposedPlacement(final LocalPlayer player,
@@ -149,70 +183,9 @@ public class CogwheelChainPartialEditDisplayHandler {
         return new ProposedPlacement(placementPos, candidate, blockHit.getDirection(), placementState);
     }
 
-    private static void renderProposedCogwheelOutline(final ClientLevel level, final BlockPos pos,
-                                                       final BlockState placementState, final int colour) {
-        final AtomicInteger counter = new AtomicInteger(0);
-        placementState.getShape(level, pos).forAllEdges((fx, fy, fz, tx, ty, tz) ->
-                Outliner.getInstance().showLine("partial_edit_outline_" + counter.getAndIncrement(),
-                                new Vec3(fx, fy, fz).add(Vec3.atLowerCornerOf(pos)),
-                                new Vec3(tx, ty, tz).add(Vec3.atLowerCornerOf(pos)))
-                        .colored(colour)
-                        .lineWidth(1 / 16f));
-    }
-
-    private static void renderValidConnectionSegments(final CogwheelChainPartialEditInsertionPlan insertionPlan) {
-        final int[] displaySides = ChainPlacementPathDisplayHelper.getPathDisplaySides(insertionPlan.rebuiltChain());
-        renderConnectionSegment(
-                "partial_edit_segment_from",
-                ChainPlacementPathDisplayHelper.getDisplayedSegment(
-                        insertionPlan.rebuiltChain(),
-                        insertionPlan.insertionIndex() - 1,
-                        displaySides
-                ),
-                VALID_COLOUR
-        );
-        renderConnectionSegment(
-                "partial_edit_segment_to",
-                ChainPlacementPathDisplayHelper.getDisplayedSegment(
-                        insertionPlan.rebuiltChain(),
-                        insertionPlan.insertionIndex(),
-                        displaySides
-                ),
-                VALID_COLOUR
-        );
-    }
-
-    private static void renderConnectionSegment(final String key,
-                                                final ChainPlacementPathDisplayHelper.DisplayedSegment segment,
-                                                final int colour) {
-        Outliner.getInstance().showLine(key, segment.from(), segment.to())
-                .colored(colour)
-                .lineWidth(2f / 16f);
-    }
-
-    private static void renderInvalidConnectionSegments(final ClientLevel level,
-                                                        final CogwheelChainPartialEditContext editContext,
-                                                        final BlockPos proposedPos) {
-        final Vec3 startCenter = editContext.startNode().center();
-        final Vec3 proposedCenter = proposedPos.getCenter();
-        final Vec3 endCenter = editContext.endNode().center();
-        renderConnectionSegment(
-                "partial_edit_segment_from",
-                new ChainPlacementPathDisplayHelper.DisplayedSegment(startCenter, proposedCenter),
-                INVALID_COLOUR
-        );
-        renderConnectionSegment(
-                "partial_edit_segment_to",
-                new ChainPlacementPathDisplayHelper.DisplayedSegment(proposedCenter, endCenter),
-                INVALID_COLOUR
-        );
-        renderParticlesBetween(level, startCenter, proposedCenter);
-        renderParticlesBetween(level, proposedCenter, endCenter);
-    }
-
     private static void renderCostOverlay(final LocalPlayer player,
-                                          final CogwheelChainPartialEditContext editContext,
-                                          final CogwheelChainPartialEditInsertionPlan insertionPlan) {
+                                           final CogwheelChainPartialEditContext editContext,
+                                           final CogwheelChainPartialEditInsertionPlan insertionPlan) {
         if (player.hasInfiniteMaterials() || insertionPlan.costDelta() == 0) {
             return;
         }
@@ -228,31 +201,6 @@ public class CogwheelChainPartialEditDisplayHandler {
                 insertionPlan.costDelta(),
                 hasEnough
         );
-    }
-
-    private static void renderParticlesBetween(final ClientLevel level, final Vec3 from, final Vec3 to) {
-        final Vec3 delta = to.subtract(from);
-        final double length = delta.length();
-        if (length < 1.0E-3 || length > 256)
-            return;
-
-        final Vec3 dir = delta.normalize();
-        final double step = 0.25;
-
-        for (double t = 0; t <= length; t += step) {
-            if (level.getRandom().nextFloat() > PARTICLE_DENSITY)
-                continue;
-
-            final Vec3 lerped = from.add(dir.scale(t));
-            level.addParticle(
-                    new DustParticleOptions(
-                            new Vector3f(1.0f, 0x5D / 255f, 0x5D / 255f),
-                            1
-                    ),
-                    true,
-                    lerped.x, lerped.y, lerped.z, 0, 0, 0
-            );
-        }
     }
 
 }

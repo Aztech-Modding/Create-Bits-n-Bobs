@@ -134,13 +134,15 @@ public class PlacingCogwheelChain {
                                           final CogwheelChainType chainType) throws ChainInteractionFailedException {
         final Direction.Axis axis = to.rotationAxis();
         final boolean isSameAxis = axis == from.rotationAxis();
+        final Vec3i difference = to.pos().subtract(from.pos());
+        final boolean isFlat = difference.get(to.rotationAxis()) == 0;
         final double totalRadius = (to.isLarge() ? 1 : 0.5) + (from.isLarge() ? 1 : 0.5);
         final boolean isAdjacent = to.pos().distSqr(from.pos()) <= totalRadius * totalRadius;
-        final boolean isValidFlat = isSameAxis && !isAdjacent;
+        final boolean isValidFlat = isFlat && isSameAxis && !isAdjacent;
         final boolean isAxisChangePermitted = chainType.permitsAxisChanges();
         final boolean isValidAxisChange = isAxisChangePermitted && isValidLargeCogAxisConnection(
                 from, to.pos(), axis, to.isLarge()
-        );
+        ); //TODO: forgot to undelete non flat being valid
 
         final boolean isValidCandidate = isValidFlat || isValidAxisChange;
 
