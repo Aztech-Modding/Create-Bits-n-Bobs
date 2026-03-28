@@ -111,7 +111,9 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
 
     @Override
     public void destroy() {
-        this.unregisterController();
+        if (!this.tryReplaceWithResidualChain(false)) {
+            this.destroyChain(true, false);
+        }
         super.destroy();
     }
 
@@ -134,49 +136,48 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
     public ItemStack destroyChain(final boolean dropItemsInWorld, final boolean effects) {
         if (this.getLevel() == null || !this.isPartOfChain()) return ItemStack.EMPTY;
 
-        this.detachKinetics();
-
-        //Try drop chains from the current block for convenience
-        int chainsToReturn = this.chainsToRefund;
-        CogwheelChain chainSource = this.controlledChain;
-        boolean hasChainData = chainSource != null;
-
-        if (!this.isController() && this.controllerOffset != null && this.getLevel() != null) {
-            final BlockPos controllerPos = this.getPos().offset(this.controllerOffset);
-
-            if (this.getSameBehaviour(controllerPos) instanceof final CogwheelChainBehaviour controllerBE) {
-                chainsToReturn = controllerBE.chainsToRefund;
-                controllerBE.chainsToRefund = 0;
-                hasChainData = true;
-                chainSource = controllerBE.controlledChain;
-            }
-        }
-        if (!hasChainData) {
+        final CogwheelChainBehaviour controller = this.resolveControllerBehaviour();
+        if (controller == null) {
             CreateBitsnBobs.LOGGER.warn("Failed to destroy chain with missing chain data at {}", this.getPos());
             this.disconnectFromChain();
             return ItemStack.EMPTY;
         }
-        final ItemStack drops = chainSource == null ? ItemStack.EMPTY : chainSource.getReturnedItem().getDefaultInstance().copyWithCount(
-                chainsToReturn);
+
+        final int chainsToReturn = controller.chainsToRefund;
+        if (!this.isController()) controller.chainsToRefund = 0;
+
+        final CogwheelChain chainSource = controller.controlledChain;
+        final ItemStack drops = chainSource == null ? ItemStack.EMPTY : chainSource.getReturnedItem().getDefaultInstance().copyWithCount(chainsToReturn);
         if (dropItemsInWorld) {
             Block.popResource(this.getLevel(), this.getPos(), drops);
         }
 
-        if (this.isController()) {
-            if (this.controlledChain == null) return ItemStack.EMPTY;
-            if (effects) this.controlledChain.createDestroyEffects(this.getLevel(), this.getPos());
-            this.controlledChain.destroy(this.getLevel(), this.getPos());
-        }
-        if (!this.isController() && this.controllerOffset != null && this.getLevel() != null) {
-            final BlockPos controllerPos = this.getPos().offset(this.controllerOffset);
-            this.<CogwheelChainBehaviour>getSameBehaviourOptional(controllerPos)
-                    .ifPresent(controller -> {
-                        if (controller.controlledChain == null) return;
-                        if (effects) controller.controlledChain.createDestroyEffects(this.getLevel(), controllerPos);
-                        controller.controlledChain.destroy(this.getLevel(), controllerPos);
-                    });
-        }
+        this.executeChainDestruction(controller, effects);
         return drops;
+    }
+
+    /**
+     * Resolves the controller behaviour for this chain member.
+     * Returns {@code this} if this behaviour is the controller, or looks up the controller
+     * via {@link #controllerOffset} if this is a non-controller member.
+     *
+     * @return the controller behaviour, or {@code null} if it could not be resolved
+     */
+    @Nullable
+    private CogwheelChainBehaviour resolveControllerBehaviour() {
+        if (this.isController()) return this;
+        if (this.controllerOffset == null || this.getLevel() == null) return null;
+        final BlockPos controllerPos = this.getPos().offset(this.controllerOffset);
+        return this.getSameBehaviour(controllerPos) instanceof final CogwheelChainBehaviour controllerBE ? controllerBE : null;
+    }
+
+    /**
+     * Creates destruction effects and destroys the chain data at the given controller's position.
+     */
+    private void executeChainDestruction(final CogwheelChainBehaviour controller, final boolean effects) {
+        if (controller.controlledChain == null) return;
+        if (effects) controller.controlledChain.createDestroyEffects(this.getLevel(), controller.getPos());
+        controller.controlledChain.destroy(this.getLevel(), controller.getPos());
     }
 
     @Override
@@ -444,6 +445,7 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
 
         controllerBehaviour.destroyChain(false, true);
 
+        if (!result.chain().checkIntegrity(this.getLevel(), controllerWorldPos)) return false;
         result.chain().placeInLevel(this.getLevel(), result.placingChain());
 
         if (!isCreative && costDifference > 0) {
@@ -462,13 +464,23 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
         return false;
     }
 
-    public void disconnectFromChain() {//TODO: investage why flip = destroy
+    public void disconnectFromChain() {
+        this.detachKinetics();
+        this.clearChainData();
+        this.sendData();
+    }
+
+    /**
+     * Clears all chain membership data without detaching kinetics or sending updates.
+     * Used by {@link CogwheelChain#destroy} to atomically sever all chain connections
+     * before triggering kinetic detachment, preventing Create's BFS from re-propagating
+     * through dead chain links.
+     */
+    public void clearChainData() {
         this.unregisterController();
         this.controlledChain = null;
         this.controllerOffset = null;
         this.chainsToRefund = 0;
-        this.detachKinetics();
-        this.sendData();
     }
 
     private void syncControllerRegistration() {
