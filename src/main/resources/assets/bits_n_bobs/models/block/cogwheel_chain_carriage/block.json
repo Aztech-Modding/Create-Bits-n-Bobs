@@ -3,33 +3,20 @@
 	"credit": "Made with Blockbench by cak :)",
 	"texture_size": [32, 32],
 	"textures": {
-		"0": "bits_n_bobs:block/chain_drive_carriage"
+		"1": "bits_n_bobs:block/chain_carriage",
+		"particle": "bits_n_bobs:block/chain_carriage"
 	},
 	"elements": [
 		{
 			"from": [0, 0, 0],
-			"to": [16, 3, 16],
-			"rotation": {"angle": 0, "axis": "y", "origin": [7, 0, 0]},
+			"to": [16, 10, 16],
 			"faces": {
-				"north": {"uv": [4, 1.5, 8, 2.25], "texture": "#0"},
-				"east": {"uv": [4, 1.5, 8, 2.25], "texture": "#0"},
-				"south": {"uv": [4, 1.5, 8, 2.25], "texture": "#0"},
-				"west": {"uv": [4, 1.5, 8, 2.25], "texture": "#0"},
-				"up": {"uv": [4, 4, 0, 0], "rotation": 90, "texture": "#0"},
-				"down": {"uv": [8, 4, 12, 0], "rotation": 90, "texture": "#0"}
-			}
-		},
-		{
-			"from": [5, 2, 5],
-			"to": [11, 6, 11],
-			"rotation": {"angle": 0, "axis": "y", "origin": [7, 2, 0]},
-			"faces": {
-				"north": {"uv": [3, 5.5, 4.5, 6.5], "texture": "#0"},
-				"east": {"uv": [3, 5.5, 4.5, 6.5], "texture": "#0"},
-				"south": {"uv": [3, 5.5, 4.5, 6.5], "texture": "#0"},
-				"west": {"uv": [3, 5.5, 4.5, 6.5], "texture": "#0"},
-				"up": {"uv": [3, 4, 4.5, 5.5], "texture": "#0"},
-				"down": {"uv": [3, 4, 4.5, 5.5], "texture": "#0"}
+				"north": {"uv": [8, 0, 16, 5], "texture": "#1"},
+				"east": {"uv": [8, 0, 16, 5], "texture": "#1"},
+				"south": {"uv": [8, 0, 16, 5], "texture": "#1"},
+				"west": {"uv": [8, 0, 16, 5], "texture": "#1"},
+				"up": {"uv": [8, 8, 0, 0], "texture": "#1"},
+				"down": {"uv": [8, 8, 0, 16], "texture": "#1"}
 			}
 		}
 	],
@@ -63,5 +50,42 @@
 		"fixed": {
 			"scale": [0.5, 0.5, 0.5]
 		}
-	}
+	},
+	"groups": [
+		{
+			"name": "group",
+			"origin": [7, 13, 8],
+			"color": 0,
+			"stepParentName": "",
+			"backdrop": false,
+			"children": [
+				0,
+				{
+					"name": "group",
+					"origin": [7, 13, 8],
+					"color": 0,
+					"stepParentName": "",
+					"backdrop": false,
+					"children": [
+						{
+							"name": "group",
+							"origin": [8, -1.38164, 8],
+							"color": 0,
+							"stepParentName": "",
+							"backdrop": false,
+							"children": []
+						}
+					]
+				},
+				{
+					"name": "group",
+					"origin": [7, 13, 8],
+					"color": 0,
+					"stepParentName": "",
+					"backdrop": false,
+					"children": []
+				}
+			]
+		}
+	]
 }

@@ -3,24 +3,8 @@
 	"credit": "Made with Blockbench by cak :)",
 	"texture_size": [32, 32],
 	"textures": {
-		"0": "bits_n_bobs:block/chain_drive_carriage",
 		"particle": "bits_n_bobs:block/chain_drive_carriage"
 	},
-	"elements": [
-		{
-			"from": [6.5, 6.5, 5],
-			"to": [9.5, 9.5, 11],
-			"rotation": {"angle": 0, "axis": "y", "origin": [8, 8, 8]},
-			"faces": {
-				"north": {"uv": [0.75, 4.5, 1.5, 5.25], "texture": "#0"},
-				"east": {"uv": [0.75, 5.25, 2.25, 4.5], "texture": "#0"},
-				"south": {"uv": [0.75, 4.5, 1.5, 5.25], "texture": "#0"},
-				"west": {"uv": [0.75, 5.25, 2.25, 4.5], "texture": "#0"},
-				"up": {"uv": [2.25, 4.5, 0.75, 5.25], "rotation": 90, "texture": "#0"},
-				"down": {"uv": [0.75, 4.5, 2.25, 5.25], "rotation": 90, "texture": "#0"}
-			}
-		}
-	],
 	"display": {
 		"thirdperson_righthand": {
 			"rotation": [75, 45, 0],

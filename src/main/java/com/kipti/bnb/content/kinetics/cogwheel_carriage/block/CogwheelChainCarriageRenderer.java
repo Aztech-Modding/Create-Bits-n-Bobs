@@ -16,7 +16,6 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 /**
  * Just statically render the extra bits that are missing when in world
- *
  */
 public class CogwheelChainCarriageRenderer extends SmartBlockEntityRenderer<CogwheelChainCarriageBlockEntity> {
 
@@ -31,9 +30,7 @@ public class CogwheelChainCarriageRenderer extends SmartBlockEntityRenderer<Cogw
                               final MultiBufferSource buffer,
                               final int light,
                               final int overlay) {
-        super.renderSafe(blockEntity, partialTicks, ms, buffer, light, overlay);
-
-        if (blockEntity.getLevel() == null || blockEntity.getLevel() instanceof VirtualRenderWorld) //TODO: better hide detection
+        if (blockEntity.getLevel() instanceof VirtualRenderWorld)
             return;
 
         final VertexConsumer cutout = buffer.getBuffer(RenderType.CUTOUT);
@@ -44,7 +41,8 @@ public class CogwheelChainCarriageRenderer extends SmartBlockEntityRenderer<Cogw
         TransformStack.of(ms)
                 .center()
                 .rotateToFace(facing)
-                .uncenter();
+                .uncenter()
+                .translate(0, 0.625, 0);
         CachedBuffers.partial(BnbPartialModels.COGWHEEL_CHAIN_CARRIAGE_SHOE_ARM, blockState)
                 .light(light)
                 .renderInto(ms, cutout);
