@@ -157,19 +157,23 @@ public class CogwheelChain {
     }
 
     public void placeInLevel(final Level level, final PlacingCogwheelChain source) {
-        boolean isController = true;
         final BlockPos controllerPos = source.getFirstNode().pos();
         final int chainsUsed = source.getChainsRequiredInLoop();
 
+        for (final PlacingCogwheelNode node : source.getVisitedNodes()) {
+            if (level.getBlockEntity(node.pos()) instanceof final KineticBlockEntity kbe) {
+                kbe.detachKinetics();
+            }
+        }
+
+        boolean isController = true;
         for (final PlacingCogwheelNode node : source.getVisitedNodes()) {
             this.placeChainCogwheelInLevel(level, node, isController, chainsUsed, controllerPos);
             isController = false;
         }
 
-        //Try to get the kinetic block entity at controller, and update the kinetics
         final BlockEntity be = level.getBlockEntity(controllerPos);
         if (be instanceof final KineticBlockEntity kbe) {
-            kbe.detachKinetics();
             kbe.updateSpeed = true;
         } else {
             throw new IllegalStateException(
@@ -198,19 +202,48 @@ public class CogwheelChain {
         behaviour.sendData();
     }
 
+    /**
+     * Destroys this chain by clearing all member data and properly detaching kinetics.
+     * <p>
+     * Uses a three-phase approach to avoid race conditions with Create's kinetic BFS propagator:
+     * <ol>
+     *     <li>Clear chain data on all members so chain connections become invisible to the propagator</li>
+     *     <li>Detach kinetics on all members (only axis neighbours are visible, preventing re-propagation through dead chain links)</li>
+     *     <li>Force-clear any residual kinetic state and mark members for speed re-evaluation from non-chain neighbours</li>
+     * </ol>
+     */
     public void destroy(final Level level, final BlockPos worldPosition) {
+        final List<CogwheelChainBehaviour> behaviours = new ArrayList<>();
         for (final PathedCogwheelNode cogwheel : this.cogwheelNodes) {
             final BlockPos pos = worldPosition.offset(cogwheel.localPos());
-            removeChainCogwheelFromLevelIfPresent(level, pos);
+            SuperBlockEntityBehaviour.getOptional(level, pos, CogwheelChainBehaviour.TYPE)
+                    .ifPresent(behaviours::add);
         }
+
+        for (final CogwheelChainBehaviour behaviour : behaviours) {
+            behaviour.clearChainData();
+        }
+
+        this.detachAndResetKinetics(behaviours);
     }
 
-    public static void removeChainCogwheelFromLevelIfPresent(final Level level, final BlockPos pos) {
-        SuperBlockEntityBehaviour.getOptional(
-                level,
-                pos,
-                CogwheelChainBehaviour.TYPE
-        ).ifPresent(CogwheelChainBehaviour::disconnectFromChain);
+    private void detachAndResetKinetics(final List<CogwheelChainBehaviour> behaviours) {
+        for (final CogwheelChainBehaviour behaviour : behaviours) {
+            if (behaviour.getBlockEntity() instanceof final KineticBlockEntity kbe
+                    && kbe.getTheoreticalSpeed() != 0) {
+                kbe.detachKinetics();
+            }
+        }
+
+        for (final CogwheelChainBehaviour behaviour : behaviours) {
+            if (behaviour.getBlockEntity() instanceof final KineticBlockEntity kbe) {
+                if (kbe.getTheoreticalSpeed() != 0) {
+                    kbe.removeSource();
+                }
+                kbe.updateSpeed = true;
+            }
+            behaviour.sendData();
+        }
     }
 
     public void createDestroyEffects(final Level level, final BlockPos worldPosition) {

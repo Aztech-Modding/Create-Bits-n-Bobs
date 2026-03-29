@@ -62,7 +62,8 @@ public class CogwheelChainCarriageRenderer extends ContraptionEntityRenderer<Cog
         TransformStack.of(ms)
                 .center()
                 .rotateToFace(entity.getInitialOrientation().getOpposite())
-                .uncenter();
+                .uncenter()
+                .translate(0, 0.625, 0);
         CachedBuffers.partial(BnbPartialModels.COGWHEEL_CHAIN_CARRIAGE_SHOE_ARM, blockState)
                 .light(packedLight)
                 .renderInto(ms, vertexConsumer);

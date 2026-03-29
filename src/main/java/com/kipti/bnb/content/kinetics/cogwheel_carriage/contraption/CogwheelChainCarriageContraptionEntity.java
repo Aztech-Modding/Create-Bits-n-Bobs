@@ -197,7 +197,7 @@ public class CogwheelChainCarriageContraptionEntity extends OrientedContraptionE
                 .lerp(
                         attachment.getCurrentPosition(level, -SHOE_OFFSET + offset), 0.5
                 );
-        this.setPos(newPos.x, newPos.y - 0.5, newPos.z);
+        this.setPos(newPos.x, newPos.y - 1.5, newPos.z);
     }
 
     private float getChainRenderOffset(final Level level, final CogwheelChainAttachment attachment) {
