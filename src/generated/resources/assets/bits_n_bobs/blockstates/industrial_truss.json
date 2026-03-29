@@ -1,28 +1,28 @@
 {
   "variants": {
     "alternating=false,axis=x": {
-      "model": "bits_n_bobs:block/industrial_truss",
+      "model": "bits_n_bobs:block/industrial_truss/industrial_truss",
       "x": 90,
       "y": 90
     },
     "alternating=false,axis=y": {
-      "model": "bits_n_bobs:block/industrial_truss"
+      "model": "bits_n_bobs:block/industrial_truss/industrial_truss"
     },
     "alternating=false,axis=z": {
-      "model": "bits_n_bobs:block/industrial_truss",
+      "model": "bits_n_bobs:block/industrial_truss/industrial_truss",
       "x": 90,
       "y": 180
     },
     "alternating=true,axis=x": {
-      "model": "bits_n_bobs:block/industrial_truss_alternating",
+      "model": "bits_n_bobs:block/industrial_truss/industrial_truss_alternating",
       "x": 90,
       "y": 90
     },
     "alternating=true,axis=y": {
-      "model": "bits_n_bobs:block/industrial_truss_alternating"
+      "model": "bits_n_bobs:block/industrial_truss/industrial_truss_alternating"
     },
     "alternating=true,axis=z": {
-      "model": "bits_n_bobs:block/industrial_truss_alternating",
+      "model": "bits_n_bobs:block/industrial_truss/industrial_truss_alternating",
       "x": 90,
       "y": 180
     }

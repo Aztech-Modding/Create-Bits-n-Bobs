@@ -63,7 +63,8 @@ public class BnbBlockEntities {
                     BnbDecorativeBlocks.WEATHERED_METAL_GIRDER_ENCASED_SHAFT,
                     BnbExtraEncasedBlocks.INDUSTRIAL_IRON_ENCASED_SHAFT,
                     BnbExtraEncasedBlocks.WEATHERED_IRON_ENCASED_SHAFT,
-                    BnbSpecialEncasedBlocks.INDUSTRIAL_GRATING_PANEL
+                    BnbSpecialEncasedBlocks.INDUSTRIAL_GRATING_PANEL,
+                    BnbDecorativeBlocks.INDUSTRIAL_TRUSS_ENCASED_SHAFT
             )
             .renderer(() -> ShaftRenderer::new)
             .register();
