@@ -5,6 +5,7 @@ import com.kipti.bnb.registry.client.BnbShapes;
 import com.kipti.bnb.registry.content.BnbBlockEntities;
 import com.kipti.bnb.registry.content.blocks.deco.BnbDecorativeBlocks;
 import com.simibubi.create.AllBlocks;
+import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.schematics.requirement.ItemRequirement;
 import net.minecraft.core.BlockPos;
@@ -82,6 +83,22 @@ public class TrussEncasedShaftBlock extends BnbEncasedShaftBlock {
                                   final BlockPos pos,
                                   final CollisionContext context) {
         return BnbShapes.ALTERNATING_TRUSS.get(state.getValue(TRUSS_AXIS));
+    }
+
+    @Override
+    public InteractionResult onWrenched(final BlockState state, final UseOnContext context) {
+        final BlockState rotated = this.getRotatedBlockState(state, context.getClickedFace());
+        if (!rotated.canSurvive(context.getLevel(), context.getClickedPos())) {
+            return InteractionResult.PASS;
+        }
+        KineticBlockEntity.switchToBlockState(
+                context.getLevel(), context.getClickedPos(),
+                this.updateAfterWrenched(rotated, context)
+        );
+        if (context.getLevel().getBlockState(context.getClickedPos()) != state) {
+            IWrenchable.playRotateSound(context.getLevel(), context.getClickedPos());
+        }
+        return InteractionResult.SUCCESS;
     }
 
     @Override

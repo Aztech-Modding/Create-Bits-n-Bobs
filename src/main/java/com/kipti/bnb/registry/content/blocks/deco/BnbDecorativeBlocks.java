@@ -5,10 +5,12 @@ import com.cake.struts.content.block.StrutBlockItem;
 import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.decoration.grating.GratingBlock;
 import com.kipti.bnb.content.decoration.grating.GratingPanelBlock;
+import com.kipti.bnb.content.decoration.grating.GratingPanelBlockItem;
 import com.kipti.bnb.content.decoration.grating.GratingPanelCTBehaviour;
 import com.kipti.bnb.content.decoration.strut.BnbStrutBlock;
 import com.kipti.bnb.content.decoration.strut.CableStrutBlock;
 import com.kipti.bnb.content.decoration.truss.TrussBlock;
+import com.kipti.bnb.content.decoration.truss.TrussBlockItem;
 import com.kipti.bnb.content.decoration.truss.TrussBlockStateGen;
 import com.kipti.bnb.content.decoration.truss.TrussEncasedShaftBlock;
 import com.kipti.bnb.content.decoration.weathered_girder.WeatheredConnectedGirderModel;
@@ -220,19 +222,19 @@ public class BnbDecorativeBlocks {
             )
             .transform(TagGen.pickaxeOnly())
             .blockstate((c, p) ->
-                                BnbBlockStateGen.directionalMixedUvLockBlock(
-                                        c, p,
+                                 BnbBlockStateGen.directionalMixedUvLockBlock(
+                                         c, p,
                                         p.models().getExistingFile(CreateBitsnBobs.asResource(
                                                 "block/industrial_grating/panel")),
                                         p.models().getExistingFile(CreateBitsnBobs.asResource(
                                                 "block/industrial_grating/panel_side"))
-                                ))
+                                 ))
             .onRegister(connectedTextures(() -> new GratingPanelCTBehaviour(BnbSpriteShifts.INDUSTRIAL_GRATING)))
             .addLayer(() -> RenderType::cutout)
-            .item()
+            .item(GratingPanelBlockItem::new)
             .model((c, p) ->
                            p.withExistingParent(
-                                   c.getName(),
+                                    c.getName(),
                                    CreateBitsnBobs.asResource("block/industrial_grating/item")
                            )
             )
@@ -254,7 +256,7 @@ public class BnbDecorativeBlocks {
             .blockstate(BnbBlockStateGen::alternatingTrussModel)
             .onRegister(connectedTextures(() -> new GratingPanelCTBehaviour(BnbSpriteShifts.INDUSTRIAL_GRATING)))
             .addLayer(() -> RenderType::cutout)
-            .item()
+            .item(TrussBlockItem::new)
             .model((c, p) ->
                            p.withExistingParent(
                                    c.getName(),

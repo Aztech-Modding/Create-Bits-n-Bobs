@@ -1,14 +1,16 @@
 package com.kipti.bnb.content.decoration.grating;
 
+import com.kipti.bnb.registry.content.blocks.encased.BnbSpecialEncasedBlocks;
+import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllShapes;
-import net.createmod.catnip.placement.IPlacementHelper;
-import net.createmod.catnip.placement.PlacementHelpers;
+import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -29,11 +31,9 @@ public class GratingPanelBlock extends GratingBlock implements IGratingPanel {
 
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
 
-    private final int placementHelperId = PlacementHelpers.register(new PlacementHelper());
-
     public GratingPanelBlock(final Properties properties) {
         super(properties);
-        registerDefaultState(defaultBlockState().setValue(FACING, Direction.UP));
+        this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.UP));
     }
 
     @Override
@@ -44,36 +44,77 @@ public class GratingPanelBlock extends GratingBlock implements IGratingPanel {
 
     @Override
     public @Nullable BlockState getStateForPlacement(final @NotNull BlockPlaceContext context) {
-        return super.getStateForPlacement(context).setValue(FACING, context.getNearestLookingDirection().getOpposite());
+        return super.getStateForPlacement(context).setValue(FACING, this.getPanelFacing(context.getPlayer()));
+    }
+
+    public BlockState getEncasedShaftState(final BlockState state, final Direction.Axis shaftAxis) {
+        return BnbSpecialEncasedBlocks.INDUSTRIAL_GRATING_PANEL.getDefaultState()
+                .setValue(GratingEncasedShaftBlock.AXIS, shaftAxis)
+                .setValue(FACING, state.getValue(FACING));
     }
 
     @Override
-    protected @NotNull ItemInteractionResult useItemOn(final @NotNull ItemStack stack, final @NotNull BlockState state, final @NotNull Level level, final @NotNull BlockPos pos, final Player player, final @NotNull InteractionHand hand, final @NotNull BlockHitResult hitResult) {
-        if (!player.isShiftKeyDown() && player.mayBuild()) {
-            final IPlacementHelper placementHelper = PlacementHelpers.get(placementHelperId);
-            if (placementHelper.matchesItem(stack)) {
-                placementHelper.getOffset(player, level, state, pos, hitResult)
-                        .placeInWorld(level, (BlockItem) stack.getItem(), player, hand, hitResult);
-                return ItemInteractionResult.SUCCESS;
-            }
+    protected @NotNull ItemInteractionResult useItemOn(final @NotNull ItemStack stack,
+                                                       final @NotNull BlockState state,
+                                                       final @NotNull Level level,
+                                                       final @NotNull BlockPos pos,
+                                                       final Player player,
+                                                       final @NotNull InteractionHand hand,
+                                                       final @NotNull BlockHitResult hitResult) {
+        final ItemInteractionResult shaftInsertResult = this.tryInsertShaft(stack, state, level, pos, player, hand);
+        if (shaftInsertResult.consumesAction()) {
+            return shaftInsertResult;
         }
 
         return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
     }
 
     @Override
-    protected @NotNull VoxelShape getShape(final BlockState state, final @NotNull BlockGetter level, final @NotNull BlockPos pos, final @NotNull CollisionContext context) {
+    protected @NotNull VoxelShape getShape(final BlockState state,
+                                           final @NotNull BlockGetter level,
+                                           final @NotNull BlockPos pos,
+                                           final @NotNull CollisionContext context) {
         return AllShapes.CASING_3PX.get(state.getValue(FACING));
     }
 
     @Override
-    protected boolean isPathfindable(@NotNull final BlockState state, @NotNull final PathComputationType pathComputationType) {
+    protected boolean isPathfindable(@NotNull final BlockState state,
+                                     @NotNull final PathComputationType pathComputationType) {
         return false;
     }
 
     @Override
     protected boolean skipRendering(final BlockState state, final BlockState adjacentState, final Direction direction) {
-        return adjacentState.getBlock() instanceof IGratingPanel && (adjacentState.getValue(FACING) == state.getValue(FACING)) || super.skipRendering(state, adjacentState, direction);
+        return adjacentState.getBlock() instanceof IGratingPanel && (adjacentState.getValue(FACING) == state.getValue(
+                FACING)) || super.skipRendering(state, adjacentState, direction);
     }
+
+    private Direction getPanelFacing(final @Nullable Player player) {
+        return player == null ? Direction.UP : player.getNearestViewDirection().getOpposite();
+    }
+
+    private ItemInteractionResult tryInsertShaft(final ItemStack stack,
+                                                 final BlockState state,
+                                                 final Level level,
+                                                 final BlockPos pos,
+                                                 final Player player,
+                                                 final InteractionHand hand) {
+        if (!AllBlocks.SHAFT.isIn(stack)) {
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        }
+
+        KineticBlockEntity.switchToBlockState(
+                level, pos, this.getEncasedShaftState(state, player.getNearestViewDirection().getAxis())
+        );
+        level.playSound(null, pos, SoundEvents.METAL_HIT, SoundSource.BLOCKS, 0.5f, 1.25f);
+        if (!level.isClientSide && !player.isCreative()) {
+            stack.shrink(1);
+            if (stack.isEmpty()) {
+                player.setItemInHand(hand, ItemStack.EMPTY);
+            }
+        }
+        return ItemInteractionResult.SUCCESS;
+    }
+
 }
 

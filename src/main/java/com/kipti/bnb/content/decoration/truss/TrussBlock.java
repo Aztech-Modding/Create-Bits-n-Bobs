@@ -84,12 +84,7 @@ public class TrussBlock extends RotatedPillarBlock {
                                                        final @NonNull BlockHitResult hitResult) {
         if (AllBlocks.SHAFT.isIn(stack)) {
             final Direction.Axis shaftAxis = player.getNearestViewDirection().getAxis();
-            KineticBlockEntity.switchToBlockState(
-                    level, pos, BnbDecorativeBlocks.INDUSTRIAL_TRUSS_ENCASED_SHAFT.getDefaultState()
-                            .setValue(RotatedPillarBlock.AXIS, shaftAxis)
-                            .setValue(TrussEncasedShaftBlock.TRUSS_AXIS, state.getValue(AXIS))
-                            .setValue(TrussEncasedShaftBlock.ALTERNATING, state.getValue(ALTERNATING))
-            );
+            KineticBlockEntity.switchToBlockState(level, pos, this.getEncasedShaftState(state, shaftAxis));
             level.playSound(null, pos, SoundEvents.METAL_HIT, SoundSource.BLOCKS, 0.5f, 1.25f);
             if (!level.isClientSide && !player.isCreative()) {
                 stack.shrink(1);
@@ -99,6 +94,13 @@ public class TrussBlock extends RotatedPillarBlock {
             return ItemInteractionResult.SUCCESS;
         }
         return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
+    }
+
+    public BlockState getEncasedShaftState(final BlockState state, final Direction.Axis shaftAxis) {
+        return BnbDecorativeBlocks.INDUSTRIAL_TRUSS_ENCASED_SHAFT.getDefaultState()
+                .setValue(RotatedPillarBlock.AXIS, shaftAxis)
+                .setValue(TrussEncasedShaftBlock.TRUSS_AXIS, state.getValue(AXIS))
+                .setValue(TrussEncasedShaftBlock.ALTERNATING, state.getValue(ALTERNATING));
     }
 }
 

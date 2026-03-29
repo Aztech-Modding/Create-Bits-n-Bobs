@@ -3,7 +3,6 @@
     {
       "apply": {
         "model": "bits_n_bobs:block/industrial_grating/panel_side",
-        "uvlock": true,
         "x": 180
       },
       "when": {
@@ -12,7 +11,18 @@
     },
     {
       "apply": {
+        "model": "bits_n_bobs:block/industrial_grating/panel_side_cutout",
+        "x": 180
+      },
+      "when": {
+        "axis": "y",
+        "facing": "down"
+      }
+    },
+    {
+      "apply": {
         "model": "bits_n_bobs:block/industrial_grating/panel",
+        "uvlock": true,
         "x": 180
       },
       "when": {
@@ -23,16 +33,6 @@
     {
       "apply": {
         "model": "bits_n_bobs:block/industrial_grating/panel_cutout",
-        "x": 180
-      },
-      "when": {
-        "axis": "y",
-        "facing": "down"
-      }
-    },
-    {
-      "apply": {
-        "model": "bits_n_bobs:block/industrial_grating/panel_side_cutout",
         "uvlock": true,
         "x": 180
       },
@@ -43,8 +43,7 @@
     },
     {
       "apply": {
-        "model": "bits_n_bobs:block/industrial_grating/panel_side",
-        "uvlock": true
+        "model": "bits_n_bobs:block/industrial_grating/panel_side"
       },
       "when": {
         "facing": "up"
@@ -52,7 +51,17 @@
     },
     {
       "apply": {
-        "model": "bits_n_bobs:block/industrial_grating/panel"
+        "model": "bits_n_bobs:block/industrial_grating/panel_side_cutout"
+      },
+      "when": {
+        "axis": "y",
+        "facing": "up"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/industrial_grating/panel",
+        "uvlock": true
       },
       "when": {
         "axis": "x|z",
@@ -61,16 +70,7 @@
     },
     {
       "apply": {
-        "model": "bits_n_bobs:block/industrial_grating/panel_cutout"
-      },
-      "when": {
-        "axis": "y",
-        "facing": "up"
-      }
-    },
-    {
-      "apply": {
-        "model": "bits_n_bobs:block/industrial_grating/panel_side_cutout",
+        "model": "bits_n_bobs:block/industrial_grating/panel_cutout",
         "uvlock": true
       },
       "when": {
@@ -81,7 +81,6 @@
     {
       "apply": {
         "model": "bits_n_bobs:block/industrial_grating/panel_side",
-        "uvlock": true,
         "x": 90
       },
       "when": {
@@ -90,7 +89,18 @@
     },
     {
       "apply": {
+        "model": "bits_n_bobs:block/industrial_grating/panel_side_cutout",
+        "x": 90
+      },
+      "when": {
+        "axis": "z",
+        "facing": "north"
+      }
+    },
+    {
+      "apply": {
         "model": "bits_n_bobs:block/industrial_grating/panel",
+        "uvlock": true,
         "x": 90
       },
       "when": {
@@ -101,16 +111,6 @@
     {
       "apply": {
         "model": "bits_n_bobs:block/industrial_grating/panel_cutout",
-        "x": 90
-      },
-      "when": {
-        "axis": "z",
-        "facing": "north"
-      }
-    },
-    {
-      "apply": {
-        "model": "bits_n_bobs:block/industrial_grating/panel_side_cutout",
         "uvlock": true,
         "x": 90
       },
@@ -122,7 +122,6 @@
     {
       "apply": {
         "model": "bits_n_bobs:block/industrial_grating/panel_side",
-        "uvlock": true,
         "x": 90,
         "y": 180
       },
@@ -132,7 +131,19 @@
     },
     {
       "apply": {
+        "model": "bits_n_bobs:block/industrial_grating/panel_side_cutout",
+        "x": 90,
+        "y": 180
+      },
+      "when": {
+        "axis": "z",
+        "facing": "south"
+      }
+    },
+    {
+      "apply": {
         "model": "bits_n_bobs:block/industrial_grating/panel",
+        "uvlock": true,
         "x": 90,
         "y": 180
       },
@@ -144,17 +155,6 @@
     {
       "apply": {
         "model": "bits_n_bobs:block/industrial_grating/panel_cutout",
-        "x": 90,
-        "y": 180
-      },
-      "when": {
-        "axis": "z",
-        "facing": "south"
-      }
-    },
-    {
-      "apply": {
-        "model": "bits_n_bobs:block/industrial_grating/panel_side_cutout",
         "uvlock": true,
         "x": 90,
         "y": 180
@@ -167,7 +167,6 @@
     {
       "apply": {
         "model": "bits_n_bobs:block/industrial_grating/panel_side",
-        "uvlock": true,
         "x": 90,
         "y": 270
       },
@@ -177,7 +176,19 @@
     },
     {
       "apply": {
+        "model": "bits_n_bobs:block/industrial_grating/panel_side_cutout",
+        "x": 90,
+        "y": 270
+      },
+      "when": {
+        "axis": "x",
+        "facing": "west"
+      }
+    },
+    {
+      "apply": {
         "model": "bits_n_bobs:block/industrial_grating/panel",
+        "uvlock": true,
         "x": 90,
         "y": 270
       },
@@ -189,17 +200,6 @@
     {
       "apply": {
         "model": "bits_n_bobs:block/industrial_grating/panel_cutout",
-        "x": 90,
-        "y": 270
-      },
-      "when": {
-        "axis": "x",
-        "facing": "west"
-      }
-    },
-    {
-      "apply": {
-        "model": "bits_n_bobs:block/industrial_grating/panel_side_cutout",
         "uvlock": true,
         "x": 90,
         "y": 270
@@ -212,7 +212,6 @@
     {
       "apply": {
         "model": "bits_n_bobs:block/industrial_grating/panel_side",
-        "uvlock": true,
         "x": 90,
         "y": 90
       },
@@ -222,7 +221,19 @@
     },
     {
       "apply": {
+        "model": "bits_n_bobs:block/industrial_grating/panel_side_cutout",
+        "x": 90,
+        "y": 90
+      },
+      "when": {
+        "axis": "x",
+        "facing": "east"
+      }
+    },
+    {
+      "apply": {
         "model": "bits_n_bobs:block/industrial_grating/panel",
+        "uvlock": true,
         "x": 90,
         "y": 90
       },
@@ -234,17 +245,6 @@
     {
       "apply": {
         "model": "bits_n_bobs:block/industrial_grating/panel_cutout",
-        "x": 90,
-        "y": 90
-      },
-      "when": {
-        "axis": "x",
-        "facing": "east"
-      }
-    },
-    {
-      "apply": {
-        "model": "bits_n_bobs:block/industrial_grating/panel_side_cutout",
         "uvlock": true,
         "x": 90,
         "y": 90
