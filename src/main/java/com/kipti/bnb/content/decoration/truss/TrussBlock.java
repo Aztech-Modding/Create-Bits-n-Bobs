@@ -25,12 +25,13 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
-public class AlternatingTrussBlock extends RotatedPillarBlock {
+public class TrussBlock extends RotatedPillarBlock {
 
     public static final BooleanProperty ALTERNATING = BooleanProperty.create("alternating");
 
-    public AlternatingTrussBlock(final Properties properties) {
+    public TrussBlock(final Properties properties) {
         super(properties);
         this.registerDefaultState(this.defaultBlockState().setValue(ALTERNATING, false));
     }
@@ -66,23 +67,23 @@ public class AlternatingTrussBlock extends RotatedPillarBlock {
     }
 
     @Override
-    protected VoxelShape getShape(final BlockState p_60555_,
-                                  final BlockGetter p_60556_,
-                                  final BlockPos p_60557_,
-                                  final CollisionContext p_60558_) {
+    protected @NonNull VoxelShape getShape(final BlockState p_60555_,
+                                           final @NonNull BlockGetter p_60556_,
+                                           final @NonNull BlockPos p_60557_,
+                                           final @NonNull CollisionContext p_60558_) {
         return BnbShapes.ALTERNATING_TRUSS.get(p_60555_.getValue(AXIS));
     }
 
     @Override
-    protected @NotNull ItemInteractionResult useItemOn(final ItemStack stack,
-                                                       final BlockState state,
-                                                       final Level level,
-                                                       final BlockPos pos,
-                                                       final Player player,
-                                                       final InteractionHand hand,
-                                                       final BlockHitResult hitResult) {
+    protected @NotNull ItemInteractionResult useItemOn(final @NonNull ItemStack stack,
+                                                       final @NonNull BlockState state,
+                                                       final @NonNull Level level,
+                                                       final @NonNull BlockPos pos,
+                                                       final @NonNull Player player,
+                                                       final @NonNull InteractionHand hand,
+                                                       final @NonNull BlockHitResult hitResult) {
         if (AllBlocks.SHAFT.isIn(stack)) {
-            final Direction.Axis shaftAxis = hitResult.getDirection().getAxis();
+            final Direction.Axis shaftAxis = player.getNearestViewDirection().getAxis();
             KineticBlockEntity.switchToBlockState(
                     level, pos, BnbDecorativeBlocks.INDUSTRIAL_TRUSS_ENCASED_SHAFT.getDefaultState()
                             .setValue(RotatedPillarBlock.AXIS, shaftAxis)

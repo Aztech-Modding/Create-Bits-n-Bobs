@@ -1,6 +1,6 @@
 package com.kipti.bnb.foundation.client;
 
-import com.kipti.bnb.content.decoration.truss.AlternatingTrussBlock;
+import com.kipti.bnb.content.decoration.truss.TrussBlock;
 import com.tterrag.registrate.providers.DataGenContext;
 import com.tterrag.registrate.providers.RegistrateBlockstateProvider;
 import net.minecraft.core.Direction;
@@ -69,8 +69,8 @@ public class BnbBlockStateGen {
                 });
     }
 
-    public static <T extends AlternatingTrussBlock> void alternatingTrussModel(final DataGenContext<Block, T> ctx,
-                                                                               final RegistrateBlockstateProvider prov) {
+    public static <T extends TrussBlock> void alternatingTrussModel(final DataGenContext<Block, T> ctx,
+                                                                    final RegistrateBlockstateProvider prov) {
         prov.getVariantBuilder(ctx.get())
                 .forAllStates(state -> {
                     final Direction dir = Direction.fromAxisAndDirection(
@@ -80,7 +80,7 @@ public class BnbBlockStateGen {
                     return ConfiguredModel.builder()
                             .modelFile(prov.models().getExistingFile(
                                     prov.modLoc("block/industrial_truss/industrial_truss" + (state.getValue(
-                                            AlternatingTrussBlock.ALTERNATING) ? "_alternating" : ""))
+                                            TrussBlock.ALTERNATING) ? "_alternating" : ""))
                             ))
                             .rotationX(dir == Direction.DOWN ? 180 : dir.getAxis().isHorizontal() ? 90 : 0)
                             .rotationY(dir.getAxis().isVertical() ? 0 : (((int) dir.toYRot()) + DEFAULT_ANGLE_OFFSET) % 360)

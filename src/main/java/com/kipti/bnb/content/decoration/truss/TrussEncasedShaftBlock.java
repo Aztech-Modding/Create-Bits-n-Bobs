@@ -32,13 +32,13 @@ public class TrussEncasedShaftBlock extends BnbEncasedShaftBlock {
             "truss_axis",
             Direction.Axis.class
     );
-    public static final BooleanProperty ALTERNATING = AlternatingTrussBlock.ALTERNATING;
+    public static final BooleanProperty ALTERNATING = TrussBlock.ALTERNATING;
 
     public TrussEncasedShaftBlock(final Properties properties) {
         super(properties, BnbDecorativeBlocks.INDUSTRIAL_TRUSS::get);
         this.registerDefaultState(this.defaultBlockState()
-                                     .setValue(TRUSS_AXIS, Direction.Axis.Y)
-                                     .setValue(ALTERNATING, false));
+                                          .setValue(TRUSS_AXIS, Direction.Axis.Y)
+                                          .setValue(ALTERNATING, false));
     }
 
     @Override

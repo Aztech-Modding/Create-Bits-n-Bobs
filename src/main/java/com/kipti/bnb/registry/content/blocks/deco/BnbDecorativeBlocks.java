@@ -8,7 +8,7 @@ import com.kipti.bnb.content.decoration.grating.GratingPanelBlock;
 import com.kipti.bnb.content.decoration.grating.GratingPanelCTBehaviour;
 import com.kipti.bnb.content.decoration.strut.BnbStrutBlock;
 import com.kipti.bnb.content.decoration.strut.CableStrutBlock;
-import com.kipti.bnb.content.decoration.truss.AlternatingTrussBlock;
+import com.kipti.bnb.content.decoration.truss.TrussBlock;
 import com.kipti.bnb.content.decoration.truss.TrussBlockStateGen;
 import com.kipti.bnb.content.decoration.truss.TrussEncasedShaftBlock;
 import com.kipti.bnb.content.decoration.weathered_girder.WeatheredConnectedGirderModel;
@@ -239,9 +239,9 @@ public class BnbDecorativeBlocks {
             .build()
             .register();
 
-    public static final BlockEntry<AlternatingTrussBlock> INDUSTRIAL_TRUSS = CreateBitsnBobs.REGISTRATE.block(
+    public static final BlockEntry<TrussBlock> INDUSTRIAL_TRUSS = CreateBitsnBobs.REGISTRATE.block(
                     "industrial_truss",
-                    AlternatingTrussBlock::new
+                    TrussBlock::new
             )
             .properties(p -> p.mapColor(MapColor.METAL)
                     .strength(0.1f, 6.0f)
