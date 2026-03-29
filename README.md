@@ -2,6 +2,27 @@
 
 Avaliable on [Curseforge](https://www.curseforge.com/minecraft/mc-mods/create-bits-n-bobs) and [Modrinth](https://modrinth.com/mod/create-bits-n-bobs)
 
+## Development Branch Usage Notice
+
+The following terms apply **only** to development branches, including but not limited to:
+
+* `contraptions-and-control`
+* `compat-and-casings`
+* any branch containing unmerged commits not present in a stable release branch (e.g. `main`, `1.20.1`)
+
+#### Permissions & Limitations
+
+* Building and running the mod from these branches is permitted for personal use and testing purposes.
+* These builds are experimental. No guarantee is provided regarding:
+
+  * stability
+  * correctness of behavior
+  * integrity of world/save data
+
+#### Redistribution
+
+* Redistribution of builds from development branches is **not permitted**.
+
 ## Translations [![Crowdin](https://badges.crowdin.net/create-bits-n-bobs/localized.svg)](https://crowdin.com/project/create-bits-n-bobs)
 Translation contributions are avaliable on [crowdin](https://crowdin.oreostack.uk/)! Please [join the discord](https://discord.com/invite/CA2dfuFxcV) for communications about translating or to request a new language.
 
