@@ -5,7 +5,6 @@ import com.cake.struts.content.block.StrutBlockEntityRenderer;
 import com.kipti.bnb.content.kinetics.chain_pulley.ChainPulleyBlockEntity;
 import com.kipti.bnb.content.kinetics.chain_pulley.ChainPulleyRenderer;
 import com.kipti.bnb.content.kinetics.cogwheel_carriage.block.CogwheelChainCarriageBlockEntity;
-import com.kipti.bnb.content.kinetics.cogwheel_carriage.block.CogwheelChainCarriageRenderer;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.migration.MigratingSimpleKineticBlockEntity;
 import com.kipti.bnb.content.kinetics.flywheel_bearing.FlywheelBearingBlockEntity;
 import com.kipti.bnb.content.kinetics.flywheel_bearing.FlywheelBearingBlockEntityRenderer;
@@ -154,7 +153,6 @@ public class BnbBlockEntities {
     public static final BlockEntityEntry<CogwheelChainCarriageBlockEntity> COGWHEEL_CHAIN_CARRIAGE = REGISTRATE
             .blockEntity("cogwheel_chain_carriage", CogwheelChainCarriageBlockEntity::new)
             .validBlock(BnbKineticBlocks.COGWHEEL_CHAIN_CARRIAGE)
-            .renderer(() -> CogwheelChainCarriageRenderer::new)
             .register();
 
     public static void register() {

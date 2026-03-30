@@ -175,8 +175,6 @@ public class DyedPipeScenes {
         scene.idle(20);
     }
 
-    // ── helpers ──────────────────────────────────────────────────────────────────
-
     private static void refreshAllInitialPipes(final CreateSceneBuilder scene) {
         refreshPipes(
                 scene,

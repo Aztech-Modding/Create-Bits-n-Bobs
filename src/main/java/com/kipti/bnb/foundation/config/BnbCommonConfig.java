@@ -3,13 +3,15 @@ package com.kipti.bnb.foundation.config;
 import com.google.common.collect.ImmutableMap;
 import com.kipti.bnb.registry.core.BnbFeatureFlag;
 import com.kipti.bnb.registry.core.BnbFeatureGroup;
-import com.kipti.bnb.registry.core.FeatureCategory;
+import com.kipti.bnb.registry.core.FeatureCategories;
 import net.createmod.catnip.config.ConfigBase;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.kipti.bnb.registry.core.FeatureCategories.*;
 
 /**
  * Common configuration for Bits 'n' Bobs, containing feature flag toggles and bulk feature group toggles.
@@ -19,18 +21,20 @@ public class BnbCommonConfig extends ConfigBase {
     private final Map<BnbFeatureGroup, Boolean> previousGroupValues = new EnumMap<>(BnbFeatureGroup.class);
     private boolean syncingGroupStates;
 
-    public final ConfigGroup FEATURE_FLAGS_GROUP = group(0, "featureFlags", "Feature flags to enable or disable certain features of the mod.");
-    public final Map<BnbFeatureGroup, ConfigBool> FEATURE_GROUP_TOGGLES = createFeatureGroupToggleConfigs();
-    public final Map<BnbFeatureFlag, ConfigBool> FEATURE_FLAGS = createFeatureFlagConfigs();
+    public final ConfigGroup FEATURE_FLAGS_GROUP = this.group(
+            0,
+            "featureFlags",
+            "Feature flags to enable or disable certain features of the mod."
+    );
+    public final Map<BnbFeatureGroup, ConfigBool> FEATURE_GROUP_TOGGLES = this.createFeatureGroupToggleConfigs();
+    public final Map<BnbFeatureFlag, ConfigBool> FEATURE_FLAGS = this.createFeatureFlagConfigs();
 
     private Map<BnbFeatureGroup, ConfigBool> createFeatureGroupToggleConfigs() {
-        group(1, "groups", "Bulk toggle groups. Enabling a group enables all its child features. Disabling a group disables all its child features.");
-
         final HashMap<BnbFeatureGroup, ConfigBool> map = new HashMap<>();
         for (final BnbFeatureGroup featureGroup : BnbFeatureGroup.values()) {
-            final ConfigBool configBool = b(
+            final ConfigBool configBool = this.b(
                     true,
-                    enumToCamelCase(featureGroup.name().toLowerCase()),
+                    this.enumToCamelCase(featureGroup.name().toLowerCase()),
                     featureGroup.getDescription()
             );
             map.put(featureGroup, configBool);
@@ -41,8 +45,8 @@ public class BnbCommonConfig extends ConfigBase {
     private Map<BnbFeatureFlag, ConfigBool> createFeatureFlagConfigs() {
         final HashMap<BnbFeatureFlag, ConfigBool> map = new HashMap<>();
 
-        for (final FeatureCategory category : FeatureCategory.values()) {
-            selectCategoryGroup(category);
+        for (final FeatureCategories.FeatureCategory category : FeatureCategories.values()) {
+            this.selectCategoryGroup(category);
             for (final BnbFeatureFlag flag : BnbFeatureFlag.values()) {
                 if (flag.getCategory() != category) {
                     continue;
@@ -50,9 +54,9 @@ public class BnbCommonConfig extends ConfigBase {
                 if (flag.isReleaseLocked()) {
                     continue;
                 }
-                final ConfigBool configBool = b(
+                final ConfigBool configBool = this.b(
                         flag.getDefaultState(),
-                        enumToCamelCase(flag.name().toLowerCase()),
+                        this.enumToCamelCase(flag.name().toLowerCase()),
                         flag.getDescription()
                 );
                 map.put(flag, configBool);
@@ -62,11 +66,13 @@ public class BnbCommonConfig extends ConfigBase {
         return ImmutableMap.copyOf(map);
     }
 
-    private void selectCategoryGroup(final FeatureCategory category) {
-        switch (category) {
-            case BLOCK -> group(1, "blocks", "Block feature toggles.");
-            case ITEM -> group(1, "items", "Item feature toggles.");
-            case BEHAVIOUR -> group(1, "behaviours", "Behaviour feature toggles.");
+    private void selectCategoryGroup(final FeatureCategories.FeatureCategory category) {
+        if (category == BLOCK) {
+            this.group(1, "blocks", "Block feature toggles.");
+        } else if (category == ITEM) {
+            this.group(1, "items", "Item feature toggles.");
+        } else if (category == BEHAVIOUR) {
+            this.group(1, "behaviours", "Behaviour feature toggles.");
         }
     }
 
@@ -90,7 +96,7 @@ public class BnbCommonConfig extends ConfigBase {
 
     @Override
     public void onLoad() {
-        syncGroupStatesFromChildren();
+        this.syncGroupStatesFromChildren();
     }
 
     @Override
@@ -100,8 +106,8 @@ public class BnbCommonConfig extends ConfigBase {
         }
         this.syncingGroupStates = true;
         try {
-            propagateChangedGroups();
-            syncGroupStatesFromChildren();
+            this.propagateChangedGroups();
+            this.syncGroupStatesFromChildren();
         } finally {
             this.syncingGroupStates = false;
         }
@@ -135,7 +141,7 @@ public class BnbCommonConfig extends ConfigBase {
                 continue;
             }
 
-            final boolean allEnabled = computeGroupState(group) == BnbFeatureGroup.GroupState.ALL_ENABLED;
+            final boolean allEnabled = this.computeGroupState(group) == BnbFeatureGroup.GroupState.ALL_ENABLED;
             groupBool.set(allEnabled);
             this.previousGroupValues.put(group, allEnabled);
         }

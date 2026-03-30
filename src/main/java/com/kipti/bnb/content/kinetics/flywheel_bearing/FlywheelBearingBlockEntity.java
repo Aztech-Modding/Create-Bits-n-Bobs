@@ -50,7 +50,7 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
 
     public FlywheelBearingBlockEntity(final BlockEntityType<?> type, final BlockPos pos, final BlockState state) {
         super(type, pos, state);
-        lazyTickRate = 5;
+        this.lazyTickRate = 5;
     }
 
     @Override
@@ -65,7 +65,7 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
 //        tooltip.add(5, Component.literal("Angular velocity " + (flywheelMovement.angularVelocity * 20) + " dps" + ((20 * 60 * flywheelMovement.angularVelocity) / 360) + " rpm"));
 //        tooltip.add(6, Component.literal("StorageEnabled: " + BnbConfigs.server().FLYWHEEL_STORAGE_CAPACITY.get()));
 
-        if (!running) {
+        if (!this.running) {
             return super.addToGoggleTooltip(tooltip, isPlayerSneaking);
         }
 
@@ -79,9 +79,9 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
                 .forGoggles(tooltip);
 
         Lang.builder(CreateBitsnBobs.MOD_ID)
-                .add(Component.literal(flywheelMovement.formatAngularMass() + " "))
+                .add(Component.literal(this.flywheelMovement.formatAngularMass() + " "))
                 .style(ChatFormatting.AQUA)
-                .add(flywheelMovement.getAngularMassDescription().copy().withStyle(ChatFormatting.DARK_GRAY))
+                .add(this.flywheelMovement.getAngularMassDescription().copy().withStyle(ChatFormatting.DARK_GRAY))
                 .forGoggles(tooltip, 1);
 
         if (BnbConfigs.server().FLYWHEEL_STORAGE_CAPACITY.get()) {
@@ -89,12 +89,16 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
                     .add(Component.translatable("tooltip.bits_n_bobs.flywheel_bearing.stored_stress"))
                     .style(ChatFormatting.GRAY)
                     .forGoggles(tooltip);
-            final float currentStoredStress = flywheelMovement.currentStoredStressTicks;
-            final float lastStoredStress = flywheelMovement.lastStoredStressTicks;
-            final float maxStoredStress = flywheelMovement.getMaxStoredStressTicks();
+            final float currentStoredStress = this.flywheelMovement.currentStoredStressTicks;
+            final float lastStoredStress = this.flywheelMovement.lastStoredStressTicks;
+            final float maxStoredStress = this.flywheelMovement.getMaxStoredStressTicks();
 
             final int direction = Float.compare(currentStoredStress, lastStoredStress);
-            final int changeStrength = Mth.clamp(Math.round(1500 * Math.abs(currentStoredStress - lastStoredStress) / maxStoredStress), 1, 5);
+            final int changeStrength = Mth.clamp(
+                    Math.round(1500 * Math.abs(currentStoredStress - lastStoredStress) / maxStoredStress),
+                    1,
+                    5
+            );
 
             final int maxBars = 100;
             final int filledBars = Mth.clamp(Math.round(currentStoredStress / maxStoredStress * maxBars), 0, maxBars);
@@ -102,19 +106,22 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
                     .add(Component.literal("|".repeat(filledBars)))
                     .style(ChatFormatting.AQUA)
                     .add(Component.literal("|".repeat(maxBars - filledBars))
-                            .withStyle(ChatFormatting.DARK_GRAY))
-                    .add(Component.literal(direction == 0 ? "" : direction > 0 ? " " + ">".repeat(changeStrength) : " " + "<".repeat(changeStrength))
-                            .withStyle(direction == 0 ? ChatFormatting.DARK_GRAY : ChatFormatting.AQUA))
+                                 .withStyle(ChatFormatting.DARK_GRAY))
+                    .add(Component.literal(direction == 0 ? "" : direction > 0 ? " " + ">".repeat(changeStrength) : " " + "<".repeat(
+                                    changeStrength))
+                                 .withStyle(direction == 0 ? ChatFormatting.DARK_GRAY : ChatFormatting.AQUA))
                     .forGoggles(tooltip, 1);
 
             Lang.builder(CreateBitsnBobs.MOD_ID)
                     .add(Component.literal(String.format("%.1fsut", currentStoredStress)))
                     .style(ChatFormatting.AQUA)
                     .add(Component.literal(String.format("/%.1fsut ", maxStoredStress))
-                            .withStyle(ChatFormatting.GRAY))
-                    .add((!flywheelMovement.canProvideStress() ? Component.translatable("tooltip.bits_n_bobs.flywheel_bearing.empty") :
-                            flywheelMovement.canReceiveStress() ? Component.empty() : Component.translatable("tooltip.bits_n_bobs.flywheel_bearing.full"))
-                            .withStyle(ChatFormatting.DARK_GRAY))
+                                 .withStyle(ChatFormatting.GRAY))
+                    .add((!this.flywheelMovement.canProvideStress() ? Component.translatable(
+                            "tooltip.bits_n_bobs.flywheel_bearing.empty") :
+                            this.flywheelMovement.canReceiveStress() ? Component.empty() : Component.translatable(
+                                    "tooltip.bits_n_bobs.flywheel_bearing.full"))
+                                 .withStyle(ChatFormatting.DARK_GRAY))
                     .forGoggles(tooltip, 1);
 
             Lang.builder(CreateBitsnBobs.MOD_ID)
@@ -123,21 +130,21 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
                     .forGoggles(tooltip);
 
             Lang.builder(CreateBitsnBobs.MOD_ID)
-                    .add(Component.literal(String.format("%.1fsu", flywheelMovement.kineticTransfer)))
+                    .add(Component.literal(String.format("%.1fsu", this.flywheelMovement.kineticTransfer)))
                     .style(ChatFormatting.AQUA)
                     .forGoggles(tooltip, 1);
         }
 
         super.addToGoggleTooltip(tooltip, isPlayerSneaking);
-        addGenerationAsZeroIfNeeded(tooltip);
+        this.addGenerationAsZeroIfNeeded(tooltip);
         return true;
     }
 
     private void addGenerationAsZeroIfNeeded(final List<Component> tooltip) {
-        if (!IRotate.StressImpact.isEnabled())
+        if (!IRotate.StressImpact.isEnabled() || !BnbConfigs.server().FLYWHEEL_STORAGE_CAPACITY.get())
             return;
 
-        final float stressBase = calculateAddedStressCapacity();
+        final float stressBase = this.calculateAddedStressCapacity();
         if (!Mth.equal(stressBase, 0))
             return;
 
@@ -151,7 +158,7 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
                 .style(ChatFormatting.AQUA)
                 .space()
                 .add(CreateLang.translate("gui.goggles.at_current_speed")
-                        .style(ChatFormatting.DARK_GRAY))
+                             .style(ChatFormatting.DARK_GRAY))
                 .forGoggles(tooltip, 1);
 
     }
@@ -163,148 +170,166 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
 
     @Override
     public void remove() {
-        if (!level.isClientSide)
-            disassemble();
+        if (!this.level.isClientSide)
+            this.disassemble();
         super.remove();
     }
 
     @Override
     public void write(final CompoundTag compound, final HolderLookup.Provider registries, final boolean clientPacket) {
-        compound.putBoolean("Running", running);
+        compound.putBoolean("Running", this.running);
 
-        compound.putFloat("NetworkFlywheelAbsorptionCapacity", hasNetwork() ? getOrCreateFlywheelNetwork().bits_n_bobs$getFlywheelStressAbsoptionCapacity() : 0);
-        compound.putFloat("NetworkFlywheelReleaseCapacity", hasNetwork() ? getOrCreateFlywheelNetwork().bits_n_bobs$getFlywheelStressReleaseCapacity() : 0);
+        compound.putFloat(
+                "NetworkFlywheelAbsorptionCapacity",
+                this.hasNetwork() ? this.getOrCreateFlywheelNetwork().bits_n_bobs$getFlywheelStressAbsoptionCapacity() : 0
+        );
+        compound.putFloat(
+                "NetworkFlywheelReleaseCapacity",
+                this.hasNetwork() ? this.getOrCreateFlywheelNetwork().bits_n_bobs$getFlywheelStressReleaseCapacity() : 0
+        );
 
-        compound.putInt("LastGeneratorDirection", lastGeneratorDirection);
+        compound.putInt("LastGeneratorDirection", this.lastGeneratorDirection);
 
-        flywheelMovement.writeAdditional(compound);
-        AssemblyException.write(compound, registries, lastException);
+        this.flywheelMovement.writeAdditional(compound);
+        AssemblyException.write(compound, registries, this.lastException);
         super.write(compound, registries, clientPacket);
     }
 
     @Override
-    protected void read(final CompoundTag compound, final HolderLookup.Provider registries, final boolean clientPacket) {
-        if (wasMoved) {
+    protected void read(final CompoundTag compound,
+                        final HolderLookup.Provider registries,
+                        final boolean clientPacket) {
+        if (this.wasMoved) {
             super.read(compound, registries, clientPacket);
             return;
         }
 
         if (clientPacket) {//TODO (?) implement network updates to the be so the client properly knows the correct information
-            clientFlywheelAbsorptionCapacityInNetwork = compound.getFloat("NetworkFlywheelAbsorptionCapacity");
-            clientFlywheelReleaseCapacityInNetwork = compound.getFloat("NetworkFlywheelReleaseCapacity");
+            this.clientFlywheelAbsorptionCapacityInNetwork = compound.getFloat("NetworkFlywheelAbsorptionCapacity");
+            this.clientFlywheelReleaseCapacityInNetwork = compound.getFloat("NetworkFlywheelReleaseCapacity");
         }
 
-        final float angleBefore = flywheelMovement.angle;
-        running = compound.getBoolean("Running");
-        lastGeneratorDirection = compound.getInt("LastGeneratorDirection");
-        flywheelMovement.readAdditional(compound, clientPacket);
-        lastException = AssemblyException.read(compound, registries);
+        final float angleBefore = this.flywheelMovement.angle;
+        this.running = compound.getBoolean("Running");
+        this.lastGeneratorDirection = compound.getInt("LastGeneratorDirection");
+        this.flywheelMovement.readAdditional(compound, clientPacket);
+        this.lastException = AssemblyException.read(compound, registries);
         super.read(compound, registries, clientPacket);
         if (!clientPacket)
             return;
-        if (!running) {
-            flywheelMovement.clientAngle = null;
-            movedContraption = null;
+        if (!this.running) {
+            this.flywheelMovement.clientAngle = null;
+            this.movedContraption = null;
         }
     }
 
     public float getInterpolatedAngle(float partialTicks) {
-        if (isVirtual())
-            return Mth.lerp(partialTicks + .5f, flywheelMovement.prevClientAngle, flywheelMovement.clientAngle == null ? flywheelMovement.angle : flywheelMovement.clientAngle);
-        if (movedContraption == null || movedContraption.isStalled() || !running)
+        if (this.isVirtual())
+            return Mth.lerp(
+                    partialTicks + .5f,
+                    this.flywheelMovement.prevClientAngle,
+                    this.flywheelMovement.clientAngle == null ? this.flywheelMovement.angle : this.flywheelMovement.clientAngle
+            );
+        if (this.movedContraption == null || this.movedContraption.isStalled() || !this.running)
             partialTicks = 0;
-        return Mth.lerp(partialTicks, flywheelMovement.prevClientAngle, flywheelMovement.clientAngle == null ? flywheelMovement.angle : flywheelMovement.clientAngle);
+        return Mth.lerp(
+                partialTicks,
+                this.flywheelMovement.prevClientAngle,
+                this.flywheelMovement.clientAngle == null ? this.flywheelMovement.angle : this.flywheelMovement.clientAngle
+        );
     }
 
     @Override
     public void onSpeedChanged(final float prevSpeed) {
         super.onSpeedChanged(prevSpeed);
-        checkAssemblyNextTick = true;
+        this.checkAssemblyNextTick = true;
 
-        if (movedContraption != null && Math.signum(prevSpeed) != Math.signum(getSpeed()) && prevSpeed != 0) {
-            if (!movedContraption.isStalled()) {
-                flywheelMovement.angle = Math.round(flywheelMovement.angle);
-                applyRotation();
+        if (this.movedContraption != null && Math.signum(prevSpeed) != Math.signum(this.getSpeed()) && prevSpeed != 0) {
+            if (!this.movedContraption.isStalled()) {
+                this.flywheelMovement.angle = Math.round(this.flywheelMovement.angle);
+                this.applyRotation();
             }
-            movedContraption.getContraption()
-                    .stop(level);
+            this.movedContraption.getContraption()
+                    .stop(this.level);
         }
     }
 
     public float getAngularSpeed() {
-        float speed = convertToAngular(flywheelMovement.angularVelocity);
-        if (getSpeed() == 0)
+        float speed = convertToAngular(this.flywheelMovement.angularVelocity);
+        if (this.getSpeed() == 0)
             speed = 0;
-        if (level.isClientSide) {
+        if (this.level.isClientSide) {
             speed *= ServerSpeedProvider.get();
-            speed += clientAngleDiff / 3f;
+            speed += this.clientAngleDiff / 3f;
         }
         return speed;
     }
 
     public void assemble() {
-        if (!(level.getBlockState(worldPosition)
+        if (!(this.level.getBlockState(this.worldPosition)
                 .getBlock() instanceof FlywheelBearingBlock))
             return;
 
-        final Direction direction = getBlockState().getValue(FlywheelBearingBlock.FACING);
+        final Direction direction = this.getBlockState().getValue(FlywheelBearingBlock.FACING);
         final BearingContraption contraption = new BearingContraption(false, direction);
         try {
-            if (!contraption.assemble(level, worldPosition))
+            if (!contraption.assemble(this.level, this.worldPosition))
                 return;
 
-            lastException = null;
+            this.lastException = null;
         } catch (final AssemblyException e) {
-            lastException = e;
-            sendData();
+            this.lastException = e;
+            this.sendData();
             return;
         }
 
-        contraption.removeBlocksFromWorld(level, BlockPos.ZERO);
-        movedContraption = InertControlledContraptionEntity.create(level, this, contraption);
-        final BlockPos anchor = worldPosition.relative(direction);
-        movedContraption.setPos(anchor.getX(), anchor.getY(), anchor.getZ());
-        movedContraption.setRotationAxis(direction.getAxis());
-        level.addFreshEntity(movedContraption);
+        contraption.removeBlocksFromWorld(this.level, BlockPos.ZERO);
+        this.movedContraption = InertControlledContraptionEntity.create(this.level, this, contraption);
+        final BlockPos anchor = this.worldPosition.relative(direction);
+        this.movedContraption.setPos(anchor.getX(), anchor.getY(), anchor.getZ());
+        this.movedContraption.setRotationAxis(direction.getAxis());
+        this.level.addFreshEntity(this.movedContraption);
 
-        flywheelMovement.assemble(this, contraption);
+        this.flywheelMovement.assemble(this, contraption);
 
-        AllSoundEvents.CONTRAPTION_ASSEMBLE.playOnServer(level, worldPosition);
+        AllSoundEvents.CONTRAPTION_ASSEMBLE.playOnServer(this.level, this.worldPosition);
 
-        running = true;
-        flywheelMovement.zero();
-        sendData();
-        updateGeneratedRotation();
-        updateFlywheelStressesInNetwork();
+        this.running = true;
+        this.flywheelMovement.zero();
+        this.sendData();
+        this.updateGeneratedRotation();
+        this.updateFlywheelStressesInNetwork();
     }
 
     public void disassemble() {
-        if (!running && movedContraption == null)
+        if (!this.running && this.movedContraption == null)
             return;
-        flywheelMovement.zero();
-        if (movedContraption != null) {
-            movedContraption.setAngle(0);
-            movedContraption.disassemble();
-            AllSoundEvents.CONTRAPTION_DISASSEMBLE.playOnServer(level, worldPosition);
+        this.flywheelMovement.zero();
+        if (this.movedContraption != null) {
+            this.movedContraption.setAngle(0);
+            this.movedContraption.disassemble();
+            AllSoundEvents.CONTRAPTION_DISASSEMBLE.playOnServer(this.level, this.worldPosition);
         }
 
-        movedContraption = null;
-        running = false;
-        updateGeneratedRotation();
-        updateFlywheelStressesInNetwork();
-        checkAssemblyNextTick = false;
-        sendData();
+        this.movedContraption = null;
+        this.running = false;
+        this.updateGeneratedRotation();
+        this.updateFlywheelStressesInNetwork();
+        this.checkAssemblyNextTick = false;
+        this.sendData();
     }
 
     @Override
-    public List<BlockPos> addPropagationLocations(final IRotate block, final BlockState state, final List<BlockPos> neighbours) {
+    public List<BlockPos> addPropagationLocations(final IRotate block,
+                                                  final BlockState state,
+                                                  final List<BlockPos> neighbours) {
         if (!ICogWheel.isLargeCog(state))
             return super.addPropagationLocations(block, state, neighbours);
 
         BlockPos.betweenClosedStream(new BlockPos(-1, -1, -1), new BlockPos(1, 1, 1))
                 .forEach(offset -> {
                     if (offset.distSqr(BlockPos.ZERO) == 2)
-                        neighbours.add(worldPosition.offset(offset));
+                        neighbours.add(this.worldPosition.offset(offset));
                 });
         return neighbours;
     }
@@ -313,54 +338,54 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
     public void tick() {
         super.tick();
 
-        if (level.isClientSide)
-            clientAngleDiff /= 2;
+        if (this.level.isClientSide)
+            this.clientAngleDiff /= 2;
 
-        if (!level.isClientSide && checkAssemblyNextTick) {
-            checkAssemblyNextTick = false;
-            if (running) {
-                if (speed == 0 && (movedContraption == null || movedContraption.getContraption()
+        if (!this.level.isClientSide && this.checkAssemblyNextTick) {
+            this.checkAssemblyNextTick = false;
+            if (this.running) {
+                if (this.speed == 0 && (this.movedContraption == null || this.movedContraption.getContraption()
                         .getBlocks()
                         .isEmpty())) {
-                    if (movedContraption != null)
-                        movedContraption.getContraption()
-                                .stop(level);
-                    disassemble();
+                    if (this.movedContraption != null)
+                        this.movedContraption.getContraption()
+                                .stop(this.level);
+                    this.disassemble();
                     return;
                 }
             } else {
-                assemble();
+                this.assemble();
             }
         }
 
-        if (!running) {
-            flywheelMovement.zero();
+        if (!this.running) {
+            this.flywheelMovement.zero();
             return;
         }
 
         if (BnbConfigs.server().FLYWHEEL_STORAGE_CAPACITY.get()) {
-            flywheelMovement.tickForStorageBehaviour(this);
+            this.flywheelMovement.tickForStorageBehaviour(this);
         } else {
-            flywheelMovement.tick(this);
+            this.flywheelMovement.tick(this);
         }
-        applyRotation();
+        this.applyRotation();
     }
 
     @Override
     public void lazyTick() {
         super.lazyTick();
-        if (movedContraption != null && running && !level.isClientSide)
-            sendData();
+        if (this.movedContraption != null && this.running && !this.level.isClientSide)
+            this.sendData();
     }
 
     protected void applyRotation() {
-        if (movedContraption == null)
+        if (this.movedContraption == null)
             return;
-        movedContraption.setAngle(level.isClientSide ? flywheelMovement.clientAngle : flywheelMovement.angle);
-        final BlockState blockState = getBlockState();
+        this.movedContraption.setAngle(this.level.isClientSide ? this.flywheelMovement.clientAngle : this.flywheelMovement.angle);
+        final BlockState blockState = this.getBlockState();
         if (blockState.hasProperty(BlockStateProperties.FACING))
-            movedContraption.setRotationAxis(blockState.getValue(BlockStateProperties.FACING)
-                    .getAxis());
+            this.movedContraption.setRotationAxis(blockState.getValue(BlockStateProperties.FACING)
+                                                          .getAxis());
     }
 
     @Override
@@ -369,13 +394,14 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
             return true;
         if (isPlayerSneaking)
             return false;
-        if (running)
+        if (this.running)
             return false;
-        final BlockState state = getBlockState();
+        final BlockState state = this.getBlockState();
         if (!(state.getBlock() instanceof BearingBlock))
             return false;
 
-        final BlockState attachedState = level.getBlockState(worldPosition.relative(state.getValue(BearingBlock.FACING)));
+        final BlockState attachedState = this.level.getBlockState(this.worldPosition.relative(state.getValue(
+                BearingBlock.FACING)));
         if (attachedState.canBeReplaced())
             return false;
         TooltipHelper.addHint(tooltip, "hint.empty_bearing");
@@ -384,12 +410,12 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
 
     @Override
     public boolean isAttachedTo(final AbstractContraptionEntity contraption) {
-        return movedContraption == contraption;
+        return this.movedContraption == contraption;
     }
 
     @Override
     public void attach(final ControlledContraptionEntity contraption) {
-        final BlockState blockState = getBlockState();
+        final BlockState blockState = this.getBlockState();
         if (!(contraption.getContraption() instanceof BearingContraption))
             return;
         if (!(contraption instanceof final InertControlledContraptionEntity inertControlledContraptionEntity))
@@ -398,53 +424,53 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
             return;
 
         this.movedContraption = inertControlledContraptionEntity;
-        setChanged();
-        final BlockPos anchor = worldPosition.relative(blockState.getValue(BearingBlock.FACING));
-        movedContraption.setPos(anchor.getX(), anchor.getY(), anchor.getZ());
+        this.setChanged();
+        final BlockPos anchor = this.worldPosition.relative(blockState.getValue(BearingBlock.FACING));
+        this.movedContraption.setPos(anchor.getX(), anchor.getY(), anchor.getZ());
         this.running = true;
-        if (!level.isClientSide) {
-            sendData();
+        if (!this.level.isClientSide) {
+            this.sendData();
         }
     }
 
     @Override
     public void onStall() {
         // I dont think this should be possible but just handle it as normal
-        if (!level.isClientSide)
-            sendData();
+        if (!this.level.isClientSide)
+            this.sendData();
     }
 
     @Override
     public boolean isValid() {
-        return !isRemoved();
+        return !this.isRemoved();
     }
 
     @Override
     public BlockPos getBlockPosition() {
-        return worldPosition;
+        return this.worldPosition;
     }
 
     @Override
     public AssemblyException getLastAssemblyException() {
-        return lastException;
+        return this.lastException;
     }
 
     public float getFlywheelStressDelta() {
-        if (!hasNetwork() || !BnbConfigs.server().FLYWHEEL_STORAGE_CAPACITY.get()) {
+        if (!this.hasNetwork() || !BnbConfigs.server().FLYWHEEL_STORAGE_CAPACITY.get()) {
             return 0;
         }
 
-        final float flywheelAbsorptionCapacityInNetwork = level == null ? 0 :
-                (level.isClientSide ? clientFlywheelAbsorptionCapacityInNetwork :
-                        getOrCreateFlywheelNetwork().bits_n_bobs$getFlywheelStressAbsoptionCapacity());
-        final float flywheelReleaseCapacityInNetwork = level == null ? 0 :
-                (level.isClientSide ? clientFlywheelReleaseCapacityInNetwork :
-                        getOrCreateFlywheelNetwork().bits_n_bobs$getFlywheelStressReleaseCapacity());
+        final float flywheelAbsorptionCapacityInNetwork = this.level == null ? 0 :
+                (this.level.isClientSide ? this.clientFlywheelAbsorptionCapacityInNetwork :
+                        this.getOrCreateFlywheelNetwork().bits_n_bobs$getFlywheelStressAbsoptionCapacity());
+        final float flywheelReleaseCapacityInNetwork = this.level == null ? 0 :
+                (this.level.isClientSide ? this.clientFlywheelReleaseCapacityInNetwork :
+                        this.getOrCreateFlywheelNetwork().bits_n_bobs$getFlywheelStressReleaseCapacity());
 
-        final float stressDifferenceInNetwork = capacity - flywheelReleaseCapacityInNetwork - stress;
+        final float stressDifferenceInNetwork = this.capacity - flywheelReleaseCapacityInNetwork - this.stress;
 
-        final float flywheelAbsorptionStressCapacity = getFlywheelStressAbsorptionCapacity();
-        final float flywheelReleaseStressCapacity = getFlywheelStressReleaseCapacity();
+        final float flywheelAbsorptionStressCapacity = this.getFlywheelStressAbsorptionCapacity();
+        final float flywheelReleaseStressCapacity = this.getFlywheelStressReleaseCapacity();
 
         if (stressDifferenceInNetwork > 0) {
             if (flywheelAbsorptionCapacityInNetwork == 0)
@@ -460,52 +486,52 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
     }
 
     protected FlywheelAccessibleKineticNetwork getOrCreateFlywheelNetwork() {
-        return (FlywheelAccessibleKineticNetwork) getOrCreateNetwork();
+        return (FlywheelAccessibleKineticNetwork) this.getOrCreateNetwork();
     }
 
     public float getFlywheelStressAbsorptionCapacity() {
-        return running ? flywheelMovement.getFlywheelStressCapacity() : 0;
+        return this.running ? this.flywheelMovement.getFlywheelStressCapacity() : 0;
     }
 
     public void updateFlywheelStressesInNetwork() {
-        if (!BnbConfigs.server().FLYWHEEL_STORAGE_CAPACITY.get() || !hasNetwork())
+        if (!BnbConfigs.server().FLYWHEEL_STORAGE_CAPACITY.get() || !this.hasNetwork())
             return;
-        getOrCreateFlywheelNetwork().bits_n_bobs$updateFlywheelStresses();
+        this.getOrCreateFlywheelNetwork().bits_n_bobs$updateFlywheelStresses();
     }
 
     @Override
     public float getGeneratedSpeed() {
         if (!BnbConfigs.server().FLYWHEEL_STORAGE_CAPACITY.get()) return 0;
 
-        final float currentSpeed = getTheoreticalSpeed();
+        final float currentSpeed = this.getTheoreticalSpeed();
 
         if (currentSpeed != 0) {
             final int direction = currentSpeed > 0 ? 1 : -1;
-            if (direction != lastGeneratorDirection) {
-                lastGeneratorDirection = direction;
-                sendData();
+            if (direction != this.lastGeneratorDirection) {
+                this.lastGeneratorDirection = direction;
+                this.sendData();
             }
         }
 
-        return flywheelMovement.canProvideStress() ? (lastGeneratorDirection * 8) : 0;
+        return this.flywheelMovement.canProvideStress() ? (this.lastGeneratorDirection * 8) : 0;
     }
 
     @Override
     public float calculateAddedStressCapacity() {
         if (!BnbConfigs.server().FLYWHEEL_STORAGE_CAPACITY.get()) return 0;
 
-        final float capacity = getFlywheelStressReleaseCapacity();
+        final float capacity = this.getFlywheelStressReleaseCapacity();
         this.lastCapacityProvided = capacity;
-        final float currentSpeed = getGeneratedSpeed();
+        final float currentSpeed = this.getGeneratedSpeed();
         return currentSpeed == 0 ? capacity : capacity / Math.abs(currentSpeed);
     }
 
     public float getFlywheelStressReleaseCapacity() {
-        return flywheelMovement.canProvideStress() ? flywheelMovement.getMaxTransferCapacity() : 0;
+        return this.flywheelMovement.canProvideStress() ? this.flywheelMovement.getMaxTransferCapacity() : 0;
     }
 
     public void updateFlywheelStressesFromNetwork() {
-        sendData();
+        this.sendData();
     }
 
 }

@@ -63,6 +63,13 @@ public class FluidTankItemMixin {
     }
 
     @Inject(method = "place", at = @At("RETURN"))
+    private void bnb$clearPendingDyeColor(final BlockPlaceContext ctx,
+                                          final CallbackInfoReturnable<InteractionResult> cir) {
+        BNB_SINGLE_PLACE_DYE.remove();
+    }
+
+
+    @Inject(method = "place", at = @At("RETURN"))
     private void bnb$applyDyeAfterPlacement(final BlockPlaceContext ctx,
                                             final CallbackInfoReturnable<InteractionResult> cir) {
         final DyeColor dye = BNB_SINGLE_PLACE_DYE.get();
