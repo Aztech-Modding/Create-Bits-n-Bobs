@@ -1,6 +1,7 @@
 package com.kipti.bnb.content.decoration.palette;
 
 import com.google.common.collect.ImmutableList;
+import com.kipti.bnb.registry.core.BnbFeatureFlag;
 import com.kipti.bnb.registry.worldgen.BnbPaletteStoneTypes;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.tterrag.registrate.builders.BlockBuilder;
@@ -11,6 +12,8 @@ import com.tterrag.registrate.util.entry.BlockEntry;
 import com.tterrag.registrate.util.nullness.NonNullSupplier;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.data.recipes.SingleItemRecipeBuilder;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -56,7 +59,11 @@ public class BnbPalettesVariantEntry {
                     .ifPresent(b -> builder.onRegister(connectedTextures(b)));
 
             builder.recipe((c, p) -> {
-                p.stonecutting(DataIngredient.tag(paletteStoneVariants.materialTag), RecipeCategory.BUILDING_BLOCKS, c);
+                final RecipeOutput conditioned = p.withConditions(BnbFeatureFlag.TILES.getDataCondition());
+                final DataIngredient stonecuttingSource = DataIngredient.tag(paletteStoneVariants.materialTag);
+                SingleItemRecipeBuilder.stonecutting(stonecuttingSource.toVanilla(), RecipeCategory.BUILDING_BLOCKS, c.get(), 1)
+                        .unlockedBy("has_" + p.safeName(stonecuttingSource), stonecuttingSource.getCriterion(p))
+                        .save(conditioned, p.safeId(c.get()).withSuffix("_from_" + p.safeName(stonecuttingSource) + "_stonecutting"));
                 pattern.addRecipes(baseBlock, c, p);
             });
 
@@ -70,8 +77,13 @@ public class BnbPalettesVariantEntry {
         }
 
         REGISTRATE.addDataGenerator(ProviderType.RECIPE,
-                p -> p.stonecutting(DataIngredient.tag(paletteStoneVariants.materialTag), RecipeCategory.BUILDING_BLOCKS,
-                        baseBlock));
+                p -> {
+                    final RecipeOutput conditioned = p.withConditions(BnbFeatureFlag.TILES.getDataCondition());
+                    final DataIngredient stonecuttingSource = DataIngredient.tag(paletteStoneVariants.materialTag);
+                    SingleItemRecipeBuilder.stonecutting(stonecuttingSource.toVanilla(), RecipeCategory.BUILDING_BLOCKS, baseBlock.get(), 1)
+                            .unlockedBy("has_" + p.safeName(stonecuttingSource), stonecuttingSource.getCriterion(p))
+                            .save(conditioned, p.safeId(baseBlock.get()).withSuffix("_from_" + p.safeName(stonecuttingSource) + "_stonecutting"));
+                });
         REGISTRATE.addDataGenerator(ProviderType.ITEM_TAGS, p -> p.addTag(paletteStoneVariants.materialTag)
                 .add(baseBlock.get()
                         .asItem()));
