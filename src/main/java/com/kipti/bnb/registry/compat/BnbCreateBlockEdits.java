@@ -1,7 +1,7 @@
 package com.kipti.bnb.registry.compat;
 
 import com.cake.azimuth.registration.CreateBlockEdits;
-import com.kipti.bnb.content.dyeable_pipes.DyeablePipeBlockItem;
+import com.kipti.bnb.content.decoration.dyeable.pipes.DyeablePipeBlockItem;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
 public class BnbCreateBlockEdits {
@@ -10,8 +10,10 @@ public class BnbCreateBlockEdits {
 
     @CreateBlockEdits.Registrator
     public static void register() {
-        CreateBlockEdits.forBlock("belt", builder ->
-                builder.properties(p -> p.emissiveRendering((a, b, c) -> a.hasProperty(GLOWING) && a.getValue(GLOWING)))
+        CreateBlockEdits.forBlock(
+                "belt", builder ->
+                        builder.properties(p -> p.emissiveRendering((a, b, c) -> a.hasProperty(GLOWING) && a.getValue(
+                                GLOWING)))
         );
 
         CreateBlockEdits.forBlockItem("fluid_pipe", DyeablePipeBlockItem::new);

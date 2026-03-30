@@ -18,7 +18,10 @@ public class BnbSpriteShifts {
 
     public static final SpriteShiftEntry
             CHAIN_PULLEY_COIL = get("block/chain_pulley_coil", "block/chain_pulley_coil_scroll"),
-            CHAIN_ROPE = SpriteShifter.get(ResourceLocation.withDefaultNamespace("block/chain"), CreateBitsnBobs.asResource("block/chain_scroll"));
+            CHAIN_ROPE = SpriteShifter.get(
+                    ResourceLocation.withDefaultNamespace("block/chain"),
+                    CreateBitsnBobs.asResource("block/chain_scroll")
+            );
 
     public static final CTSpriteShiftEntry
             WEATHERED_GIRDER_POLE = vertical("weathered_girder_pole_side");
@@ -32,10 +35,12 @@ public class BnbSpriteShifts {
     private static Map<DyeColor, SpriteShiftEntry> getHeadlampSpriteShifts(final boolean off) {
         final Map<DyeColor, SpriteShiftEntry> map = new EnumMap<>(DyeColor.class);
         for (final DyeColor color : DyeColor.values()) {
-            map.put(color, get(
-                    "block/headlight/headlight_off",
-                    "block/headlight/headlight" + (off ? "_off" : "_on") + "_" + color.getName()
-            ));
+            map.put(
+                    color, get(
+                            "block/headlight/headlight_off",
+                            "block/headlight/headlight" + (off ? "_off" : "_on") + "_" + color.getName()
+                    )
+            );
         }
         return Collections.unmodifiableMap(map);
     }
@@ -57,36 +62,60 @@ public class BnbSpriteShifts {
      */
     public static final Map<DyeColor, SpriteShiftEntry> HEADLAMP_OFF_SPRITE_SHIFTS = getHeadlampSpriteShifts(true);
 
-    private enum PipeDyeSpriteShiftType {
-        PIPES_CONNECTED("pipes_connected"), PIPES("pipes"), GLASS_FLUID_PIPE("glass_fluid_pipe");
+    public static final Map<DyeColor, SpriteShiftEntry> DYED_PIPES = getDyedSpriteShifts(
+            "create",
+            "pipes",
+            "dyed_pipes"
+    );
+    public static final Map<DyeColor, SpriteShiftEntry> DYED_PIPES_CONNECTED = getDyedSpriteShifts(
+            "create",
+            "pipes_connected",
+            "dyed_pipes"
+    );
+    public static final Map<DyeColor, SpriteShiftEntry> DYED_GLASS_FLUID_PIPE = getDyedSpriteShifts(
+            "create",
+            "glass_fluid_pipe",
+            "dyed_pipes"
+    );
 
-        final String texture;
+    public static final Map<DyeColor, SpriteShiftEntry> DYED_FLUID_TANK_CONNECTED = getDyedSpriteShifts(
+            "create",
+            "fluid_tank_connected",
+            "dyed_fluid_tank"
+    );
+    public static final Map<DyeColor, SpriteShiftEntry> DYED_FLUID_TANK_TOP_CONNECTED = getDyedSpriteShifts(
+            "create",
+            "fluid_tank_top_connected",
+            "dyed_fluid_tank"
+    );
+    public static final Map<DyeColor, SpriteShiftEntry> DYED_FLUID_TANK_INNER_CONNECTED = getDyedSpriteShifts(
+            "create",
+            "fluid_tank_inner_connected",
+            "dyed_fluid_tank"
+    );
+    public static final Map<DyeColor, SpriteShiftEntry> DYED_FLUID_TANK_WINDOW = getDyedSpriteShifts(
+            "create",
+            "fluid_tank_window",
+            "dyed_fluid_tank"
+    );
+    public static final Map<DyeColor, SpriteShiftEntry> DYED_FLUID_TANK_WINDOW_SINGLE = getDyedSpriteShifts(
+            "create",
+            "fluid_tank_window_single",
+            "dyed_fluid_tank"
+    );
 
-        PipeDyeSpriteShiftType(final String texture) {
-            this.texture = texture;
-        }
-
-        public String getTexture() {
-            return texture;
-        }
-    }
-
-    public static final Map<DyeColor, SpriteShiftEntry> DYED_PIPES = getDyedPipeSpriteShifts(PipeDyeSpriteShiftType.PIPES);
-    public static final Map<DyeColor, SpriteShiftEntry> DYED_PIPES_CONNECTED = getDyedPipeSpriteShifts(PipeDyeSpriteShiftType.PIPES_CONNECTED);
-    /**
-     * Sprite shifts from the undyed Create connected pipe texture to the dyed BnB connected pipe texture for each dye color.
-     */
-    public static final Map<DyeColor, SpriteShiftEntry> DYED_GLASS_FLUID_PIPE = getDyedPipeSpriteShifts(PipeDyeSpriteShiftType.GLASS_FLUID_PIPE);
-
-    private static Map<DyeColor, SpriteShiftEntry> getDyedPipeSpriteShifts(final PipeDyeSpriteShiftType connected) {
+    public static Map<DyeColor, SpriteShiftEntry> getDyedSpriteShifts(
+            final String sourceNamespace,
+            final String sourceTexture,
+            final String targetFolder) {
         final Map<DyeColor, SpriteShiftEntry> map = new EnumMap<>(DyeColor.class);
         for (final DyeColor color : DyeColor.values()) {
-            final String originalPath = "block/" + connected.getTexture();
-            final String targetPath = "block/dyed_pipes/" + connected.getTexture() + "_" + color.getName();
-            map.put(color, SpriteShifter.get(
-                    ResourceLocation.fromNamespaceAndPath("create", originalPath),
-                    CreateBitsnBobs.asResource(targetPath)
-            ));
+            map.put(
+                    color, SpriteShifter.get(
+                            ResourceLocation.fromNamespaceAndPath(sourceNamespace, "block/" + sourceTexture),
+                            CreateBitsnBobs.asResource("block/" + targetFolder + "/" + sourceTexture + "_" + color.getName())
+                    )
+            );
         }
         return Collections.unmodifiableMap(map);
     }
@@ -99,9 +128,13 @@ public class BnbSpriteShifts {
         return getCT(AllCTTypes.VERTICAL, name);
     }
 
-    private static CTSpriteShiftEntry getCT(final CTType type, final String blockTextureName, final String connectedTextureName) {
-        return CTSpriteShifter.getCT(type, CreateBitsnBobs.asResource("block/" + blockTextureName),
-                CreateBitsnBobs.asResource("block/" + connectedTextureName + "_connected"));
+    private static CTSpriteShiftEntry getCT(final CTType type,
+                                            final String blockTextureName,
+                                            final String connectedTextureName) {
+        return CTSpriteShifter.getCT(
+                type, CreateBitsnBobs.asResource("block/" + blockTextureName),
+                CreateBitsnBobs.asResource("block/" + connectedTextureName + "_connected")
+        );
     }
 
     private static CTSpriteShiftEntry getCT(final CTType type, final String blockTextureName) {
@@ -109,7 +142,10 @@ public class BnbSpriteShifts {
     }
 
     private static SpriteShiftEntry get(final String originalLocation, final String targetLocation) {
-        return SpriteShifter.get(CreateBitsnBobs.asResource(originalLocation), CreateBitsnBobs.asResource(targetLocation));
+        return SpriteShifter.get(
+                CreateBitsnBobs.asResource(originalLocation),
+                CreateBitsnBobs.asResource(targetLocation)
+        );
     }
 
     public static void register() {

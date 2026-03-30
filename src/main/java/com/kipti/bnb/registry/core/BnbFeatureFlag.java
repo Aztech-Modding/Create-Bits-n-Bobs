@@ -1,15 +1,20 @@
 package com.kipti.bnb.registry.core;
 
 import com.kipti.bnb.foundation.config.conditions.BnbFeatureEnabledCondition;
+import com.kipti.bnb.registry.content.BnbItems;
+import com.kipti.bnb.registry.content.blocks.BnbBracketBlocks;
 import com.kipti.bnb.registry.content.blocks.BnbKineticBlocks;
 import com.kipti.bnb.registry.content.blocks.BnbTrinketBlocks;
 import com.kipti.bnb.registry.content.blocks.deco.BnbDecorativeBlocks;
+import com.kipti.bnb.registry.content.blocks.encased.BnbExtraEncasedBlocks;
+import com.kipti.bnb.registry.content.blocks.encased.BnbSpecialEncasedBlocks;
 import com.kipti.bnb.registry.worldgen.BnbPaletteStoneTypes;
 import com.simibubi.create.foundation.block.DyedBlockList;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.common.util.Lazy;
 
 import java.util.ArrayList;
@@ -18,95 +23,300 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public enum BnbFeatureFlag {
-    COGWHEEL_CHAIN_DRIVES("Ability for the player to create chain drives using create's cogwheels specifically."),
-    FLANGED_CHAIN_DRIVES("Ability for the player to create chain drives using the flanged gear cogwheels.", BnbKineticBlocks.LARGE_FLANGED_COGWHEEL::get, BnbKineticBlocks.SMALL_FLANGED_COGWHEEL::get),
+    COGWHEEL_CHAIN_DRIVES(
+            FeatureCategories.BEHAVIOUR,
+            "Ability for the player to create chain drives using create's cogwheels specifically."
+    ),
+    FLANGED_CHAIN_DRIVES(
+            FeatureCategories.BLOCK, "Ability for the player to create chain drives using the flanged gear cogwheels.",
+            BnbKineticBlocks.LARGE_FLANGED_COGWHEEL::get, BnbKineticBlocks.SMALL_FLANGED_COGWHEEL::get
+    ),
 
-    CHAIN_PULLEY("Availability of the Chain Pulley block.", BnbKineticBlocks.CHAIN_PULLEY::get),
+    CHAIN_PULLEY(
+            FeatureCategories.BLOCK,
+            "Availability of the Chain Pulley block.",
+            BnbKineticBlocks.CHAIN_PULLEY::get,
+            BnbKineticBlocks.CHAIN_ROPE::get,
+            BnbKineticBlocks.CHAIN_PULLEY_MAGNET::get
+    ),
 
-    EXPERIMENTAL_FLYWHEEL_BEARING("Availability of the Flywheel Bearing block. (In development)", false, BnbKineticBlocks.FLYWHEEL_BEARING::get),
-    EXPERIMENTAL_WOODEN_STRUT("Availability of the Wooden Strut block. (In development)", false, BnbDecorativeBlocks.WOODEN_GIRDER_STRUT::get),
+    EXPERIMENTAL_FLYWHEEL_BEARING(
+            FeatureCategories.BLOCK, "Availability of the Flywheel Bearing block.", true,
+            BnbKineticBlocks.FLYWHEEL_BEARING::get
+    ),
+    WOODEN_STRUT(
+            FeatureCategories.BLOCK, "Availability of the Wooden Strut block.", true,
+            BnbDecorativeBlocks.WOODEN_GIRDER_STRUT::get
+    ),
 
-    WEATHERED_GIRDER("Availability of the weathered girder block.", BnbDecorativeBlocks.WEATHERED_METAL_GIRDER::get, BnbDecorativeBlocks.WEATHERED_GIRDER_STRUT::get),
-    GIRDER_STRUT("Availability of the girder strut blocks.", BnbDecorativeBlocks.GIRDER_STRUT::get, BnbDecorativeBlocks.WEATHERED_GIRDER_STRUT::get),
+    WEATHERED_GIRDER(
+            FeatureCategories.BLOCK,
+            "Availability of the weathered girder block.",
+            BnbDecorativeBlocks.WEATHERED_METAL_GIRDER::get,
+            BnbDecorativeBlocks.WEATHERED_GIRDER_STRUT::get,
+            BnbDecorativeBlocks.WEATHERED_METAL_GIRDER_ENCASED_SHAFT::get
+    ),
+    GIRDER_STRUT(
+            FeatureCategories.BLOCK, "Availability of the girder strut blocks.",
+            BnbDecorativeBlocks.GIRDER_STRUT::get, BnbDecorativeBlocks.WEATHERED_GIRDER_STRUT::get
+    ),
 
-    NIXIE_BOARD("Availability of Nixie Board block.", createSupplierSet(BnbTrinketBlocks.NIXIE_BOARD, BnbTrinketBlocks.DYED_NIXIE_BOARD)),
-    LARGE_NIXIE_TUBE("Availability of Large Nixie Tube block.", createSupplierSet(BnbTrinketBlocks.LARGE_NIXIE_TUBE, BnbTrinketBlocks.DYED_LARGE_NIXIE_TUBE)),
+    NIXIE_BOARD(
+            FeatureCategories.BLOCK, "Availability of Nixie Board block.",
+            createBlockAndDyedSupplierSet(BnbTrinketBlocks.NIXIE_BOARD, BnbTrinketBlocks.DYED_NIXIE_BOARD)
+    ),
+    LARGE_NIXIE_TUBE(
+            FeatureCategories.BLOCK, "Availability of Large Nixie Tube block.",
+            createBlockAndDyedSupplierSet(BnbTrinketBlocks.LARGE_NIXIE_TUBE, BnbTrinketBlocks.DYED_LARGE_NIXIE_TUBE)
+    ),
 
-    LIGHTBULB("Availability of the Lightbulb block.", BnbTrinketBlocks.LIGHTBULB::get),
-    BRASS_LAMP("Availability of the Brass Lamp block.", BnbTrinketBlocks.BRASS_LAMP::get),
-    HEADLAMP("Availability of the Headlamp block.", BnbTrinketBlocks.HEADLAMP::get),
-    CHAIRS("Availability of the Chair blocks.", createSupplierSet(BnbTrinketBlocks.CHAIRS)),
+    LIGHTBULB(
+            FeatureCategories.BLOCK, "Availability of the Lightbulb block.",
+            BnbTrinketBlocks.LIGHTBULB::get
+    ),
+    BRASS_LAMP(
+            FeatureCategories.BLOCK, "Availability of the Brass Lamp block.",
+            BnbTrinketBlocks.BRASS_LAMP::get
+    ),
+    HEADLAMP(
+            FeatureCategories.BLOCK, "Availability of the Headlamp block.",
+            BnbTrinketBlocks.HEADLAMP::get
+    ),
+    CHAIRS(
+            FeatureCategories.BLOCK, "Availability of the Chair blocks.",
+            createDyedSupplierSet(BnbTrinketBlocks.CHAIRS)
+    ),
 
-    TILES("Availability of the tile decoration blocks.", createDecoBlockSupplierSet(BnbPaletteStoneTypes.values())),
+    TILES(
+            FeatureCategories.BLOCK, "Availability of the tile decoration blocks.",
+            createDecoBlockSupplierSet(BnbPaletteStoneTypes.values())
+    ),
+
+    INDUSTRIAL_GRATING(
+            FeatureCategories.BLOCK,
+            "Availability of the industrial grating blocks.",
+            true,
+            BnbDecorativeBlocks.INDUSTRIAL_GRATING::get,
+            BnbDecorativeBlocks.INDUSTRIAL_GRATING_PANEL::get,
+            BnbSpecialEncasedBlocks.INDUSTRIAL_GRATING_PANEL::get
+    ),
+    INDUSTRIAL_TRUSS(
+            FeatureCategories.BLOCK, "Availability of the industrial truss blocks.", true,
+            BnbDecorativeBlocks.INDUSTRIAL_TRUSS::get, BnbDecorativeBlocks.INDUSTRIAL_TRUSS_ENCASED_SHAFT::get
+    ),
+    COGWHEEL_CHAIN_CARRIAGE(
+            FeatureCategories.BLOCK, "Availability of the Cogwheel Chain Carriage block.", true,
+            BnbKineticBlocks.COGWHEEL_CHAIN_CARRIAGE::get
+    ),
+    THROTTLE_LEVER(
+            FeatureCategories.BLOCK,
+            "Availability of the Throttle Lever block.",
+            true,
+            BnbTrinketBlocks.THROTTLE_LEVER::get
+    ),
+
+    CABLE_GIRDER_STRUT(
+            FeatureCategories.BLOCK, "Availability of the Cable Girder Strut block.",
+            true,
+            BnbDecorativeBlocks.CABLE_GIRDER_STRUT::get
+    ),
+    WEATHERED_METAL_BRACKET(
+            FeatureCategories.BLOCK, "Availability of the Weathered Metal Bracket block.",
+            BnbBracketBlocks.WEATHERED_METAL_BRACKET::get
+    ),
+
+    INDUSTRIAL_IRON_ENCASING(
+            FeatureCategories.BLOCK,
+            "Availability of the Industrial Iron encased block variants.",
+            BnbExtraEncasedBlocks.INDUSTRIAL_IRON_ENCASED_SHAFT::get,
+            BnbExtraEncasedBlocks.INDUSTRIAL_IRON_ENCASED_COGWHEEL::get,
+            BnbExtraEncasedBlocks.INDUSTRIAL_IRON_ENCASED_LARGE_COGWHEEL::get
+    ),
+    WEATHERED_IRON_ENCASING(
+            FeatureCategories.BLOCK,
+            "Availability of the Weathered Iron encased block variants.",
+            BnbExtraEncasedBlocks.WEATHERED_IRON_ENCASED_SHAFT::get,
+            BnbExtraEncasedBlocks.WEATHERED_IRON_ENCASED_COGWHEEL::get,
+            BnbExtraEncasedBlocks.WEATHERED_IRON_ENCASED_LARGE_COGWHEEL::get
+    ),
+
+    COOKIE_DOUGH(
+            FeatureCategories.ITEM, "Availability of the Cookie Dough item.", true, BnbItems.COOKIE_DOUGH
+    ),
+
+    DYEABLE_PIPES(FeatureCategories.BEHAVIOUR, "Ability to dye fluid pipes."),
+    DYEABLE_TANKS(FeatureCategories.BEHAVIOUR, "Ability to dye fluid tanks."),
 
     ;
 
-    @SuppressWarnings("unchecked")
-    private static Lazy<Supplier<Block>[]> createDecoBlockSupplierSet(final BnbPaletteStoneTypes[] values) {
+    private static Lazy<List<Supplier<Block>>> createDecoBlockSupplierSet(final BnbPaletteStoneTypes[] values) {
         return Lazy.of(() -> {
             final List<Supplier<Block>> blocks = new ArrayList<>();
             for (final BnbPaletteStoneTypes type : values) {
                 blocks.addAll(type.getVariants()
-                        .registeredBlocks.stream()
-                        .map(e -> (Supplier<Block>) e::get)
-                        .toList());
+                                      .registeredBlocks.stream()
+                                      .map(e -> (Supplier<Block>) e::get)
+                                      .toList());
                 blocks.addAll(type.getVariants()
-                        .registeredPartials.stream()
-                        .map(e -> (Supplier<Block>) e::get)
-                        .toList());
+                                      .registeredPartials.stream()
+                                      .map(e -> (Supplier<Block>) e::get)
+                                      .toList());
             }
-            return blocks.toArray(Supplier[]::new);
+            return blocks;
         });
     }
 
     @SuppressWarnings("unchecked")
-    private static Supplier<Block>[] createSupplierSet(final DyedBlockList<? extends Block> dyedBlockList) {
+    private static Supplier<Block>[] createDyedSupplierSet(final DyedBlockList<? extends Block> dyedBlockList) {
         return (Supplier<Block>[]) Arrays.stream(dyedBlockList.toArray())
-                .map(chairEntry -> ((Supplier<Block>) chairEntry::get))
+                .map(entry -> ((Supplier<Block>) entry::get))
                 .toArray(Supplier[]::new);
     }
 
-    @SuppressWarnings("unchecked")
-    private static Lazy<Supplier<Block>[]> createSupplierSet(final BlockEntry<? extends Block> baseBlock, final DyedBlockList<? extends Block> dyedBlockList) {
+    private static Lazy<List<Supplier<Block>>> createBlockAndDyedSupplierSet(final BlockEntry<? extends Block> baseBlock,
+                                                                             final DyedBlockList<? extends Block> dyedBlockList) {
         return Lazy.of(() -> {
             final List<Supplier<Block>> blocks = new ArrayList<>();
             blocks.add(baseBlock::get);
             blocks.addAll(Arrays.stream(dyedBlockList.toArray())
-                    .map(dyedEntry -> (Supplier<Block>) dyedEntry::get)
-                    .toList());
-            return blocks.toArray(Supplier[]::new);
+                                  .map(dyedEntry -> (Supplier<Block>) dyedEntry::get)
+                                  .toList());
+            return blocks.stream().toList();
         });
     }
 
+    private final FeatureCategories.FeatureCategory category;
     private final String description;
-    private final Lazy<Supplier<Block>[]> associatedBlocks;
+    private final Lazy<List<Supplier<Block>>> associatedBlocks;
+    private final Lazy<List<Supplier<Item>>> associatedItems;
     private final boolean defaultState;
+    private final boolean releaseLocked;
 
     @SafeVarargs
-    BnbFeatureFlag(final String description, final Supplier<Block>... associatedBlocks) {
-        this.description = description;
-        this.associatedBlocks = Lazy.of(() -> associatedBlocks);
-        this.defaultState = true;
+    BnbFeatureFlag(final FeatureCategories.ItemFeatureCategory blocks,
+                   final String description,
+                   final Supplier<Item>... associatedItems) {
+        this(blocks, description, false, true, Lazy.of(List::of), Lazy.of(() -> Arrays.asList(associatedItems)));
     }
 
     @SafeVarargs
-    BnbFeatureFlag(final String description, final boolean defaultState, final Supplier<Block>... associatedBlocks) {
-        this.description = description;
-        this.associatedBlocks = Lazy.of(() -> associatedBlocks);
-        this.defaultState = defaultState;
+    BnbFeatureFlag(final FeatureCategories.ItemFeatureCategory blocks,
+                   final String description,
+                   final boolean experimental,
+                   final Supplier<Item>... associatedItems) {
+        this(
+                blocks,
+                description,
+                experimental,
+                !experimental,
+                Lazy.of(List::of),
+                Lazy.of(() -> Arrays.asList(associatedItems))
+        );
     }
 
-    BnbFeatureFlag(final String description, final Lazy<Supplier<Block>[]> associatedBlocks) {
+    @SafeVarargs
+    BnbFeatureFlag(final FeatureCategories.BlockFeatureCategory blocks,
+                   final String description,
+                   final Supplier<Block>... associatedBlocks) {
+        this(blocks, description, false, true, Lazy.of(() -> Arrays.asList(associatedBlocks)), Lazy.of(List::of));
+    }
+
+    @SafeVarargs
+    BnbFeatureFlag(final FeatureCategories.BlockFeatureCategory blocks,
+                   final String description,
+                   final boolean experimental,
+                   final Supplier<Block>... associatedBlocks) {
+        this(
+                blocks,
+                description,
+                experimental,
+                !experimental,
+                Lazy.of(() -> Arrays.asList(associatedBlocks)),
+                Lazy.of(List::of)
+        );
+    }
+
+    BnbFeatureFlag(final FeatureCategories.BehaviourFeatureCategory blocks,
+                   final String description) {
+        this(blocks, description, false, true, Lazy.of(List::of), Lazy.of(List::of));
+    }
+
+    BnbFeatureFlag(final FeatureCategories.BlockFeatureCategory block,
+                   final String description,
+                   final Lazy<List<Supplier<Block>>> associatedBlocks) {
+        this(block, description, false, true, associatedBlocks, Lazy.of(List::of));
+    }
+
+    BnbFeatureFlag(final FeatureCategories.FeatureCategory category,
+                   final String description,
+                   final boolean releaseLocked,
+                   final boolean defaultState,
+                   final Lazy<List<Supplier<Block>>> associatedBlocks,
+                   final Lazy<List<Supplier<Item>>> associatedItems) {
+        this.category = category;
         this.description = description;
         this.associatedBlocks = associatedBlocks;
-        this.defaultState = true;
+        this.associatedItems = associatedItems;
+        this.defaultState = defaultState;
+        this.releaseLocked = releaseLocked;
+    }
+
+    public static boolean isDevEnvironment() {
+        return !FMLLoader.isProduction();
+    }
+
+    /**
+     * Returns whether the item is associated with any release-locked feature flag.
+     */
+    public static boolean isReleaseLocked(final Item item) {
+        if (item instanceof final BlockItem blockItem) {
+            return isReleaseLocked(blockItem);
+        }
+        for (final BnbFeatureFlag flag : BnbFeatureFlag.values()) {
+            if (!flag.releaseLocked) {
+                continue;
+            }
+            for (final Supplier<Item> itemSupplier : flag.getAssociatedItems()) {
+                if (itemSupplier.get() == item) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns whether the block item is associated with any release-locked feature flag.
+     */
+    public static boolean isReleaseLocked(final BlockItem blockItem) {
+        if (blockItem == null) {
+            return false;
+        }
+        for (final BnbFeatureFlag flag : BnbFeatureFlag.values()) {
+            if (!flag.releaseLocked) {
+                continue;
+            }
+            for (final Supplier<Block> blockSupplier : flag.getAssociatedBlocks()) {
+                if (blockSupplier.get() == blockItem.getBlock()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public static boolean isEnabled(final Item item) {
-        if (!(item instanceof final BlockItem blockItem)) {
-            return true;
+        if (item instanceof final BlockItem blockItem) {
+            return isEnabled(blockItem);
         }
-        return isEnabled(blockItem);
+        for (final BnbFeatureFlag featureFlag : BnbFeatureFlag.values()) {
+            for (final Supplier<Item> itemSupplier : featureFlag.getAssociatedItems()) {
+                if (itemSupplier.get() == item && !featureFlag.get()) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**
@@ -140,22 +350,37 @@ public enum BnbFeatureFlag {
             return false;
         }
 
-        return BnbConfigs.common().getFeatureFlagState(flag);
+        return flag.get();
+    }
+
+    public FeatureCategories.FeatureCategory getCategory() {
+        return this.category;
     }
 
     public String getDescription() {
-        return description;
+        return this.description;
     }
 
     public boolean getDefaultState() {
-        return defaultState;
+        return this.defaultState;
     }
 
-    public Supplier<Block>[] getAssociatedBlocks() {
-        return associatedBlocks.get();
+    public boolean isReleaseLocked() {
+        return this.releaseLocked;
+    }
+
+    public List<Supplier<Block>> getAssociatedBlocks() {
+        return this.associatedBlocks.get();
+    }
+
+    public List<Supplier<Item>> getAssociatedItems() {
+        return this.associatedItems.get();
     }
 
     public boolean get() {
+        if (this.releaseLocked && !isDevEnvironment()) {
+            return false;
+        }
         return BnbConfigs.common().getFeatureFlagState(this);
     }
 

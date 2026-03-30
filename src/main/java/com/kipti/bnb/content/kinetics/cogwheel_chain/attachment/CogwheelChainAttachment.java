@@ -229,27 +229,31 @@ public class CogwheelChainAttachment {
         return wrapped < 0 ? wrapped + totalLength : wrapped;
     }
 
-    private static Vec3 getSmoothedCurrentDirection(final List<CogwheelChainSegment> segments, final float dist) {
-        final float backDist = dist - 0.1f;
-        final float frontDist = dist + 0.1f;
+    private Vec3 getSmoothedCurrentDirection(final List<CogwheelChainSegment> segments, final float dist) {
+        final float backDist = dist - 0.2f;
+        final float frontDist = dist + 0.2f;
 
-        final CogwheelChainSegment backSegment = findSegmentAtDist(segments, backDist);
-        final CogwheelChainSegment frontSegment = findSegmentAtDist(segments, frontDist);
-        if (backSegment == null || frontSegment == null) return Vec3.ZERO;
-
-        final Vec3 backDirection = backSegment.toPosition().subtract(backSegment.fromPosition()).normalize();
-        final Vec3 frontDirection = frontSegment.toPosition().subtract(frontSegment.fromPosition()).normalize();
-
-        final float pointOfChange = (backSegment.endDist() + frontSegment.startDist()) / 2f;
-        final float lerpFrom = (pointOfChange - backDist) / (frontDist - backDist);
-
-        return frontDirection.lerp(backDirection, lerpFrom);
+        return this.resolvePositionOnSegments(segments, frontDist).subtract(this.resolvePositionOnSegments(
+                segments,
+                backDist
+        )).normalize();
+//        final CogwheelChainSegment backSegment = findSegmentAtDist(segments, backDist);
+//        final CogwheelChainSegment frontSegment = findSegmentAtDist(segments, frontDist);
+//        if (backSegment == null || frontSegment == null) return Vec3.ZERO;
+//
+//        final Vec3 backDirection = backSegment.toPosition().subtract(backSegment.fromPosition()).normalize();
+//        final Vec3 frontDirection = frontSegment.toPosition().subtract(frontSegment.fromPosition()).normalize();
+//
+//        final float pointOfChange = (backSegment.endDist() + frontSegment.startDist()) / 2f;
+//        final float lerpFrom = (pointOfChange - backDist) / (frontDist - backDist);
+//
+//        return frontDirection.lerp(backDirection, lerpFrom);
     }
 
     public Vec3 getCurrentDirection(final Level level, final float offset) {
         final @Nullable List<CogwheelChainSegment> segments = this.getCurrentCogwheelChainSegments(level);
         if (segments == null) return Vec3.ZERO;
-        return getSmoothedCurrentDirection(segments, this.dist + offset);
+        return this.getSmoothedCurrentDirection(segments, this.dist + offset);
     }
 
     public Vec3 getCurrentDirection(final Level level) {

@@ -23,7 +23,13 @@ public class FlywheelBearingBlock extends DirectionalKineticBlock implements IBE
     }
 
     @Override
-    protected @NotNull ItemInteractionResult useItemOn(final @NotNull ItemStack stack, final @NotNull BlockState state, final @NotNull Level level, final @NotNull BlockPos pos, final Player player, final @NotNull InteractionHand hand, final @NotNull BlockHitResult hitResult) {
+    protected @NotNull ItemInteractionResult useItemOn(final @NotNull ItemStack stack,
+                                                       final @NotNull BlockState state,
+                                                       final @NotNull Level level,
+                                                       final @NotNull BlockPos pos,
+                                                       final Player player,
+                                                       final @NotNull InteractionHand hand,
+                                                       final @NotNull BlockHitResult hitResult) {
         if (!player.mayBuild())
             return ItemInteractionResult.FAIL;
         if (player.isShiftKeyDown())
@@ -31,13 +37,15 @@ public class FlywheelBearingBlock extends DirectionalKineticBlock implements IBE
         if (stack.isEmpty()) {
             if (level.isClientSide)
                 return ItemInteractionResult.SUCCESS;
-            withBlockEntityDo(level, pos, be -> {
-                if (be.running) {
-                    be.disassemble();
-                } else {
-                    be.checkAssemblyNextTick = true;
-                }
-            });
+            this.withBlockEntityDo(
+                    level, pos, be -> {
+                        if (be.running) {
+                            be.disassemble();
+                        } else {
+                            be.checkAssemblyNextTick = true;
+                        }
+                    }
+            );
             return ItemInteractionResult.SUCCESS;
         }
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;

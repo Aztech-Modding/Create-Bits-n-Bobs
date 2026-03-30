@@ -2,6 +2,7 @@ package com.kipti.bnb.content.decoration.palette;
 
 import com.google.common.collect.ImmutableMap;
 import com.kipti.bnb.CreateBitsnBobs;
+import com.kipti.bnb.registry.core.BnbFeatureFlag;
 import com.kipti.bnb.registry.worldgen.BnbPaletteStoneTypes;
 import com.simibubi.create.Create;
 import com.simibubi.create.foundation.data.CreateRegistrate;
@@ -16,8 +17,10 @@ import com.tterrag.registrate.util.nullness.NonnullType;
 import net.createmod.catnip.lang.Lang;
 import net.minecraft.core.Direction;
 import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
+import net.minecraft.data.recipes.SingleItemRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
@@ -150,8 +153,20 @@ public abstract class BnbPaletteBlockPartial<B extends Block> {
         protected void createRecipes(final BnbPaletteStoneTypes type, final BlockEntry<? extends Block> patternBlock,
                                      final DataGenContext<Block, ? extends Block> c, final RegistrateRecipeProvider p) {
             final RecipeCategory category = RecipeCategory.BUILDING_BLOCKS;
-            p.stairs(DataIngredient.items(patternBlock.get()), category, c, c.getName(), false);
-            p.stonecutting(DataIngredient.tag(type.materialTag), category, c, 1);
+            final RecipeOutput conditioned = p.withConditions(BnbFeatureFlag.TILES.getDataCondition());
+            final DataIngredient stairSource = DataIngredient.items(patternBlock.get());
+            ShapedRecipeBuilder.shaped(category, c.get(), 4)
+                    .pattern("X  ")
+                    .pattern("XX ")
+                    .pattern("XXX")
+                    .define('X', stairSource.toVanilla())
+                    .group(c.getName())
+                    .unlockedBy("has_" + p.safeName(stairSource), stairSource.getCriterion(p))
+                    .save(conditioned, p.safeId(c.get()));
+            final DataIngredient stonecuttingSource = DataIngredient.tag(type.materialTag);
+            SingleItemRecipeBuilder.stonecutting(stonecuttingSource.toVanilla(), category, c.get(), 1)
+                    .unlockedBy("has_" + p.safeName(stonecuttingSource), stonecuttingSource.getCriterion(p))
+                    .save(conditioned, p.safeId(c.get()).withSuffix("_from_" + p.safeName(stonecuttingSource) + "_stonecutting"));
         }
 
     }
@@ -213,14 +228,24 @@ public abstract class BnbPaletteBlockPartial<B extends Block> {
         protected void createRecipes(final BnbPaletteStoneTypes type, final BlockEntry<? extends Block> patternBlock,
                                      final DataGenContext<Block, ? extends Block> c, final RegistrateRecipeProvider p) {
             final RecipeCategory category = RecipeCategory.BUILDING_BLOCKS;
-            p.slab(DataIngredient.items(patternBlock.get()), category, c, c.getName(), false);
-            p.stonecutting(DataIngredient.tag(type.materialTag), category, c, 2);
+            final RecipeOutput conditioned = p.withConditions(BnbFeatureFlag.TILES.getDataCondition());
+            final DataIngredient slabSource = DataIngredient.items(patternBlock.get());
+            ShapedRecipeBuilder.shaped(category, c.get(), 6)
+                    .pattern("XXX")
+                    .define('X', slabSource.toVanilla())
+                    .group(c.getName())
+                    .unlockedBy("has_" + p.safeName(slabSource), slabSource.getCriterion(p))
+                    .save(conditioned, p.safeId(c.get()));
+            final DataIngredient stonecuttingSource = DataIngredient.tag(type.materialTag);
+            SingleItemRecipeBuilder.stonecutting(stonecuttingSource.toVanilla(), category, c.get(), 2)
+                    .unlockedBy("has_" + p.safeName(stonecuttingSource), stonecuttingSource.getCriterion(p))
+                    .save(conditioned, p.safeId(c.get()).withSuffix("_from_" + p.safeName(stonecuttingSource) + "_stonecutting"));
             final DataIngredient ingredient = DataIngredient.items(c.get());
             ShapelessRecipeBuilder.shapeless(category, patternBlock.get())
                     .requires(ingredient.toVanilla())
                     .requires(ingredient.toVanilla())
                     .unlockedBy("has_" + c.getName(), ingredient.getCriterion(p))
-                    .save(p, Create.ID + ":" + c.getName() + "_recycling");
+                    .save(conditioned, Create.ID + ":" + c.getName() + "_recycling");
         }
 
         @Override
@@ -313,8 +338,20 @@ public abstract class BnbPaletteBlockPartial<B extends Block> {
         protected void createRecipes(final BnbPaletteStoneTypes type, final BlockEntry<? extends Block> patternBlock,
                                      final DataGenContext<Block, ? extends Block> c, final RegistrateRecipeProvider p) {
             final RecipeCategory category = RecipeCategory.BUILDING_BLOCKS;
-            p.stairs(DataIngredient.items(patternBlock.get()), category, c, c.getName(), false);
-            p.stonecutting(DataIngredient.tag(type.materialTag), category, c, 1);
+            final RecipeOutput conditioned = p.withConditions(BnbFeatureFlag.TILES.getDataCondition());
+            final DataIngredient stairSource = DataIngredient.items(patternBlock.get());
+            ShapedRecipeBuilder.shaped(category, c.get(), 4)
+                    .pattern("X  ")
+                    .pattern("XX ")
+                    .pattern("XXX")
+                    .define('X', stairSource.toVanilla())
+                    .group(c.getName())
+                    .unlockedBy("has_" + p.safeName(stairSource), stairSource.getCriterion(p))
+                    .save(conditioned, p.safeId(c.get()));
+            final DataIngredient stonecuttingSource = DataIngredient.tag(type.materialTag);
+            SingleItemRecipeBuilder.stonecutting(stonecuttingSource.toVanilla(), category, c.get(), 1)
+                    .unlockedBy("has_" + p.safeName(stonecuttingSource), stonecuttingSource.getCriterion(p))
+                    .save(conditioned, p.safeId(c.get()).withSuffix("_from_" + p.safeName(stonecuttingSource) + "_stonecutting"));
         }
 
     }
@@ -376,14 +413,24 @@ public abstract class BnbPaletteBlockPartial<B extends Block> {
         protected void createRecipes(final BnbPaletteStoneTypes type, final BlockEntry<? extends Block> patternBlock,
                                      final DataGenContext<Block, ? extends Block> c, final RegistrateRecipeProvider p) {
             final RecipeCategory category = RecipeCategory.BUILDING_BLOCKS;
-            p.slab(DataIngredient.items(patternBlock.get()), category, c, c.getName(), false);
-            p.stonecutting(DataIngredient.tag(type.materialTag), category, c, 2);
+            final RecipeOutput conditioned = p.withConditions(BnbFeatureFlag.TILES.getDataCondition());
+            final DataIngredient slabSource = DataIngredient.items(patternBlock.get());
+            ShapedRecipeBuilder.shaped(category, c.get(), 6)
+                    .pattern("XXX")
+                    .define('X', slabSource.toVanilla())
+                    .group(c.getName())
+                    .unlockedBy("has_" + p.safeName(slabSource), slabSource.getCriterion(p))
+                    .save(conditioned, p.safeId(c.get()));
+            final DataIngredient stonecuttingSource = DataIngredient.tag(type.materialTag);
+            SingleItemRecipeBuilder.stonecutting(stonecuttingSource.toVanilla(), category, c.get(), 2)
+                    .unlockedBy("has_" + p.safeName(stonecuttingSource), stonecuttingSource.getCriterion(p))
+                    .save(conditioned, p.safeId(c.get()).withSuffix("_from_" + p.safeName(stonecuttingSource) + "_stonecutting"));
             final DataIngredient ingredient = DataIngredient.items(c.get());
             ShapelessRecipeBuilder.shapeless(category, patternBlock.get())
                     .requires(ingredient.toVanilla())
                     .requires(ingredient.toVanilla())
                     .unlockedBy("has_" + c.getName(), ingredient.getCriterion(p))
-                    .save(p, Create.ID + ":" + c.getName() + "_recycling");
+                    .save(conditioned, Create.ID + ":" + c.getName() + "_recycling");
         }
 
         @Override
@@ -434,14 +481,18 @@ public abstract class BnbPaletteBlockPartial<B extends Block> {
         protected void createRecipes(final BnbPaletteStoneTypes type, final BlockEntry<? extends Block> patternBlock,
                                      final DataGenContext<Block, ? extends Block> c, final RegistrateRecipeProvider p) {
             final RecipeCategory category = RecipeCategory.BUILDING_BLOCKS;
-            p.stonecutting(DataIngredient.tag(type.materialTag), category, c, 1);
+            final RecipeOutput conditioned = p.withConditions(BnbFeatureFlag.TILES.getDataCondition());
+            final DataIngredient stonecuttingSource = DataIngredient.tag(type.materialTag);
+            SingleItemRecipeBuilder.stonecutting(stonecuttingSource.toVanilla(), category, c.get(), 1)
+                    .unlockedBy("has_" + p.safeName(stonecuttingSource), stonecuttingSource.getCriterion(p))
+                    .save(conditioned, p.safeId(c.get()).withSuffix("_from_" + p.safeName(stonecuttingSource) + "_stonecutting"));
             final DataIngredient ingredient = DataIngredient.items(patternBlock.get());
             ShapedRecipeBuilder.shaped(category, c.get(), 6)
                     .pattern("XXX")
                     .pattern("XXX")
                     .define('X', ingredient.toVanilla())
                     .unlockedBy("has_" + p.safeName(ingredient), ingredient.getCriterion(p))
-                    .save(p, p.safeId(c.get()));
+                    .save(conditioned, p.safeId(c.get()));
         }
 
     }
@@ -557,14 +608,18 @@ public abstract class BnbPaletteBlockPartial<B extends Block> {
         protected void createRecipes(final BnbPaletteStoneTypes type, final BlockEntry<? extends Block> patternBlock,
                                      final DataGenContext<Block, ? extends Block> c, final RegistrateRecipeProvider p) {
             final RecipeCategory category = RecipeCategory.BUILDING_BLOCKS;
-            p.stonecutting(DataIngredient.tag(type.materialTag), category, c, 1);
+            final RecipeOutput conditioned = p.withConditions(BnbFeatureFlag.TILES.getDataCondition());
+            final DataIngredient stonecuttingSource = DataIngredient.tag(type.materialTag);
+            SingleItemRecipeBuilder.stonecutting(stonecuttingSource.toVanilla(), category, c.get(), 1)
+                    .unlockedBy("has_" + p.safeName(stonecuttingSource), stonecuttingSource.getCriterion(p))
+                    .save(conditioned, p.safeId(c.get()).withSuffix("_from_" + p.safeName(stonecuttingSource) + "_stonecutting"));
             final DataIngredient ingredient = DataIngredient.items(patternBlock.get());
             ShapedRecipeBuilder.shaped(category, c.get(), 6)
                     .pattern("XXX")
                     .pattern("XXX")
                     .define('X', ingredient.toVanilla())
                     .unlockedBy("has_" + p.safeName(ingredient), ingredient.getCriterion(p))
-                    .save(p, p.safeId(c.get()));
+                    .save(conditioned, p.safeId(c.get()));
         }
     }
 }

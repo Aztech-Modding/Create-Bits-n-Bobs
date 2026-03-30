@@ -15,8 +15,6 @@ import net.minecraft.world.phys.Vec3;
 
 public class CogwheelChainCarriageContraptionEntity extends OrientedContraptionEntity {
 
-    public static final float SHOE_OFFSET = 0.5f;
-
     protected static final float CLIENT_CHASING_RATE_CHANGE = 0.015f;
     protected static final float CLIENT_CHASING_MAX = 0.3f;
     private static final float MAX_CLIENT_SERVER_DIFF = 0.5f;
@@ -140,14 +138,6 @@ public class CogwheelChainCarriageContraptionEntity extends OrientedContraptionE
             final float lerpResistance = 0.85f;
             this.currentClientChasingRate = this.currentClientChasingRate * lerpResistance + targetRate * (1.0f - lerpResistance);
         }
-
-        this.lastFrontShoeDir = this.frontShoeDir;
-        this.lastBackShoeDir = this.backShoeDir;
-
-        final float offset = this.getChainRenderOffset(this.level(), attachment);
-
-        this.frontShoeDir = attachment.getCurrentDirection(this.level(), SHOE_OFFSET + offset);
-        this.backShoeDir = attachment.getCurrentDirection(this.level(), -SHOE_OFFSET + offset);
     }
 
     private void tickServer() {
@@ -193,10 +183,7 @@ public class CogwheelChainCarriageContraptionEntity extends OrientedContraptionE
         final CogwheelChainAttachment attachment = this.getAttachment();
         final float offset = this.getChainRenderOffset(level, attachment);
         final Vec3 newPos = attachment
-                .getCurrentPosition(level, SHOE_OFFSET + offset)
-                .lerp(
-                        attachment.getCurrentPosition(level, -SHOE_OFFSET + offset), 0.5
-                );
+                .getCurrentPosition(level, offset);
         this.setPos(newPos.x, newPos.y - 1.5, newPos.z);
     }
 
@@ -207,11 +194,7 @@ public class CogwheelChainCarriageContraptionEntity extends OrientedContraptionE
     private void updateYawFromChain(final Level level) {
         final CogwheelChainAttachment attachment = this.getAttachment();
         final float offset = this.getChainRenderOffset(level, attachment);
-        final Vec3 frontPos = attachment.getCurrentPosition(
-                level, SHOE_OFFSET + offset);
-        final Vec3 backPos = attachment.getCurrentPosition(
-                level, -SHOE_OFFSET + offset);
-        final Vec3 direction = frontPos.subtract(backPos);
+        final Vec3 direction = attachment.getCurrentDirection(level, offset);
 
         if (direction.horizontalDistanceSqr() > 1e-8) {
             this.prevYaw = this.yaw;
