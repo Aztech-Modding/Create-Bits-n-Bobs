@@ -1,7 +1,6 @@
 package com.kipti.bnb.registry.compat;
 
 import com.cake.azimuth.registration.CreateBlockEdits;
-import com.kipti.bnb.content.decoration.dyeable.fluid_tank.DyeableFluidTankBlockItem;
 import com.kipti.bnb.content.decoration.dyeable.pipes.DyeablePipeBlockItem;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
@@ -18,7 +17,6 @@ public class BnbCreateBlockEdits {
         );
 
         CreateBlockEdits.forBlockItem("fluid_pipe", DyeablePipeBlockItem::new);
-        CreateBlockEdits.forBlockItem("fluid_tank", DyeableFluidTankBlockItem::new);
     }
 
 }

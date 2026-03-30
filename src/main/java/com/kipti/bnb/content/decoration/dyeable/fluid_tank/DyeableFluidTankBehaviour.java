@@ -1,24 +1,20 @@
 package com.kipti.bnb.content.decoration.dyeable.fluid_tank;
 
 import com.cake.azimuth.behaviour.SuperBlockEntityBehaviour;
-import com.kipti.bnb.content.decoration.dyeable.DyeableTransitionHelper;
 import com.simibubi.create.api.connectivity.ConnectivityHandler;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BehaviourType;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
-import net.neoforged.neoforge.event.level.BlockEvent;
 import org.jetbrains.annotations.Nullable;
 
 public class DyeableFluidTankBehaviour extends SuperBlockEntityBehaviour {
@@ -62,16 +58,6 @@ public class DyeableFluidTankBehaviour extends SuperBlockEntityBehaviour {
         }
     }
 
-    public void setColorQuiet(@Nullable final DyeColor color) {
-        if (this.color == color) {
-            return;
-        }
-        this.color = color;
-        if (this.hasLevel() && this.getLevel().isClientSide) {
-            this.refreshRenderedModel();
-        }
-    }
-
     @Override
     public void onItemUse(final PlayerInteractEvent.RightClickBlock event) {
         final ItemStack stack = event.getItemStack();
@@ -93,19 +79,24 @@ public class DyeableFluidTankBehaviour extends SuperBlockEntityBehaviour {
     }
 
     private void dyeSingle(@Nullable final DyeColor color) {
-        this.color = color;
-
         final FluidTankBlockEntity tankBE = (FluidTankBlockEntity) this.blockEntity;
         final FluidTankBlockEntity controllerBE = tankBE.getControllerBE();
 
-        if (controllerBE != null && (controllerBE.getWidth() > 1 || controllerBE.getHeight() > 1)) {
-            ConnectivityHandler.splitMulti(controllerBE);
-        } //AGENT: This does not seem to look for connection when dying a tank, since its just splitting
+        final boolean wasMulti = controllerBE != null && (controllerBE.getWidth() > 1 || controllerBE.getHeight() > 1);
 
-        this.blockEntity.notifyUpdate();
+        if (wasMulti) {
+            ConnectivityHandler.splitMulti(controllerBE);
+        }
+
+        this.setColor(color);
+        ConnectivityHandler.formMulti(tankBE);
+
+        if (wasMulti && controllerBE != tankBE) {
+            ConnectivityHandler.formMulti(controllerBE);
+        }
     }
 
-    private void dyeEntireTank(@Nullable final DyeColor color) { //Agent: Doesent work, i see controller dyed but the remainder appear undyed to the client
+    private void dyeEntireTank(@Nullable final DyeColor color) {
         final FluidTankBlockEntity tankBE = (FluidTankBlockEntity) this.blockEntity;
         final FluidTankBlockEntity controllerBE = tankBE.getControllerBE();
 
@@ -123,40 +114,9 @@ public class DyeableFluidTankBehaviour extends SuperBlockEntityBehaviour {
                     final BlockPos pos = controllerPos.offset(x, y, z);
                     final DyeableFluidTankBehaviour behaviour = BlockEntityBehaviour.get(level, pos, TYPE);
                     if (behaviour != null) {
-                        behaviour.setColorQuiet(color);
+                        behaviour.setColor(color);
                     }
                 }
-            }
-        }
-
-        controllerBE.notifyUpdate();
-    }
-
-    @Override
-    public void onBlockPlaced(final BlockEvent.EntityPlaceEvent event) { //Agent: Also doesent work, check fluid tank item mixin for full description
-        if (event.getLevel().isClientSide()) {
-            return;
-        }
-        if (!(event.getEntity() instanceof final Player player)) {
-            return;
-        }
-
-        final Level level = (Level) event.getLevel();
-        final BlockPos pos = event.getPos();
-        DyeableTransitionHelper.consumePendingPlacementColor(level, pos);
-
-        final ItemStack offhand = player.getOffhandItem();
-        if (offhand.getItem() instanceof final DyeItem dyeItem) {
-            this.setColor(dyeItem.getDyeColor());
-            return;
-        }
-
-        for (final Direction direction : new Direction[]{Direction.UP, Direction.DOWN}) {
-            final BlockPos adjacentPos = pos.relative(direction);
-            final DyeableFluidTankBehaviour adjacentBehaviour = BlockEntityBehaviour.get(level, adjacentPos, TYPE);
-            if (adjacentBehaviour != null && adjacentBehaviour.getColor() != null) {
-                this.setColor(adjacentBehaviour.getColor());
-                return;
             }
         }
     }

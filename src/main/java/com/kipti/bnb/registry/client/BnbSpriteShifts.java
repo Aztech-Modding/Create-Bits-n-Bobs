@@ -78,9 +78,6 @@ public class BnbSpriteShifts {
             "dyed_pipes"
     );
 
-    //AGENT: i disabled non connected tank sprites but they need deleting (C:\onedriveisevil\azt\Create-Bits-n-Bobs\src\main\resources\assets\bits_n_bobs\textures\block\dyed_fluid_tank\fluid_tank_inner_red.png < like this where it isnt fluid_tank_inner_connected),
-    // also agent do the add handling for windows like C:\onedriveisevil\azt\Create-Bits-n-Bobs\src\main\resources\assets\bits_n_bobs\textures\block\dyed_fluid_tank\fluid_tank_window_single_black.png and C:\onedriveisevil\azt\Create-Bits-n-Bobs\src\main\resources\assets\bits_n_bobs\textures\block\dyed_fluid_tank\fluid_tank_window_red.png since there was actually a pixel that i missed
-
     public static final Map<DyeColor, SpriteShiftEntry> DYED_FLUID_TANK_CONNECTED = getDyedSpriteShifts(
             "create",
             "fluid_tank_connected",
@@ -94,6 +91,16 @@ public class BnbSpriteShifts {
     public static final Map<DyeColor, SpriteShiftEntry> DYED_FLUID_TANK_INNER_CONNECTED = getDyedSpriteShifts(
             "create",
             "fluid_tank_inner_connected",
+            "dyed_fluid_tank"
+    );
+    public static final Map<DyeColor, SpriteShiftEntry> DYED_FLUID_TANK_WINDOW = getDyedSpriteShifts(
+            "create",
+            "fluid_tank_window",
+            "dyed_fluid_tank"
+    );
+    public static final Map<DyeColor, SpriteShiftEntry> DYED_FLUID_TANK_WINDOW_SINGLE = getDyedSpriteShifts(
+            "create",
+            "fluid_tank_window_single",
             "dyed_fluid_tank"
     );
 

@@ -28,6 +28,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Shifts fluid tank quad UVs to dyed texture variants when the tank has a dye color applied.
+ */
 @Mixin(FluidTankModel.class)
 public class FluidTankModelMixin {
 
@@ -122,6 +125,12 @@ public class FluidTankModelMixin {
         if (entry != null && bnb$uvWithinSprite(u, v, entry.getOriginal())) return entry;
 
         entry = BnbSpriteShifts.DYED_FLUID_TANK_INNER_CONNECTED.get(color);
+        if (entry != null && bnb$uvWithinSprite(u, v, entry.getOriginal())) return entry;
+
+        entry = BnbSpriteShifts.DYED_FLUID_TANK_WINDOW.get(color);
+        if (entry != null && bnb$uvWithinSprite(u, v, entry.getOriginal())) return entry;
+
+        entry = BnbSpriteShifts.DYED_FLUID_TANK_WINDOW_SINGLE.get(color);
         if (entry != null && bnb$uvWithinSprite(u, v, entry.getOriginal())) return entry;
 
         return null;
