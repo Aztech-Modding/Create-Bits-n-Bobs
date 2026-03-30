@@ -1,4 +1,10 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "bits_n_bobs:feature_enabled",
+      "feature": "tiles"
+    }
+  ],
   "parent": "minecraft:recipes/root",
   "criteria": {
     "has_andesite_tile_slab": {

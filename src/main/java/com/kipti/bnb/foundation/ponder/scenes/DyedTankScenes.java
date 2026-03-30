@@ -67,7 +67,7 @@ public class DyedTankScenes {
         scene.addKeyframe();
 
         scene.overlay().showText(70)
-                .text("You can change the color of a tank by using dye")
+                .text("Fluid Tanks can be recolored by applying Dye")
                 .placeNearTarget()
                 .pointAt(util.vector().centerOf(3, 3, 3));
         scene.idle(30);
@@ -87,7 +87,7 @@ public class DyedTankScenes {
         scene.idle(30);
 
         scene.overlay().showText(80)
-                .text("Holding shift while using dye allows you to add dye to an individual block")
+                .text("Sneak to apply Dye to a single block within a Tank")
                 .placeNearTarget()
                 .pointAt(util.vector().centerOf(0, 2, 0))
                 .attachKeyFrame();
@@ -137,21 +137,21 @@ public class DyedTankScenes {
         scene.idle(30);
 
         scene.overlay().showText(70)
-                .text("Dyed pipes and tanks of the same color will connect")
+                .text("Pipes and Tanks of the same color will connect as usual")
                 .placeNearTarget()
                 .pointAt(util.vector().centerOf(1, 2, 4))
                 .colored(PonderPalette.RED);
         scene.idle(80);
 
         scene.overlay().showText(70)
-                .text("Dyed pipes will not connect to dyed tanks of a different color")
+                .text("However, Pipes of different colors will not automatically connect")
                 .placeNearTarget()
                 .pointAt(util.vector().centerOf(4, 2, 1))
                 .colored(PonderPalette.BLUE);
         scene.idle(80);
 
         scene.overlay().showText(70)
-                .text("Undyed pipes connect to any tank")
+                .text("Pipes without dye will automatically connect to all other tanks or pipes")
                 .placeNearTarget()
                 .pointAt(util.vector().centerOf(1, 2, 3));
         scene.idle(80);

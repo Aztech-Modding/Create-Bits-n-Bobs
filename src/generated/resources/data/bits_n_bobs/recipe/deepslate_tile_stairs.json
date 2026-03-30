@@ -1,4 +1,10 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "bits_n_bobs:feature_enabled",
+      "feature": "tiles"
+    }
+  ],
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "group": "deepslate_tile_stairs",
