@@ -1,6 +1,6 @@
 package com.kipti.bnb.foundation.ponder.scenes;
 
-import com.kipti.bnb.content.dyeable_pipes.DyeablePipeBehaviour;
+import com.kipti.bnb.content.decoration.dyeable.pipes.DyeablePipeBehaviour;
 import com.kipti.bnb.foundation.ponder.instruction.DyePipeInstruction;
 import com.simibubi.create.foundation.ponder.CreateSceneBuilder;
 import net.createmod.catnip.math.Pointing;
@@ -41,7 +41,8 @@ public class DyedPipeScenes {
                         .add(util.select().position(2, 2, 3))
                         .add(util.select().position(1, 2, 3))
                         .add(util.select().position(1, 1, 3)),
-                Blocks.AIR.defaultBlockState(), false);
+                Blocks.AIR.defaultBlockState(), false
+        );
 
         scene.world().showSection(util.select().layer(0), Direction.UP);
         scene.idle(5);
@@ -50,7 +51,8 @@ public class DyedPipeScenes {
                 util.select().fromTo(2, 1, 0, 2, 1, 3)
                         .add(util.select().position(3, 1, 1))
                         .add(util.select().fromTo(0, 1, 2, 1, 1, 2)),
-                Direction.DOWN);
+                Direction.DOWN
+        );
 
         scene.addInstruction(new DyePipeInstruction(new BlockPos(0, 1, 2), null));
         scene.addInstruction(new DyePipeInstruction(new BlockPos(1, 1, 2), null));
@@ -176,10 +178,12 @@ public class DyedPipeScenes {
     // ── helpers ──────────────────────────────────────────────────────────────────
 
     private static void refreshAllInitialPipes(final CreateSceneBuilder scene) {
-        refreshPipes(scene,
+        refreshPipes(
+                scene,
                 new BlockPos(0, 1, 2), new BlockPos(1, 1, 2), new BlockPos(2, 1, 0),
                 new BlockPos(2, 1, 1), new BlockPos(2, 1, 2), new BlockPos(2, 1, 3),
-                new BlockPos(3, 1, 1));
+                new BlockPos(3, 1, 1)
+        );
     }
 
     private static void refreshPipes(final CreateSceneBuilder scene, final BlockPos... positions) {

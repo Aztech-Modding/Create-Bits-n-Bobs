@@ -230,8 +230,8 @@ public class CogwheelChainAttachment {
     }
 
     private static Vec3 getSmoothedCurrentDirection(final List<CogwheelChainSegment> segments, final float dist) {
-        final float backDist = dist - 0.1f;
-        final float frontDist = dist + 0.1f;
+        final float backDist = dist - 0.2f;
+        final float frontDist = dist + 0.2f;
 
         final CogwheelChainSegment backSegment = findSegmentAtDist(segments, backDist);
         final CogwheelChainSegment frontSegment = findSegmentAtDist(segments, frontDist);

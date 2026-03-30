@@ -9,8 +9,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 public class GratingBlockStateGen {
-
-
+    
     public static <T extends Block> void gratingEncasedShaftBlock(final DataGenContext<Block, T> ctx,
                                                                   final RegistrateBlockstateProvider prov) {
         for (final Direction dir : Direction.values()) {//Specifically not using forAllStates cause uh
