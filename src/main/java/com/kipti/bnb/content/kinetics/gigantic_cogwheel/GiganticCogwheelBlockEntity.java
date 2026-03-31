@@ -4,9 +4,19 @@ import com.simibubi.create.Create;
 import com.simibubi.create.content.kinetics.base.IRotate;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.simpleRelays.ICogWheel;
+import dev.engine_room.flywheel.lib.visualization.VisualizationHelper;
+import net.createmod.catnip.platform.CatnipServices;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -15,10 +25,53 @@ import net.minecraft.world.phys.AABB;
 import java.util.List;
 
 public class GiganticCogwheelBlockEntity extends KineticBlockEntity {
+    private static final ResourceLocation DEFAULT_PLANK_TEXTURE =
+            ResourceLocation.fromNamespaceAndPath("minecraft", "block/spruce_planks");
+    private static final ResourceLocation DEFAULT_LOG_TEXTURE =
+            ResourceLocation.fromNamespaceAndPath("minecraft", "block/spruce_log");
+
+    private ResourceLocation plankTexture = DEFAULT_PLANK_TEXTURE;
+    private ResourceLocation logTexture = DEFAULT_LOG_TEXTURE;
 
     public GiganticCogwheelBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         setLazyTickRate(3); // check frequently to catch newly placed small cogs
+    }
+
+    public boolean tryApplyTextureFromItem(ItemStack stack) {
+        if (stack.isEmpty() || !(stack.getItem() instanceof BlockItem blockItem))
+            return false;
+
+        Block block = blockItem.getBlock();
+        ResourceLocation blockId = BuiltInRegistries.BLOCK.getKey(block);
+        ResourceLocation texture = ResourceLocation.fromNamespaceAndPath(
+                blockId.getNamespace(),
+                "block/" + blockId.getPath()
+        );
+
+        boolean changed = false;
+        if (stack.is(ItemTags.PLANKS) && !texture.equals(plankTexture)) {
+            plankTexture = texture;
+            changed = true;
+        } else if (stack.is(ItemTags.LOGS) && !texture.equals(logTexture)) {
+            logTexture = texture;
+            changed = true;
+        }
+
+        if (!changed)
+            return false;
+
+        setChanged();
+        sendData();
+        return true;
+    }
+
+    public ResourceLocation getPlankTexture() {
+        return plankTexture;
+    }
+
+    public ResourceLocation getLogTexture() {
+        return logTexture;
     }
 
     @Override
@@ -186,5 +239,34 @@ public class GiganticCogwheelBlockEntity extends KineticBlockEntity {
     @Override
     protected AABB createRenderBoundingBox() {
         return new AABB(worldPosition).inflate(1.5);
+    }
+
+    @Override
+    protected void read(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
+        super.read(tag, registries, clientPacket);
+
+        if (tag.contains("PlankTexture")) {
+            ResourceLocation parsed = ResourceLocation.tryParse(tag.getString("PlankTexture"));
+            plankTexture = parsed != null ? parsed : DEFAULT_PLANK_TEXTURE;
+        } else {
+            plankTexture = DEFAULT_PLANK_TEXTURE;
+        }
+
+        if (tag.contains("LogTexture")) {
+            ResourceLocation parsed = ResourceLocation.tryParse(tag.getString("LogTexture"));
+            logTexture = parsed != null ? parsed : DEFAULT_LOG_TEXTURE;
+        } else {
+            logTexture = DEFAULT_LOG_TEXTURE;
+        }
+
+        if (clientPacket)
+            CatnipServices.PLATFORM.executeOnClientOnly(() -> () -> VisualizationHelper.queueUpdate(this));
+    }
+
+    @Override
+    protected void write(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
+        super.write(tag, registries, clientPacket);
+        tag.putString("PlankTexture", plankTexture.toString());
+        tag.putString("LogTexture", logTexture.toString());
     }
 }

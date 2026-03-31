@@ -1,4 +1,4 @@
-{
+  {
   "loader": "neoforge:obj",
   "model": "bits_n_bobs:models/block/gigantic_cogwheel/gigantic_cogwheel.obj",
   "flip_v": true,
