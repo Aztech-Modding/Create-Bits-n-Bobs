@@ -8,6 +8,7 @@ import com.kipti.bnb.content.kinetics.cogwheel_carriage.block.CogwheelChainCarri
 import com.kipti.bnb.content.kinetics.cogwheel_chain.migration.MigratingSimpleKineticBlockEntity;
 import com.kipti.bnb.content.kinetics.flywheel_bearing.FlywheelBearingBlockEntity;
 import com.kipti.bnb.content.kinetics.flywheel_bearing.FlywheelBearingBlockEntityRenderer;
+import com.kipti.bnb.content.kinetics.gigantic_cogwheel.GiganticCogwheelBlockEntity;
 import com.kipti.bnb.content.kinetics.throttle_lever.ThrottleLeverBlockEntity;
 import com.kipti.bnb.content.kinetics.throttle_lever.ThrottleLeverBlockEntityRenderer;
 import com.kipti.bnb.content.trinkets.light.headlamp.HeadlampBlockEntity;
@@ -16,6 +17,7 @@ import com.kipti.bnb.content.trinkets.light.headlamp.rendering.pipeline.visual.H
 import com.kipti.bnb.content.trinkets.nixie.foundation.GenericNixieDisplayBlockEntity;
 import com.kipti.bnb.content.trinkets.nixie.foundation.GenericNixieDisplayBoardRenderer;
 import com.kipti.bnb.foundation.client.GenericBlockEntityRenderModels;
+import com.kipti.bnb.registry.client.BnbPartialModels;
 import com.kipti.bnb.registry.content.blocks.BnbKineticBlocks;
 import com.kipti.bnb.registry.content.blocks.BnbTrinketBlocks;
 import com.kipti.bnb.registry.content.blocks.deco.BnbDecorativeBlocks;
@@ -141,6 +143,17 @@ public class BnbBlockEntities {
             .validBlocks(BnbKineticBlocks.SMALL_FLANGED_COGWHEEL, BnbKineticBlocks.LARGE_FLANGED_COGWHEEL)
             .validBlocks(BnbEncasedListBlocks.ENCASED_LARGE_FLANGED_COGWHEEL.toArray())
             .validBlocks(BnbEncasedListBlocks.ENCASED_FLANGED_COGWHEEL.toArray())
+            .renderer(() -> KineticBlockEntityRenderer::new)
+            .register();
+
+    public static final BlockEntityEntry<GiganticCogwheelBlockEntity> GIGANTIC_COGWHEEL = REGISTRATE
+            .blockEntity("gigantic_cogwheel", GiganticCogwheelBlockEntity::new)
+            .visual(() -> (context, blockEntity, partialTick) ->
+                    new SingleAxisRotatingVisual<>(
+                            context, blockEntity, partialTick,
+                            Models.partial(BnbPartialModels.GIGANTIC_COGWHEEL)
+                    ), true)
+            .validBlocks(BnbKineticBlocks.GIGANTIC_COGWHEEL)
             .renderer(() -> KineticBlockEntityRenderer::new)
             .register();
 

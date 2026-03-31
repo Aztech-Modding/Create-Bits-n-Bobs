@@ -5,6 +5,8 @@ import com.kipti.bnb.content.kinetics.chain_pulley.ChainPulleyBlock;
 import com.kipti.bnb.content.kinetics.cogwheel_carriage.block.CogwheelChainCarriageBlock;
 import com.kipti.bnb.content.kinetics.cogwheel_carriage.block.CogwheelChainCarriageMovementBehaviour;
 import com.kipti.bnb.content.kinetics.cogwheel_carriage.block.CogwheelChainCarriageMovingInteraction;
+import com.kipti.bnb.content.kinetics.gigantic_cogwheel.GiganticCogwheelBlock;
+import com.kipti.bnb.content.kinetics.gigantic_cogwheel.GiganticCogwheelSatelliteBlock;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.block.EmptyFlangedGearBlock;
 import com.kipti.bnb.content.kinetics.flywheel_bearing.FlywheelBearingBlock;
 import com.kipti.bnb.foundation.client.GenericBlockEntityRenderModels;
@@ -153,6 +155,45 @@ public class BnbKineticBlocks {
                                            CreateBitsnBobs.asResource("block/flywheel_bearing/item")
                                    )
                     )
+                    .build()
+                    .register();
+
+    public static final BlockEntry<GiganticCogwheelBlock> GIGANTIC_COGWHEEL =
+            REGISTRATE.block("gigantic_cogwheel", GiganticCogwheelBlock::new)
+                    .initialProperties(SharedProperties::stone)
+                    .properties(p -> p.noOcclusion())
+                    .transform(axeOrPickaxe())
+                    .blockstate((c, p) -> p.directionalBlock(
+                            c.get(),
+                            state -> p.models().cubeAll(
+                                    c.getName(),
+                                    CreateBitsnBobs.asResource("block/gigantic_cogwheel/center")
+                            )
+                    ))
+                    .item()
+                    .model((c, p) -> p.withExistingParent(
+                            c.getName(),
+                            CreateBitsnBobs.asResource("block/gigantic_cogwheel/center")
+                    ))
+                    .build()
+                    .register();
+
+    public static final BlockEntry<GiganticCogwheelSatelliteBlock> GIGANTIC_COGWHEEL_SATELLITE =
+            REGISTRATE.block("gigantic_cogwheel_satellite", GiganticCogwheelSatelliteBlock::new)
+                    .initialProperties(SharedProperties::stone)
+                    .transform(axeOrPickaxe())
+                    .blockstate((c, p) -> p.simpleBlock(
+                            c.get(),
+                            p.models().cubeAll(
+                                    c.getName(),
+                                    CreateBitsnBobs.asResource("block/gigantic_cogwheel/satellite")
+                            )
+                    ))
+                    .item()
+                    .model((c, p) -> p.withExistingParent(
+                            c.getName(),
+                            CreateBitsnBobs.asResource("block/gigantic_cogwheel/satellite")
+                    ))
                     .build()
                     .register();
 

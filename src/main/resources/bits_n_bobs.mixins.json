@@ -12,6 +12,7 @@
     "ItemInputMixin",
     "ContraptionColliderMixin",
     "DynamicComponentMixin",
+    "KineticBlockEntityMixin",
     "RotationPropagatorMixin",
     "ServerEntityMixin",
     "ServerGamePacketListenerImplAccessor",

@@ -1,0 +1,11 @@
+{
+  "loader": "neoforge:obj",
+  "model": "bits_n_bobs:models/block/gigantic_cogwheel/gigantic_cogwheel.obj",
+  "flip_v": true,
+  "ambientocclusion": false,
+  "textures": {
+    "m_bde41804-9a8e-6a4c-1ddd-940e68cf8498": "bits_n_bobs:block/gigantic_cog",
+    "m_b3baabff-c0c0-162c-3af3-1db4a3f9d0c9": "minecraft:block/spruce_planks",
+    "m_9eb772bb-17ed-e1a6-e592-5b0e0a59c5e9": "minecraft:block/spruce_log"
+  }
+}
