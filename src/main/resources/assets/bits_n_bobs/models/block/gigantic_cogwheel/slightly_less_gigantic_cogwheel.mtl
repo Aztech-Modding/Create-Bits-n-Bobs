@@ -1,0 +1,8 @@
+# Made in Blockbench 5.1.1
+newmtl m_b3baabff-c0c0-162c-3af3-1db4a3f9d0c9
+map_Kd texture.png
+newmtl m_9eb772bb-17ed-e1a6-e592-5b0e0a59c5e9
+map_Kd texture.png
+newmtl m_bde41804-9a8e-6a4c-1ddd-940e68cf8498
+map_Kd gigantic_cog.png
+newmtl none
