@@ -20,7 +20,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
@@ -31,10 +30,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class FluidTankItemMixin {
 
     @Unique
-    private static final ThreadLocal<DyeColor> BNB_MULTI_PLACE_DYE = new ThreadLocal<>();
-    @Unique
-    private static final ThreadLocal<DyeColor> BNB_SINGLE_PLACE_DYE = new ThreadLocal<>();
-
+    private static final ThreadLocal<DyeColor> BNB$PLACEMENT_DYE = new ThreadLocal<>();
 
     @Unique
     @Nullable
@@ -47,81 +43,6 @@ public class FluidTankItemMixin {
             return dyeItem.getDyeColor();
         }
         return null;
-    }
-
-    @Inject(method = "place", at = @At("HEAD"))
-    private void bnb$savePendingDyeColor(final BlockPlaceContext ctx,
-                                         final CallbackInfoReturnable<InteractionResult> cir) {
-        final DyeColor dye = bnb$getDyeOffhandOrSurface(ctx);
-
-        if (dye != null) {
-            DyeableTransitionHelper.savePendingPlacementColor(
-                    ctx.getLevel(), ctx.getClickedPos(), dye
-            );
-            BNB_SINGLE_PLACE_DYE.set(dye);
-        }
-    }
-
-    @Inject(method = "place", at = @At("RETURN"))
-    private void bnb$clearPendingDyeColor(final BlockPlaceContext ctx,
-                                          final CallbackInfoReturnable<InteractionResult> cir) {
-        BNB_SINGLE_PLACE_DYE.remove();
-    }
-
-
-    @Inject(method = "place", at = @At("RETURN"))
-    private void bnb$applyDyeAfterPlacement(final BlockPlaceContext ctx,
-                                            final CallbackInfoReturnable<InteractionResult> cir) {
-        final DyeColor dye = BNB_SINGLE_PLACE_DYE.get();
-
-        try {
-            final InteractionResult result = cir.getReturnValue();
-            if (result.consumesAction() && ctx.getLevel().isClientSide()) {
-                final DyeableTankBehaviour behaviour = BlockEntityBehaviour.get(
-                        ctx.getLevel(), ctx.getClickedPos(), DyeableTankBehaviour.TYPE
-                );
-                if (behaviour != null) {
-                    behaviour.applyColorClientOnly(dye);
-                }
-            }
-        } finally {
-            DyeableTransitionHelper.consumePendingPlacementColor(
-                    ctx.getLevel(), ctx.getClickedPos()
-            );
-        }
-    }
-
-    @Inject(method = "updateCustomBlockEntityTag", at = @At("RETURN"))
-    private void bnb$applyDyeToBlockEntity(
-            final BlockPos pos, final Level level, @Nullable final Player player,
-            final ItemStack stack, final BlockState state,
-            final CallbackInfoReturnable<Boolean> cir
-    ) {
-        if (level.isClientSide() || player == null) {
-            return;
-        }
-        final DyeColor dye = BNB_MULTI_PLACE_DYE.get() != null ? BNB_MULTI_PLACE_DYE.get() : BNB_SINGLE_PLACE_DYE.get();
-        if (dye != null) {
-            final DyeableTankBehaviour behaviour = BlockEntityBehaviour.get(
-                    level, pos, DyeableTankBehaviour.TYPE
-            );
-            if (behaviour != null) {
-                behaviour.setColor(dye);
-            }
-        }
-    }
-
-    @Inject(method = "tryMultiPlace", at = @At("HEAD"))
-    private void bnb$captureMultiPlaceDye(final BlockPlaceContext ctx, final CallbackInfo ci) {
-        final DyeColor dye = bnb$getDyeOffhandOrSurface(ctx);
-        if (dye != null) {
-            BNB_MULTI_PLACE_DYE.set(dye);
-        }
-    }
-
-    @Inject(method = "tryMultiPlace", at = @At("RETURN"))
-    private void bnb$clearMultiPlaceDye(final BlockPlaceContext ctx, final CallbackInfo ci) {
-        BNB_MULTI_PLACE_DYE.remove();
     }
 
     @Unique
@@ -140,19 +61,75 @@ public class FluidTankItemMixin {
         return dye;
     }
 
+    @Inject(method = "place", at = @At("HEAD"))
+    private void bnb$savePendingDyeColor(final BlockPlaceContext ctx,
+                                         final CallbackInfoReturnable<InteractionResult> cir) {
+        final DyeColor dye = bnb$getDyeOffhandOrSurface(ctx);
+        BNB$PLACEMENT_DYE.set(dye);
+
+        if (dye != null) {
+            DyeableTransitionHelper.savePendingPlacementColor(
+                    ctx.getLevel(), ctx.getClickedPos(), dye
+            );
+        }
+    }
+
+    @Inject(
+            method = "place",
+            at = @At(value = "INVOKE",
+                    target = "Lnet/minecraft/world/item/BlockItem;place(Lnet/minecraft/world/item/context/BlockPlaceContext;)Lnet/minecraft/world/InteractionResult;",
+                    shift = At.Shift.AFTER)
+    )
+    private void bnb$applyEarlyClientColor(final BlockPlaceContext ctx,
+                                           final CallbackInfoReturnable<InteractionResult> cir) {
+        final DyeColor dye = BNB$PLACEMENT_DYE.get();
+        if (dye != null && ctx.getLevel().isClientSide()) {
+            final DyeableTankBehaviour behaviour = BlockEntityBehaviour.get(
+                    ctx.getLevel(), ctx.getClickedPos(), DyeableTankBehaviour.TYPE
+            );
+            if (behaviour != null) {
+                behaviour.applyColorClientOnly(dye);
+            }
+        }
+    }
+
+    @Inject(method = "place", at = @At("RETURN"))
+    private void bnb$applyDyeAfterPlacement(final BlockPlaceContext ctx,
+                                            final CallbackInfoReturnable<InteractionResult> cir) {
+        final DyeColor dye = BNB$PLACEMENT_DYE.get();
+        BNB$PLACEMENT_DYE.remove();
+
+        try {
+            if (dye != null && ctx.getLevel().isClientSide()) {
+                final DyeableTankBehaviour behaviour = BlockEntityBehaviour.get(
+                        ctx.getLevel(), ctx.getClickedPos(), DyeableTankBehaviour.TYPE
+                );
+                if (behaviour != null) {
+                    behaviour.applyColorClientOnly(dye);
+                }
+            }
+        } finally {
+            if (dye != null) {
+                DyeableTransitionHelper.consumePendingPlacementColor(
+                        ctx.getLevel(), ctx.getClickedPos()
+                );
+            }
+        }
+    }
+
     @Redirect(
             method = "tryMultiPlace",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/BlockItem;place(Lnet/minecraft/world/item/context/BlockPlaceContext;)Lnet/minecraft/world/InteractionResult;"),
             remap = false
     )
     private InteractionResult bnb$wrapSubPlacement(final BlockItem instance, final BlockPlaceContext context) {
-        final DyeColor dye = BNB_MULTI_PLACE_DYE.get();
+        final DyeColor dye = BNB$PLACEMENT_DYE.get();
         if (dye != null) {
             DyeableTransitionHelper.savePendingPlacementColor(context.getLevel(), context.getClickedPos(), dye);
         }
         try {
             final InteractionResult result = instance.place(context);
-            if (result.consumesAction() && dye != null && context.getLevel().isClientSide()) {
+            if (dye != null && context.getLevel().isClientSide()) {
                 final DyeableTankBehaviour behaviour = BlockEntityBehaviour.get(
                         context.getLevel(), context.getClickedPos(), DyeableTankBehaviour.TYPE
                 );
@@ -167,4 +144,25 @@ public class FluidTankItemMixin {
             }
         }
     }
+
+    @Inject(method = "updateCustomBlockEntityTag", at = @At("RETURN"))
+    private void bnb$applyDyeToBlockEntity(
+            final BlockPos pos, final Level level, @Nullable final Player player,
+            final ItemStack stack, final BlockState state,
+            final CallbackInfoReturnable<Boolean> cir
+    ) {
+        if (level.isClientSide() || player == null) {
+            return;
+        }
+        final DyeColor dye = BNB$PLACEMENT_DYE.get();
+        if (dye != null) {
+            final DyeableTankBehaviour behaviour = BlockEntityBehaviour.get(
+                    level, pos, DyeableTankBehaviour.TYPE
+            );
+            if (behaviour != null) {
+                behaviour.setColor(dye);
+            }
+        }
+    }
+
 }

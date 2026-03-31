@@ -12,13 +12,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class DyeableTransitionHelper {
+public class DyeableTransitionHelper {
 
     private static final WorldAttached<Map<BlockPos, DyeColor>> CACHED_DYES = new WorldAttached<>($ -> new HashMap<>());
     private static final WorldAttached<Map<BlockPos, DyeColor>> PENDING_PLACEMENT_DYES = new WorldAttached<>($ -> new HashMap<>());
-
-    private DyeableTransitionHelper() {
-    }
 
     public static void saveCurrentDye(final Level level, final BlockPos pos) {
         final DyeablePipeBehaviour behaviour = BlockEntityBehaviour.get(level, pos, DyeablePipeBehaviour.TYPE);
