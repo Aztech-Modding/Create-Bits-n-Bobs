@@ -3,6 +3,7 @@ package com.kipti.bnb;
 import com.cake.azimuth.ponder.PonderForeignLabelRegistry;
 import com.cake.struts.compat.flywheel.StrutsFlywheelCompatLoader;
 import com.cake.struts.content.StrutModelManipulator;
+import com.kipti.bnb.content.kinetics.gigantic_cogwheel.GiganticCogwheelRenderer;
 import com.kipti.bnb.content.trinkets.light.headlamp.rendering.pipeline.block_entity.HeadlampRenderCache;
 import com.kipti.bnb.content.trinkets.light.headlamp.rendering.pipeline.block_entity.HeadlampVertexBufferCache;
 import com.kipti.bnb.foundation.ponder.BnbPonderPlugin;
@@ -13,6 +14,7 @@ import com.kipti.bnb.registry.content.BnbBlockEntities;
 import com.kipti.bnb.registry.content.blocks.deco.BnbStrutDefinitions;
 import com.kipti.bnb.registry.core.BnbConfigs;
 import net.createmod.catnip.config.ui.BaseConfigScreen;
+import net.createmod.catnip.render.SuperByteBufferCache;
 import net.createmod.ponder.foundation.PonderIndex;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.neoforged.api.distmarker.Dist;
@@ -54,6 +56,8 @@ public class CreateBitsnBobsClient {
         BnbPartialModels.register();
         BnbSpriteShifts.register();
 
+        SuperByteBufferCache.getInstance().registerCompartment(GiganticCogwheelRenderer.GIGANTIC_COGWHEEL_CACHE);
+
         StrutsFlywheelCompatLoader.registerStrutVisual(BnbBlockEntities.GIRDER_STRUT.get());
 
         BaseConfigScreen.setDefaultActionFor(CreateBitsnBobs.MOD_ID, base -> base
@@ -73,6 +77,7 @@ public class CreateBitsnBobsClient {
         StrutModelManipulator.invalidateMeshes();
         HeadlampRenderCache.clearCaches();
         HeadlampVertexBufferCache.clear();
+        SuperByteBufferCache.getInstance().invalidate(GiganticCogwheelRenderer.GIGANTIC_COGWHEEL_CACHE);
     }
 
     @EventBusSubscriber(Dist.CLIENT)

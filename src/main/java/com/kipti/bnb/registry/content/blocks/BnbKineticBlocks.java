@@ -190,6 +190,7 @@ public class BnbKineticBlocks {
                             .noOcclusion()
                             .isViewBlocking((state, level, pos) -> false))
                     .transform(axeOrPickaxe())
+                    .clientExtension(() -> () -> new GiganticCogwheelSatelliteBlock.RenderProperties())
                     .blockstate((c, p) -> p.simpleBlock(
                             c.get(),
                             p.models().cubeAll(

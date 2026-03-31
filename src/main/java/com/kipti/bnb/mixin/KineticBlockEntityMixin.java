@@ -1,7 +1,7 @@
 package com.kipti.bnb.mixin;
 
 import com.kipti.bnb.content.kinetics.gigantic_cogwheel.GiganticCogwheelBlock;
-import com.simibubi.create.Create;
+import com.kipti.bnb.content.kinetics.gigantic_cogwheel.GiganticCogwheelBlockEntity;
 import com.simibubi.create.content.kinetics.base.IRotate;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.simpleRelays.ICogWheel;
@@ -70,17 +70,8 @@ public class KineticBlockEntityMixin {
         BlockPos targetPos = target.getBlockPos();
         BlockPos d = targetPos.subtract(selfPos);
 
-        if (!isValidDiff(axis, d)) return;
+        if (!GiganticCogwheelBlockEntity.isValidDiff(axis, d)) return;
 
-        Create.LOGGER.info("[GiganticCog] MIXIN propagateRotationTo: small->gigantic ratio applied");
         cir.setReturnValue(-1f / 5f);
-    }
-
-    private static boolean isValidDiff(Direction.Axis axis, BlockPos diff) {
-        return switch (axis) {
-            case X -> diff.getX() == 0 && (Math.abs(diff.getY()) == 3 && diff.getZ() == 0 || Math.abs(diff.getZ()) == 3 && diff.getY() == 0);
-            case Y -> diff.getY() == 0 && (Math.abs(diff.getX()) == 3 && diff.getZ() == 0 || Math.abs(diff.getZ()) == 3 && diff.getX() == 0);
-            case Z -> diff.getZ() == 0 && (Math.abs(diff.getX()) == 3 && diff.getY() == 0 || Math.abs(diff.getY()) == 3 && diff.getX() == 0);
-        };
     }
 }

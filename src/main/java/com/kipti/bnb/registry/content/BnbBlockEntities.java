@@ -9,6 +9,8 @@ import com.kipti.bnb.content.kinetics.cogwheel_chain.migration.MigratingSimpleKi
 import com.kipti.bnb.content.kinetics.flywheel_bearing.FlywheelBearingBlockEntity;
 import com.kipti.bnb.content.kinetics.flywheel_bearing.FlywheelBearingBlockEntityRenderer;
 import com.kipti.bnb.content.kinetics.gigantic_cogwheel.GiganticCogwheelBlockEntity;
+import com.kipti.bnb.content.kinetics.gigantic_cogwheel.GiganticCogwheelRenderer;
+import com.kipti.bnb.content.kinetics.gigantic_cogwheel.GiganticCogwheelVisual;
 import com.kipti.bnb.content.kinetics.throttle_lever.ThrottleLeverBlockEntity;
 import com.kipti.bnb.content.kinetics.throttle_lever.ThrottleLeverBlockEntityRenderer;
 import com.kipti.bnb.content.trinkets.light.headlamp.HeadlampBlockEntity;
@@ -148,13 +150,9 @@ public class BnbBlockEntities {
 
     public static final BlockEntityEntry<GiganticCogwheelBlockEntity> GIGANTIC_COGWHEEL = REGISTRATE
             .blockEntity("gigantic_cogwheel", GiganticCogwheelBlockEntity::new)
-            .visual(() -> (context, blockEntity, partialTick) ->
-                    new SingleAxisRotatingVisual<>(
-                            context, blockEntity, partialTick,
-                            Models.partial(BnbPartialModels.GIGANTIC_COGWHEEL)
-                    ), true)
+            .visual(() -> GiganticCogwheelVisual::new, true)
             .validBlocks(BnbKineticBlocks.GIGANTIC_COGWHEEL)
-            .renderer(() -> KineticBlockEntityRenderer::new)
+            .renderer(() -> GiganticCogwheelRenderer::new)
             .register();
 
     public static final BlockEntityEntry<ThrottleLeverBlockEntity> THROTTLE_LEVER = REGISTRATE

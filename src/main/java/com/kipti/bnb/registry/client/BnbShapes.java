@@ -56,6 +56,12 @@ public class BnbShapes {
             LARGE_FLANGED_GEAR = shape(LARGE_FLANGED_GEAR_SHAPE).add(SIX_VOXEL_POLE.get(Direction.Axis.Y))
                     .forAxis();
 
+    public static final VoxelShape GIGANTIC_COGWHEEL_PLATE = cuboid(0, 5, 0, 16, 11, 16);
+
+    public static final VoxelShaper
+            GIGANTIC_COGWHEEL = shape(GIGANTIC_COGWHEEL_PLATE).add(SIX_VOXEL_POLE.get(Direction.Axis.Y)).forAxis(),
+            GIGANTIC_COGWHEEL_SATELLITE = shape(GIGANTIC_COGWHEEL_PLATE).forAxis();
+
     public static final VoxelShaper ALTERNATING_TRUSS = shape(1, 0, 1, 15, 16, 15)
             .add(cuboid(0, 0, 0, 3, 16, 3))
             .add(cuboid(13, 0, 0, 16, 16, 3))
@@ -67,11 +73,21 @@ public class BnbShapes {
         return new AllShapes.Builder(shape);
     }
 
-    public static AllShapes.Builder shape(final double x1, final double y1, final double z1, final double x2, final double y2, final double z2) {
+    public static AllShapes.Builder shape(final double x1,
+                                          final double y1,
+                                          final double z1,
+                                          final double x2,
+                                          final double y2,
+                                          final double z2) {
         return shape(cuboid(x1, y1, z1, x2, y2, z2));
     }
 
-    public static VoxelShape cuboid(final double x1, final double y1, final double z1, final double x2, final double y2, final double z2) {
+    public static VoxelShape cuboid(final double x1,
+                                    final double y1,
+                                    final double z1,
+                                    final double x2,
+                                    final double y2,
+                                    final double z2) {
         return Block.box(x1, y1, z1, x2, y2, z2);
     }
 

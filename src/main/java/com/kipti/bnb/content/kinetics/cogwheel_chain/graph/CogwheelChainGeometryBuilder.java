@@ -36,7 +36,11 @@ public class CogwheelChainGeometryBuilder {
             final Pair<Vec3, Vec3> currentOffsets = offsetsAtNodes.get(i);
             final Pair<Vec3, Vec3> nextOffsets = offsetsAtNodes.get((i + 1) % n);
 
-            resultNodes.add(new RenderedChainPathNode(currentNode.localPos(), currentOffsets.getFirst(), currentNode.rotationAxisVec()));
+            resultNodes.add(new RenderedChainPathNode(
+                    currentNode.localPos(),
+                    currentOffsets.getFirst(),
+                    currentNode.rotationAxisVec()
+            ));
             resultNodes.addAll(
                     wrappedArcBetweenPoints(
                             currentNode,
@@ -46,7 +50,11 @@ public class CogwheelChainGeometryBuilder {
                             nextOffsets.getFirst().add(nextNode.center())
                     )
             );
-            resultNodes.add(new RenderedChainPathNode(currentNode.localPos(), currentOffsets.getSecond(), currentNode.rotationAxisVec()));
+            resultNodes.add(new RenderedChainPathNode(
+                    currentNode.localPos(),
+                    currentOffsets.getSecond(),
+                    currentNode.rotationAxisVec()
+            ));
         }
 
         return resultNodes;
@@ -166,10 +174,14 @@ public class CogwheelChainGeometryBuilder {
     }
 
     private static @NotNull Vec3 getDirectionOfAxis(final PathedCogwheelNode currentNode) {
-        return Vec3.atLowerCornerOf(Direction.fromAxisAndDirection(currentNode.rotationAxis(), Direction.AxisDirection.POSITIVE).getNormal());
+        return Vec3.atLowerCornerOf(Direction.fromAxisAndDirection(
+                currentNode.rotationAxis(),
+                Direction.AxisDirection.POSITIVE
+        ).getNormal());
     }
 
-    private static @NotNull Vec3 getConnectionDirection(final PathedCogwheelNode previousNode, final PathedCogwheelNode currentNode) {
+    private static @NotNull Vec3 getConnectionDirection(final PathedCogwheelNode previousNode,
+                                                        final PathedCogwheelNode currentNode) {
         Vec3 incomingADiff = currentNode.center().subtract(previousNode.center());
 
         if (previousNode.rotationAxis() != currentNode.rotationAxis()) {
@@ -185,7 +197,10 @@ public class CogwheelChainGeometryBuilder {
                                                final PathedCogwheelNode currentNode,
                                                final boolean isIncoming) {
         final Vec3 axis = getDirectionOfAxis(currentNode);
-        final Vec3 incoming = isIncoming ? getConnectionDirection(previousNode, currentNode) : getConnectionDirection(currentNode, previousNode);
+        final Vec3 incoming = isIncoming ? getConnectionDirection(previousNode, currentNode) : getConnectionDirection(
+                currentNode,
+                previousNode
+        );
 
         final double previousRadius = previousNode.isLarge() ? 1.0f : 0.5f + (previousNode.hasSmallCogwheelOffset() ? 1 / 8f : 0.0f);
         final double currentRadius = currentNode.isLarge() ? 1.0f : 0.5f + (currentNode.hasSmallCogwheelOffset() ? 1 / 8f : 0.0f);
@@ -197,7 +212,8 @@ public class CogwheelChainGeometryBuilder {
 //            return otherAxis.cross(axis).normalize().scale(
 //                currentNode.pos().subtract(previousNode.pos()).get(previousNode.rotationAxis()) * (isIncoming ? 1 : -1)
 //            );
-            return getDirectionOfAxis(previousNode).scale(previousNode.localPos().subtract(currentNode.localPos()).get(previousNode.rotationAxis()));
+            return getDirectionOfAxis(previousNode).scale(previousNode.localPos().subtract(currentNode.localPos()).get(
+                    previousNode.rotationAxis()));
         }
 
         if (previousNode.side() == currentNode.side()) {
