@@ -9,6 +9,7 @@ import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
@@ -16,6 +17,8 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.Nullable;
 
@@ -43,6 +46,16 @@ public class CogwheelChainCarriageBlock extends HorizontalDirectionalBlock imple
     protected void createBlockStateDefinition(final StateDefinition.Builder<Block, BlockState> p_49915_) {
         super.createBlockStateDefinition(p_49915_);
         p_49915_.add(FACING);
+    }
+
+    @Override
+    public VoxelShape getCollisionShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+        return Block.box(0, 0, 0, 16, 10, 16);
+    }
+
+    @Override
+    public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+        return Block.box(0, 0, 0, 16, 10, 16);
     }
 
     @Override
@@ -92,4 +105,7 @@ public class CogwheelChainCarriageBlock extends HorizontalDirectionalBlock imple
     public BlockEntityType<? extends CogwheelChainCarriageBlockEntity> getBlockEntityType() {
         return BnbBlockEntities.COGWHEEL_CHAIN_CARRIAGE.get();
     }
+
+
 }
+

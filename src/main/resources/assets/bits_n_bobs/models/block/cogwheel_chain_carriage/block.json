@@ -2,6 +2,7 @@
   "render_type": "cutout",
   "format_version": "1.21.11",
   "credit": "Made with Blockbench by cak :)",
+  "ambientocclusion": false,
   "texture_size": [
     32,
     32
