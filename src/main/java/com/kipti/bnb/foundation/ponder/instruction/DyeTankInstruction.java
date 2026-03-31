@@ -1,7 +1,7 @@
 package com.kipti.bnb.foundation.ponder.instruction;
 
 import com.kipti.bnb.CreateBitsnBobs;
-import com.kipti.bnb.content.decoration.dyeable.fluid_tank.DyeableFluidTankBehaviour;
+import com.kipti.bnb.content.decoration.dyeable.tanks.DyeableTankBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import net.createmod.ponder.api.element.WorldSectionElement;
 import net.createmod.ponder.foundation.PonderScene;
@@ -33,7 +33,7 @@ public class DyeTankInstruction extends PonderInstruction {
     @Override
     public void tick(final PonderScene scene) {
         final Level level = scene.getWorld();
-        final DyeableFluidTankBehaviour behaviour = BlockEntityBehaviour.get(level, this.tankPos, DyeableFluidTankBehaviour.TYPE);
+        final DyeableTankBehaviour behaviour = BlockEntityBehaviour.get(level, this.tankPos, DyeableTankBehaviour.TYPE);
         if (behaviour == null) {
             CreateBitsnBobs.LOGGER.warn(
                     "Could not find dyeable fluid tank block entity at {}, skipping instruction",

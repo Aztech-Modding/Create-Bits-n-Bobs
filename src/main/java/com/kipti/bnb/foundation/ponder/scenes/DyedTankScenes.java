@@ -1,7 +1,7 @@
 package com.kipti.bnb.foundation.ponder.scenes;
 
-import com.kipti.bnb.content.decoration.dyeable.fluid_tank.DyeableFluidTankBehaviour;
 import com.kipti.bnb.content.decoration.dyeable.pipes.DyeablePipeBehaviour;
+import com.kipti.bnb.content.decoration.dyeable.tanks.DyeableTankBehaviour;
 import com.kipti.bnb.foundation.ponder.instruction.DyeTankInstruction;
 import com.simibubi.create.content.fluids.tank.FluidTankBlock;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
@@ -179,8 +179,8 @@ public class DyedTankScenes {
         for (int x = x1; x <= x2; x++) {
             for (int y = y1; y <= y2; y++) {
                 for (int z = z1; z <= z2; z++) {
-                    final DyeableFluidTankBehaviour behaviour = BlockEntityBehaviour.get(
-                            level, new BlockPos(x, y, z), DyeableFluidTankBehaviour.TYPE
+                    final DyeableTankBehaviour behaviour = BlockEntityBehaviour.get(
+                            level, new BlockPos(x, y, z), DyeableTankBehaviour.TYPE
                     );
                     if (behaviour != null) {
                         behaviour.applyColorClientOnly(color);

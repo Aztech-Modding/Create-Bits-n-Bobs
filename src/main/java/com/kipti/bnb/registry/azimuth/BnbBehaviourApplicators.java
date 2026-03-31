@@ -2,8 +2,8 @@ package com.kipti.bnb.registry.azimuth;
 
 import com.cake.azimuth.registration.BehaviourApplicators;
 import com.cake.azimuth.registration.VisualWrapperInterest;
-import com.kipti.bnb.content.decoration.dyeable.fluid_tank.DyeableFluidTankBehaviour;
 import com.kipti.bnb.content.decoration.dyeable.pipes.DyeablePipeBehaviour;
+import com.kipti.bnb.content.decoration.dyeable.tanks.DyeableTankBehaviour;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.behaviour.CogwheelChainBehaviour;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChainCandidate;
 import com.simibubi.create.AllBlockEntityTypes;
@@ -40,7 +40,10 @@ public class BnbBehaviourApplicators {
     }
 
     private static void registerDyeableFluidTankBehaviour() {
-        BehaviourApplicators.registerForType(AllBlockEntityTypes.FLUID_TANK, be -> List.of(new DyeableFluidTankBehaviour(be)));
+        BehaviourApplicators.registerForType(
+                AllBlockEntityTypes.FLUID_TANK,
+                be -> List.of(new DyeableTankBehaviour(be))
+        );
     }
 
     private static boolean isSomeCogwheelBlockEntity(final BlockEntityType<?> type) {

@@ -1,7 +1,7 @@
 package com.kipti.bnb.mixin.dyeable.fluid_tank;
 
 import com.kipti.bnb.content.decoration.dyeable.DyeableTransitionHelper;
-import com.kipti.bnb.content.decoration.dyeable.fluid_tank.DyeableFluidTankBehaviour;
+import com.kipti.bnb.content.decoration.dyeable.tanks.DyeableTankBehaviour;
 import com.simibubi.create.api.connectivity.ConnectivityHandler;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import net.minecraft.core.BlockPos;
@@ -30,10 +30,10 @@ public class ConnectivityHandlerMixin {
 
     @Inject(method = "formMulti(Lnet/minecraft/world/level/block/entity/BlockEntity;)V", at = @At("HEAD"))
     private static void bnb$captureFormationColor(final BlockEntity be, final CallbackInfo ci) {
-        final DyeableFluidTankBehaviour behaviour = BlockEntityBehaviour.get(
+        final DyeableTankBehaviour behaviour = BlockEntityBehaviour.get(
                 be.getLevel(),
                 be.getBlockPos(),
-                DyeableFluidTankBehaviour.TYPE
+                DyeableTankBehaviour.TYPE
         );
         if (behaviour == null) {
             return;
@@ -72,10 +72,10 @@ public class ConnectivityHandlerMixin {
     @Unique
     @Nullable
     private static DyeColor bnb$getEffectiveTankColor(final BlockEntity be) {
-        final DyeableFluidTankBehaviour behaviour = BlockEntityBehaviour.get(
+        final DyeableTankBehaviour behaviour = BlockEntityBehaviour.get(
                 be.getLevel(),
                 be.getBlockPos(),
-                DyeableFluidTankBehaviour.TYPE
+                DyeableTankBehaviour.TYPE
         );
         if (behaviour != null && behaviour.getColor() != null) {
             return behaviour.getColor();

@@ -1,7 +1,7 @@
 package com.kipti.bnb.mixin.dyeable.fluid_tank;
 
 import com.kipti.bnb.content.decoration.dyeable.DyeableTransitionHelper;
-import com.kipti.bnb.content.decoration.dyeable.fluid_tank.DyeableFluidTankBehaviour;
+import com.kipti.bnb.content.decoration.dyeable.tanks.DyeableTankBehaviour;
 import com.kipti.bnb.registry.client.BnbSpriteShifts;
 import com.simibubi.create.content.fluids.tank.FluidTankModel;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
@@ -46,10 +46,10 @@ public class FluidTankModelMixin {
             final ModelData blockEntityData,
             final CallbackInfoReturnable<ModelData.Builder> cir
     ) {
-        final DyeableFluidTankBehaviour behaviour = BlockEntityBehaviour.get(
+        final DyeableTankBehaviour behaviour = BlockEntityBehaviour.get(
                 world,
                 pos,
-                DyeableFluidTankBehaviour.TYPE
+                DyeableTankBehaviour.TYPE
         );
         DyeColor color = null;
         if (behaviour != null) {

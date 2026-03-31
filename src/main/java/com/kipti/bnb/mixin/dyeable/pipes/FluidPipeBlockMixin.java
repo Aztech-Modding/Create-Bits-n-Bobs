@@ -1,8 +1,8 @@
 package com.kipti.bnb.mixin.dyeable.pipes;
 
 import com.kipti.bnb.content.decoration.dyeable.DyeableTransitionHelper;
-import com.kipti.bnb.content.decoration.dyeable.fluid_tank.DyeableFluidTankBehaviour;
 import com.kipti.bnb.content.decoration.dyeable.pipes.DyeablePipeBehaviour;
+import com.kipti.bnb.content.decoration.dyeable.tanks.DyeableTankBehaviour;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.simibubi.create.content.fluids.pipes.FluidPipeBlock;
@@ -109,10 +109,10 @@ public class FluidPipeBlockMixin {
     @Unique
     @Nullable
     private static DyeColor bnb$getEffectiveTankColor(final BlockAndTintGetter world, final BlockPos pos) {
-        final DyeableFluidTankBehaviour behaviour = BlockEntityBehaviour.get(
+        final DyeableTankBehaviour behaviour = BlockEntityBehaviour.get(
                 world,
                 pos,
-                DyeableFluidTankBehaviour.TYPE
+                DyeableTankBehaviour.TYPE
         );
         if (behaviour != null && behaviour.getColor() != null) {
             return behaviour.getColor();

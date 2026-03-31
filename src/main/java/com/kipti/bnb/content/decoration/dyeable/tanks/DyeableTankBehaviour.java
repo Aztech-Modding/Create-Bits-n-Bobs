@@ -1,4 +1,4 @@
-package com.kipti.bnb.content.decoration.dyeable.fluid_tank;
+package com.kipti.bnb.content.decoration.dyeable.tanks;
 
 import com.cake.azimuth.behaviour.SuperBlockEntityBehaviour;
 import com.simibubi.create.api.connectivity.ConnectivityHandler;
@@ -17,14 +17,17 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import org.jetbrains.annotations.Nullable;
 
-public class DyeableFluidTankBehaviour extends SuperBlockEntityBehaviour {
+public class DyeableTankBehaviour extends SuperBlockEntityBehaviour {
 
-    public static final BehaviourType<DyeableFluidTankBehaviour> TYPE = new BehaviourType<>("dyeable_fluid_tank");
+    public static final BehaviourType<DyeableTankBehaviour> TYPE = new BehaviourType<>("dyeable_fluid_tank");
 
     @Nullable
     private DyeColor color;
 
-    public DyeableFluidTankBehaviour(final SmartBlockEntity be) {
+    @Nullable
+    private GayDye gayDye;
+
+    public DyeableTankBehaviour(final SmartBlockEntity be) {
         super(be);
     }
 
@@ -35,6 +38,13 @@ public class DyeableFluidTankBehaviour extends SuperBlockEntityBehaviour {
 
     @Nullable
     public DyeColor getColor() {
+        if (this.gayDye != null) {
+            //Get offset to controller
+            if (this.getBlockEntity() instanceof final FluidTankBlockEntity ftbe) {
+                final int localY = this.getPos().subtract(ftbe.getController()).getY();
+                return this.gayDye.getDisplayedColor(localY);
+            }
+        }
         return this.color;
     }
 
@@ -112,7 +122,7 @@ public class DyeableFluidTankBehaviour extends SuperBlockEntityBehaviour {
             for (int y = 0; y < controllerBE.getHeight(); y++) {
                 for (int z = 0; z < controllerBE.getWidth(); z++) {
                     final BlockPos pos = controllerPos.offset(x, y, z);
-                    final DyeableFluidTankBehaviour behaviour = BlockEntityBehaviour.get(level, pos, TYPE);
+                    final DyeableTankBehaviour behaviour = BlockEntityBehaviour.get(level, pos, TYPE);
                     if (behaviour != null) {
                         behaviour.setColor(color);
                     }
@@ -126,6 +136,12 @@ public class DyeableFluidTankBehaviour extends SuperBlockEntityBehaviour {
         super.write(nbt, registries, clientPacket);
         if (this.color != null) {
             nbt.putInt("DyeColor", this.color.getId());
+        }
+
+        if (this.gayDye != null) {
+            final CompoundTag gay = new CompoundTag();
+            this.gayDye.write(gay);
+            nbt.put("Gay", gay);
         }
     }
 
@@ -141,6 +157,10 @@ public class DyeableFluidTankBehaviour extends SuperBlockEntityBehaviour {
 
         if (clientPacket && previousColor != this.color) {
             this.refreshRenderedModel();
+        }
+
+        if (nbt.contains("Gay")) {
+            this.gayDye = GayDye.read(nbt.getCompound("Gay"));
         }
     }
 

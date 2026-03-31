@@ -1,7 +1,7 @@
 package com.kipti.bnb.mixin.dyeable.fluid_tank;
 
 import com.kipti.bnb.content.decoration.dyeable.DyeableTransitionHelper;
-import com.kipti.bnb.content.decoration.dyeable.fluid_tank.DyeableFluidTankBehaviour;
+import com.kipti.bnb.content.decoration.dyeable.tanks.DyeableTankBehaviour;
 import com.simibubi.create.content.fluids.tank.FluidTankItem;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import net.minecraft.core.BlockPos;
@@ -77,8 +77,8 @@ public class FluidTankItemMixin {
         try {
             final InteractionResult result = cir.getReturnValue();
             if (result.consumesAction() && ctx.getLevel().isClientSide()) {
-                final DyeableFluidTankBehaviour behaviour = BlockEntityBehaviour.get(
-                        ctx.getLevel(), ctx.getClickedPos(), DyeableFluidTankBehaviour.TYPE
+                final DyeableTankBehaviour behaviour = BlockEntityBehaviour.get(
+                        ctx.getLevel(), ctx.getClickedPos(), DyeableTankBehaviour.TYPE
                 );
                 if (behaviour != null) {
                     behaviour.applyColorClientOnly(dye);
@@ -102,8 +102,8 @@ public class FluidTankItemMixin {
         }
         final DyeColor dye = BNB_MULTI_PLACE_DYE.get() != null ? BNB_MULTI_PLACE_DYE.get() : BNB_SINGLE_PLACE_DYE.get();
         if (dye != null) {
-            final DyeableFluidTankBehaviour behaviour = BlockEntityBehaviour.get(
-                    level, pos, DyeableFluidTankBehaviour.TYPE
+            final DyeableTankBehaviour behaviour = BlockEntityBehaviour.get(
+                    level, pos, DyeableTankBehaviour.TYPE
             );
             if (behaviour != null) {
                 behaviour.setColor(dye);
@@ -130,8 +130,8 @@ public class FluidTankItemMixin {
 
         if (ctx.getClickedFace().getAxis().isVertical()) {
             final BlockPos placedOnPos = ctx.getClickedPos().relative(ctx.getClickedFace().getOpposite());
-            final DyeableFluidTankBehaviour surfaceBehaviour = BlockEntityBehaviour.get(
-                    ctx.getLevel(), placedOnPos, DyeableFluidTankBehaviour.TYPE
+            final DyeableTankBehaviour surfaceBehaviour = BlockEntityBehaviour.get(
+                    ctx.getLevel(), placedOnPos, DyeableTankBehaviour.TYPE
             );
             if (surfaceBehaviour != null && surfaceBehaviour.getColor() != null) {
                 dye = surfaceBehaviour.getColor();
@@ -153,8 +153,8 @@ public class FluidTankItemMixin {
         try {
             final InteractionResult result = instance.place(context);
             if (result.consumesAction() && dye != null && context.getLevel().isClientSide()) {
-                final DyeableFluidTankBehaviour behaviour = BlockEntityBehaviour.get(
-                        context.getLevel(), context.getClickedPos(), DyeableFluidTankBehaviour.TYPE
+                final DyeableTankBehaviour behaviour = BlockEntityBehaviour.get(
+                        context.getLevel(), context.getClickedPos(), DyeableTankBehaviour.TYPE
                 );
                 if (behaviour != null) {
                     behaviour.applyColorClientOnly(dye);
