@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "axis=x": { "model": "bits_n_bobs:block/gigantic_cogwheel/cogwheel", "y": 90 },
+    "axis=y": { "model": "bits_n_bobs:block/gigantic_cogwheel/cogwheel" },
+    "axis=z": { "model": "bits_n_bobs:block/gigantic_cogwheel/cogwheel", "x": 90 }
+  }
+}

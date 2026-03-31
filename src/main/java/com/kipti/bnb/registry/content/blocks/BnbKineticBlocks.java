@@ -5,6 +5,8 @@ import com.kipti.bnb.content.kinetics.chain_pulley.ChainPulleyBlock;
 import com.kipti.bnb.content.kinetics.cogwheel_carriage.block.CogwheelChainCarriageBlock;
 import com.kipti.bnb.content.kinetics.cogwheel_carriage.block.CogwheelChainCarriageMovementBehaviour;
 import com.kipti.bnb.content.kinetics.cogwheel_carriage.block.CogwheelChainCarriageMovingInteraction;
+import com.kipti.bnb.content.kinetics.gigantic_cogwheel.GiganticCogwheelBlock;
+import com.kipti.bnb.content.kinetics.gigantic_cogwheel.GiganticCogwheelSatelliteBlock;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.block.EmptyFlangedGearBlock;
 import com.kipti.bnb.content.kinetics.flywheel_bearing.FlywheelBearingBlock;
 import com.kipti.bnb.foundation.client.GenericBlockEntityRenderModels;
@@ -43,12 +45,12 @@ public class BnbKineticBlocks {
                     .mapColor(MapColor.DIRT))
             .transform(axeOrPickaxe())
             .blockstate((c, p) ->
-                                BlockStateGen.axisBlock(
-                                        c,
-                                        p,
-                                        (s) -> p.models().getExistingFile(CreateBitsnBobs.asResource(
-                                                "block/flanged_gear/small_cogwheel"))
-                                ))
+                    BlockStateGen.axisBlock(
+                            c,
+                            p,
+                            (s) -> p.models().getExistingFile(CreateBitsnBobs.asResource(
+                                    "block/flanged_gear/small_cogwheel"))
+                    ))
             .item()
             .model((c, p) -> p.withExistingParent(
                     c.getName(),
@@ -68,12 +70,12 @@ public class BnbKineticBlocks {
                     .mapColor(MapColor.DIRT))
             .transform(axeOrPickaxe())
             .blockstate((c, p) ->
-                                BlockStateGen.axisBlock(
-                                        c,
-                                        p,
-                                        (s) -> p.models().getExistingFile(CreateBitsnBobs.asResource(
-                                                "block/flanged_gear/large_cogwheel"))
-                                ))
+                    BlockStateGen.axisBlock(
+                            c,
+                            p,
+                            (s) -> p.models().getExistingFile(CreateBitsnBobs.asResource(
+                                    "block/flanged_gear/large_cogwheel"))
+                    ))
             .item()
             .model((c, p) -> p.withExistingParent(
                     c.getName(),
@@ -109,6 +111,7 @@ public class BnbKineticBlocks {
             .item()
             .transform(customItemModel())
             .register();
+
     public static final BlockEntry<PulleyBlock.RopeBlock> CHAIN_ROPE = REGISTRATE.block(
                     "chain_rope",
                     PulleyBlock.RopeBlock::new
@@ -123,6 +126,7 @@ public class BnbKineticBlocks {
                             .getExistingFile(p.modLoc("block/chain_pulley/" + c.getName()))
             ))
             .register();
+
     public static final BlockEntry<PulleyBlock.MagnetBlock> CHAIN_PULLEY_MAGNET =
             REGISTRATE.block("chain_pulley_magnet", PulleyBlock.MagnetBlock::new)
                     .initialProperties(SharedProperties::stone)
@@ -134,6 +138,7 @@ public class BnbKineticBlocks {
                                     .getExistingFile(p.modLoc("block/chain_pulley/" + c.getName()))
                     ))
                     .register();
+
     public static final BlockEntry<FlywheelBearingBlock> FLYWHEEL_BEARING =
             REGISTRATE.block("flywheel_bearing", FlywheelBearingBlock::new)
                     .transform(axeOrPickaxe())
@@ -148,12 +153,50 @@ public class BnbKineticBlocks {
                     ))
                     .item()
                     .model((c, p) ->
-                                   p.withExistingParent(
-                                           c.getName(),
-                                           CreateBitsnBobs.asResource("block/flywheel_bearing/item")
-                                   )
+                            p.withExistingParent(
+                                    c.getName(),
+                                    CreateBitsnBobs.asResource("block/flywheel_bearing/item")
+                            )
                     )
                     .build()
+                    .register();
+
+    public static final BlockEntry<GiganticCogwheelBlock> GIGANTIC_COGWHEEL =
+            REGISTRATE.block("gigantic_cogwheel", GiganticCogwheelBlock::new)
+                    .initialProperties(SharedProperties::stone)
+                    .properties(p -> p
+                            .noOcclusion()
+                            .isViewBlocking((state, level, pos) -> false))
+                    .transform(axeOrPickaxe())
+                    .blockstate((c, p) -> p.directionalBlock(
+                            c.get(),
+                            state -> p.models().cubeAll(
+                                    c.getName(),
+                                    CreateBitsnBobs.asResource("block/gigantic_cogwheel/center")
+                            )
+                    ))
+                    .item()
+                    .model((c, p) -> p.withExistingParent(
+                            c.getName(),
+                            CreateBitsnBobs.asResource("block/gigantic_cogwheel/center")
+                    ))
+                    .build()
+                    .register();
+
+    public static final BlockEntry<GiganticCogwheelSatelliteBlock> GIGANTIC_COGWHEEL_SATELLITE =
+            REGISTRATE.block("gigantic_cogwheel_satellite", GiganticCogwheelSatelliteBlock::new)
+                    .initialProperties(SharedProperties::stone)
+                    .properties(p -> p
+                            .noOcclusion()
+                            .isViewBlocking((state, level, pos) -> false))
+                    .transform(axeOrPickaxe())
+                    .blockstate((c, p) -> p.simpleBlock(
+                            c.get(),
+                            p.models().cubeAll(
+                                    c.getName(),
+                                    CreateBitsnBobs.asResource("block/gigantic_cogwheel/satellite")
+                            )
+                    ))
                     .register();
 
     public static final BlockEntry<CogwheelChainCarriageBlock> COGWHEEL_CHAIN_CARRIAGE =
@@ -168,10 +211,10 @@ public class BnbKineticBlocks {
                     .onRegister(interactionBehaviour(new CogwheelChainCarriageMovingInteraction()))
                     .item()
                     .model((c, p) ->
-                                   p.withExistingParent(
-                                           c.getName(),
-                                           CreateBitsnBobs.asResource("block/cogwheel_chain_carriage/item")
-                                   ))
+                            p.withExistingParent(
+                                    c.getName(),
+                                    CreateBitsnBobs.asResource("block/cogwheel_chain_carriage/item")
+                            ))
                     .build()
                     .register();
 

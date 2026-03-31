@@ -39,6 +39,9 @@ public class BnbPartialModels {
 
     LARGE_STONE_COG_SHAFTLESS = block("large_stone_cog_shaftless"),
 
+    GIGANTIC_COGWHEEL = block("gigantic_cogwheel/cogwheel"),
+
+
     THROTTLE_LEVER_HANDLE = block("throttle_lever/handle");
 
 
