@@ -32,6 +32,15 @@ public class DyeableTankBehaviour extends SuperBlockEntityBehaviour {
     }
 
     @Override
+    public void tick() {
+        super.tick();
+        if (this.gayDye != null && this.gayDye.needsTicking()) {
+            this.gayDye.tick();
+            this.refreshRenderedModel();
+        }
+    }
+
+    @Override
     public BehaviourType<?> getType() {
         return TYPE;
     }
@@ -106,6 +115,40 @@ public class DyeableTankBehaviour extends SuperBlockEntityBehaviour {
         }
     }
 
+    public void setGayDye(@Nullable final GayDye gayDye) {
+        this.gayDye = gayDye;
+        if (this.hasLevel() && this.getLevel().isClientSide) {
+            this.refreshRenderedModel();
+        } else {
+            this.blockEntity.notifyUpdate();
+        }
+    }
+
+    public void applyGayDyeToEntireTank(final GayDye gayDye) {
+        final FluidTankBlockEntity tankBE = (FluidTankBlockEntity) this.blockEntity;
+        final FluidTankBlockEntity controllerBE = tankBE.getControllerBE();
+
+        if (controllerBE == null) {
+            this.setGayDye(gayDye);
+            return;
+        }
+
+        final Level level = this.getLevel();
+        final BlockPos controllerPos = controllerBE.getBlockPos();
+
+        for (int x = 0; x < controllerBE.getWidth(); x++) {
+            for (int y = 0; y < controllerBE.getHeight(); y++) {
+                for (int z = 0; z < controllerBE.getWidth(); z++) {
+                    final BlockPos pos = controllerPos.offset(x, y, z);
+                    final DyeableTankBehaviour behaviour = BlockEntityBehaviour.get(level, pos, TYPE);
+                    if (behaviour != null) {
+                        behaviour.setGayDye(gayDye);
+                    }
+                }
+            }
+        }
+    }
+
     private void dyeEntireTank(@Nullable final DyeColor color) {
         final FluidTankBlockEntity tankBE = (FluidTankBlockEntity) this.blockEntity;
         final FluidTankBlockEntity controllerBE = tankBE.getControllerBE();
@@ -155,12 +198,15 @@ public class DyeableTankBehaviour extends SuperBlockEntityBehaviour {
             this.color = null;
         }
 
-        if (clientPacket && previousColor != this.color) {
-            this.refreshRenderedModel();
-        }
-
+        final GayDye previousGayDye = this.gayDye;
         if (nbt.contains("Gay")) {
             this.gayDye = GayDye.read(nbt.getCompound("Gay"));
+        } else {
+            this.gayDye = null;
+        }
+
+        if (clientPacket && (previousColor != this.color || previousGayDye != this.gayDye)) {
+            this.refreshRenderedModel();
         }
     }
 

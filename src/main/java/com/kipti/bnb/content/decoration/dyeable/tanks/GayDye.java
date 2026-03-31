@@ -27,6 +27,7 @@ public class GayDye {
             });
     private static final DyeColor[] TRANS_EVEN =
             reverse(new DyeColor[]{
+                    DyeColor.WHITE,
                     DyeColor.LIGHT_BLUE,
                     DyeColor.PINK,
                     DyeColor.WHITE,
@@ -35,11 +36,12 @@ public class GayDye {
             });
     private static final DyeColor[] MAYBE_SO_MUCH_AS_BISEXUAL =
             reverse(new DyeColor[]{
-                    DyeColor.BLUE,
-                    DyeColor.BLUE,
                     DyeColor.PURPLE,
                     DyeColor.PINK,
                     DyeColor.PINK,
+                    DyeColor.PURPLE,
+                    DyeColor.BLUE,
+                    DyeColor.BLUE,
             });
 
     private int animationTick = 0;
@@ -77,10 +79,14 @@ public class GayDye {
 
     public DyeColor getDisplayedColor(final int localTankY) {
         if (this.animationType == AnimationType.SCROLLING) {
-            return this.prideType.getColorWrapped(localTankY + this.animationTick);
+            return this.prideType.getColorWrapped(localTankY + Math.floorDiv(this.animationTick, 200));
         } else {
             return this.prideType.getColorWrapped(localTankY);
         }
+    }
+
+    public boolean needsTicking() {
+        return this.animationType == AnimationType.SCROLLING;
     }
 
     public enum AnimationType {
