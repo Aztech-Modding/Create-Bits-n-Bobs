@@ -41,8 +41,8 @@ public enum BnbFeatureFlag {
             BnbKineticBlocks.CHAIN_PULLEY_MAGNET::get
     ),
 
-    EXPERIMENTAL_FLYWHEEL_BEARING(
-            FeatureCategories.BLOCK, "Availability of the Flywheel Bearing block.", false, false,
+    FLYWHEEL_BEARING(
+            FeatureCategories.BLOCK, "Availability of the Flywheel Bearing block.",
             BnbKineticBlocks.FLYWHEEL_BEARING::get
     ),
     WOODEN_STRUT(
@@ -141,7 +141,7 @@ public enum BnbFeatureFlag {
     ),
 
     COOKIE_DOUGH(
-            FeatureCategories.ITEM, "Availability of the Cookie Dough item.", true, BnbItems.COOKIE_DOUGH
+            FeatureCategories.ITEM, "Availability of the Cookie Dough item.", BnbItems.COOKIE_DOUGH
     ),
 
     DYEABLE_PIPES(FeatureCategories.BEHAVIOUR, "Ability to dye fluid pipes."),
@@ -191,6 +191,20 @@ public enum BnbFeatureFlag {
     private final Lazy<List<Supplier<Item>>> associatedItems;
     private final boolean defaultState;
     private final boolean releaseLocked;
+
+    @SafeVarargs
+    BnbFeatureFlag(final FeatureCategories.ItemFeatureCategory blocks,
+                   final String description,
+                   final Supplier<Item>... associatedItems) {
+        this(
+                blocks,
+                description,
+                false,
+                true,
+                Lazy.of(List::of),
+                Lazy.of(() -> Arrays.asList(associatedItems))
+        );
+    }
 
     @SafeVarargs
     BnbFeatureFlag(final FeatureCategories.ItemFeatureCategory blocks,
