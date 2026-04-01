@@ -13,7 +13,7 @@
     },
     "icon": {
       "count": 1,
-      "id": "bits_n_bobs:cookie_dough"
+      "id": "minecraft:red_dye"
     },
     "title": {
       "translate": "advancement.bits_n_bobs.dye_fluid_component"

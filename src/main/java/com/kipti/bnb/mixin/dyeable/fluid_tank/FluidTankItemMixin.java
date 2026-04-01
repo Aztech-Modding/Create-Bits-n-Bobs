@@ -2,6 +2,7 @@ package com.kipti.bnb.mixin.dyeable.fluid_tank;
 
 import com.kipti.bnb.content.decoration.dyeable.DyeableTransitionHelper;
 import com.kipti.bnb.content.decoration.dyeable.tanks.DyeableTankBehaviour;
+import com.kipti.bnb.registry.content.BnbAdvancements;
 import com.simibubi.create.content.fluids.tank.FluidTankItem;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import net.minecraft.core.BlockPos;
@@ -68,6 +69,7 @@ public class FluidTankItemMixin {
         BNB$PLACEMENT_DYE.set(dye);
 
         if (dye != null) {
+            BnbAdvancements.DYE_FLUID_COMPONENT.awardTo(ctx.getPlayer());
             DyeableTransitionHelper.savePendingPlacementColor(
                     ctx.getLevel(), ctx.getClickedPos(), dye
             );
@@ -125,6 +127,7 @@ public class FluidTankItemMixin {
     private InteractionResult bnb$wrapSubPlacement(final BlockItem instance, final BlockPlaceContext context) {
         final DyeColor dye = BNB$PLACEMENT_DYE.get();
         if (dye != null) {
+            BnbAdvancements.DYE_FLUID_COMPONENT.awardTo(context.getPlayer());
             DyeableTransitionHelper.savePendingPlacementColor(context.getLevel(), context.getClickedPos(), dye);
         }
         try {
