@@ -18,7 +18,13 @@ public class ReleaseLockTooltipHandler {
         }
 
         if (BnbFeatureFlag.isReleaseLocked(event.getItemStack().getItem())) {
-            event.getToolTip().add(Component.literal("[!] Feature disabled in production").withStyle(ChatFormatting.RED));
+            event.getToolTip().add(Component.literal("[!] Feature is upcoming content").withStyle(
+                    ChatFormatting.RED));
+        }
+
+        if (BnbFeatureFlag.isExperimental(event.getItemStack().getItem())) {
+            event.getToolTip().add(Component.literal("[!] Feature is experimental").withStyle(
+                    ChatFormatting.YELLOW));
         }
     }
 

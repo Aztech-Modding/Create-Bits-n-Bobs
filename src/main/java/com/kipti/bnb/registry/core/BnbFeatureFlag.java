@@ -20,6 +20,7 @@ import net.neoforged.neoforge.common.util.Lazy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public enum BnbFeatureFlag {
@@ -41,12 +42,12 @@ public enum BnbFeatureFlag {
     ),
 
     EXPERIMENTAL_FLYWHEEL_BEARING(
-            FeatureCategories.BLOCK, "Availability of the Flywheel Bearing block.", true,
+            FeatureCategories.BLOCK, "Availability of the Flywheel Bearing block.", false, false,
             BnbKineticBlocks.FLYWHEEL_BEARING::get
     ),
     WOODEN_STRUT(
-            FeatureCategories.BLOCK, "Availability of the Wooden Strut block.", true,
-            BnbDecorativeBlocks.WOODEN_GIRDER_STRUT::get
+            FeatureCategories.BLOCK, "Availability of the Wooden Strut block.", true
+//            BnbDecorativeBlocks.WOODEN_GIRDER_STRUT::get
     ),
 
     WEATHERED_GIRDER(
@@ -117,7 +118,6 @@ public enum BnbFeatureFlag {
 
     CABLE_GIRDER_STRUT(
             FeatureCategories.BLOCK, "Availability of the Cable Girder Strut block.",
-            true,
             BnbDecorativeBlocks.CABLE_GIRDER_STRUT::get
     ),
     WEATHERED_METAL_BRACKET(
@@ -195,13 +195,6 @@ public enum BnbFeatureFlag {
     @SafeVarargs
     BnbFeatureFlag(final FeatureCategories.ItemFeatureCategory blocks,
                    final String description,
-                   final Supplier<Item>... associatedItems) {
-        this(blocks, description, false, true, Lazy.of(List::of), Lazy.of(() -> Arrays.asList(associatedItems)));
-    }
-
-    @SafeVarargs
-    BnbFeatureFlag(final FeatureCategories.ItemFeatureCategory blocks,
-                   final String description,
                    final boolean experimental,
                    final Supplier<Item>... associatedItems) {
         this(
@@ -224,13 +217,29 @@ public enum BnbFeatureFlag {
     @SafeVarargs
     BnbFeatureFlag(final FeatureCategories.BlockFeatureCategory blocks,
                    final String description,
-                   final boolean experimental,
+                   final boolean releaseLocked,
                    final Supplier<Block>... associatedBlocks) {
         this(
                 blocks,
                 description,
-                experimental,
-                !experimental,
+                releaseLocked,
+                !releaseLocked,
+                Lazy.of(() -> Arrays.asList(associatedBlocks)),
+                Lazy.of(List::of)
+        );
+    }
+
+    @SafeVarargs
+    BnbFeatureFlag(final FeatureCategories.BlockFeatureCategory blocks,
+                   final String description,
+                   final boolean releaseLocked,
+                   final boolean defaultState,
+                   final Supplier<Block>... associatedBlocks) {
+        this(
+                blocks,
+                description,
+                releaseLocked,
+                defaultState,
                 Lazy.of(() -> Arrays.asList(associatedBlocks)),
                 Lazy.of(List::of)
         );
@@ -265,19 +274,20 @@ public enum BnbFeatureFlag {
         return !FMLLoader.isProduction();
     }
 
-    /**
-     * Returns whether the item is associated with any release-locked feature flag.
-     */
-    public static boolean isReleaseLocked(final Item item) {
-        if (item instanceof final BlockItem blockItem) {
-            return isReleaseLocked(blockItem);
-        }
+    private static boolean checkFlags(final Predicate<BnbFeatureFlag> flagPredicate,
+                                      final Predicate<Item> itemPredicate,
+                                      final Predicate<Block> blockPredicate) {
         for (final BnbFeatureFlag flag : BnbFeatureFlag.values()) {
-            if (!flag.releaseLocked) {
-                continue;
+            if (!flagPredicate.test(flag)) continue;
+
+            for (final Supplier<Item> item : flag.getAssociatedItems()) {
+                if (itemPredicate.test(item.get())) {
+                    return true;
+                }
             }
-            for (final Supplier<Item> itemSupplier : flag.getAssociatedItems()) {
-                if (itemSupplier.get() == item) {
+
+            for (final Supplier<Block> block : flag.getAssociatedBlocks()) {
+                if (blockPredicate.test(block.get())) {
                     return true;
                 }
             }
@@ -285,57 +295,30 @@ public enum BnbFeatureFlag {
         return false;
     }
 
-    /**
-     * Returns whether the block item is associated with any release-locked feature flag.
-     */
-    public static boolean isReleaseLocked(final BlockItem blockItem) {
-        if (blockItem == null) {
-            return false;
-        }
-        for (final BnbFeatureFlag flag : BnbFeatureFlag.values()) {
-            if (!flag.releaseLocked) {
-                continue;
-            }
-            for (final Supplier<Block> blockSupplier : flag.getAssociatedBlocks()) {
-                if (blockSupplier.get() == blockItem.getBlock()) {
-                    return true;
-                }
-            }
-        }
-        return false;
+    public static boolean isReleaseLocked(final Item item) {
+        return checkFlags(
+                BnbFeatureFlag::isReleaseLocked,
+                flagItem -> flagItem == item,
+                block -> item instanceof final BlockItem blockItem && blockItem.getBlock() == block
+        );
+    }
+
+    public static boolean isExperimental(final Item item) {
+        return checkFlags(
+                BnbFeatureFlag::isExperimental,
+                flagItem -> flagItem == item,
+                block -> item instanceof final BlockItem blockItem && blockItem.getBlock() == block
+        );
     }
 
     public static boolean isEnabled(final Item item) {
-        if (item instanceof final BlockItem blockItem) {
-            return isEnabled(blockItem);
-        }
-        for (final BnbFeatureFlag featureFlag : BnbFeatureFlag.values()) {
-            for (final Supplier<Item> itemSupplier : featureFlag.getAssociatedItems()) {
-                if (itemSupplier.get() == item && !featureFlag.get()) {
-                    return false;
-                }
-            }
-        }
-        return true;
+        return !checkFlags(
+                flag -> !flag.isEnabled(),
+                flagItem -> flagItem == item,
+                block -> item instanceof final BlockItem blockItem && blockItem.getBlock() == block
+        );
     }
 
-    /**
-     * Returns whether the block is disabled by ANY related feature flag.
-     */
-    public static boolean isEnabled(final BlockItem tabItem) {
-        if (tabItem == null) {
-            return false;
-        }
-
-        for (final BnbFeatureFlag featureFlag : BnbFeatureFlag.values()) {
-            for (final Supplier<Block> blockSupplier : featureFlag.getAssociatedBlocks()) {
-                if (blockSupplier.get() == tabItem.getBlock() && !featureFlag.get()) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
 
     public static boolean isEnabled(final String featureFlagKey) {
         if (featureFlagKey == null || featureFlagKey.isEmpty()) {
@@ -350,7 +333,11 @@ public enum BnbFeatureFlag {
             return false;
         }
 
-        return flag.get();
+        return flag.isEnabled();
+    }
+
+    private boolean isExperimental() {
+        return !this.defaultState;
     }
 
     public FeatureCategories.FeatureCategory getCategory() {
@@ -377,9 +364,9 @@ public enum BnbFeatureFlag {
         return this.associatedItems.get();
     }
 
-    public boolean get() {
-        if (this.releaseLocked && !isDevEnvironment()) {
-            return false;
+    public boolean isEnabled() {
+        if (isDevEnvironment()) {
+            return true;
         }
         return BnbConfigs.common().getFeatureFlagState(this);
     }

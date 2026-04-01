@@ -19,7 +19,6 @@ import com.kipti.bnb.content.trinkets.light.headlamp.rendering.pipeline.visual.H
 import com.kipti.bnb.content.trinkets.nixie.foundation.GenericNixieDisplayBlockEntity;
 import com.kipti.bnb.content.trinkets.nixie.foundation.GenericNixieDisplayBoardRenderer;
 import com.kipti.bnb.foundation.client.GenericBlockEntityRenderModels;
-import com.kipti.bnb.registry.client.BnbPartialModels;
 import com.kipti.bnb.registry.content.blocks.BnbKineticBlocks;
 import com.kipti.bnb.registry.content.blocks.BnbTrinketBlocks;
 import com.kipti.bnb.registry.content.blocks.deco.BnbDecorativeBlocks;
@@ -53,8 +52,9 @@ public class BnbBlockEntities {
     public static final BlockEntityEntry<StrutBlockEntity> GIRDER_STRUT = REGISTRATE
             .blockEntity("girder_strut", StrutBlockEntity::new)
             .validBlocks(
-                    BnbDecorativeBlocks.GIRDER_STRUT, BnbDecorativeBlocks.WEATHERED_GIRDER_STRUT,
-                    BnbDecorativeBlocks.WOODEN_GIRDER_STRUT, BnbDecorativeBlocks.CABLE_GIRDER_STRUT
+                    BnbDecorativeBlocks.GIRDER_STRUT,
+                    BnbDecorativeBlocks.WEATHERED_GIRDER_STRUT,
+                    BnbDecorativeBlocks.CABLE_GIRDER_STRUT
             )
             .renderer(() -> StrutBlockEntityRenderer::new)
             .register();

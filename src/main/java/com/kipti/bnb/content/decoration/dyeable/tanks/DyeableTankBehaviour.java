@@ -1,6 +1,7 @@
 package com.kipti.bnb.content.decoration.dyeable.tanks;
 
 import com.cake.azimuth.behaviour.SuperBlockEntityBehaviour;
+import com.kipti.bnb.registry.content.BnbAdvancements;
 import com.simibubi.create.api.connectivity.ConnectivityHandler;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
@@ -10,6 +11,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
@@ -85,6 +87,10 @@ public class DyeableTankBehaviour extends SuperBlockEntityBehaviour {
         }
 
         if (!event.getLevel().isClientSide) {
+            if (event.getEntity() instanceof final Player player) {
+                BnbAdvancements.DYE_FLUID_COMPONENT.awardTo(player);
+            }
+
             final DyeColor newColor = dyeItem.getDyeColor();
             if (event.getEntity().isShiftKeyDown()) {
                 this.dyeSingle(newColor);

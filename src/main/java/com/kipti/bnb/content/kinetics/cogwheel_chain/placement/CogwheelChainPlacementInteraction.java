@@ -18,8 +18,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -99,17 +99,29 @@ public class CogwheelChainPlacementInteraction {
             return currentBuildingChain != null;
         }
 
-        if (!BnbFeatureFlag.COGWHEEL_CHAIN_DRIVES.get()) {
+        if (!BnbFeatureFlag.COGWHEEL_CHAIN_DRIVES.isEnabled()) {
             player.displayClientMessage(new ChainInteractionFailedException("config_forbids").getComponent(), true);
             return true;
         }
 
         if (!heldChainType.getCogwheelPredicate().test(targetedState.getBlock())) {
-            player.displayClientMessage(new ChainInteractionFailedException("invalid_cogwheel_type." + heldChainType.getTranslationKey()).getComponent(), true);
+            player.displayClientMessage(
+                    new ChainInteractionFailedException("invalid_cogwheel_type." + heldChainType.getTranslationKey()).getComponent(),
+                    true
+            );
             return true;
         }
 
-        rightClickForChain(event, level, hitPos, targetedState, targetedCandidate, heldChainType, chainItemInHand, player);
+        rightClickForChain(
+                event,
+                level,
+                hitPos,
+                targetedState,
+                targetedCandidate,
+                heldChainType,
+                chainItemInHand,
+                player
+        );
         return true;
     }
 
@@ -135,7 +147,12 @@ public class CogwheelChainPlacementInteraction {
                                            final LocalPlayer player) {
         if (currentBuildingChain == null || currentChainLevel == null || !currentChainLevel.equals(level.dimension())) {
             CogwheelChainPartialEditInteractionHandler.clearEditState();
-            currentBuildingChain = new PlacingCogwheelChain(hitPos, targetedCandidate.axis(), targetedCandidate.isLarge(), targetedCandidate.hasSmallCogwheelOffset());
+            currentBuildingChain = new PlacingCogwheelChain(
+                    hitPos,
+                    targetedCandidate.axis(),
+                    targetedCandidate.isLarge(),
+                    targetedCandidate.hasSmallCogwheelOffset()
+            );
             currentChainLevel = level.dimension();
             currentChainType = heldChainType;
             currentChainItemType = chainItemInHand.getItem();
@@ -212,7 +229,8 @@ public class CogwheelChainPlacementInteraction {
                 isChainDriveItem(player.getOffhandItem()) ? player.getOffhandItem() : null;
     }
 
-    public static @Nullable ItemStack getCompatibleCogwheelItemInHand(final LocalPlayer player, final CogwheelChainType chainType) {
+    public static @Nullable ItemStack getCompatibleCogwheelItemInHand(final LocalPlayer player,
+                                                                      final CogwheelChainType chainType) {
         return isCompatibleCogwheelItem(player.getMainHandItem(), chainType) ? player.getMainHandItem() :
                 isCompatibleCogwheelItem(player.getOffhandItem(), chainType) ? player.getOffhandItem() : null;
     }
@@ -240,7 +258,6 @@ public class CogwheelChainPlacementInteraction {
         return chainType.getCogwheelPredicate().test(blockItem.getBlock())
                 && CogwheelChainCandidate.getForBlock(blockItem.getBlock()) != null;
     }
-
 
 
 }

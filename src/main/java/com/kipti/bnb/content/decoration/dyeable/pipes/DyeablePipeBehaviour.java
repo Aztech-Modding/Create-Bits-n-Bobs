@@ -2,6 +2,7 @@ package com.kipti.bnb.content.decoration.dyeable.pipes;
 
 import com.cake.azimuth.behaviour.SuperBlockEntityBehaviour;
 import com.kipti.bnb.content.decoration.dyeable.DyeableTransitionHelper;
+import com.kipti.bnb.registry.content.BnbAdvancements;
 import com.simibubi.create.content.fluids.FluidPropagator;
 import com.simibubi.create.content.fluids.pipes.FluidPipeBlock;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
@@ -78,6 +79,9 @@ public class DyeablePipeBehaviour extends SuperBlockEntityBehaviour {
         }
 
         if (!event.getLevel().isClientSide) {
+            if (event.getEntity() instanceof final Player player) {
+                BnbAdvancements.DYE_FLUID_COMPONENT.awardTo(player);
+            }
             this.setColor(dyeItem.getDyeColor());
         }
 

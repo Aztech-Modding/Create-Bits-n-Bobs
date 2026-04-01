@@ -11,11 +11,11 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "bits_n_bobs:wooden_girder_strut"
+          "name": "minecraft:air"
         }
       ],
       "rolls": 1.0
     }
   ],
-  "random_sequence": "bits_n_bobs:blocks/wooden_girder_strut"
+  "random_sequence": "bits_n_bobs:blocks/gigantic_cogwheel_satellite"
 }

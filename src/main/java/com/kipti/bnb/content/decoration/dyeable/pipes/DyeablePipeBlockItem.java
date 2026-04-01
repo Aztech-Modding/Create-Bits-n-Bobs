@@ -1,6 +1,7 @@
 package com.kipti.bnb.content.decoration.dyeable.pipes;
 
 import com.kipti.bnb.content.decoration.dyeable.DyeableTransitionHelper;
+import com.kipti.bnb.registry.content.BnbAdvancements;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;
@@ -26,6 +27,7 @@ public class DyeablePipeBlockItem extends BlockItem {
     public InteractionResult place(final BlockPlaceContext context) {
         final @Nullable DyeColor offhandDye = getOffhandDyeColor(context);
         if (offhandDye != null) {
+            BnbAdvancements.DYE_FLUID_COMPONENT.awardTo(context.getPlayer());
             DyeableTransitionHelper.savePendingPlacementColor(
                     context.getLevel(), context.getClickedPos(), offhandDye
             );

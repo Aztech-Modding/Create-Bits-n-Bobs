@@ -1,4 +1,4 @@
-// 1.21.1	2026-03-31T00:30:15.6634948	Registrate Provider for bits_n_bobs [Registries, Data Maps, Recipes, Advancements, Loot Tables, Tags (blocks), Tags (enchantments), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider]
+// 1.21.1	2026-04-01T17:24:57.3422215	Registrate Provider for bits_n_bobs [Registries, Data Maps, Recipes, Advancements, Loot Tables, Tags (blocks), Tags (enchantments), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider]
 bae96470ab6d0efb7a73bf4e5f0a82277358b272 assets/bits_n_bobs/blockstates/andesite_encased_flanged_cogwheel.json
 161eacda54e0ee43ba4ec50b5a179c7c27d6ab3a assets/bits_n_bobs/blockstates/andesite_encased_large_flanged_cogwheel.json
 70069cf32ef31f524297f96e15c560aa8e3e41ae assets/bits_n_bobs/blockstates/andesite_encased_piston_extension_pole.json
@@ -52,6 +52,8 @@ ef59cf755e5af37758df3761c75f22476245aa52 assets/bits_n_bobs/blockstates/diorite_
 0abb47cf084948c642893f5dea24407700f4d275 assets/bits_n_bobs/blockstates/dripstone_tile_stairs.json
 4cea5e6e1cdace4ee944c7b0f773e98421298e49 assets/bits_n_bobs/blockstates/dripstone_tile_wall.json
 945aa14fe01a9661ed3f80860150d73284bf6fc9 assets/bits_n_bobs/blockstates/flywheel_bearing.json
+9a9f1fa8ecd23a90b7452b3cd96433710d827c9c assets/bits_n_bobs/blockstates/gigantic_cogwheel.json
+37a4eb07905a73b7aa23fc98ced9d84edf382156 assets/bits_n_bobs/blockstates/gigantic_cogwheel_satellite.json
 6a0ac2241185490eaf2da8778ea49cf4325ca760 assets/bits_n_bobs/blockstates/girder_strut.json
 416f0c064c0fb3b051125278c317f919bf597bc5 assets/bits_n_bobs/blockstates/granite_tiles.json
 cf7282424d3ae45c34efcbc0447be669486ef1a5 assets/bits_n_bobs/blockstates/granite_tile_slab.json
@@ -142,12 +144,11 @@ db93f0b6304e85777db8e210ec27877930cd94a5 assets/bits_n_bobs/blockstates/weathere
 c0190afa39321b2f2c2ef4fc2365954911f2b89b assets/bits_n_bobs/blockstates/white_chair.json
 4db90e28dfc8d1b622b3336685268b883059c3fb assets/bits_n_bobs/blockstates/white_large_nixie_tube.json
 98c1742a3f1ee6f357a35cadd1559b1d5f6d364a assets/bits_n_bobs/blockstates/white_nixie_board.json
-57ecd443efdff90afc77d1307f6aad8a84edca4e assets/bits_n_bobs/blockstates/wooden_girder_strut.json
 bbb308f65d8082773ca234d880ab5896c2390014 assets/bits_n_bobs/blockstates/yellow_chair.json
 4db90e28dfc8d1b622b3336685268b883059c3fb assets/bits_n_bobs/blockstates/yellow_large_nixie_tube.json
 98c1742a3f1ee6f357a35cadd1559b1d5f6d364a assets/bits_n_bobs/blockstates/yellow_nixie_board.json
-76ca8fcbdc891088393e4d5ea948f03e259ed94e assets/bits_n_bobs/lang/en_ud.json
-4b21e9d083fd1b6e716981b05e016f5c132c9dec assets/bits_n_bobs/lang/en_us.json
+f82e19e770cac8360a1d17da9fd895d06566bac3 assets/bits_n_bobs/lang/en_ud.json
+1ef7ff7786ab221c00c88cbe1bba7fa84ba2f030 assets/bits_n_bobs/lang/en_us.json
 42e62dfae8361f2959305f50adfaaffafe2b3e5a assets/bits_n_bobs/models/block/andesite_encased_flanged_cogwheel.json
 77e1dc1a5410d8439303b65e92d739dbf9cad9ef assets/bits_n_bobs/models/block/andesite_encased_flanged_cogwheel_bottom.json
 189ffb75ff304fd545f38f215657c4e114a6d435 assets/bits_n_bobs/models/block/andesite_encased_flanged_cogwheel_top.json
@@ -579,6 +580,7 @@ d00e6df783cc9d2038e38707f94a2de440472338 assets/bits_n_bobs/models/item/dripston
 eb7dd3beee6c327215b017e5671d0230b444cbe7 assets/bits_n_bobs/models/item/dripstone_tile_stairs.json
 729fd1a050dbfa7f831154f530cc893704e62111 assets/bits_n_bobs/models/item/dripstone_tile_wall.json
 911b38bbfd8c3cfebb2cc485b0670f56d9715902 assets/bits_n_bobs/models/item/flywheel_bearing.json
+6b91ca3a43d3bc5aca19249afa4164817ea80efa assets/bits_n_bobs/models/item/gigantic_cogwheel.json
 e4b469885e1079719d1e6a5d7ad76c20faf73480 assets/bits_n_bobs/models/item/girder_strut.json
 858ae037a6cca6fe2857fb2fb9c52bbbe4bfd760 assets/bits_n_bobs/models/item/granite_tiles.json
 30ab6ba209e7f282bce1bfb4c397b632a68648d9 assets/bits_n_bobs/models/item/granite_tile_slab.json
@@ -646,7 +648,6 @@ bbd08e5d6b1e02b0e9e904b274fd8dbc0e005065 assets/bits_n_bobs/models/item/weathere
 b918cb8c78460b774c757725866a3bc9b64d72fc assets/bits_n_bobs/models/item/weathered_metal_bracket.json
 a756ec3f1d1ff09079622e814c629a112bbbc14f assets/bits_n_bobs/models/item/weathered_metal_girder.json
 f83d44615309b843be16b656e17b472a3dc22019 assets/bits_n_bobs/models/item/white_chair.json
-f18bdc130a1f26271863a1259347cefbba619c70 assets/bits_n_bobs/models/item/wooden_girder_strut.json
 630417845e5676a5c4a82321f9f31fc31409420e assets/bits_n_bobs/models/item/yellow_chair.json
 cbaf41a095b2aff7823b886ad95974f6a5acde3d data/bits_n_bobs/advancement/recipes/building_blocks/andesite_from_stone_types_andesite_stonecutting.json
 c62bcee9a88a07fce1de71894d03ab3abcb3d438 data/bits_n_bobs/advancement/recipes/building_blocks/andesite_tiles_from_stone_types_andesite_stonecutting.json
@@ -845,6 +846,8 @@ e6efe1814db8353f18aa8b56338975ce3735609c data/bits_n_bobs/loot_table/blocks/dior
 dfe4103baee3c62563086322ff2c0b7801ae9708 data/bits_n_bobs/loot_table/blocks/dripstone_tile_stairs.json
 c269f51c58aebf400e1375a4d3e5c44e3b83177f data/bits_n_bobs/loot_table/blocks/dripstone_tile_wall.json
 1fa21743f2a57f1e526a663f6f9baf3fefc92834 data/bits_n_bobs/loot_table/blocks/flywheel_bearing.json
+f982184ce2835eb99cc339cf33861d58d2c74669 data/bits_n_bobs/loot_table/blocks/gigantic_cogwheel.json
+52056f80afd72a47c9515a3fd098d491545a4110 data/bits_n_bobs/loot_table/blocks/gigantic_cogwheel_satellite.json
 b768e8a90035e52718c555815c861a8d77db869a data/bits_n_bobs/loot_table/blocks/girder_strut.json
 1995596300553cc2210ea9d26e91e174dc5366f1 data/bits_n_bobs/loot_table/blocks/granite_tiles.json
 c83126a83f9099a133739a1460cb89682c3fcdcb data/bits_n_bobs/loot_table/blocks/granite_tile_slab.json
@@ -935,7 +938,6 @@ fdb5e19b652af66f9f0faf3cde44886af1640197 data/bits_n_bobs/loot_table/blocks/weat
 5257aa8bf4427d5f9e41bc6d9f406f5b705b6b4e data/bits_n_bobs/loot_table/blocks/white_chair.json
 e3a915b6aacfc016fb09966054c0037eab1e4abb data/bits_n_bobs/loot_table/blocks/white_large_nixie_tube.json
 caf6a78511e0b6483d8383dbf1c98296b07df2b1 data/bits_n_bobs/loot_table/blocks/white_nixie_board.json
-828879f84e4c58fa30e37bd82958893f28664a0d data/bits_n_bobs/loot_table/blocks/wooden_girder_strut.json
 e69a6e41b208776e408c43c6a1e4207afda75349 data/bits_n_bobs/loot_table/blocks/yellow_chair.json
 a0e32af6f87c8062a5173945dbf8149347afbaf2 data/bits_n_bobs/loot_table/blocks/yellow_large_nixie_tube.json
 6660413d44895a511f670b35a2f9d0e9d9cc3292 data/bits_n_bobs/loot_table/blocks/yellow_nixie_board.json
@@ -1118,7 +1120,7 @@ e9c7f0b566532fff7cf437a0090a3f922f1858a0 data/create/recipe/scoria_tile_slab_rec
 02533d9a61ad20784b54a0aee5983e21e7dfd6cb data/create/recipe/tuff_tile_slab_recycling.json
 f81752657747e2c27f70e26c6317537f0a1d4930 data/create/recipe/veridium_tile_slab_recycling.json
 033f75b4c401f8616e1d2b8a61c46886cd9a5bc2 data/create/tags/block/brittle.json
-500613658aa0b8da3e3b788eb695a24cdb33ef6d data/create/tags/block/safe_nbt.json
+aba72e37571e0cf714fa38ace2b165cbe7f94d70 data/create/tags/block/safe_nbt.json
 749d9923fac41fc2f812c706568223fd1d1b251f data/create/tags/item/invalid_for_track_paving.json
 b2746ad5fb6e8a9bd43915d905fd9a3c218c3c63 data/create/tags/item/stone_types/andesite.json
 82481f615fec3a1f1dc8e14a2d59c8a56ce7ec28 data/create/tags/item/stone_types/asurine.json
@@ -1137,8 +1139,8 @@ f1f656352662478775cd9db2d1ca8f7aac574145 data/create/tags/item/stone_types/verid
 2cb2802b72d43e1df64d640dfba8ff2cc66bc4f8 data/c/tags/entity_type/teleporting_not_supported.json
 de30238a3ec01e43241a56c5c283d45aae3597b7 data/c/tags/item/ropes.json
 033f75b4c401f8616e1d2b8a61c46886cd9a5bc2 data/minecraft/tags/block/climbable.json
-75a8c644a81f32fcd68f9e01e85d9d776b951b49 data/minecraft/tags/block/mineable/axe.json
-b4efb47b0773d0db20561cbefb6d055c14339cdc data/minecraft/tags/block/mineable/pickaxe.json
+83e51315030256cd957187762e5bd942601affb8 data/minecraft/tags/block/mineable/axe.json
+ab9163bdbfaa008eee6ccdf9a521f579e9b80642 data/minecraft/tags/block/mineable/pickaxe.json
 ed62c06140a0397feee5c79128d399c64719a198 data/minecraft/tags/block/slabs.json
 10c05d7d5af60bb17cc6d8618bd4354ba3dd741a data/minecraft/tags/block/stairs.json
 b8e4b52b0eaeafeb7c3642ce0fe41d29e6b0dbb0 data/minecraft/tags/block/walls.json

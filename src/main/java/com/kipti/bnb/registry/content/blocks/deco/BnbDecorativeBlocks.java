@@ -38,7 +38,6 @@ import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import static com.kipti.bnb.CreateBitsnBobs.REGISTRATE;
 import static com.simibubi.create.foundation.data.CreateRegistrate.connectedTextures;
 import static com.simibubi.create.foundation.data.ModelGen.customItemModel;
-import static com.simibubi.create.foundation.data.TagGen.axeOnly;
 import static com.simibubi.create.foundation.data.TagGen.pickaxeOnly;
 
 public class BnbDecorativeBlocks {
@@ -132,34 +131,34 @@ public class BnbDecorativeBlocks {
             .build()
             .register();
 
-    public static final BlockEntry<BnbStrutBlock> WOODEN_GIRDER_STRUT = REGISTRATE.block(
-                    "wooden_girder_strut",
-                    p -> new BnbStrutBlock(
-                            p,
-                            BnbStrutDefinitions.WOODEN_MODEL
-                    )
-            )
-            .initialProperties(SharedProperties::wooden)
-            .transform(axeOnly())
-            .properties(p -> p.noOcclusion()
-                    .sound(SoundType.WOOD))
-            .blockstate((c, p) -> p.directionalBlock(
-                    c.get(),
-                    (state) -> p.models().getExistingFile(CreateBitsnBobs.asResource(
-                            "block/girder_strut/wooden_girder_strut_attachment")
-                    )
-            ))
-            .onRegister(CreateRegistrate.blockModel(() -> StrutModelBuilder::new))
-            .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
-            .item(StrutBlockItem::new)
-            .model((c, p) ->
-                           p.withExistingParent(
-                                   c.getName(),
-                                   CreateBitsnBobs.asResource("block/girder_strut/wooden_girder_item")
-                           )
-            )
-            .build()
-            .register();
+//    public static final BlockEntry<BnbStrutBlock> WOODEN_GIRDER_STRUT = REGISTRATE.block(
+//                    "wooden_girder_strut",
+//                    p -> new BnbStrutBlock(
+//                            p,
+//                            BnbStrutDefinitions.WOODEN_MODEL
+//                    )
+//            )
+//            .initialProperties(SharedProperties::wooden)
+//            .transform(axeOnly())
+//            .properties(p -> p.noOcclusion()
+//                    .sound(SoundType.WOOD))
+//            .blockstate((c, p) -> p.directionalBlock(
+//                    c.get(),
+//                    (state) -> p.models().getExistingFile(CreateBitsnBobs.asResource(
+//                            "block/girder_strut/wooden_girder_strut_attachment")
+//                    )
+//            ))
+//            .onRegister(CreateRegistrate.blockModel(() -> StrutModelBuilder::new))
+//            .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
+//            .item(StrutBlockItem::new)
+//            .model((c, p) ->
+//                           p.withExistingParent(
+//                                   c.getName(),
+//                                   CreateBitsnBobs.asResource("block/girder_strut/wooden_girder_item")
+//                           )
+//            )
+//            .build()
+//            .register();
 
     public static final BlockEntry<CableStrutBlock> CABLE_GIRDER_STRUT = REGISTRATE.block(
                     "cable_girder_strut",
@@ -222,19 +221,19 @@ public class BnbDecorativeBlocks {
             )
             .transform(TagGen.pickaxeOnly())
             .blockstate((c, p) ->
-                                 BnbBlockStateGen.directionalMixedUvLockBlock(
-                                         c, p,
+                                BnbBlockStateGen.directionalMixedUvLockBlock(
+                                        c, p,
                                         p.models().getExistingFile(CreateBitsnBobs.asResource(
                                                 "block/industrial_grating/panel")),
                                         p.models().getExistingFile(CreateBitsnBobs.asResource(
                                                 "block/industrial_grating/panel_side"))
-                                 ))
+                                ))
             .onRegister(connectedTextures(() -> new GratingPanelCTBehaviour(BnbSpriteShifts.INDUSTRIAL_GRATING)))
             .addLayer(() -> RenderType::cutout)
             .item(GratingPanelBlockItem::new)
             .model((c, p) ->
                            p.withExistingParent(
-                                    c.getName(),
+                                   c.getName(),
                                    CreateBitsnBobs.asResource("block/industrial_grating/item")
                            )
             )

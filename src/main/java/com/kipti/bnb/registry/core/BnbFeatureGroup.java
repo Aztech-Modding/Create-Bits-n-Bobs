@@ -46,7 +46,7 @@ public enum BnbFeatureGroup {
             if (child.isReleaseLocked()) {
                 continue;
             }
-            if (child.get()) {
+            if (child.isEnabled()) {
                 anyEnabled = true;
             } else {
                 anyDisabled = true;
