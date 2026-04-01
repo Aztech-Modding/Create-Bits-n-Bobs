@@ -26,6 +26,7 @@ import com.kipti.bnb.registry.content.blocks.encased.BnbEncasedListBlocks;
 import com.kipti.bnb.registry.content.blocks.encased.BnbExtraEncasedBlocks;
 import com.kipti.bnb.registry.content.blocks.encased.BnbSpecialEncasedBlocks;
 import com.simibubi.create.AllBlocks;
+import com.simibubi.create.content.fluids.pipes.FluidPipeBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 import com.simibubi.create.content.kinetics.base.ShaftRenderer;
@@ -70,6 +71,14 @@ public class BnbBlockEntities {
                     BnbDecorativeBlocks.INDUSTRIAL_TRUSS_ENCASED_SHAFT
             )
             .renderer(() -> ShaftRenderer::new)
+            .register();
+
+    public static final BlockEntityEntry<FluidPipeBlockEntity> ENCASED_PIPE = REGISTRATE
+            .blockEntity("encased_pipe", FluidPipeBlockEntity::new)
+            .validBlocks(
+                    BnbSpecialEncasedBlocks.INDUSTRIAL_GRATING_PANEL_PIPE,
+                    BnbDecorativeBlocks.INDUSTRIAL_TRUSS_ENCASED_PIPE
+            )
             .register();
 
     public static final BlockEntityEntry<SimpleKineticBlockEntity> ENCASED_COGWHEEL = REGISTRATE

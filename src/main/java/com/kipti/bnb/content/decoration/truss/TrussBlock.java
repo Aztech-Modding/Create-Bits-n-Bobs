@@ -3,6 +3,8 @@ package com.kipti.bnb.content.decoration.truss;
 import com.kipti.bnb.registry.client.BnbShapes;
 import com.kipti.bnb.registry.content.blocks.deco.BnbDecorativeBlocks;
 import com.simibubi.create.AllBlocks;
+import com.simibubi.create.content.fluids.FluidTransportBehaviour;
+import com.simibubi.create.content.fluids.pipes.FluidPipeBlock;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -17,6 +19,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.PipeBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -93,6 +96,19 @@ public class TrussBlock extends RotatedPillarBlock {
             }
             return ItemInteractionResult.SUCCESS;
         }
+        if (AllBlocks.FLUID_PIPE.isIn(stack)) {
+            BlockState pipeState = this.getEncasedPipeState(state, level, pos);
+            FluidTransportBehaviour.cacheFlows(level, pos);
+            level.setBlockAndUpdate(pos, pipeState);
+            FluidTransportBehaviour.loadFlows(level, pos);
+            level.playSound(null, pos, SoundEvents.METAL_HIT, SoundSource.BLOCKS, 0.5f, 1.25f);
+            if (!level.isClientSide && !player.isCreative()) {
+                stack.shrink(1);
+                if (stack.isEmpty())
+                    player.setItemInHand(hand, ItemStack.EMPTY);
+            }
+            return ItemInteractionResult.SUCCESS;
+        }
         return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
     }
 
@@ -101,6 +117,17 @@ public class TrussBlock extends RotatedPillarBlock {
                 .setValue(RotatedPillarBlock.AXIS, shaftAxis)
                 .setValue(TrussEncasedShaftBlock.TRUSS_AXIS, state.getValue(AXIS))
                 .setValue(TrussEncasedShaftBlock.ALTERNATING, state.getValue(ALTERNATING));
+    }
+
+    public BlockState getEncasedPipeState(final BlockState state, final Level level, final BlockPos pos) {
+        BlockState result = BnbDecorativeBlocks.INDUSTRIAL_TRUSS_ENCASED_PIPE.getDefaultState()
+                .setValue(TrussEncasedPipeBlock.TRUSS_AXIS, state.getValue(AXIS))
+                .setValue(TrussEncasedPipeBlock.ALTERNATING, state.getValue(ALTERNATING));
+        for (Direction d : Direction.values()) {
+            result = result.setValue(PipeBlock.PROPERTY_BY_DIRECTION.get(d),
+                    FluidPipeBlock.canConnectTo(level, pos.relative(d), level.getBlockState(pos.relative(d)), d));
+        }
+        return result;
     }
 }
 

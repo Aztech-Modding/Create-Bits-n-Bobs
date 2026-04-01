@@ -12,6 +12,7 @@ import com.kipti.bnb.content.decoration.strut.CableStrutBlock;
 import com.kipti.bnb.content.decoration.truss.TrussBlock;
 import com.kipti.bnb.content.decoration.truss.TrussBlockItem;
 import com.kipti.bnb.content.decoration.truss.TrussBlockStateGen;
+import com.kipti.bnb.content.decoration.truss.TrussEncasedPipeBlock;
 import com.kipti.bnb.content.decoration.truss.TrussEncasedShaftBlock;
 import com.kipti.bnb.content.decoration.weathered_girder.WeatheredConnectedGirderModel;
 import com.kipti.bnb.content.decoration.weathered_girder.WeatheredGirderBlock;
@@ -21,6 +22,7 @@ import com.kipti.bnb.foundation.client.BnbBlockStateGen;
 import com.kipti.bnb.registry.client.BnbSpriteShifts;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllTags;
+import com.simibubi.create.content.decoration.encasing.EncasingRegistry;
 import com.simibubi.create.foundation.block.connected.SimpleCTBehaviour;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.data.SharedProperties;
@@ -287,6 +289,31 @@ public class BnbDecorativeBlocks {
                             ))
             ))
             .addLayer(() -> RenderType::cutout)
+            .register();
+
+    public static final BlockEntry<TrussEncasedPipeBlock> INDUSTRIAL_TRUSS_ENCASED_PIPE = CreateBitsnBobs.REGISTRATE.block(
+                    "industrial_truss_encased_pipe",
+                    TrussEncasedPipeBlock::new
+            )
+            .properties(p -> p.mapColor(MapColor.METAL)
+                    .strength(0.1f, 6.0f)
+                    .sound(SoundType.METAL)
+                    .isSuffocating((state, level, pos) -> false)
+                    .isViewBlocking((state, level, pos) -> false)
+                    .noOcclusion()
+            )
+            .transform(TagGen.pickaxeOnly())
+            .blockstate(TrussBlockStateGen::trussEncasedPipeModel)
+            .loot((p, b) -> p.add(
+                    b, p.createSingleItemTable(INDUSTRIAL_TRUSS.get())
+                            .withPool(p.applyExplosionCondition(
+                                    AllBlocks.FLUID_PIPE.get(), LootPool.lootPool()
+                                            .setRolls(ConstantValue.exactly(1.0F))
+                                            .add(LootItem.lootTableItem(AllBlocks.FLUID_PIPE.get()))
+                            ))
+            ))
+            .addLayer(() -> RenderType::cutout)
+            .transform(EncasingRegistry.addVariantTo(AllBlocks.FLUID_PIPE))
             .register();
 
     public static void register() {
