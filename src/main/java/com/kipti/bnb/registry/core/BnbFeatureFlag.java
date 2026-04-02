@@ -99,11 +99,13 @@ public enum BnbFeatureFlag {
             true,
             BnbDecorativeBlocks.INDUSTRIAL_GRATING::get,
             BnbDecorativeBlocks.INDUSTRIAL_GRATING_PANEL::get,
-            BnbSpecialEncasedBlocks.INDUSTRIAL_GRATING_PANEL::get
+            BnbSpecialEncasedBlocks.INDUSTRIAL_GRATING_PANEL::get,
+            BnbSpecialEncasedBlocks.INDUSTRIAL_GRATING_PANEL_PIPE::get
     ),
     INDUSTRIAL_TRUSS(
             FeatureCategories.BLOCK, "Availability of the industrial truss blocks.", true,
-            BnbDecorativeBlocks.INDUSTRIAL_TRUSS::get, BnbDecorativeBlocks.INDUSTRIAL_TRUSS_ENCASED_SHAFT::get
+            BnbDecorativeBlocks.INDUSTRIAL_TRUSS::get, BnbDecorativeBlocks.INDUSTRIAL_TRUSS_ENCASED_SHAFT::get,
+            BnbDecorativeBlocks.INDUSTRIAL_TRUSS_ENCASED_PIPE::get
     ),
     COGWHEEL_CHAIN_CARRIAGE(
             FeatureCategories.BLOCK, "Availability of the Cogwheel Chain Carriage block.", true,

@@ -285,17 +285,17 @@
       "request": "launch",
       "name": "Client",
       "presentation": {
-        "group": "Mod Development - Create-BNB",
+        "group": "Mod Development - Create-Bits-n-Bobs",
         "order": 0
       },
-      "projectName": "Create-BNB",
+      "projectName": "Create-Bits-n-Bobs",
       "mainClass": "net.neoforged.devlaunch.Main",
       "args": [
-        "@C:\\Users\\Adrie\\Documents\\GitHub\\Create-BNB\\build\\moddev\\clientRunProgramArgs.txt"
+        "@C:\\onedriveisevil\\azt\\Create-Bits-n-Bobs\\build\\moddev\\clientRunProgramArgs.txt"
       ],
       "vmArgs": [
-        "@C:\\Users\\Adrie\\Documents\\GitHub\\Create-BNB\\build\\moddev\\clientRunVmArgs.txt",
-        "-Dfml.modFolders\u003dbits_n_bobs%%C:\\Users\\Adrie\\Documents\\GitHub\\Create-BNB\\bin\\main"
+        "@C:\\onedriveisevil\\azt\\Create-Bits-n-Bobs\\build\\moddev\\clientRunVmArgs.txt",
+        "-Dfml.modFolders\u003dbits_n_bobs%%C:\\onedriveisevil\\azt\\Create-Bits-n-Bobs\\bin\\main"
       ],
       "cwd": "${workspaceFolder}\\run",
       "env": {},
@@ -307,17 +307,17 @@
       "request": "launch",
       "name": "Data",
       "presentation": {
-        "group": "Mod Development - Create-BNB",
+        "group": "Mod Development - Create-Bits-n-Bobs",
         "order": 1
       },
-      "projectName": "Create-BNB",
+      "projectName": "Create-Bits-n-Bobs",
       "mainClass": "net.neoforged.devlaunch.Main",
       "args": [
-        "@C:\\Users\\Adrie\\Documents\\GitHub\\Create-BNB\\build\\moddev\\dataRunProgramArgs.txt"
+        "@C:\\onedriveisevil\\azt\\Create-Bits-n-Bobs\\build\\moddev\\dataRunProgramArgs.txt"
       ],
       "vmArgs": [
-        "@C:\\Users\\Adrie\\Documents\\GitHub\\Create-BNB\\build\\moddev\\dataRunVmArgs.txt",
-        "-Dfml.modFolders\u003dbits_n_bobs%%C:\\Users\\Adrie\\Documents\\GitHub\\Create-BNB\\bin\\main"
+        "@C:\\onedriveisevil\\azt\\Create-Bits-n-Bobs\\build\\moddev\\dataRunVmArgs.txt",
+        "-Dfml.modFolders\u003dbits_n_bobs%%C:\\onedriveisevil\\azt\\Create-Bits-n-Bobs\\bin\\main"
       ],
       "cwd": "${workspaceFolder}\\run",
       "env": {},
@@ -329,17 +329,17 @@
       "request": "launch",
       "name": "Server",
       "presentation": {
-        "group": "Mod Development - Create-BNB",
+        "group": "Mod Development - Create-Bits-n-Bobs",
         "order": 2
       },
-      "projectName": "Create-BNB",
+      "projectName": "Create-Bits-n-Bobs",
       "mainClass": "net.neoforged.devlaunch.Main",
       "args": [
-        "@C:\\Users\\Adrie\\Documents\\GitHub\\Create-BNB\\build\\moddev\\serverRunProgramArgs.txt"
+        "@C:\\onedriveisevil\\azt\\Create-Bits-n-Bobs\\build\\moddev\\serverRunProgramArgs.txt"
       ],
       "vmArgs": [
-        "@C:\\Users\\Adrie\\Documents\\GitHub\\Create-BNB\\build\\moddev\\serverRunVmArgs.txt",
-        "-Dfml.modFolders\u003dbits_n_bobs%%C:\\Users\\Adrie\\Documents\\GitHub\\Create-BNB\\bin\\main"
+        "@C:\\onedriveisevil\\azt\\Create-Bits-n-Bobs\\build\\moddev\\serverRunVmArgs.txt",
+        "-Dfml.modFolders\u003dbits_n_bobs%%C:\\onedriveisevil\\azt\\Create-Bits-n-Bobs\\bin\\main"
       ],
       "cwd": "${workspaceFolder}\\run",
       "env": {},

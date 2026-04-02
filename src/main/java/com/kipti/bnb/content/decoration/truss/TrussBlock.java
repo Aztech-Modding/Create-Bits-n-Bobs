@@ -97,7 +97,7 @@ public class TrussBlock extends RotatedPillarBlock {
             return ItemInteractionResult.SUCCESS;
         }
         if (AllBlocks.FLUID_PIPE.isIn(stack)) {
-            BlockState pipeState = this.getEncasedPipeState(state, level, pos);
+            final BlockState pipeState = this.getEncasedPipeState(state, level, pos, player);
             FluidTransportBehaviour.cacheFlows(level, pos);
             level.setBlockAndUpdate(pos, pipeState);
             FluidTransportBehaviour.loadFlows(level, pos);
@@ -119,14 +119,44 @@ public class TrussBlock extends RotatedPillarBlock {
                 .setValue(TrussEncasedShaftBlock.ALTERNATING, state.getValue(ALTERNATING));
     }
 
-    public BlockState getEncasedPipeState(final BlockState state, final Level level, final BlockPos pos) {
+    public BlockState getEncasedPipeState(final BlockState state, final Level level, final BlockPos pos,
+                                            final Player player) {
         BlockState result = BnbDecorativeBlocks.INDUSTRIAL_TRUSS_ENCASED_PIPE.getDefaultState()
                 .setValue(TrussEncasedPipeBlock.TRUSS_AXIS, state.getValue(AXIS))
                 .setValue(TrussEncasedPipeBlock.ALTERNATING, state.getValue(ALTERNATING));
-        for (Direction d : Direction.values()) {
-            result = result.setValue(PipeBlock.PROPERTY_BY_DIRECTION.get(d),
-                    FluidPipeBlock.canConnectTo(level, pos.relative(d), level.getBlockState(pos.relative(d)), d));
+
+        final Direction.Axis trussAxis = state.getValue(AXIS);
+        final Direction positiveStrut = Direction.get(Direction.AxisDirection.POSITIVE, trussAxis);
+        final Direction negativeStrut = Direction.get(Direction.AxisDirection.NEGATIVE, trussAxis);
+
+        final boolean strutPositive = FluidPipeBlock.canConnectTo(level, pos.relative(positiveStrut),
+                level.getBlockState(pos.relative(positiveStrut)), positiveStrut);
+        final boolean strutNegative = FluidPipeBlock.canConnectTo(level, pos.relative(negativeStrut),
+                level.getBlockState(pos.relative(negativeStrut)), negativeStrut);
+        final boolean hasStrutConnection = strutPositive || strutNegative;
+
+        if (hasStrutConnection) {
+            result = result.setValue(PipeBlock.PROPERTY_BY_DIRECTION.get(positiveStrut), strutPositive);
+            result = result.setValue(PipeBlock.PROPERTY_BY_DIRECTION.get(negativeStrut), strutNegative);
+            return result;
         }
+
+        boolean hasAdjacentPipe = false;
+        for (final Direction d : Direction.values()) {
+            final boolean canConnect = FluidPipeBlock.canConnectTo(level, pos.relative(d),
+                    level.getBlockState(pos.relative(d)), d);
+            result = result.setValue(PipeBlock.PROPERTY_BY_DIRECTION.get(d), canConnect);
+            if (canConnect) {
+                hasAdjacentPipe = true;
+            }
+        }
+
+        if (!hasAdjacentPipe && player != null) {
+            final Direction playerDirection = player.getNearestViewDirection();
+            result = result.setValue(PipeBlock.PROPERTY_BY_DIRECTION.get(playerDirection), true);
+            result = result.setValue(PipeBlock.PROPERTY_BY_DIRECTION.get(playerDirection.getOpposite()), true);
+        }
+
         return result;
     }
 }

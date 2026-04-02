@@ -24,6 +24,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.Nullable;
 
+//ignore-complexity: Ponders are animations not logic
 public class DyedTankScenes {
 
     public static void dyedTank(final SceneBuilder builder, final SceneBuildingUtil util) {

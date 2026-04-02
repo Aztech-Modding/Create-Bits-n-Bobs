@@ -16,6 +16,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 
+//ignore-complexity: Ponders are animations not logic
 public class CogwheelChainScenes {
 
     public static void flatCogwheelChain(final SceneBuilder builder, final SceneBuildingUtil util) {
@@ -104,10 +105,12 @@ public class CogwheelChainScenes {
     }
 
     private static void hideChainFromController(final Selection selection, final CreateSceneBuilder scene) {
-        scene.addInstruction(new BlockEntityDataInstruction(selection, KineticBlockEntity.class, (tag) -> {
+        scene.addInstruction(new BlockEntityDataInstruction(
+                selection, KineticBlockEntity.class, (tag) -> {
             tag.remove("Chain");
             return tag;
-        }, true));
+        }, true
+        ));
     }
 
     public static void changingAxisCogwheelChain(final SceneBuilder builder, final SceneBuildingUtil util) {
@@ -127,7 +130,10 @@ public class CogwheelChainScenes {
         scene.idle(5);
         scene.world().showSection(util.select().position(3, 2, 2), Direction.SOUTH);
         scene.idle(5);
-        scene.world().showSection(util.select().position(3, 2, 3).add(util.select().position(3, 1, 3)), Direction.NORTH);
+        scene.world().showSection(
+                util.select().position(3, 2, 3).add(util.select().position(3, 1, 3)),
+                Direction.NORTH
+        );
         scene.idle(5);
 
         scene.addKeyframe();
@@ -140,7 +146,13 @@ public class CogwheelChainScenes {
 
         scene.idle(80);
 
-        scene.addInstruction(new ExpandingOutlineInstruction(PonderPalette.BLUE, new Vec3(3.5f, 1.5, 2.5), new Vec3(6.5f, 1.5, 2.5), 80, 20));
+        scene.addInstruction(new ExpandingOutlineInstruction(
+                PonderPalette.BLUE,
+                new Vec3(3.5f, 1.5, 2.5),
+                new Vec3(6.5f, 1.5, 2.5),
+                80,
+                20
+        ));
         scene.idle(20);
 
         scene.overlay().showText(70)

@@ -3,7 +3,10 @@ package com.kipti.bnb.content.decoration.grating;
 import com.kipti.bnb.registry.content.blocks.encased.BnbSpecialEncasedBlocks;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllShapes;
+import com.simibubi.create.content.fluids.FluidTransportBehaviour;
+import com.simibubi.create.content.fluids.pipes.FluidPipeBlock;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
+import net.createmod.catnip.data.Iterate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
@@ -16,6 +19,7 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.PipeBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -66,6 +70,11 @@ public class GratingPanelBlock extends GratingBlock implements IGratingPanel {
             return shaftInsertResult;
         }
 
+        final ItemInteractionResult pipeInsertResult = this.tryInsertPipe(stack, state, level, pos, player, hand);
+        if (pipeInsertResult.consumesAction()) {
+            return pipeInsertResult;
+        }
+
         return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
     }
 
@@ -91,6 +100,43 @@ public class GratingPanelBlock extends GratingBlock implements IGratingPanel {
 
     private Direction getPanelFacing(final @Nullable Player player) {
         return player == null ? Direction.UP : player.getNearestViewDirection().getOpposite();
+    }
+
+    public BlockState getEncasedPipeState(final BlockState state, final Level level, final BlockPos pos) {
+        BlockState result = BnbSpecialEncasedBlocks.INDUSTRIAL_GRATING_PANEL_PIPE.getDefaultState()
+                .setValue(FACING, state.getValue(FACING));
+        for (Direction direction : Iterate.directions) {
+            BlockPos neighborPos = pos.relative(direction);
+            result = result.setValue(
+                    PipeBlock.PROPERTY_BY_DIRECTION.get(direction),
+                    FluidPipeBlock.canConnectTo(level, neighborPos, level.getBlockState(neighborPos), direction)
+            );
+        }
+        return result;
+    }
+
+    private ItemInteractionResult tryInsertPipe(final ItemStack stack,
+                                                final BlockState state,
+                                                final Level level,
+                                                final BlockPos pos,
+                                                final Player player,
+                                                final InteractionHand hand) {
+        if (!AllBlocks.FLUID_PIPE.isIn(stack)) {
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        }
+
+        BlockState pipeState = this.getEncasedPipeState(state, level, pos);
+        FluidTransportBehaviour.cacheFlows(level, pos);
+        level.setBlockAndUpdate(pos, pipeState);
+        FluidTransportBehaviour.loadFlows(level, pos);
+        level.playSound(null, pos, SoundEvents.METAL_HIT, SoundSource.BLOCKS, 0.5f, 1.25f);
+        if (!level.isClientSide && !player.isCreative()) {
+            stack.shrink(1);
+            if (stack.isEmpty()) {
+                player.setItemInHand(hand, ItemStack.EMPTY);
+            }
+        }
+        return ItemInteractionResult.SUCCESS;
     }
 
     private ItemInteractionResult tryInsertShaft(final ItemStack stack,

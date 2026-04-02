@@ -4,6 +4,7 @@ import com.kipti.bnb.CreateBitsnBobs;
 import com.tterrag.registrate.providers.DataGenContext;
 import com.tterrag.registrate.providers.RegistrateBlockstateProvider;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.PipeBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
@@ -51,6 +52,22 @@ public class TrussBlockStateGen {
 
     public static <T extends TrussEncasedPipeBlock> void trussEncasedPipeModel(final DataGenContext<Block, T> ctx,
                                                                                final RegistrateBlockstateProvider prov) {
+        prov.getMultipartBuilder(ctx.get())
+                .part()
+                .modelFile(prov.models().getExistingFile(CreateBitsnBobs.asResource("block/pipe_core")))
+                .addModel()
+                .end();
+
+        for (final Direction dir : Direction.values()) {
+            prov.getMultipartBuilder(ctx.get())
+                    .part()
+                    .modelFile(prov.models().getExistingFile(
+                            ResourceLocation.fromNamespaceAndPath("create", "block/fluid_pipe/connection/" + dir.getSerializedName())))
+                    .addModel()
+                    .condition(getConnectionProperty(dir), true)
+                    .end();
+        }
+
         for (final Direction.Axis trussAxis : Direction.Axis.values()) {
             for (final boolean alternating : new boolean[]{false, true}) {
                 final Direction trussDir = Direction.fromAxisAndDirection(trussAxis, Direction.AxisDirection.POSITIVE);

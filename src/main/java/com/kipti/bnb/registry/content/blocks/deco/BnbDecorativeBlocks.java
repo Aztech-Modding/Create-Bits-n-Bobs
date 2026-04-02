@@ -23,6 +23,7 @@ import com.kipti.bnb.registry.client.BnbSpriteShifts;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllTags;
 import com.simibubi.create.content.decoration.encasing.EncasingRegistry;
+import com.simibubi.create.content.fluids.PipeAttachmentModel;
 import com.simibubi.create.foundation.block.connected.SimpleCTBehaviour;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.data.SharedProperties;
@@ -304,6 +305,7 @@ public class BnbDecorativeBlocks {
             )
             .transform(TagGen.pickaxeOnly())
             .blockstate(TrussBlockStateGen::trussEncasedPipeModel)
+            .onRegister(CreateRegistrate.blockModel(() -> PipeAttachmentModel::withAO))
             .loot((p, b) -> p.add(
                     b, p.createSingleItemTable(INDUSTRIAL_TRUSS.get())
                             .withPool(p.applyExplosionCondition(

@@ -5,9 +5,11 @@ import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.foundation.ponder.scenes.CogwheelChainScenes;
 import com.kipti.bnb.foundation.ponder.scenes.DyedPipeScenes;
 import com.kipti.bnb.foundation.ponder.scenes.DyedTankScenes;
+import com.kipti.bnb.foundation.ponder.scenes.GirderStrutScenes;
 import com.kipti.bnb.foundation.ponder.scenes.NixieDisplayScenes;
 import com.kipti.bnb.registry.content.blocks.BnbKineticBlocks;
 import com.kipti.bnb.registry.content.blocks.BnbTrinketBlocks;
+import com.kipti.bnb.registry.content.blocks.deco.BnbDecorativeBlocks;
 import com.simibubi.create.AllBlocks;
 import com.tterrag.registrate.util.entry.ItemProviderEntry;
 import com.tterrag.registrate.util.entry.RegistryEntry;
@@ -71,6 +73,18 @@ public class BnbPonderScenes {
 
         HELPER.forComponents(BnbTrinketBlocks.LARGE_NIXIE_TUBE)
                 .addStoryBoard("nixie/large_nixie_tube", NixieDisplayScenes::largeNixieTube);
+
+        HELPER.forComponents(BnbDecorativeBlocks.GIRDER_STRUT)
+                .addStoryBoard("struts/industrial_strut",
+                        (builder, util) -> GirderStrutScenes.girderStrut(builder, util, BnbDecorativeBlocks.GIRDER_STRUT));
+
+        HELPER.forComponents(BnbDecorativeBlocks.WEATHERED_GIRDER_STRUT)
+                .addStoryBoard("struts/weathered_strut",
+                        (builder, util) -> GirderStrutScenes.girderStrut(builder, util, BnbDecorativeBlocks.WEATHERED_GIRDER_STRUT));
+
+        HELPER.forComponents(BnbDecorativeBlocks.CABLE_GIRDER_STRUT)
+                .addStoryBoard("struts/cable_strut",
+                        (builder, util) -> GirderStrutScenes.girderStrut(builder, util, BnbDecorativeBlocks.CABLE_GIRDER_STRUT));
     }
 }
 

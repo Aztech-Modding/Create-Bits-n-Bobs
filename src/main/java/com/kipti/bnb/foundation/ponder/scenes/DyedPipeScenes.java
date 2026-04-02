@@ -13,6 +13,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 
+//ignore-complexity: Ponders are animations not logic
 public class DyedPipeScenes {
 
     public static void dyedPipes(final SceneBuilder builder, final SceneBuildingUtil util) {
