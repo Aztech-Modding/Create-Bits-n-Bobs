@@ -5,7 +5,6 @@ import com.kipti.bnb.foundation.client.BnbBlockStateGen;
 import com.tterrag.registrate.providers.DataGenContext;
 import com.tterrag.registrate.providers.RegistrateBlockstateProvider;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -73,22 +72,6 @@ public class GratingBlockStateGen {
                 Direction.EAST, BlockStateProperties.EAST,
                 Direction.WEST, BlockStateProperties.WEST
         );
-
-        prov.getMultipartBuilder(ctx.get())
-                .part()
-                .modelFile(prov.models().getExistingFile(CreateBitsnBobs.asResource("block/pipe_core")))
-                .addModel()
-                .end();
-
-        for (final Direction dir : Direction.values()) {
-            prov.getMultipartBuilder(ctx.get())
-                    .part()
-                    .modelFile(prov.models().getExistingFile(
-                            ResourceLocation.fromNamespaceAndPath("create", "block/fluid_pipe/connection/" + dir.getSerializedName())))
-                    .addModel()
-                    .condition(connectionProperties.get(dir), true)
-                    .end();
-        }
 
         for (final Direction dir : Direction.values()) {
             final BooleanProperty connectionProp = connectionProperties.get(dir);

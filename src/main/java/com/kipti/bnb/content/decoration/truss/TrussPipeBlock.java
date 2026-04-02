@@ -1,13 +1,17 @@
 package com.kipti.bnb.content.decoration.truss;
 
+import com.kipti.bnb.content.decoration.dyeable.DyeableTransitionHelper;
 import com.kipti.bnb.registry.client.BnbShapes;
 import com.kipti.bnb.registry.content.BnbBlockEntities;
 import com.kipti.bnb.registry.content.blocks.deco.BnbDecorativeBlocks;
 import com.simibubi.create.AllBlocks;
+import com.simibubi.create.api.schematic.requirement.SpecialBlockItemRequirement;
 import com.simibubi.create.content.contraptions.StructureTransform;
+import com.simibubi.create.content.decoration.encasing.EncasedBlock;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.content.fluids.FluidTransportBehaviour;
 import com.simibubi.create.content.fluids.pipes.EncasedPipeBlock;
+import com.simibubi.create.content.fluids.pipes.FluidPipeBlock;
 import com.simibubi.create.content.fluids.pipes.FluidPipeBlockEntity;
 import com.simibubi.create.content.schematics.requirement.ItemRequirement;
 import net.minecraft.core.BlockPos;
@@ -38,17 +42,21 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class TrussEncasedPipeBlock extends EncasedPipeBlock {
+public class TrussPipeBlock extends FluidPipeBlock implements EncasedBlock, SpecialBlockItemRequirement {
 
-    public static final EnumProperty<Direction.Axis> TRUSS_AXIS = EnumProperty.create("truss_axis", Direction.Axis.class);
+    public static final EnumProperty<Direction.Axis> TRUSS_AXIS = EnumProperty.create(
+            "truss_axis",
+            Direction.Axis.class
+    );
     public static final BooleanProperty ALTERNATING = TrussBlock.ALTERNATING;
 
-    public TrussEncasedPipeBlock(Properties properties) {
-        super(properties, BnbDecorativeBlocks.INDUSTRIAL_TRUSS::get);
+    public TrussPipeBlock(final Properties properties) {
+        super(properties);
         this.registerDefaultState(this.defaultBlockState()
-                .setValue(TRUSS_AXIS, Direction.Axis.Y)
-                .setValue(ALTERNATING, false));
+                                          .setValue(TRUSS_AXIS, Direction.Axis.Y)
+                                          .setValue(ALTERNATING, false));
     }
 
     @Override
@@ -59,32 +67,39 @@ public class TrussEncasedPipeBlock extends EncasedPipeBlock {
 
     @Override
     public @NotNull BlockState getStateForPlacement(final @NotNull BlockPlaceContext context) {
-        Direction.Axis trussAxis = context.getNearestLookingDirection().getAxis();
-        BlockState state = this.defaultBlockState().setValue(TRUSS_AXIS, trussAxis);
-        Direction positiveAxis = Direction.get(Direction.AxisDirection.POSITIVE, trussAxis);
-        BlockState neighborState = context.getLevel().getBlockState(context.getClickedPos().relative(positiveAxis));
-        boolean isAlternating = neighborState.hasProperty(ALTERNATING) && neighborState.getValue(ALTERNATING);
+        BlockState state = super.getStateForPlacement(context);
+        final Direction.Axis trussAxis = context.getNearestLookingDirection().getAxis();
+        state = state.setValue(TRUSS_AXIS, trussAxis);
+        final Direction positiveAxis = Direction.get(Direction.AxisDirection.POSITIVE, trussAxis);
+        final BlockState neighborState = context.getLevel().getBlockState(context.getClickedPos().relative(positiveAxis));
+        final boolean isAlternating = neighborState.hasProperty(ALTERNATING) && neighborState.getValue(ALTERNATING);
         return state.setValue(ALTERNATING, !isAlternating);
     }
 
     @Override
-    protected @NotNull BlockState updateShape(final @NotNull BlockState state,
-                                              final @NotNull Direction direction,
-                                              final @NotNull BlockState neighborState,
-                                              final @NotNull LevelAccessor level,
-                                              final @NotNull BlockPos pos,
-                                              final @NotNull BlockPos neighborPos) {
-        Direction positiveAxis = Direction.get(Direction.AxisDirection.POSITIVE, state.getValue(TRUSS_AXIS));
+    public @NotNull BlockState updateShape(final @NotNull BlockState state,
+                                           final @NotNull Direction direction,
+                                           final @NotNull BlockState neighborState,
+                                           final @NotNull LevelAccessor level,
+                                           final @NotNull BlockPos pos,
+                                           final @NotNull BlockPos neighborPos) {
+        final Direction positiveAxis = Direction.get(Direction.AxisDirection.POSITIVE, state.getValue(TRUSS_AXIS));
+        BlockState updatedState = state;
         if (direction == positiveAxis) {
-            boolean isAlternating = neighborState.hasProperty(ALTERNATING) && neighborState.getValue(ALTERNATING);
-            return state.setValue(ALTERNATING, !isAlternating);
+            final boolean isAlternating = neighborState.hasProperty(ALTERNATING) && neighborState.getValue(ALTERNATING);
+            updatedState = updatedState.setValue(ALTERNATING, !isAlternating);
         }
-        return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
+        return super.updateShape(updatedState, direction, neighborState, level, pos, neighborPos);
     }
 
     @Override
     public BlockEntityType<? extends FluidPipeBlockEntity> getBlockEntityType() {
         return BnbBlockEntities.ENCASED_PIPE.get();
+    }
+
+    @Override
+    public Block getCasing() {
+        return BnbDecorativeBlocks.INDUSTRIAL_TRUSS.get();
     }
 
     @Override
@@ -95,25 +110,23 @@ public class TrussEncasedPipeBlock extends EncasedPipeBlock {
                                final Player player,
                                final InteractionHand hand,
                                final BlockHitResult ray) {
+        DyeableTransitionHelper.saveCurrentDye(level, pos);
         FluidTransportBehaviour.cacheFlows(level, pos);
         BlockState encased = EncasedPipeBlock.transferSixWayProperties(state, this.defaultBlockState());
-        Direction.Axis trussAxis = player.getNearestViewDirection().getAxis();
+        final Direction.Axis trussAxis = player.getNearestViewDirection().getAxis();
         encased = encased.setValue(TRUSS_AXIS, trussAxis);
-        Direction positiveAxis = Direction.get(Direction.AxisDirection.POSITIVE, trussAxis);
-        BlockState neighborState = level.getBlockState(pos.relative(positiveAxis));
-        boolean isAlternating = neighborState.hasProperty(ALTERNATING) && neighborState.getValue(ALTERNATING);
+        final Direction positiveAxis = Direction.get(Direction.AxisDirection.POSITIVE, trussAxis);
+        final BlockState neighborState = level.getBlockState(pos.relative(positiveAxis));
+        final boolean isAlternating = neighborState.hasProperty(ALTERNATING) && neighborState.getValue(ALTERNATING);
         encased = encased.setValue(ALTERNATING, !isAlternating);
         level.setBlockAndUpdate(pos, encased);
         FluidTransportBehaviour.loadFlows(level, pos);
+        DyeableTransitionHelper.applyPreviousDye(level, pos);
     }
 
     @Override
     public @NotNull InteractionResult onWrenched(final BlockState state, final UseOnContext context) {
-        InteractionResult result = super.onWrenched(state, context);
-        if (!context.getLevel().isClientSide && context.getPlayer() != null && !context.getPlayer().isCreative()) {
-            context.getPlayer().getInventory().placeItemBackInInventory(BnbDecorativeBlocks.INDUSTRIAL_TRUSS.asStack());
-        }
-        return result;
+        return InteractionResult.PASS;
     }
 
     @Override
@@ -122,13 +135,15 @@ public class TrussEncasedPipeBlock extends EncasedPipeBlock {
             return InteractionResult.SUCCESS;
         }
 
-        Level level = context.getLevel();
-        BlockPos pos = context.getClickedPos();
+        final Level level = context.getLevel();
+        final BlockPos pos = context.getClickedPos();
 
         level.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, pos, Block.getId(state));
-        level.setBlockAndUpdate(pos, BnbDecorativeBlocks.INDUSTRIAL_TRUSS.getDefaultState()
-                .setValue(RotatedPillarBlock.AXIS, state.getValue(TRUSS_AXIS))
-                .setValue(TrussBlock.ALTERNATING, state.getValue(ALTERNATING)));
+        level.setBlockAndUpdate(
+                pos, BnbDecorativeBlocks.INDUSTRIAL_TRUSS.getDefaultState()
+                        .setValue(RotatedPillarBlock.AXIS, state.getValue(TRUSS_AXIS))
+                        .setValue(TrussBlock.ALTERNATING, state.getValue(ALTERNATING))
+        );
 
         if (context.getPlayer() != null && !context.getPlayer().isCreative()) {
             context.getPlayer().getInventory().placeItemBackInInventory(AllBlocks.FLUID_PIPE.asStack());
@@ -147,7 +162,7 @@ public class TrussEncasedPipeBlock extends EncasedPipeBlock {
     }
 
     @Override
-    public ItemRequirement getRequiredItems(final BlockState state, final BlockEntity blockEntity) {
+    public ItemRequirement getRequiredItems(final BlockState state, final @Nullable BlockEntity blockEntity) {
         return ItemRequirement.of(AllBlocks.FLUID_PIPE.getDefaultState(), blockEntity)
                 .union(ItemRequirement.of(BnbDecorativeBlocks.INDUSTRIAL_TRUSS.getDefaultState(), blockEntity));
     }
@@ -169,7 +184,7 @@ public class TrussEncasedPipeBlock extends EncasedPipeBlock {
     @Override
     public @NotNull BlockState rotate(final @NotNull BlockState state, final @NotNull Rotation rotation) {
         BlockState rotated = super.rotate(state, rotation);
-        Direction.Axis trussAxis = state.getValue(TRUSS_AXIS);
+        final Direction.Axis trussAxis = state.getValue(TRUSS_AXIS);
         if (rotation == Rotation.CLOCKWISE_90 || rotation == Rotation.COUNTERCLOCKWISE_90) {
             if (trussAxis == Direction.Axis.X) {
                 rotated = rotated.setValue(TRUSS_AXIS, Direction.Axis.Z);
@@ -182,8 +197,11 @@ public class TrussEncasedPipeBlock extends EncasedPipeBlock {
 
     @Override
     public @NotNull BlockState transform(final BlockState state, final StructureTransform transform) {
-        Direction trussDir = Direction.fromAxisAndDirection(state.getValue(TRUSS_AXIS), Direction.AxisDirection.POSITIVE);
-        Direction newTrussDir = transform.rotateFacing(trussDir);
+        final Direction trussDir = Direction.fromAxisAndDirection(
+                state.getValue(TRUSS_AXIS),
+                Direction.AxisDirection.POSITIVE
+        );
+        final Direction newTrussDir = transform.rotateFacing(trussDir);
         return super.transform(state, transform).setValue(TRUSS_AXIS, newTrussDir.getAxis());
     }
 }

@@ -122,8 +122,8 @@ public class TrussBlock extends RotatedPillarBlock {
     public BlockState getEncasedPipeState(final BlockState state, final Level level, final BlockPos pos,
                                             final Player player) {
         BlockState result = BnbDecorativeBlocks.INDUSTRIAL_TRUSS_ENCASED_PIPE.getDefaultState()
-                .setValue(TrussEncasedPipeBlock.TRUSS_AXIS, state.getValue(AXIS))
-                .setValue(TrussEncasedPipeBlock.ALTERNATING, state.getValue(ALTERNATING));
+                .setValue(TrussPipeBlock.TRUSS_AXIS, state.getValue(AXIS))
+                .setValue(TrussPipeBlock.ALTERNATING, state.getValue(ALTERNATING));
 
         final Direction.Axis trussAxis = state.getValue(AXIS);
         final Direction positiveStrut = Direction.get(Direction.AxisDirection.POSITIVE, trussAxis);

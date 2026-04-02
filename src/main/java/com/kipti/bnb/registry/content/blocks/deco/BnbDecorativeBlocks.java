@@ -12,7 +12,7 @@ import com.kipti.bnb.content.decoration.strut.CableStrutBlock;
 import com.kipti.bnb.content.decoration.truss.TrussBlock;
 import com.kipti.bnb.content.decoration.truss.TrussBlockItem;
 import com.kipti.bnb.content.decoration.truss.TrussBlockStateGen;
-import com.kipti.bnb.content.decoration.truss.TrussEncasedPipeBlock;
+import com.kipti.bnb.content.decoration.truss.TrussPipeBlock;
 import com.kipti.bnb.content.decoration.truss.TrussEncasedShaftBlock;
 import com.kipti.bnb.content.decoration.weathered_girder.WeatheredConnectedGirderModel;
 import com.kipti.bnb.content.decoration.weathered_girder.WeatheredGirderBlock;
@@ -292,9 +292,9 @@ public class BnbDecorativeBlocks {
             .addLayer(() -> RenderType::cutout)
             .register();
 
-    public static final BlockEntry<TrussEncasedPipeBlock> INDUSTRIAL_TRUSS_ENCASED_PIPE = CreateBitsnBobs.REGISTRATE.block(
+    public static final BlockEntry<TrussPipeBlock> INDUSTRIAL_TRUSS_ENCASED_PIPE = CreateBitsnBobs.REGISTRATE.block(
                     "industrial_truss_encased_pipe",
-                    TrussEncasedPipeBlock::new
+                    TrussPipeBlock::new
             )
             .properties(p -> p.mapColor(MapColor.METAL)
                     .strength(0.1f, 6.0f)

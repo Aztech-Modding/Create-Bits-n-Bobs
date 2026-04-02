@@ -2,7 +2,7 @@ package com.kipti.bnb.registry.content.blocks.encased;
 
 import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.decoration.grating.GratingBlockStateGen;
-import com.kipti.bnb.content.decoration.grating.GratingEncasedPipeBlock;
+import com.kipti.bnb.content.decoration.grating.GratingPipePanelBlock;
 import com.kipti.bnb.content.decoration.grating.GratingEncasedShaftBlock;
 import com.kipti.bnb.content.decoration.grating.GratingPanelCTBehaviour;
 import com.kipti.bnb.registry.client.BnbSpriteShifts;
@@ -40,7 +40,7 @@ public class BnbSpecialEncasedBlocks {
             .transform(EncasingRegistry.addVariantTo(AllBlocks.SHAFT))
             .register();
 
-    public static final BlockEntry<GratingEncasedPipeBlock> INDUSTRIAL_GRATING_PANEL_PIPE = CreateBitsnBobs.REGISTRATE.block("industrial_grating_panel_encased_pipe", GratingEncasedPipeBlock::new)
+    public static final BlockEntry<GratingPipePanelBlock> INDUSTRIAL_GRATING_PANEL_PIPE = CreateBitsnBobs.REGISTRATE.block("industrial_grating_panel_encased_pipe", GratingPipePanelBlock::new)
             .properties(p -> p.mapColor(MapColor.METAL)
                     .noOcclusion()
                     .strength(0.1f, 6.0f)

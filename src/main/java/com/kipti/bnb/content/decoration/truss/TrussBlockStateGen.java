@@ -4,7 +4,6 @@ import com.kipti.bnb.CreateBitsnBobs;
 import com.tterrag.registrate.providers.DataGenContext;
 import com.tterrag.registrate.providers.RegistrateBlockstateProvider;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.PipeBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
@@ -50,24 +49,8 @@ public class TrussBlockStateGen {
         return trussAxis == Direction.Axis.Y ? "_cutout_z" : "_cutout_x";
     }
 
-    public static <T extends TrussEncasedPipeBlock> void trussEncasedPipeModel(final DataGenContext<Block, T> ctx,
-                                                                               final RegistrateBlockstateProvider prov) {
-        prov.getMultipartBuilder(ctx.get())
-                .part()
-                .modelFile(prov.models().getExistingFile(CreateBitsnBobs.asResource("block/pipe_core")))
-                .addModel()
-                .end();
-
-        for (final Direction dir : Direction.values()) {
-            prov.getMultipartBuilder(ctx.get())
-                    .part()
-                    .modelFile(prov.models().getExistingFile(
-                            ResourceLocation.fromNamespaceAndPath("create", "block/fluid_pipe/connection/" + dir.getSerializedName())))
-                    .addModel()
-                    .condition(getConnectionProperty(dir), true)
-                    .end();
-        }
-
+    public static <T extends TrussPipeBlock> void trussEncasedPipeModel(final DataGenContext<Block, T> ctx,
+                                                                         final RegistrateBlockstateProvider prov) {
         for (final Direction.Axis trussAxis : Direction.Axis.values()) {
             for (final boolean alternating : new boolean[]{false, true}) {
                 final Direction trussDir = Direction.fromAxisAndDirection(trussAxis, Direction.AxisDirection.POSITIVE);
@@ -82,8 +65,8 @@ public class TrussBlockStateGen {
                                 CreateBitsnBobs.asResource("block/industrial_truss/industrial_truss_beams")))
                         .rotationX(rotX).rotationY(rotY)
                         .addModel()
-                        .condition(TrussEncasedPipeBlock.TRUSS_AXIS, trussAxis)
-                        .condition(TrussEncasedPipeBlock.ALTERNATING, alternating)
+                        .condition(TrussPipeBlock.TRUSS_AXIS, trussAxis)
+                        .condition(TrussPipeBlock.ALTERNATING, alternating)
                         .end();
 
                 final Map<String, Direction> cutoutToWorld = getDirectionMapping(trussAxis);
@@ -99,8 +82,8 @@ public class TrussBlockStateGen {
                                     CreateBitsnBobs.asResource(modelPath)))
                             .rotationX(rotX).rotationY(rotY)
                             .addModel()
-                            .condition(TrussEncasedPipeBlock.TRUSS_AXIS, trussAxis)
-                            .condition(TrussEncasedPipeBlock.ALTERNATING, alternating)
+                            .condition(TrussPipeBlock.TRUSS_AXIS, trussAxis)
+                            .condition(TrussPipeBlock.ALTERNATING, alternating)
                             .condition(connectionProp, true)
                             .end();
                 }
