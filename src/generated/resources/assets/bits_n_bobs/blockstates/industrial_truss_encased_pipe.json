@@ -2,59 +2,6 @@
   "multipart": [
     {
       "apply": {
-        "model": "bits_n_bobs:block/pipe_core"
-      }
-    },
-    {
-      "apply": {
-        "model": "create:block/fluid_pipe/connection/down"
-      },
-      "when": {
-        "down": "true"
-      }
-    },
-    {
-      "apply": {
-        "model": "create:block/fluid_pipe/connection/up"
-      },
-      "when": {
-        "up": "true"
-      }
-    },
-    {
-      "apply": {
-        "model": "create:block/fluid_pipe/connection/north"
-      },
-      "when": {
-        "north": "true"
-      }
-    },
-    {
-      "apply": {
-        "model": "create:block/fluid_pipe/connection/south"
-      },
-      "when": {
-        "south": "true"
-      }
-    },
-    {
-      "apply": {
-        "model": "create:block/fluid_pipe/connection/west"
-      },
-      "when": {
-        "west": "true"
-      }
-    },
-    {
-      "apply": {
-        "model": "create:block/fluid_pipe/connection/east"
-      },
-      "when": {
-        "east": "true"
-      }
-    },
-    {
-      "apply": {
         "model": "bits_n_bobs:block/industrial_truss/industrial_truss_beams",
         "x": 90,
         "y": 90

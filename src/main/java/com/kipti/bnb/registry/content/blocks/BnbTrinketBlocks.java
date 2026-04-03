@@ -37,8 +37,13 @@ import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.properties.AttachFace;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
+import net.neoforged.neoforge.client.model.generators.ModelFile;
 
 import static com.kipti.bnb.CreateBitsnBobs.REGISTRATE;
 import static com.kipti.bnb.content.trinkets.chair.ChairBlockStateGen.dyedChair;
@@ -135,7 +140,27 @@ public class BnbTrinketBlocks {
                     .initialProperties(() -> Blocks.LEVER)
                     .transform(axeOrPickaxe())
                     .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
-                    .blockstate((c, p) -> p.directionalBlock(c.get(), (s) -> AssetLookup.partialBaseModel(c, p, s.getValue(ThrottleLeverBlock.HAS_SHAFT) ? "shaft" : "")))
+                    .blockstate((c, p) -> {
+                        p.getVariantBuilder(c.get()).forAllStatesExcept(state -> {
+                            AttachFace face = state.getValue(ThrottleLeverBlock.FACE);
+                            Direction facing = state.getValue(ThrottleLeverBlock.FACING);
+                            boolean hasShaft = state.getValue(ThrottleLeverBlock.HAS_SHAFT);
+
+                            ModelFile model = AssetLookup.partialBaseModel(c, p, hasShaft ? "shaft" : "");
+
+                            int xRot = face == AttachFace.FLOOR ? 0 : face == AttachFace.WALL ? 90 : 180;
+                            int yRot = (int) facing.toYRot();
+                            if (face == AttachFace.CEILING) {
+                                yRot = (yRot + 180) % 360;
+                            }
+
+                            return ConfiguredModel.builder()
+                                    .modelFile(model)
+                                    .rotationX(xRot)
+                                    .rotationY(yRot)
+                                    .build();
+                        }, BlockStateProperties.POWER);
+                    })
                     .onRegister(ItemUseOverrides::addBlock)
                     .item()
                     .transform(customItemModel())

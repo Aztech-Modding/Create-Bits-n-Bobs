@@ -69,6 +69,16 @@ public class BnbShapes {
             .add(cuboid(13, 0, 13, 16, 16, 16))
             .forAxis();
 
+    public static final VoxelShape
+            THROTTLE_LEVER_FLOOR_Z = cuboid(2, 0, 1, 14, 9, 15),
+            THROTTLE_LEVER_FLOOR_X = cuboid(1, 0, 2, 15, 9, 14),
+            THROTTLE_LEVER_CEILING_Z = cuboid(2, 7, 1, 14, 16, 15),
+            THROTTLE_LEVER_CEILING_X = cuboid(1, 7, 2, 15, 16, 14),
+            THROTTLE_LEVER_WALL_NORTH = cuboid(2, 1, 7, 14, 15, 16),
+            THROTTLE_LEVER_WALL_SOUTH = cuboid(2, 1, 0, 14, 15, 9),
+            THROTTLE_LEVER_WALL_EAST = cuboid(0, 1, 2, 9, 15, 14),
+            THROTTLE_LEVER_WALL_WEST = cuboid(7, 1, 2, 16, 15, 14);
+
     public static AllShapes.Builder shape(final VoxelShape shape) {
         return new AllShapes.Builder(shape);
     }

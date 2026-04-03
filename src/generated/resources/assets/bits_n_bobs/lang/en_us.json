@@ -26,7 +26,7 @@
   "bits_n_bobs.ponder.girder_strut.header": "Placing Girder Struts",
   "bits_n_bobs.ponder.girder_strut.text_1": "Struts can be used to span a gap between two blocks",
   "bits_n_bobs.ponder.girder_strut.text_2": "Struts can be placed at different angles",
-  "bits_n_bobs.ponder.girder_strut.text_3": "However, Struts must always remain straight",
+  "bits_n_bobs.ponder.girder_strut.text_3": "However, Struts can only move in 2 axes at the same time, meaning they cannot bend.",
   "bits_n_bobs.ponder.large_nixie_tube.header": "Using Large Nixie Tubes",
   "bits_n_bobs.ponder.large_nixie_tube.text_1": "This is a Large Nixie Tube, it can be used to display custom text and symbols",
   "bits_n_bobs.ponder.large_nixie_tube.text_2": "Large Nixie Tubes can be combined when in compatible rows",
