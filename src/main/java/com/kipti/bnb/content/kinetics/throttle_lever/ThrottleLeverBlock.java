@@ -3,8 +3,6 @@ package com.kipti.bnb.content.kinetics.throttle_lever;
 import com.kipti.bnb.registry.client.BnbShapes;
 import com.kipti.bnb.registry.content.BnbBlockEntities;
 import com.mojang.serialization.MapCodec;
-import com.simibubi.create.content.kinetics.base.IRotate;
-import com.simibubi.create.content.kinetics.base.KineticBlock;
 import com.simibubi.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -24,29 +22,25 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-/** Face-attached kinetic lever providing 0-15 analog redstone output via drag interaction. */
-public class ThrottleLeverBlock extends KineticBlock implements IBE<ThrottleLeverBlockEntity> {
+public class ThrottleLeverBlock extends Block implements IBE<ThrottleLeverBlockEntity> {
 
     public static final MapCodec<ThrottleLeverBlock> CODEC = simpleCodec(ThrottleLeverBlock::new);
 
     public static final EnumProperty<AttachFace> FACE = BlockStateProperties.ATTACH_FACE;
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
-    public static final BooleanProperty HAS_SHAFT = BooleanProperty.create("has_shaft");
 
-    public ThrottleLeverBlock(Properties properties) {
+    public ThrottleLeverBlock(final Properties properties) {
         super(properties);
         this.registerDefaultState(this.stateDefinition.any()
-                .setValue(FACE, AttachFace.WALL)
-                .setValue(FACING, Direction.NORTH)
-                .setValue(BlockStateProperties.POWER, 0)
-                .setValue(HAS_SHAFT, false));
+                                          .setValue(FACE, AttachFace.WALL)
+                                          .setValue(FACING, Direction.NORTH)
+                                          .setValue(BlockStateProperties.POWER, 0));
     }
 
     @Override
@@ -55,14 +49,14 @@ public class ThrottleLeverBlock extends KineticBlock implements IBE<ThrottleLeve
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACE, FACING, BlockStateProperties.POWER, HAS_SHAFT);
+    protected void createBlockStateDefinition(final StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(FACE, FACING, BlockStateProperties.POWER);
     }
 
     @Override
-    public BlockState getStateForPlacement(BlockPlaceContext context) {
-        for (Direction direction : context.getNearestLookingDirections()) {
-            BlockState blockstate;
+    public BlockState getStateForPlacement(final BlockPlaceContext context) {
+        for (final Direction direction : context.getNearestLookingDirections()) {
+            final BlockState blockstate;
             if (direction.getAxis() == Direction.Axis.Y) {
                 blockstate = this.defaultBlockState()
                         .setValue(FACE, direction == Direction.UP ? AttachFace.CEILING : AttachFace.FLOOR)
@@ -80,14 +74,14 @@ public class ThrottleLeverBlock extends KineticBlock implements IBE<ThrottleLeve
     }
 
     @Override
-    protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
-        Direction shaftDir = getShaftDirection(state);
-        BlockPos attachedPos = pos.relative(shaftDir);
+    protected boolean canSurvive(final BlockState state, final LevelReader level, final BlockPos pos) {
+        final Direction shaftDir = getShaftDirection(state);
+        final BlockPos attachedPos = pos.relative(shaftDir);
         return level.getBlockState(attachedPos).isFaceSturdy(level, attachedPos, shaftDir.getOpposite());
     }
 
-    public static Direction getConnectedDirection(BlockState state) {
-        AttachFace face = state.getValue(FACE);
+    public static Direction getConnectedDirection(final BlockState state) {
+        final AttachFace face = state.getValue(FACE);
         return switch (face) {
             case CEILING -> Direction.DOWN;
             case FLOOR -> Direction.UP;
@@ -95,41 +89,33 @@ public class ThrottleLeverBlock extends KineticBlock implements IBE<ThrottleLeve
         };
     }
 
-    public static Direction getShaftDirection(BlockState state) {
+    public static Direction getShaftDirection(final BlockState state) {
         return getConnectedDirection(state).getOpposite();
     }
 
     @Override
-    public Direction.Axis getRotationAxis(BlockState state) {
-        return getShaftDirection(state).getAxis();
-    }
-
-    @Override
-    public boolean hasShaftTowards(LevelReader world, BlockPos pos, BlockState state, Direction face) {
-        return face == getShaftDirection(state);
-    }
-
-    @Override
-    protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
-        Direction shaftDir = getShaftDirection(state);
+    protected BlockState updateShape(final BlockState state,
+                                     final Direction direction,
+                                     final BlockState neighborState,
+                                     final LevelAccessor level,
+                                     final BlockPos pos,
+                                     final BlockPos neighborPos) {
+        final Direction shaftDir = getShaftDirection(state);
 
         if (direction == shaftDir && !state.canSurvive(level, pos)) {
             return Blocks.AIR.defaultBlockState();
-        }
-
-        if (direction == shaftDir) {
-            boolean hasShaft = neighborState.getBlock() instanceof IRotate rotatingNeighbor
-                    && rotatingNeighbor.getRotationAxis(neighborState) == this.getRotationAxis(state);
-            return state.setValue(HAS_SHAFT, hasShaft);
         }
 
         return state;
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        AttachFace face = state.getValue(FACE);
-        Direction facing = state.getValue(FACING);
+    protected VoxelShape getShape(final BlockState state,
+                                  final BlockGetter level,
+                                  final BlockPos pos,
+                                  final CollisionContext context) {
+        final AttachFace face = state.getValue(FACE);
+        final Direction facing = state.getValue(FACING);
         return switch (face) {
             case FLOOR -> facing.getAxis() == Direction.Axis.Z
                     ? BnbShapes.THROTTLE_LEVER_FLOOR_Z : BnbShapes.THROTTLE_LEVER_FLOOR_X;
@@ -146,32 +132,42 @@ public class ThrottleLeverBlock extends KineticBlock implements IBE<ThrottleLeve
     }
 
     @Override
-    protected boolean isSignalSource(BlockState state) {
+    protected boolean isSignalSource(final BlockState state) {
         return true;
     }
 
     @Override
-    protected int getSignal(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
+    protected int getSignal(final BlockState state,
+                            final BlockGetter level,
+                            final BlockPos pos,
+                            final Direction direction) {
         return state.getValue(BlockStateProperties.POWER);
     }
 
     @Override
-    protected int getDirectSignal(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
+    protected int getDirectSignal(final BlockState state,
+                                  final BlockGetter level,
+                                  final BlockPos pos,
+                                  final Direction direction) {
         return getConnectedDirection(state) == direction ? state.getValue(BlockStateProperties.POWER) : 0;
     }
 
     @Override
-    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+    protected InteractionResult useWithoutItem(final BlockState state,
+                                               final Level level,
+                                               final BlockPos pos,
+                                               final Player player,
+                                               final BlockHitResult hitResult) {
         return InteractionResult.SUCCESS;
     }
 
     @Override
-    protected BlockState rotate(BlockState state, Rotation rotation) {
+    protected BlockState rotate(final BlockState state, final Rotation rotation) {
         return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
     }
 
     @Override
-    protected BlockState mirror(BlockState state, Mirror mirror) {
+    protected BlockState mirror(final BlockState state, final Mirror mirror) {
         return state.rotate(mirror.getRotation(state.getValue(FACING)));
     }
 

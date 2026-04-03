@@ -32,12 +32,12 @@ import com.tterrag.registrate.providers.RegistrateRecipeProvider;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import com.tterrag.registrate.util.nullness.NonNullFunction;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.AttachFace;
@@ -55,10 +55,19 @@ import static com.simibubi.create.foundation.data.ModelGen.customItemModel;
 import static com.simibubi.create.foundation.data.TagGen.*;
 
 public class BnbTrinketBlocks {
-    public static final BlockEntry<NixieBoardBlockNixie> NIXIE_BOARD = REGISTRATE.block("nixie_board", p -> new NixieBoardBlockNixie(p, null))
+    public static final BlockEntry<NixieBoardBlockNixie> NIXIE_BOARD = REGISTRATE.block(
+                    "nixie_board",
+                    p -> new NixieBoardBlockNixie(
+                            p,
+                            null
+                    )
+            )
             .transform(nixieBoard())
             .item()
-            .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/nixie_board/nixie_board_single")))
+            .model((c, p) -> p.withExistingParent(
+                    c.getName(),
+                    CreateBitsnBobs.asResource("block/nixie_board/nixie_board_single")
+            ))
             .build()
             .register();
     public static final DyedBlockList<NixieBoardBlockNixie> DYED_NIXIE_BOARD = new DyedBlockList<>(colour -> {
@@ -67,10 +76,19 @@ public class BnbTrinketBlocks {
                 .transform(nixieBoard())
                 .register();
     });
-    public static final BlockEntry<LargeNixieTubeBlockNixie> LARGE_NIXIE_TUBE = REGISTRATE.block("large_nixie_tube", p -> new LargeNixieTubeBlockNixie(p, null))
+    public static final BlockEntry<LargeNixieTubeBlockNixie> LARGE_NIXIE_TUBE = REGISTRATE.block(
+                    "large_nixie_tube",
+                    p -> new LargeNixieTubeBlockNixie(
+                            p,
+                            null
+                    )
+            )
             .transform(largeNixieTube())
             .item()
-            .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/large_nixie_tube/large_nixie_tube")))
+            .model((c, p) -> p.withExistingParent(
+                    c.getName(),
+                    CreateBitsnBobs.asResource("block/large_nixie_tube/large_nixie_tube")
+            ))
             .build()
             .register();
     public static final DyedBlockList<LargeNixieTubeBlockNixie> DYED_LARGE_NIXIE_TUBE = new DyedBlockList<>(colour -> {
@@ -82,10 +100,13 @@ public class BnbTrinketBlocks {
     public static final BlockEntry<LightbulbBlock> LIGHTBULB = REGISTRATE.block("lightbulb", LightbulbBlock::new)
             .initialProperties(SharedProperties::softMetal)
             .transform(pickaxeOnly())
-            .blockstate((c, p) -> p.directionalBlock(c.get(),
+            .blockstate((c, p) -> p.directionalBlock(
+                    c.get(),
                     (state) -> p.models().getExistingFile(CreateBitsnBobs.asResource(
-                            "block/lightbulb/lightbulb" + (state.getValue(LightbulbBlock.CAGE) ? "" : "_uncaged") + (LightBlock.shouldUseOnLightModel(state) ? "_on" : "")
-                    ))))
+                            "block/lightbulb/lightbulb" + (state.getValue(LightbulbBlock.CAGE) ? "" : "_uncaged") + (LightBlock.shouldUseOnLightModel(
+                                    state) ? "_on" : "")
+                    ))
+            ))
             .properties(p -> p
                     .noOcclusion()
                     .lightLevel(LightBlock::getLightLevel)
@@ -93,13 +114,17 @@ public class BnbTrinketBlocks {
                     .forceSolidOn())
             .addLayer(() -> RenderType::translucent)
             .item()
-            .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/lightbulb/lightbulb_uncaged")))
+            .model((c, p) -> p.withExistingParent(
+                    c.getName(),
+                    CreateBitsnBobs.asResource("block/lightbulb/lightbulb_uncaged")
+            ))
             .build()
             .register();
     public static final BlockEntry<HeadlampBlock> HEADLAMP = REGISTRATE.block("headlamp", HeadlampBlock::new)
             .initialProperties(SharedProperties::softMetal)
             .transform(pickaxeOnly())
-            .blockstate((c, p) -> p.simpleBlock(c.get(),
+            .blockstate((c, p) -> p.simpleBlock(
+                    c.get(),
                     p.models().getExistingFile(CreateBitsnBobs.asResource(
                             "block/headlamp/headlight_block"
                     ))
@@ -117,13 +142,22 @@ public class BnbTrinketBlocks {
             .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/headlamp/headlight")))
             .build()
             .register();
-    public static final BlockEntry<LightBlock> BRASS_LAMP = REGISTRATE.block("brass_lamp", (p) -> new LightBlock(p, BnbShapes.BRASS_LAMP_SHAPE, true))
+    public static final BlockEntry<LightBlock> BRASS_LAMP = REGISTRATE.block(
+                    "brass_lamp",
+                    (p) -> new LightBlock(
+                            p,
+                            BnbShapes.BRASS_LAMP_SHAPE,
+                            true
+                    )
+            )
             .initialProperties(SharedProperties::softMetal)
             .transform(pickaxeOnly())
-            .blockstate((c, p) -> p.directionalBlock(c.get(),
+            .blockstate((c, p) -> p.directionalBlock(
+                    c.get(),
                     (state) -> p.models().getExistingFile(CreateBitsnBobs.asResource(
                             "block/brass_lamp/brass_lamp" + (LightBlock.shouldUseOnLightModel(state) ? "_on" : "")
-                    ))))
+                    ))
+            ))
             .properties(p -> p
                     .noOcclusion()
                     .lightLevel(LightBlock::getLightLevel)
@@ -132,7 +166,10 @@ public class BnbTrinketBlocks {
                     .forceSolidOn())
             .addLayer(() -> RenderType::translucent)
             .item()
-            .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/brass_lamp/brass_lamp")))
+            .model((c, p) -> p.withExistingParent(
+                    c.getName(),
+                    CreateBitsnBobs.asResource("block/brass_lamp/brass_lamp")
+            ))
             .build()
             .register();
     public static final BlockEntry<ThrottleLeverBlock> THROTTLE_LEVER =
@@ -141,25 +178,26 @@ public class BnbTrinketBlocks {
                     .transform(axeOrPickaxe())
                     .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
                     .blockstate((c, p) -> {
-                        p.getVariantBuilder(c.get()).forAllStatesExcept(state -> {
-                            AttachFace face = state.getValue(ThrottleLeverBlock.FACE);
-                            Direction facing = state.getValue(ThrottleLeverBlock.FACING);
-                            boolean hasShaft = state.getValue(ThrottleLeverBlock.HAS_SHAFT);
+                        p.getVariantBuilder(c.get()).forAllStatesExcept(
+                                state -> {
+                                    AttachFace face = state.getValue(ThrottleLeverBlock.FACE);
+                                    Direction facing = state.getValue(ThrottleLeverBlock.FACING);
 
-                            ModelFile model = AssetLookup.partialBaseModel(c, p, hasShaft ? "shaft" : "");
+                                    ModelFile model = AssetLookup.partialBaseModel(c, p);
 
-                            int xRot = face == AttachFace.FLOOR ? 0 : face == AttachFace.WALL ? 90 : 180;
-                            int yRot = (int) facing.toYRot();
-                            if (face == AttachFace.CEILING) {
-                                yRot = (yRot + 180) % 360;
-                            }
+                                    int xRot = face == AttachFace.FLOOR ? 0 : face == AttachFace.WALL ? 90 : 180;
+                                    int yRot = (int) facing.toYRot();
+                                    if (face == AttachFace.CEILING) {
+                                        yRot = (yRot + 180) % 360;
+                                    }
 
-                            return ConfiguredModel.builder()
-                                    .modelFile(model)
-                                    .rotationX(xRot)
-                                    .rotationY(yRot)
-                                    .build();
-                        }, BlockStateProperties.POWER);
+                                    return ConfiguredModel.builder()
+                                            .modelFile(model)
+                                            .rotationX(xRot)
+                                            .rotationY(yRot)
+                                            .build();
+                                }, BlockStateProperties.POWER
+                        );
                     })
                     .onRegister(ItemUseOverrides::addBlock)
                     .item()
@@ -187,19 +225,25 @@ public class BnbTrinketBlocks {
                             .requires(DyeHelper.getWoolOfDye(colour))
                             .requires(ItemTags.WOODEN_STAIRS)
                             .unlockedBy("has_wool", RegistrateRecipeProvider.has(ItemTags.WOOL))
-                            .save(p.withConditions(BnbFeatureFlag.CHAIRS.getDataCondition()), CreateBitsnBobs.asResource("crafting/" + c.getName()));
+                            .save(
+                                    p.withConditions(BnbFeatureFlag.CHAIRS.getDataCondition()),
+                                    CreateBitsnBobs.asResource("crafting/" + c.getName())
+                            );
                     ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, c.get())
                             .requires(colour.getTag())
                             .requires(BnbTags.BnbItemTags.CHAIRS.tag)
                             .unlockedBy("has_seat", RegistrateRecipeProvider.has(BnbTags.BnbItemTags.CHAIRS.tag))
-                            .save(p.withConditions((BnbFeatureFlag.CHAIRS.getDataCondition())), CreateBitsnBobs.asResource("crafting/" + c.getName() + "_from_other_chair"));
+                            .save(
+                                    p.withConditions((BnbFeatureFlag.CHAIRS.getDataCondition())),
+                                    CreateBitsnBobs.asResource("crafting/" + c.getName() + "_from_other_chair")
+                            );
                 })
                 .onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "block.bits_n_bobs.chair"))
                 .tag(BnbTags.BnbBlockTags.CHAIRS.tag)
                 .item()
                 .model((c, p) ->
-                        p.withExistingParent("item/" + colourName + "_chair", p.modLoc("block/chair/item"))
-                                .texture("2", p.modLoc("block/chair/chair_" + colourName)))
+                               p.withExistingParent("item/" + colourName + "_chair", p.modLoc("block/chair/item"))
+                                       .texture("2", p.modLoc("block/chair/chair_" + colourName)))
                 .tag(BnbTags.BnbItemTags.CHAIRS.tag)
                 .build()
                 .register();
