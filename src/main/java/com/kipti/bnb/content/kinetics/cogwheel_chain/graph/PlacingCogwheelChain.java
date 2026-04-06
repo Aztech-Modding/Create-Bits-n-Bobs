@@ -142,8 +142,8 @@ public class PlacingCogwheelChain {
         final boolean isAxisChangePermitted = chainType.permitsAxisChanges();
         final boolean isValidAxisChange = isAxisChangePermitted && isValidLargeCogAxisConnection(
                 from, to.pos(), axis, to.isLarge()
-        ); //TODO: forgot to undelete non flat being valid
-
+        );
+        
         final boolean isValidCandidate = isValidFlat || isValidAxisChange;
 
         if (!isValidCandidate) {
@@ -220,7 +220,7 @@ public class PlacingCogwheelChain {
         return Objects.hashCode(this.visitedNodes);
     }
 
-    public boolean canBuildChainIfLooping() throws ChainInteractionFailedException {
+    public boolean tryCompleteLoop() throws ChainInteractionFailedException {
         if (this.getSize() < 2) return false;
         final PlacingCogwheelNode firstNode = this.visitedNodes.getFirst();
         final PlacingCogwheelNode lastNode = this.getLastNode();

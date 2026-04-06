@@ -1,5 +1,7 @@
 package com.kipti.bnb.registry.content.blocks.deco;
 
+import com.cake.azimuth.lang.IncludeLangDefaults;
+import com.cake.azimuth.lang.LangDefault;
 import com.cake.struts.content.StrutModelBuilder;
 import com.cake.struts.content.block.StrutBlockItem;
 import com.kipti.bnb.CreateBitsnBobs;
@@ -43,6 +45,10 @@ import static com.simibubi.create.foundation.data.CreateRegistrate.connectedText
 import static com.simibubi.create.foundation.data.ModelGen.customItemModel;
 import static com.simibubi.create.foundation.data.TagGen.pickaxeOnly;
 
+@IncludeLangDefaults({
+        @LangDefault(key = "block.bits_n_bobs.girder_strut.tooltip.summary", value = "A type of girder used to span a distance _between two anchor points_."),
+        @LangDefault(key = "message.bits_n_bobs.girder_strut.missing_anchors", value = "You need %s more Girder Struts"),
+})
 public class BnbDecorativeBlocks {
 
     public static final BlockEntry<WeatheredGirderBlock> WEATHERED_METAL_GIRDER = REGISTRATE.block(

@@ -1,5 +1,7 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.edit;
 
+import com.cake.azimuth.lang.IncludeLangDefaults;
+import com.cake.azimuth.lang.LangDefault;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.attachment.CogwheelChainAttachment;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChain;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChainCandidate;
@@ -37,6 +39,9 @@ import java.util.List;
  *   <li>Shift+right-click cancels at any point</li>
  * </ol>
  */
+@IncludeLangDefaults(
+        @LangDefault(key = "tooltip.bits_n_bobs.chain_drive_partial_edit_hint", value = "Inserting cogwheel into chain drive")
+)
 public class CogwheelChainPartialEditInteractionHandler {
 
     private static @Nullable CogwheelChainPartialEditContext currentEditContext = null;

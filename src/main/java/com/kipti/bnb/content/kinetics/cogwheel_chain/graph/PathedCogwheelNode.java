@@ -35,7 +35,9 @@ public record PathedCogwheelNode(int side, boolean isLarge, Direction.Axis rotat
                 nodeTag.getInt("OffsetY"),
                 nodeTag.getInt("OffsetZ")
         );
-        final Direction.Axis rotationAxis = Direction.Axis.values()[nodeTag.getInt("RotationAxis")];
+        final int axisOrdinal = nodeTag.getInt("RotationAxis");
+        final Direction.Axis[] axes = Direction.Axis.values();
+        final Direction.Axis rotationAxis = axisOrdinal >= 0 && axisOrdinal < axes.length ? axes[axisOrdinal] : Direction.Axis.Y;
 
 
         final boolean offsetForSmallCogwheel;

@@ -19,6 +19,7 @@ public class GratingBlockStateGen {
             final Direction.Axis otherAxisA = dir.getAxis() == Direction.Axis.X ? Direction.Axis.Y : Direction.Axis.X;
             final Direction.Axis otherAxisB = dir.getAxis() == Direction.Axis.Z ? Direction.Axis.Y : Direction.Axis.Z;
 
+            // Side panel: solid when shaft axis is perpendicular to facing
             prov.getMultipartBuilder(ctx.get())
                     .part()
                     .modelFile(prov.models().getExistingFile(CreateBitsnBobs.asResource(
@@ -28,7 +29,9 @@ public class GratingBlockStateGen {
                     .uvLock(false)
                     .addModel()
                     .condition(BlockStateProperties.FACING, dir)
+                    .condition(GratingEncasedShaftBlock.AXIS, otherAxisA, otherAxisB)
                     .end()
+                    // Side panel: cutout when shaft axis aligns with facing (shaft passes through)
                     .part()
                     .modelFile(prov.models().getExistingFile(CreateBitsnBobs.asResource(
                             "block/industrial_grating/panel_side_cutout")))
@@ -40,6 +43,7 @@ public class GratingBlockStateGen {
                     .condition(GratingEncasedShaftBlock.AXIS, dir.getAxis())
                     .end();
 
+            // Top panel: solid when shaft axis is perpendicular to facing
             prov.getMultipartBuilder(ctx.get()).part()
                     .modelFile(prov.models().getExistingFile(CreateBitsnBobs.asResource("block/industrial_grating/panel")))
                     .rotationX(dir == Direction.DOWN ? 180 : dir.getAxis().isHorizontal() ? 90 : 0)
@@ -49,6 +53,7 @@ public class GratingBlockStateGen {
                     .condition(BlockStateProperties.FACING, dir)
                     .condition(GratingEncasedShaftBlock.AXIS, otherAxisA, otherAxisB)
                     .end()
+                    // Top panel: cutout when shaft axis aligns with facing (shaft passes through)
                     .part()
                     .modelFile(prov.models().getExistingFile(CreateBitsnBobs.asResource(
                             "block/industrial_grating/panel_cutout")))
@@ -87,6 +92,7 @@ public class GratingBlockStateGen {
                     .uvLock(false)
                     .addModel()
                     .condition(BlockStateProperties.FACING, dir)
+                    .condition(connectionProp, false)
                     .end()
                     .part()
                     .modelFile(prov.models().getExistingFile(CreateBitsnBobs.asResource(

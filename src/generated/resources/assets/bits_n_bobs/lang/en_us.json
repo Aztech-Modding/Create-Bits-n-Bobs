@@ -206,6 +206,7 @@
   "block.bits_n_bobs.yellow_chair": "Yellow Chair",
   "block.bits_n_bobs.yellow_large_nixie_tube": "Yellow Large Nixie Tube",
   "block.bits_n_bobs.yellow_nixie_board": "Yellow Nixie Board",
+  "create.gui.assembly.exception.bits_n_bobs.no_chain_to_attach_to": "No chain to attach to!",
   "entity.bits_n_bobs.cogwheel_chain_carriage_contraption": "Cogwheel Chain Carriage Contraption",
   "entity.bits_n_bobs.inert_stationary_contraption": "Inert Stationary Contraption",
   "generator.bits_n_bobs.ponderous_planes": "Ponderflat",

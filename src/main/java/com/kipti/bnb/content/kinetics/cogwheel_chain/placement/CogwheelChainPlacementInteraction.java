@@ -1,5 +1,7 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.placement;
 
+import com.cake.azimuth.lang.IncludeLangDefaults;
+import com.cake.azimuth.lang.LangDefault;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.edit.CogwheelChainPartialEditInteractionHandler;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChainCandidate;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.PlacingCogwheelChain;
@@ -35,6 +37,9 @@ import org.jetbrains.annotations.Nullable;
  * Client-side interaction entry point for cogwheel-chain placement, removal, and partial edit entry.
  */
 @EventBusSubscriber(Dist.CLIENT)
+@IncludeLangDefaults(
+        @LangDefault(key = "tooltip.bits_n_bobs.chain_drive_placing_hint", value = "Placing chain drive, create a complete loop to finish.")
+)
 public class CogwheelChainPlacementInteraction {
 
     public static @Nullable PlacingCogwheelChain currentBuildingChain = null;
@@ -177,7 +182,7 @@ public class CogwheelChainPlacementInteraction {
 
                 final boolean completed;
                 try {
-                    completed = currentBuildingChain.canBuildChainIfLooping();
+                    completed = currentBuildingChain.tryCompleteLoop();
                 } catch (final ChainInteractionFailedException exception) {
                     player.displayClientMessage(exception.getComponent(), true);
                     clearPlacingChain();

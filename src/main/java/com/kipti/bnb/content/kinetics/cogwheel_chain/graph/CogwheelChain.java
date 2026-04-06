@@ -125,8 +125,8 @@ public class CogwheelChain {
 
     public int getChainsRequired() {
         double length = 0;
-        for (int i = 0; i <= this.cogwheelNodes.size(); i++) {
-            final PathedCogwheelNode startNode = this.cogwheelNodes.get(i % this.cogwheelNodes.size());
+        for (int i = 0; i < this.cogwheelNodes.size(); i++) {
+            final PathedCogwheelNode startNode = this.cogwheelNodes.get(i);
             final PathedCogwheelNode endNode = this.cogwheelNodes.get((i + 1) % this.cogwheelNodes.size());
             length += startNode.dist(endNode);
         }

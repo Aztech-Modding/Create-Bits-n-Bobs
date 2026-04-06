@@ -257,7 +257,7 @@ public class CogwheelChainAttachment {
     }
 
     public Vec3 getCurrentDirection(final Level level) {
-        return this.getCurrentDirection(level, this.dist);
+        return this.getCurrentDirection(level, 0);
     }
 
     public float wrapDist(final Level level, final float dist) {

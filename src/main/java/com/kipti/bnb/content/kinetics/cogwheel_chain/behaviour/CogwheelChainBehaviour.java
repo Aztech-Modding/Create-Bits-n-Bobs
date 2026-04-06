@@ -23,7 +23,6 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.event.level.BlockEvent;
@@ -119,9 +118,9 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
 
     @Override
     public ItemRequirement getRequiredItems(final BlockState state) {
-        return this.isController() ? new ItemRequirement(
+        return this.isController() && this.controlledChain != null ? new ItemRequirement(
                 ItemRequirement.ItemUseType.CONSUME,
-                Blocks.CHAIN.asItem().getDefaultInstance().copyWithCount(this.controlledChain != null ? this.controlledChain.getChainsRequired() : 0)
+                this.controlledChain.getReturnedItem().getDefaultInstance().copyWithCount(this.controlledChain.getChainsRequired())
         ) : ItemRequirement.NONE;
     }
 

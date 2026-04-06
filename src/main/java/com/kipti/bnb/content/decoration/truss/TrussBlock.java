@@ -138,6 +138,12 @@ public class TrussBlock extends RotatedPillarBlock {
         if (hasStrutConnection) {
             result = result.setValue(PipeBlock.PROPERTY_BY_DIRECTION.get(positiveStrut), strutPositive);
             result = result.setValue(PipeBlock.PROPERTY_BY_DIRECTION.get(negativeStrut), strutNegative);
+            for (final Direction d : Direction.values()) {
+                if (d.getAxis() == trussAxis) continue;
+                result = result.setValue(PipeBlock.PROPERTY_BY_DIRECTION.get(d),
+                        FluidPipeBlock.canConnectTo(level, pos.relative(d),
+                                level.getBlockState(pos.relative(d)), d));
+            }
             return result;
         }
 

@@ -37,6 +37,14 @@ public class BnbSpecialEncasedBlocks {
             .onRegister(connectedTextures(() -> new GratingPanelCTBehaviour(BnbSpriteShifts.INDUSTRIAL_GRATING)))
             .onRegister(connectedTextures(() -> new GratingPanelCTBehaviour(BnbSpriteShifts.INDUSTRIAL_GRATING_CUTOUT)))
             .addLayer(() -> RenderType::cutout)
+            .loot((p, b) -> p.add(
+                    b, p.createSingleItemTable(BnbDecorativeBlocks.INDUSTRIAL_GRATING_PANEL.get())
+                            .withPool(p.applyExplosionCondition(
+                                    AllBlocks.SHAFT.get(), LootPool.lootPool()
+                                            .setRolls(ConstantValue.exactly(1.0F))
+                                            .add(LootItem.lootTableItem(AllBlocks.SHAFT.get()))
+                            ))
+            ))
             .transform(EncasingRegistry.addVariantTo(AllBlocks.SHAFT))
             .register();
 

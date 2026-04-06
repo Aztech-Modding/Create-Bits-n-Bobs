@@ -6,6 +6,7 @@
         "x": 180
       },
       "when": {
+        "down": "false",
         "facing": "down"
       }
     },
@@ -46,7 +47,8 @@
         "model": "bits_n_bobs:block/industrial_grating/panel_side"
       },
       "when": {
-        "facing": "up"
+        "facing": "up",
+        "up": "false"
       }
     },
     {
@@ -84,7 +86,8 @@
         "x": 90
       },
       "when": {
-        "facing": "north"
+        "facing": "north",
+        "north": "false"
       }
     },
     {
@@ -126,7 +129,8 @@
         "y": 180
       },
       "when": {
-        "facing": "south"
+        "facing": "south",
+        "south": "false"
       }
     },
     {
@@ -171,7 +175,8 @@
         "y": 270
       },
       "when": {
-        "facing": "west"
+        "facing": "west",
+        "west": "false"
       }
     },
     {
@@ -216,6 +221,7 @@
         "y": 90
       },
       "when": {
+        "east": "false",
         "facing": "east"
       }
     },

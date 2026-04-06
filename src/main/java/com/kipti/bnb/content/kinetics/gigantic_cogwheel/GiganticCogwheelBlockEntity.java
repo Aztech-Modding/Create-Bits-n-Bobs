@@ -31,12 +31,16 @@ import java.util.List;
  */
 public class GiganticCogwheelBlockEntity extends KineticBlockEntity {
 
-    public BlockState material;
+    private BlockState material;
 
     public GiganticCogwheelBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         this.material = Blocks.SPRUCE_PLANKS.defaultBlockState();
         this.setLazyTickRate(20);
+    }
+
+    public BlockState getMaterial() {
+        return this.material;
     }
 
     public ItemInteractionResult applyMaterialIfValid(ItemStack stack) {

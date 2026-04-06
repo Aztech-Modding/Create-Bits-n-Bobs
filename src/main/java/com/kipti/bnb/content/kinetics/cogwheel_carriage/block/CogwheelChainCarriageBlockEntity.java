@@ -1,5 +1,7 @@
 package com.kipti.bnb.content.kinetics.cogwheel_carriage.block;
 
+import com.cake.azimuth.lang.IncludeLangDefaults;
+import com.cake.azimuth.lang.LangDefault;
 import com.kipti.bnb.content.kinetics.cogwheel_carriage.contraption.CogwheelChainCarriageContraption;
 import com.kipti.bnb.content.kinetics.cogwheel_carriage.contraption.CogwheelChainCarriageContraptionEntity;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.attachment.CogwheelChainAttachment;
@@ -18,15 +20,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-/**
- * Block entity for the cogwheel chain carriage. Stores a chain attachment
- * resolved at activation time and uses it to assemble a contraption.
- *
- * <p>The attachment is not ticked here — the block entity is stationary.
- * Once assembled, the {@link CogwheelChainCarriageContraptionEntity} owns
- * the attachment and drives movement along the chain.</p>
- */
+@IncludeLangDefaults(
+        @LangDefault(key = "bits_n_bobs.no_chain_to_attach_to", format = CogwheelChainCarriageBlockEntity.ASSEMBLY_EXCEPTION_FORMAT, value = "No chain to attach to!")
+)
 public class CogwheelChainCarriageBlockEntity extends SmartBlockEntity {
+
+    public static final String ASSEMBLY_EXCEPTION_FORMAT = "create.gui.assembly.exception.%s";
 
     private @Nullable AssemblyException lastException;
     public boolean assembleNextTick;
@@ -56,7 +55,7 @@ public class CogwheelChainCarriageBlockEntity extends SmartBlockEntity {
     private void assemble() {
         final CogwheelChainAttachment attachment = CogwheelChainAttachmentHelper.findNearestAttachment(this.level, this.getBlockPos().getCenter());
         if (attachment == null) {
-            this.lastException = new AssemblyException("bits_n_bobs.no_chain_to_attatch_to");
+            this.lastException = new AssemblyException("bits_n_bobs.no_chain_to_attach_to");
             return;
         }
 
