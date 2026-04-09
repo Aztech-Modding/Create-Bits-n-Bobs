@@ -1,6 +1,6 @@
 package com.kipti.bnb.mixin;
 
-import com.kipti.bnb.registry.BnbPartialModels;
+import com.kipti.bnb.registry.client.BnbPartialModels;
 import com.simibubi.create.AllBlocks;
 import net.createmod.catnip.gui.element.GuiGameElement;
 import net.minecraft.world.level.block.state.BlockState;
@@ -16,10 +16,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class GuiGameElementMixin {
 
     @Inject(method = "of(Lnet/minecraft/world/level/block/state/BlockState;)Lnet/createmod/catnip/gui/element/GuiGameElement$GuiRenderBuilder;", at = @At("HEAD"), cancellable = true)
-    private static void ofBlockStateInject(BlockState blockState, CallbackInfoReturnable<GuiGameElement.GuiRenderBuilder> cir) {
+    private static void ofBlockStateInject(final BlockState blockState, final CallbackInfoReturnable<GuiGameElement.GuiRenderBuilder> cir) {
         if (AllBlocks.ROPE_PULLEY.has(blockState)) {
             cir.setReturnValue(GuiGameElement.of(BnbPartialModels.ROPE_PULLEY_JEI));
         }
     }
 
 }
+

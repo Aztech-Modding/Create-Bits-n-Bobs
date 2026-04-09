@@ -1,0 +1,107 @@
+{
+	"format_version": "1.21.6",
+	"credit": "Made with Blockbench",
+	"parent": "block/block",
+	"textures": {
+		"1": "bits_n_bobs:block/cable",
+		"particle": "bits_n_bobs:block/cable"
+	},
+	"elements": [
+		{
+			"from": [7.05, 7.05, 0],
+			"to": [8.95, 8.95, 16],
+			"rotation": {"angle": 0, "axis": "y", "origin": [7, 7, 0]},
+			"faces": {
+				"north": {"uv": [7, 0, 9, 2], "rotation": 90, "texture": "#1"},
+				"east": {"uv": [7, 0, 9, 16], "rotation": 90, "texture": "#1"},
+				"south": {"uv": [7, 0, 9, 2], "rotation": 90, "texture": "#1"},
+				"west": {"uv": [7, 0, 9, 16], "rotation": 90, "texture": "#1"},
+				"up": {"uv": [7, 0, 9, 16], "texture": "#1"},
+				"down": {"uv": [7, 0, 9, 16], "texture": "#1"}
+			}
+		}
+	],
+	"display": {
+		"thirdperson_righthand": {
+			"rotation": [75, 45, 0],
+			"translation": [0, 2.5, 0],
+			"scale": [0.375, 0.375, 0.375]
+		},
+		"thirdperson_lefthand": {
+			"rotation": [75, 45, 0],
+			"translation": [0, 2.5, 0],
+			"scale": [0.375, 0.375, 0.375]
+		},
+		"firstperson_righthand": {
+			"rotation": [0, 45, 0],
+			"scale": [0.4, 0.4, 0.4]
+		},
+		"firstperson_lefthand": {
+			"rotation": [0, -135, 0],
+			"scale": [0.4, 0.4, 0.4]
+		},
+		"ground": {
+			"translation": [0, 3, 0],
+			"scale": [0.25, 0.25, 0.25]
+		},
+		"gui": {
+			"rotation": [30, -135, 0],
+			"scale": [0.625, 0.625, 0.625]
+		},
+		"fixed": {
+			"scale": [0.5, 0.5, 0.5]
+		}
+	},
+	"groups": [
+		{
+			"name": "Beam X",
+			"origin": [8, 13, 8],
+			"color": 0,
+			"stepParentName": "",
+			"backdrop": false,
+			"children": [0]
+		},
+		{
+			"name": "Brace",
+			"origin": [0, 0, 0],
+			"color": 0,
+			"stepParentName": "",
+			"backdrop": false,
+			"children": []
+		},
+		{
+			"name": "girder_strut_attachment",
+			"origin": [8, 8, 8],
+			"color": 0,
+			"stepParentName": "",
+			"backdrop": false,
+			"children": [
+				{
+					"name": "Brace",
+					"origin": [0, 0, 0],
+					"color": 0,
+					"stepParentName": "",
+					"backdrop": false,
+					"children": []
+				},
+				{
+					"name": "girder_strut_attachment",
+					"origin": [8, 8, 8],
+					"color": 0,
+					"stepParentName": "",
+					"backdrop": false,
+					"children": [
+						{
+							"name": "Brace",
+							"origin": [0, 0, 0],
+							"color": 0,
+							"stepParentName": "",
+							"backdrop": false,
+							"children": []
+						}
+					]
+				}
+			]
+		}
+	]
+}

@@ -17,3 +17,4 @@ public interface ReverseRenderableBakedGlyph {
             final int packedLight
     );
 }
+

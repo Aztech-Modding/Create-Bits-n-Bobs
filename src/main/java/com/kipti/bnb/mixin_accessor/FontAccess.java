@@ -8,3 +8,4 @@ public interface FontAccess {
     FontSet bits_n_bobs$getFontSet(ResourceLocation fontLocation);
 
 }
+

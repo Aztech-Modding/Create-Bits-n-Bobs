@@ -4,9 +4,8 @@
 	"texture_size": [32, 32],
 	"textures": {
 		"1": "bits_n_bobs:block/flywheel_bearing",
-		"2": "bits_n_bobs:block/god damn it fuck my chud fucking life i hate everyone and everything fuck my fucking chud dingaling life man",
 		"4": "bits_n_bobs:block/large_dark_cogwheel",
-		"particle": "bits_n_bobs:block/god damn it fuck my chud fucking life i hate everyone and everything fuck my fucking chud dingaling life man"
+		"5": "create:block/bearing_top"
 	},
 	"elements": [
 		{
@@ -249,8 +248,8 @@
 				"east": {"uv": [0, 3, 8, 5], "texture": "#1"},
 				"south": {"uv": [0, 3, 8, 5], "texture": "#1"},
 				"west": {"uv": [0, 3, 8, 5], "texture": "#1"},
-				"up": {"uv": [16, 16, 0, 0], "texture": "#2"},
-				"down": {"uv": [16, 16, 0, 32], "texture": "#2"}
+				"up": {"uv": [16, 16, 0, 0], "texture": "#5"},
+				"down": {"uv": [16, 16, 0, 32], "texture": "#5"}
 			}
 		}
 	],
@@ -292,25 +291,22 @@
 		{
 			"name": "large_cogwheel",
 			"origin": [8, 8, 8],
+			"scope": 0,
 			"color": 0,
-			"stepParentName": "",
-			"backdrop": false,
 			"children": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
 		},
 		{
 			"name": "body",
 			"origin": [0, 0, 0],
+			"scope": 0,
 			"color": 0,
-			"stepParentName": "",
-			"backdrop": false,
 			"children": []
 		},
 		{
 			"name": "Head",
 			"origin": [8, 15, 8],
+			"scope": 0,
 			"color": 0,
-			"stepParentName": "",
-			"backdrop": false,
 			"children": []
 		},
 		15,

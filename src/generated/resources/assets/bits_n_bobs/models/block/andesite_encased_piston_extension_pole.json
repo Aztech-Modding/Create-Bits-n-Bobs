@@ -1,0 +1,7 @@
+{
+  "parent": "bits_n_bobs:block/encased_piston_pole/block",
+  "textures": {
+    "casing": "create:block/andesite_casing",
+    "opening": "create:block/gearbox"
+  }
+}

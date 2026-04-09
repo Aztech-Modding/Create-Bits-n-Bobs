@@ -2,7 +2,16 @@ package com.kipti.bnb.network;
 
 
 import com.kipti.bnb.CreateBitsnBobs;
+import com.kipti.bnb.network.packets.from_client.CogwheelChainCarriageQueueDisassemblyPacket;
+import com.kipti.bnb.network.packets.from_client.CogwheelChainRidingPacket;
+import com.kipti.bnb.network.packets.from_client.DragInteractionUpdatePacket;
+import com.kipti.bnb.network.packets.from_client.PartialEditCogwheelChainPacket;
 import com.kipti.bnb.network.packets.from_client.PlaceCogwheelChainPacket;
+import com.kipti.bnb.network.packets.from_client.WrenchCogwheelChainPacket;
+import com.kipti.bnb.network.packets.to_client.ApplyHeadlampQueuedOperationsPacket;
+import com.kipti.bnb.network.packets.to_client.CogwheelChainCarriageUpdateDistPacket;
+import com.kipti.bnb.network.packets.to_client.CogwheelChainRidingBroadcastPacket;
+import com.kipti.bnb.network.packets.to_client.PeekCogwheelChainControllerHighlightPacket;
 import net.createmod.catnip.net.base.BasePacketPayload;
 import net.createmod.catnip.net.base.CatnipPacketRegistry;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -14,17 +23,42 @@ import java.util.Locale;
 public enum BnbPackets implements BasePacketPayload.PacketTypeProvider {
     // C2S
     PLACE_COGWHEEL_CHAIN(PlaceCogwheelChainPacket.class, PlaceCogwheelChainPacket.STREAM_CODEC),
+    WRENCH_COGWHEEL_CHAIN(WrenchCogwheelChainPacket.class, WrenchCogwheelChainPacket.STREAM_CODEC),
+    PARTIAL_EDIT_COGWHEEL_CHAIN(PartialEditCogwheelChainPacket.class, PartialEditCogwheelChainPacket.STREAM_CODEC),
+    COGWHEEL_CHAIN_CARRIAGE_QUEUE_DISASSEMBLE(
+            CogwheelChainCarriageQueueDisassemblyPacket.class,
+            CogwheelChainCarriageQueueDisassemblyPacket.STREAM_CODEC
+    ),
+    COGWHEEL_CHAIN_RIDING(CogwheelChainRidingPacket.class, CogwheelChainRidingPacket.STREAM_CODEC),
+    DRAG_INTERACTION_UPDATE(DragInteractionUpdatePacket.class, DragInteractionUpdatePacket.STREAM_CODEC),
 
     // S2C
+    APPLY_HEADLAMP_QUEUED_OPERATIONS(
+            ApplyHeadlampQueuedOperationsPacket.class,
+            ApplyHeadlampQueuedOperationsPacket.STREAM_CODEC
+    ),
+    PEEK_COGWHEEL_CHAIN_CONTROLLER_HIGHLIGHT(
+            PeekCogwheelChainControllerHighlightPacket.class,
+            PeekCogwheelChainControllerHighlightPacket.STREAM_CODEC
+    ),
+    COGWHEEL_CHAIN_CARRIAGE_UPDATE_DIST(
+            CogwheelChainCarriageUpdateDistPacket.class,
+            CogwheelChainCarriageUpdateDistPacket.STREAM_CODEC
+    ),
+    COGWHEEL_CHAIN_RIDING_BROADCAST(
+            CogwheelChainRidingBroadcastPacket.class,
+            CogwheelChainRidingBroadcastPacket.STREAM_CODEC
+    ),
     ;
 
     private final CatnipPacketRegistry.PacketType<?> type;
 
-    <T extends BasePacketPayload> BnbPackets(Class<T> clazz, StreamCodec<? super RegistryFriendlyByteBuf, T> codec) {
-        String name = this.name().toLowerCase(Locale.ROOT);
+    <T extends BasePacketPayload> BnbPackets(final Class<T> clazz,
+                                             final StreamCodec<? super RegistryFriendlyByteBuf, T> codec) {
+        final String name = this.name().toLowerCase(Locale.ROOT);
         this.type = new CatnipPacketRegistry.PacketType<>(
-            new CustomPacketPayload.Type<>(CreateBitsnBobs.asResource(name)),
-            clazz, codec
+                new CustomPacketPayload.Type<>(CreateBitsnBobs.asResource(name)),
+                clazz, codec
         );
     }
 
@@ -35,10 +69,11 @@ public enum BnbPackets implements BasePacketPayload.PacketTypeProvider {
     }
 
     public static void register() {
-        CatnipPacketRegistry packetRegistry = new CatnipPacketRegistry(CreateBitsnBobs.MOD_ID, 1);
-        for (BnbPackets packet : BnbPackets.values()) {
+        final CatnipPacketRegistry packetRegistry = new CatnipPacketRegistry(CreateBitsnBobs.MOD_ID, 1);
+        for (final BnbPackets packet : BnbPackets.values()) {
             packetRegistry.registerPacket(packet.type);
         }
         packetRegistry.registerAllPackets();
     }
 }
+

@@ -15,3 +15,4 @@ public class ShipyardHelper {
         return containing.distSqr(Vec3i.ZERO) >= 2_000_000d * 2_000_000d;
     }
 }
+

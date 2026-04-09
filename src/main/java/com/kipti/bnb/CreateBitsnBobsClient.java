@@ -1,12 +1,22 @@
 package com.kipti.bnb;
 
-import com.kipti.bnb.content.girder_strut.GirderStrutModelManipulator;
+import com.cake.azimuth.ponder.PonderForeignLabelRegistry;
+import com.cake.struts.compat.flywheel.StrutsFlywheelCompatLoader;
+import com.cake.struts.content.StrutModelManipulator;
+import com.kipti.bnb.content.kinetics.gigantic_cogwheel.GiganticCogwheelRenderer;
+import com.kipti.bnb.content.trinkets.light.headlamp.rendering.pipeline.block_entity.HeadlampRenderCache;
+import com.kipti.bnb.content.trinkets.light.headlamp.rendering.pipeline.block_entity.HeadlampVertexBufferCache;
 import com.kipti.bnb.foundation.ponder.BnbPonderPlugin;
-import com.kipti.bnb.registry.BnbConfigs;
-import com.kipti.bnb.registry.BnbPartialModels;
-import com.kipti.bnb.registry.BnbSpriteShifts;
+import com.kipti.bnb.registry.client.BnbInstanceTypes;
+import com.kipti.bnb.registry.client.BnbPartialModels;
+import com.kipti.bnb.registry.client.BnbSpriteShifts;
+import com.kipti.bnb.registry.content.BnbBlockEntities;
+import com.kipti.bnb.registry.content.blocks.deco.BnbStrutDefinitions;
+import com.kipti.bnb.registry.core.BnbConfigs;
 import net.createmod.catnip.config.ui.BaseConfigScreen;
+import net.createmod.catnip.render.SuperByteBufferCache;
 import net.createmod.ponder.foundation.PonderIndex;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -16,6 +26,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.neoforged.neoforge.client.event.ModelEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 
@@ -27,8 +38,11 @@ public class CreateBitsnBobsClient {
     public CreateBitsnBobsClient(final ModContainer container) {
         final IEventBus eventBus = container.getEventBus();
 
+        BnbInstanceTypes.init();
+
         container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
         eventBus.addListener(this::onClientSetup);
+        eventBus.addListener(this::registerAdditionalModels);
     }
 
     private void onClientSetup(final FMLClientSetupEvent event) {
@@ -37,9 +51,14 @@ public class CreateBitsnBobsClient {
 
     private static void clientInit() {
         PonderIndex.addPlugin(new BnbPonderPlugin());
+        PonderForeignLabelRegistry.register("bits_n_bobs", "BITS N BOBS");//TODO: localized component
 
         BnbPartialModels.register();
         BnbSpriteShifts.register();
+
+        SuperByteBufferCache.getInstance().registerCompartment(GiganticCogwheelRenderer.GIGANTIC_COGWHEEL_CACHE);
+
+        StrutsFlywheelCompatLoader.registerStrutVisual(BnbBlockEntities.GIRDER_STRUT.get());
 
         BaseConfigScreen.setDefaultActionFor(CreateBitsnBobs.MOD_ID, base -> base
                 .withButtonLabels(null, "Feature Settings", "Balancing Settings")
@@ -47,13 +66,22 @@ public class CreateBitsnBobsClient {
         );
     }
 
+    private void registerAdditionalModels(final ModelEvent.RegisterAdditional event) {
+        event.register(ModelResourceLocation.standalone(BnbStrutDefinitions.NORMAL_MODEL.segmentModelLocation()));
+        event.register(ModelResourceLocation.standalone(BnbStrutDefinitions.WEATHERED_MODEL.segmentModelLocation()));
+        event.register(ModelResourceLocation.standalone(BnbStrutDefinitions.WOODEN_MODEL.segmentModelLocation()));
+        event.register(ModelResourceLocation.standalone(BnbStrutDefinitions.CABLE_MODEL.segmentModelLocation()));
+    }
+
     public static void invalidateRenderers() {
-        GirderStrutModelManipulator.invalidateMeshes();
+        StrutModelManipulator.invalidateMeshes();
+        HeadlampRenderCache.clearCaches();
+        HeadlampVertexBufferCache.clear();
+        SuperByteBufferCache.getInstance().invalidate(GiganticCogwheelRenderer.GIGANTIC_COGWHEEL_CACHE);
     }
 
     @EventBusSubscriber(Dist.CLIENT)
     private static class ModBusEvents {
-
         @SubscribeEvent
         public static void onLoadComplete(final FMLLoadCompleteEvent event) {
             final ModContainer createContainer = ModList.get()

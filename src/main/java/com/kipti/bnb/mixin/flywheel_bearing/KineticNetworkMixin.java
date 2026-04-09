@@ -1,8 +1,8 @@
 package com.kipti.bnb.mixin.flywheel_bearing;
 
-import com.kipti.bnb.content.flywheel_bearing.FlywheelBearingBlockEntity;
+import com.kipti.bnb.content.kinetics.flywheel_bearing.FlywheelBearingBlockEntity;
 import com.kipti.bnb.mixin_accessor.FlywheelAccessibleKineticNetwork;
-import com.kipti.bnb.registry.BnbConfigs;
+import com.kipti.bnb.registry.core.BnbConfigs;
 import com.simibubi.create.content.kinetics.KineticNetwork;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -58,13 +58,13 @@ public abstract class KineticNetworkMixin implements FlywheelAccessibleKineticNe
         float presentFlywheelStressCapacity = 0;
         for (final Iterator<KineticBlockEntity> iterator = members.keySet()
                 .iterator(); iterator.hasNext(); ) {
-            KineticBlockEntity be = iterator.next();
+            final KineticBlockEntity be = iterator.next();
             if (be.getLevel()
                     .getBlockEntity(be.getBlockPos()) != be) {
                 iterator.remove();
                 continue;
             }
-            if (!(be instanceof FlywheelBearingBlockEntity flywheelBearing))
+            if (!(be instanceof final FlywheelBearingBlockEntity flywheelBearing))
                 continue;
             presentFlywheelStressCapacity += flywheelBearing.getFlywheelStressAbsorptionCapacity();
         }
@@ -79,13 +79,13 @@ public abstract class KineticNetworkMixin implements FlywheelAccessibleKineticNe
         float presentFlywheelStressCapacity = 0;
         for (final Iterator<KineticBlockEntity> iterator = members.keySet()
                 .iterator(); iterator.hasNext(); ) {
-            KineticBlockEntity be = iterator.next();
+            final KineticBlockEntity be = iterator.next();
             if (be.getLevel()
                     .getBlockEntity(be.getBlockPos()) != be) {
                 iterator.remove();
                 continue;
             }
-            if (!(be instanceof FlywheelBearingBlockEntity flywheelBearing))
+            if (!(be instanceof final FlywheelBearingBlockEntity flywheelBearing))
                 continue;
             presentFlywheelStressCapacity += flywheelBearing.getFlywheelStressReleaseCapacity();
         }
@@ -111,20 +111,20 @@ public abstract class KineticNetworkMixin implements FlywheelAccessibleKineticNe
 
         for (final Iterator<KineticBlockEntity> iterator = members.keySet()
                 .iterator(); iterator.hasNext(); ) {
-            KineticBlockEntity be = iterator.next();
+            final KineticBlockEntity be = iterator.next();
             if (be.getLevel()
                     .getBlockEntity(be.getBlockPos()) != be) {
                 iterator.remove();
                 continue;
             }
-            if (!(be instanceof FlywheelBearingBlockEntity flywheelBearing))
+            if (!(be instanceof final FlywheelBearingBlockEntity flywheelBearing))
                 continue;
             flywheelBearing.updateFlywheelStressesFromNetwork();
         }
     }
 
     @Inject(method = "updateNetwork", at = @At("HEAD"))
-    public void bits_n_bobs$updateNetworkHead(CallbackInfo ci) {
+    public void bits_n_bobs$updateNetworkHead(final CallbackInfo ci) {
         if (!bits_n_bobs$flywheelCapacitiesAllowedInServer())
             return;
 
@@ -137,42 +137,42 @@ public abstract class KineticNetworkMixin implements FlywheelAccessibleKineticNe
     }
 
     @Inject(method = "addSilently", at = @At("HEAD"))
-    public void addSilently(KineticBlockEntity be, float lastCapacity, float lastStress, CallbackInfo ci) {
+    public void addSilently(final KineticBlockEntity be, final float lastCapacity, final float lastStress, final CallbackInfo ci) {
         if (!bits_n_bobs$flywheelCapacitiesAllowedInServer())
             return;
 
         if (members.containsKey(be))
             return;
 
-        if (be instanceof FlywheelBearingBlockEntity flywheelBearing) {
+        if (be instanceof final FlywheelBearingBlockEntity flywheelBearing) {
             currentFlywheelStressAbsorptionCapacity += flywheelBearing.getFlywheelStressAbsorptionCapacity();
             currentFlywheelStressReleaseCapacity += flywheelBearing.getFlywheelStressReleaseCapacity();
         }
     }
 
     @Inject(method = "add", at = @At("HEAD"))
-    public void add(KineticBlockEntity be, CallbackInfo ci) {
+    public void add(final KineticBlockEntity be, final CallbackInfo ci) {
         if (!bits_n_bobs$flywheelCapacitiesAllowedInServer())
             return;
 
         if (members.containsKey(be))
             return;
 
-        if (be instanceof FlywheelBearingBlockEntity flywheelBearing) {
+        if (be instanceof final FlywheelBearingBlockEntity flywheelBearing) {
             currentFlywheelStressAbsorptionCapacity += flywheelBearing.getFlywheelStressAbsorptionCapacity();
             currentFlywheelStressReleaseCapacity += flywheelBearing.getFlywheelStressReleaseCapacity();
         }
     }
 
     @Inject(method = "remove", at = @At("HEAD"))
-    public void remove(KineticBlockEntity be, CallbackInfo ci) {
+    public void remove(final KineticBlockEntity be, final CallbackInfo ci) {
         if (!bits_n_bobs$flywheelCapacitiesAllowedInServer())
             return;
 
         if (!members.containsKey(be))
             return;
 
-        if (be instanceof FlywheelBearingBlockEntity flywheelBearing) {
+        if (be instanceof final FlywheelBearingBlockEntity flywheelBearing) {
             currentFlywheelStressAbsorptionCapacity -= flywheelBearing.getFlywheelStressAbsorptionCapacity();
             currentFlywheelStressReleaseCapacity -= flywheelBearing.getFlywheelStressReleaseCapacity();
         }
@@ -190,3 +190,4 @@ public abstract class KineticNetworkMixin implements FlywheelAccessibleKineticNe
 
 
 }
+

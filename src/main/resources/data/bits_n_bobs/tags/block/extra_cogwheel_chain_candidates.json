@@ -1,0 +1,8 @@
+{
+  "values": [
+    {
+      "id": "simulated:swivel_bearing",
+      "required": false
+    }
+  ]
+}

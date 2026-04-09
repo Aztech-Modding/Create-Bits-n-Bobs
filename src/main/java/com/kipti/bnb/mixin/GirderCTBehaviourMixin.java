@@ -1,6 +1,6 @@
 package com.kipti.bnb.mixin;
 
-import com.kipti.bnb.content.weathered_girder.WeatheredGirderBlock;
+import com.kipti.bnb.content.decoration.weathered_girder.WeatheredGirderBlock;
 import com.simibubi.create.content.decoration.girder.GirderCTBehaviour;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -24,3 +24,4 @@ public class GirderCTBehaviourMixin {
     }
 
 }
+

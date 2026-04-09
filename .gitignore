@@ -8,12 +8,18 @@ bin
 
 .env
 
+.vscode/
+
 # idea
 out
 *.ipr
 *.iws
 *.iml
 .idea
+
+# But keep code styles and inspection profiles
+!.idea/codeStyles/
+!.idea/inspectionProfiles/
 
 # gradle
 build
@@ -26,3 +32,10 @@ runs
 run-data
 
 repo
+bad_apple_stress_test/videoplayback.mp4
+bad_apple_stress_test/node_modules/
+bad_apple_stress_test/output/
+
+vault/textures_that_are_mit_i_swear
+
+scratchpad

@@ -1,7 +1,8 @@
 package com.kipti.bnb.mixin.presets;
 
-import com.kipti.bnb.foundation.generation.PonderLevelSource;
-import com.kipti.bnb.registry.BnbWorldPresets;
+import com.kipti.bnb.foundation.generation.PonderflatGeneratorSettings;
+import com.kipti.bnb.foundation.generation.PonderflatLevelSource;
+import com.kipti.bnb.registry.worldgen.BnbWorldPresets;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.resources.ResourceKey;
@@ -32,8 +33,9 @@ public abstract class WorldPresetsBootstrapMixin {
 
     @Inject(method = "bootstrap", at = @At("TAIL"))
     private void onBootstrap(final CallbackInfo ci) {
-        final Holder.Reference<Biome> plains = biomes.getOrThrow(Biomes.PLAINS);
-        this.registerCustomOverworldPreset(BnbWorldPresets.PONDER, this.makeOverworld(new PonderLevelSource(plains)));
+        final Holder.Reference<Biome> voidBiome = biomes.getOrThrow(Biomes.THE_VOID);
+        this.registerCustomOverworldPreset(BnbWorldPresets.PONDER, this.makeOverworld(new PonderflatLevelSource(voidBiome, new PonderflatGeneratorSettings())));
     }
 
 }
+

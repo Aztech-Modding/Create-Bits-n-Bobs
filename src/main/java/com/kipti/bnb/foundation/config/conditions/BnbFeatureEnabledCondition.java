@@ -1,6 +1,6 @@
 package com.kipti.bnb.foundation.config.conditions;
 
-import com.kipti.bnb.registry.BnbFeatureFlag;
+import com.kipti.bnb.registry.core.BnbFeatureFlag;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -17,7 +17,7 @@ public record BnbFeatureEnabledCondition(String featureFlagKey) implements ICond
     );
 
     @Override
-    public boolean test(IContext context) {
+    public boolean test(final @NotNull IContext context) {
         return BnbFeatureFlag.isEnabled(this.featureFlagKey);
     }
 
@@ -27,3 +27,4 @@ public record BnbFeatureEnabledCondition(String featureFlagKey) implements ICond
     }
 
 }
+

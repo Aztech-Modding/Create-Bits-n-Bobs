@@ -1,0 +1,122 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/industrial_grating/panel",
+        "uvlock": true,
+        "x": 180
+      },
+      "when": {
+        "facing": "down"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/industrial_grating/panel_side",
+        "x": 180
+      },
+      "when": {
+        "facing": "down"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/industrial_grating/panel",
+        "uvlock": true
+      },
+      "when": {
+        "facing": "up"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/industrial_grating/panel_side"
+      },
+      "when": {
+        "facing": "up"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/industrial_grating/panel",
+        "uvlock": true,
+        "x": 90
+      },
+      "when": {
+        "facing": "north"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/industrial_grating/panel_side",
+        "x": 90
+      },
+      "when": {
+        "facing": "north"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/industrial_grating/panel",
+        "uvlock": true,
+        "x": 90,
+        "y": 180
+      },
+      "when": {
+        "facing": "south"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/industrial_grating/panel_side",
+        "x": 90,
+        "y": 180
+      },
+      "when": {
+        "facing": "south"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/industrial_grating/panel",
+        "uvlock": true,
+        "x": 90,
+        "y": 270
+      },
+      "when": {
+        "facing": "west"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/industrial_grating/panel_side",
+        "x": 90,
+        "y": 270
+      },
+      "when": {
+        "facing": "west"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/industrial_grating/panel",
+        "uvlock": true,
+        "x": 90,
+        "y": 90
+      },
+      "when": {
+        "facing": "east"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/industrial_grating/panel_side",
+        "x": 90,
+        "y": 90
+      },
+      "when": {
+        "facing": "east"
+      }
+    }
+  ]
+}

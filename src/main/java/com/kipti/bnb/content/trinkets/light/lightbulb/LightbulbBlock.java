@@ -1,0 +1,43 @@
+package com.kipti.bnb.content.trinkets.light.lightbulb;
+
+import com.kipti.bnb.content.trinkets.light.founation.LightBlock;
+import com.kipti.bnb.registry.client.BnbShapes;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.NotNull;
+
+public class LightbulbBlock extends LightBlock {
+
+    public static final BooleanProperty CAGE = BooleanProperty.create("cage");
+
+    public LightbulbBlock(final Properties properties) {
+        super(properties, BnbShapes.LIGHTBULB_SHAPE);
+        this.registerDefaultState(this.defaultBlockState().setValue(CAGE, false));
+    }
+
+    @Override
+    public InteractionResult onWrenched(final BlockState state, final UseOnContext context) {
+        context.getLevel().setBlock(context.getClickedPos(), state.cycle(CAGE), 3);
+        return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    protected @NotNull VoxelShape getShape(final BlockState state, @NotNull final BlockGetter level, @NotNull final BlockPos pos, @NotNull final CollisionContext context) {
+        return (state.getValue(CAGE) ? BnbShapes.LIGHTBULB_CAGED_SHAPE : BnbShapes.LIGHTBULB_SHAPE).get(state.getValue(FACING));
+    }
+
+    @Override
+    protected void createBlockStateDefinition(final StateDefinition.@NotNull Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
+        builder.add(CAGE);
+    }
+}
+

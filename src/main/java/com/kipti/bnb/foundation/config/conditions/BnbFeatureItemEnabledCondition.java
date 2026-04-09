@@ -1,6 +1,6 @@
 package com.kipti.bnb.foundation.config.conditions;
 
-import com.kipti.bnb.registry.BnbFeatureFlag;
+import com.kipti.bnb.registry.core.BnbFeatureFlag;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -29,3 +29,4 @@ public record BnbFeatureItemEnabledCondition(ResourceKey<Item> itemKey) implemen
     }
 
 }
+

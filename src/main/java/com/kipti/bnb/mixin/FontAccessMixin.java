@@ -14,8 +14,9 @@ public abstract class FontAccessMixin implements FontAccess {
     abstract FontSet getFontSet(ResourceLocation fontLocation);
 
     @Override
-    public FontSet bits_n_bobs$getFontSet(ResourceLocation fontLocation) {
+    public FontSet bits_n_bobs$getFontSet(final ResourceLocation fontLocation) {
         return getFontSet(fontLocation);
     }
 
 }
+
