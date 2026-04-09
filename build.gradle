@@ -25,12 +25,16 @@ repositories {
     maven { url 'https://maven.createmod.net' }
     maven {
         name = 'azmod-maven'
-        url = uri("https://maven.azmod.net/${findProperty('azmodRepository') ?: 'releases'}")
+        url = uri("https://maven.azmod.net/${findProperty('azmod_repository') ?: 'releases'}")
     }
     // Add your extra repos from broken build
     maven { url = 'https://maven.squiddev.cc' } // CC: Tweaked
     maven { url = 'https://mvn.devos.one/snapshots' }
     maven { url = 'https://raw.githubusercontent.com/Fuzss/modresources/main/maven/' }
+    maven {
+        name = 'BlameJared Maven (CrT / Bookshelf)'
+        url = 'https://maven.blamejared.com'
+    }
 }
 
 neoForge {
@@ -67,12 +71,19 @@ sourceSets.main.resources {
 dependencies {
     implementation "net.neoforged:neoforge:${neo_version}"
     implementation("com.cake.azimuth:azimuth:${azimuth_version}")
-    implementation("com.cake.struts:struts:${struts_version}+mc${minecraft_version}")
+    implementation("com.cake.struts:struts:${struts_version}")
     compileOnly("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
-    implementation("net.createmod.ponder:Ponder-NeoForge-${minecraft_version}:${ponder_version}")
+    implementation("net.createmod.ponder:ponder-neoforge:${ponder_version}+mc${minecraft_version}")
+    runtimeOnly("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
     compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${minecraft_version}:${flywheel_version}")
     runtimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${minecraft_version}:${flywheel_version}")
     implementation("com.tterrag.registrate:Registrate:${registrate_version}")
+
+    // Dev dependency: wonderful veil hotswap
+    implementation("foundry.veil:veil-neoforge-${project.minecraft_version}:${project.veil_version}") {
+        exclude group: "maven.modrinth"
+        exclude group: "me.fallenbreath"
+    }
 
     if (enable_cc_tweaked.toBoolean()) {
         compileOnly("cc.tweaked:cc-tweaked-$minecraft_version-core-api:$cc_tweaked_version")

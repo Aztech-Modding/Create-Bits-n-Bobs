@@ -140,6 +140,8 @@
   "block.bits_n_bobs.yellow_chair": "Yellow Chair",
   "block.bits_n_bobs.yellow_large_nixie_tube": "Yellow Large Nixie Tube",
   "block.bits_n_bobs.yellow_nixie_board": "Yellow Nixie Board",
+  "block.bits_n_bobs.gigantic_cogwheel": "Gargantuan Cogwheel",
+  "block.bits_n_bobs.gigantic_cogwheel.tooltip.summary":  "Compensating for something?",
   "entity.bits_n_bobs.inert_stationary_contraption": "Inert Stationary Contraption",
   "generator.bits_n_bobs.ponderous_planes": "Ponderflat",
   "item.bits_n_bobs.icon_lightbulb": "Icon Lightbulb",

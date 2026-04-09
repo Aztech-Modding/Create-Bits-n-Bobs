@@ -56,6 +56,12 @@ public class BnbShapes {
             LARGE_FLANGED_GEAR = shape(LARGE_FLANGED_GEAR_SHAPE).add(SIX_VOXEL_POLE.get(Direction.Axis.Y))
                     .forAxis();
 
+    public static final VoxelShape GIGANTIC_COGWHEEL_PLATE = cuboid(0, 5, 0, 16, 11, 16);
+
+    public static final VoxelShaper
+            GIGANTIC_COGWHEEL = shape(GIGANTIC_COGWHEEL_PLATE).add(SIX_VOXEL_POLE.get(Direction.Axis.Y)).forAxis(),
+            GIGANTIC_COGWHEEL_SATELLITE = shape(GIGANTIC_COGWHEEL_PLATE).forAxis();
+
     public static final VoxelShaper ALTERNATING_TRUSS = shape(1, 0, 1, 15, 16, 15)
             .add(cuboid(0, 0, 0, 3, 16, 3))
             .add(cuboid(13, 0, 0, 16, 16, 3))
@@ -63,15 +69,35 @@ public class BnbShapes {
             .add(cuboid(13, 0, 13, 16, 16, 16))
             .forAxis();
 
+    public static final VoxelShape
+            THROTTLE_LEVER_FLOOR_Z = cuboid(2, 0, 1, 14, 9, 15),
+            THROTTLE_LEVER_FLOOR_X = cuboid(1, 0, 2, 15, 9, 14),
+            THROTTLE_LEVER_CEILING_Z = cuboid(2, 7, 1, 14, 16, 15),
+            THROTTLE_LEVER_CEILING_X = cuboid(1, 7, 2, 15, 16, 14),
+            THROTTLE_LEVER_WALL_NORTH = cuboid(2, 1, 7, 14, 15, 16),
+            THROTTLE_LEVER_WALL_SOUTH = cuboid(2, 1, 0, 14, 15, 9),
+            THROTTLE_LEVER_WALL_EAST = cuboid(0, 1, 2, 9, 15, 14),
+            THROTTLE_LEVER_WALL_WEST = cuboid(7, 1, 2, 16, 15, 14);
+
     public static AllShapes.Builder shape(final VoxelShape shape) {
         return new AllShapes.Builder(shape);
     }
 
-    public static AllShapes.Builder shape(final double x1, final double y1, final double z1, final double x2, final double y2, final double z2) {
+    public static AllShapes.Builder shape(final double x1,
+                                          final double y1,
+                                          final double z1,
+                                          final double x2,
+                                          final double y2,
+                                          final double z2) {
         return shape(cuboid(x1, y1, z1, x2, y2, z2));
     }
 
-    public static VoxelShape cuboid(final double x1, final double y1, final double z1, final double x2, final double y2, final double z2) {
+    public static VoxelShape cuboid(final double x1,
+                                    final double y1,
+                                    final double z1,
+                                    final double x2,
+                                    final double y2,
+                                    final double z2) {
         return Block.box(x1, y1, z1, x2, y2, z2);
     }
 

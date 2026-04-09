@@ -20,7 +20,7 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
-public final class HeadlampRenderCache {
+public class HeadlampRenderCache {
 
     private static final int MAX_QUAD_CACHE_ENTRIES = 512;
     private static final int MAX_TRANSFORM_CACHE_ENTRIES = 64;
@@ -31,9 +31,6 @@ public final class HeadlampRenderCache {
     private static final LruCache<QuadCacheKey, List<BakedQuad>> QUAD_CACHE = new LruCache<>(MAX_QUAD_CACHE_ENTRIES);
     private static final LruCache<TransformKey, Matrix4f> TRANSFORM_CACHE = new LruCache<>(MAX_TRANSFORM_CACHE_ENTRIES);
     private static final Map<SpriteKey, TextureAtlasSprite> SPRITE_CACHE = new ConcurrentHashMap<>();
-
-    private HeadlampRenderCache() {
-    }
 
     public static void clearCaches() {
         QUAD_CACHE.clear();
@@ -87,16 +84,14 @@ public final class HeadlampRenderCache {
     private record SpriteKey(ResourceLocation texture) {
     }
 
-    private static final class LruCache<K, V> {
-        private final Map<K, V> map;
-
-        private LruCache(final int maxEntries) {
-            this.map = new LinkedHashMap<>(16, 0.75f, true) {
+    private record LruCache<K, V>(Map<K, V> map) {
+        private LruCache(final int map) {
+            this(new LinkedHashMap<>(16, 0.75f, true) {
                 @Override
                 protected boolean removeEldestEntry(final Map.Entry<K, V> eldest) {
-                    return size() > maxEntries;
+                    return size() > map;
                 }
-            };
+            });
         }
 
         public synchronized V get(final K key) {

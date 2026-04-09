@@ -1,5 +1,7 @@
 package com.kipti.bnb;
 
+import com.cake.azimuth.lang.IncludeLangDefaults;
+import com.cake.azimuth.lang.LangDefault;
 import com.cake.azimuth.registration.BehaviourApplicators;
 import com.cake.azimuth.registration.VisualWrapperInterest;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.BnbCogwheelChainTypes;
@@ -14,6 +16,7 @@ import com.kipti.bnb.registry.datagen.BnbCreativeTabs;
 import com.kipti.bnb.registry.datagen.BnbDataConditions;
 import com.kipti.bnb.registry.datagen.BnbLangEntries;
 import com.mojang.logging.LogUtils;
+import com.simibubi.create.Create;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.item.ItemDescription;
 import com.simibubi.create.foundation.item.KineticStats;
@@ -22,15 +25,21 @@ import net.createmod.catnip.lang.FontHelper;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
+import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.registries.RegisterEvent;
 import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(CreateBitsnBobs.MOD_ID)
+@IncludeLangDefaults({
+        @LangDefault(key = "tab.bits_n_bobs.base", value = CreateBitsnBobs.TAB_NAME),
+        @LangDefault(key = "tab.bits_n_bobs.deco", value = CreateBitsnBobs.DECO_NAME),
+})
 public class CreateBitsnBobs {
 
     public static final String MOD_ID = "bits_n_bobs";
@@ -77,6 +86,11 @@ public class CreateBitsnBobs {
         BnbConfigs.register(modLoadingContext, modContainer);
 
         BnbBehaviourApplicators.register();
+        modEventBus.addListener(CreateBitsnBobs::onRegister);
+    }
+
+    private static void onRegister(RegisterEvent event) {
+        BnbContraptionTypes.register();
     }
 
     private static void commonSetup(final FMLCommonSetupEvent event) {

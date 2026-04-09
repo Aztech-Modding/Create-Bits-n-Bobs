@@ -1,9 +1,9 @@
 package com.kipti.bnb.foundation.ponder.instruction;
 
 import com.kipti.bnb.CreateBitsnBobs;
-import com.kipti.bnb.content.dyeable_pipes.DyeablePipeBehaviour;
-import net.createmod.ponder.api.element.WorldSectionElement;
+import com.kipti.bnb.content.decoration.dyeable.pipes.DyeablePipeBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
+import net.createmod.ponder.api.element.WorldSectionElement;
 import net.createmod.ponder.foundation.PonderScene;
 import net.createmod.ponder.foundation.instruction.PonderInstruction;
 import net.minecraft.core.BlockPos;
@@ -34,26 +34,29 @@ public class DyePipeInstruction extends PonderInstruction {
     @Override
     public void tick(final PonderScene scene) {
         final Level level = scene.getWorld();
-        final DyeablePipeBehaviour behaviour = BlockEntityBehaviour.get(level, pipePos, DyeablePipeBehaviour.TYPE);
+        final DyeablePipeBehaviour behaviour = BlockEntityBehaviour.get(level, this.pipePos, DyeablePipeBehaviour.TYPE);
         if (behaviour == null) {
-            CreateBitsnBobs.LOGGER.warn("Could not find dyeable pipe block entity at {}, skipping instruction", pipePos);
+            CreateBitsnBobs.LOGGER.warn(
+                    "Could not find dyeable pipe block entity at {}, skipping instruction",
+                    this.pipePos
+            );
             return;
         }
 
         final DyeColor previousColor = behaviour.getColor();
-        if (previousColor == targetColor) {
+        if (previousColor == this.targetColor) {
             return;
         }
 
-        final int particleStateId = Block.getId(level.getBlockState(pipePos));
+        final int particleStateId = Block.getId(level.getBlockState(this.pipePos));
 
         // Set color visually without triggering gameplay neighbour propagation
-        behaviour.applyColorClientOnly(targetColor);
-        DyeablePipeBehaviour.refreshPipeState(level, pipePos, level.getBlockState(pipePos), false);
+        behaviour.applyColorClientOnly(this.targetColor);
+        DyeablePipeBehaviour.refreshPipeState(level, this.pipePos, level.getBlockState(this.pipePos), false);
         scene.forEach(WorldSectionElement.class, WorldSectionElement::queueRedraw);
 
-        if (previousColor != null && targetColor == null) {
-            level.levelEvent(2001, pipePos, particleStateId);
+        if (previousColor != null && this.targetColor == null) {
+            level.levelEvent(2001, this.pipePos, particleStateId);
         }
     }
 }

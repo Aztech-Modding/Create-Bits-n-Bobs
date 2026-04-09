@@ -12,7 +12,7 @@ import net.minecraft.world.item.DyeColor;
  *
  * @see HeadlampBlockEntity#getRenderStateAsLong()
  */
-public final class HeadlampConstants {
+public class HeadlampConstants {
 
     /**
      * Number of headlamp placement slots in a single block.

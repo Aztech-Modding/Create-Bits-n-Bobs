@@ -73,7 +73,7 @@ public class BnbCreativeTabs {
             if (!CreateRegistrate.isInCreativeTab(item, tabToGet.get()) || (item.get() instanceof BlockItem))
                 continue;
 
-            if (matchesItemFilter(item.get()))
+            if (matchesItemFilter(item.get()) && BnbFeatureFlag.isEnabled(item.get()))
                 output.accept(item.get());
         }
     }

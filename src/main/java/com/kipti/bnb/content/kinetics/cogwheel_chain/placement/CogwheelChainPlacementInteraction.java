@@ -1,5 +1,8 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.placement;
 
+import com.cake.azimuth.lang.IncludeLangDefaults;
+import com.cake.azimuth.lang.LangDefault;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.edit.CogwheelChainPartialEditInteractionHandler;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChainCandidate;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.PlacingCogwheelChain;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.shape.CogwheelChainInteractionHandler;
@@ -17,6 +20,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -29,7 +33,13 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.InputEvent;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Client-side interaction entry point for cogwheel-chain placement, removal, and partial edit entry.
+ */
 @EventBusSubscriber(Dist.CLIENT)
+@IncludeLangDefaults(
+        @LangDefault(key = "tooltip.bits_n_bobs.chain_drive_placing_hint", value = "Placing chain drive, create a complete loop to finish.")
+)
 public class CogwheelChainPlacementInteraction {
 
     public static @Nullable PlacingCogwheelChain currentBuildingChain = null;
@@ -56,11 +66,10 @@ public class CogwheelChainPlacementInteraction {
         if (player == null || level == null)
             return false;
 
-        if (tryDestroyChainWithWrench(player)) {
+        if (tryHandleSelectedChainInteraction(player)) {
             return true;
         }
 
-        //If it is a chain targeting a cogwheel
         final ItemStack chainItemInHand = getChainItemInHand(player);
 
         if (chainItemInHand == null) {
@@ -68,11 +77,10 @@ public class CogwheelChainPlacementInteraction {
         }
 
         final CogwheelChainType heldChainType = CogwheelChainType.COGWHEEL_TYPE_BY_ITEM.get(chainItemInHand.getItem());
-        if (heldChainType == null) { //Shouldn't be null, but what the hell
+        if (heldChainType == null) {
             return false;
         }
 
-        //If crouching, or a mismatched type, try clear
         if (player.isShiftKeyDown() || (currentChainType != null && currentChainType != heldChainType)) {
             if (currentBuildingChain != null) {
                 clearPlacingChain();
@@ -96,58 +104,85 @@ public class CogwheelChainPlacementInteraction {
             return currentBuildingChain != null;
         }
 
-        if (!BnbFeatureFlag.COGWHEEL_CHAIN_DRIVES.get()) {
+        if (!BnbFeatureFlag.COGWHEEL_CHAIN_DRIVES.isEnabled()) {
             player.displayClientMessage(new ChainInteractionFailedException("config_forbids").getComponent(), true);
             return true;
         }
 
         if (!heldChainType.getCogwheelPredicate().test(targetedState.getBlock())) {
-            player.displayClientMessage(new ChainInteractionFailedException("invalid_cogwheel_type." + heldChainType.getTranslationKey()).getComponent(), true);
+            player.displayClientMessage(
+                    new ChainInteractionFailedException("invalid_cogwheel_type." + heldChainType.getTranslationKey()).getComponent(),
+                    true
+            );
             return true;
         }
 
-        rightClickForChain(event, level, hitPos, targetedState, targetedCandidate, heldChainType, chainItemInHand, player);
+        rightClickForChain(
+                event,
+                level,
+                hitPos,
+                targetedState,
+                targetedCandidate,
+                heldChainType,
+                chainItemInHand,
+                player
+        );
         return true;
+    }
+
+    private static boolean tryHandleSelectedChainInteraction(final LocalPlayer player) {
+        if (tryDestroyChainWithWrench(player)) {
+            return true;
+        }
+
+        if (CogwheelChainPartialEditInteractionHandler.onRightClick()) {
+            return true;
+        }
+
+        return CogwheelChainInteractionHandler.onUse();
     }
 
     private static void rightClickForChain(final InputEvent.InteractionKeyMappingTriggered event,
                                            final ClientLevel level,
                                            final BlockPos hitPos,
                                            final BlockState targetedState,
-                                           final CogwheelChainCandidate targetedCandidate, final CogwheelChainType heldChainType,
+                                           final CogwheelChainCandidate targetedCandidate,
+                                           final CogwheelChainType heldChainType,
                                            final ItemStack chainItemInHand,
                                            final LocalPlayer player) {
         if (currentBuildingChain == null || currentChainLevel == null || !currentChainLevel.equals(level.dimension())) {
-            //Start a new chain
-            currentBuildingChain = new PlacingCogwheelChain(hitPos, targetedCandidate.axis(), targetedCandidate.isLarge(), targetedCandidate.hasSmallCogwheelOffset());
+            CogwheelChainPartialEditInteractionHandler.clearEditState();
+            currentBuildingChain = new PlacingCogwheelChain(
+                    hitPos,
+                    targetedCandidate.axis(),
+                    targetedCandidate.isLarge(),
+                    targetedCandidate.hasSmallCogwheelOffset()
+            );
             currentChainLevel = level.dimension();
             currentChainType = heldChainType;
             currentChainItemType = chainItemInHand.getItem();
 
             player.displayClientMessage(Component.translatable("tooltip.bits_n_bobs.chain_drive_placing_hint"), true);
         } else {
-            //if this is the last node, then remove the last one
             if (currentBuildingChain.getLastNode().pos().equals(hitPos)) {
                 currentBuildingChain.getNodes().removeLast();
 
-                //If no nodes left, clear chain
                 if (currentBuildingChain.getNodes().isEmpty()) {
                     clearPlacingChain();
                 }
                 return;
             }
 
-            //Try to add to existing chain
             try {
                 final boolean added = currentBuildingChain.tryAddNode(hitPos, targetedState, currentChainType);
 
-                if (!added) { //Only happens with invalid target, ignore quietly
+                if (!added) {
                     return;
                 }
 
                 final boolean completed;
                 try {
-                    completed = currentBuildingChain.canBuildChainIfLooping();
+                    completed = currentBuildingChain.tryCompleteLoop();
                 } catch (final ChainInteractionFailedException exception) {
                     player.displayClientMessage(exception.getComponent(), true);
                     clearPlacingChain();
@@ -155,7 +190,6 @@ public class CogwheelChainPlacementInteraction {
                 }
 
                 if (completed) {
-                    //If completed, send to server, clear current chain
                     CatnipServices.NETWORK.sendToServer(new PlaceCogwheelChainPacket(
                             currentBuildingChain,
                             currentChainType,
@@ -165,7 +199,6 @@ public class CogwheelChainPlacementInteraction {
                     clearPlacingChain();
                 }
             } catch (final ChainInteractionFailedException exception) {
-                //Send message on fail
                 player.displayClientMessage(exception.getComponent(), true);
             }
         }
@@ -192,6 +225,7 @@ public class CogwheelChainPlacementInteraction {
             return false;
 
         CatnipServices.NETWORK.sendToServer(new WrenchCogwheelChainPacket(controllerPos, chainPosition));
+        CogwheelChainPartialEditInteractionHandler.clearEditState();
         return true;
     }
 
@@ -200,15 +234,36 @@ public class CogwheelChainPlacementInteraction {
                 isChainDriveItem(player.getOffhandItem()) ? player.getOffhandItem() : null;
     }
 
+    public static @Nullable ItemStack getCompatibleCogwheelItemInHand(final LocalPlayer player,
+                                                                      final CogwheelChainType chainType) {
+        return isCompatibleCogwheelItem(player.getMainHandItem(), chainType) ? player.getMainHandItem() :
+                isCompatibleCogwheelItem(player.getOffhandItem(), chainType) ? player.getOffhandItem() : null;
+    }
+
     public static void clearPlacingChain() {
         currentBuildingChain = null;
         currentChainLevel = null;
         currentChainType = null;
+        currentChainItemType = null;
     }
 
     public static boolean isChainDriveItem(final ItemStack stack) {
         return CogwheelChainType.COGWHEEL_TYPE_BY_ITEM.get(stack.getItem()) != null;
     }
+
+    public static boolean isCompatibleCogwheelItem(final ItemStack stack) {
+        if (!(stack.getItem() instanceof final BlockItem blockItem))
+            return false;
+        return CogwheelChainCandidate.getForBlock(blockItem.getBlock()) != null;
+    }
+
+    public static boolean isCompatibleCogwheelItem(final ItemStack stack, final CogwheelChainType chainType) {
+        if (!(stack.getItem() instanceof final BlockItem blockItem))
+            return false;
+        return chainType.getCogwheelPredicate().test(blockItem.getBlock())
+                && CogwheelChainCandidate.getForBlock(blockItem.getBlock()) != null;
+    }
+
 
 }
 

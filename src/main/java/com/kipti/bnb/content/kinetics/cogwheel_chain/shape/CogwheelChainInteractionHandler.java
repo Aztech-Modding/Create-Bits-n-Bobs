@@ -1,23 +1,27 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.shape;
 
-import com.cake.azimuth.behaviour.SuperBlockEntityBehaviour;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.behaviour.CogwheelChainBehaviour;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.attachment.CogwheelChainAttachment;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.edit.CogwheelChainPartialEditInteractionHandler;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.placement.CogwheelChainPlacementInteraction;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.riding.CogwheelChainRidingHelper;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.world.CogwheelChainWorld;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.AllItems;
+import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.foundation.utility.RaycastHelper;
-import net.createmod.catnip.data.WorldAttached;
+import net.createmod.catnip.outliner.Outliner;
 import net.createmod.catnip.render.DefaultSuperRenderTypeBuffer;
 import net.createmod.catnip.render.SuperRenderTypeBuffer;
+import net.createmod.catnip.theme.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -26,17 +30,11 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RenderHighlightEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 
-import java.util.List;
-import java.util.Map.Entry;
-
 /**
  * Client-side selection and outline handling for cogwheel chains.
  */
 @EventBusSubscriber(Dist.CLIENT)
 public class CogwheelChainInteractionHandler {
-
-    private static final WorldAttached<LevelChainShapeStore> loadedChains =
-            new WorldAttached<>($ -> new LevelChainShapeStore());
 
     public static BlockPos selectedController;
     public static float selectedChainPosition;
@@ -45,6 +43,7 @@ public class CogwheelChainInteractionHandler {
 
     private static void clearSelection() {
         selectedController = null;
+        selectedChainPosition = 0;
         selectedShape = null;
         selectedBakedPosition = null;
     }
@@ -58,19 +57,7 @@ public class CogwheelChainInteractionHandler {
             return true;
         }
 
-        return SuperBlockEntityBehaviour.getOptional(level, selectedController, CogwheelChainBehaviour.TYPE)
-                .map(behaviour -> !behaviour.isController())
-                .orElse(false);
-    }
-
-    public static void put(final Level level,
-                           final BlockPos controllerPos,
-                           final List<CogwheelChainShape> shapes) {
-        loadedChains.get(level).put(controllerPos, shapes);
-    }
-
-    public static void invalidate(final Level level, final BlockPos controllerPos) {
-        loadedChains.get(level).invalidate(controllerPos);
+        return !CogwheelChainWorld.get(level).containsChain(selectedController);
     }
 
     public static void clientTick() {
@@ -80,66 +67,73 @@ public class CogwheelChainInteractionHandler {
             return;
         }
 
-        final Level level = mc.level;
         final LocalPlayer player = mc.player;
-
-        if (!isActive(player.getMainHandItem())) {
+        if (!isActive(player)) {
             clearSelection();
             return;
         }
 
-        final LevelChainShapeStore levelStore = loadedChains.get(level);
-        levelStore.validate(level);
-
         final Vec3 origin = player.getEyePosition();
         final double range = player.getAttributeValue(Attributes.BLOCK_INTERACTION_RANGE) + 1;
         final Vec3 target = RaycastHelper.getTraceTarget(player, range, origin);
-        final HitResult hitResult = mc.hitResult;
+        final double vanillaDistSq = mc.hitResult != null
+                ? mc.hitResult.getLocation().distanceToSqr(origin)
+                : Double.MAX_VALUE;
 
-        double bestDistance = hitResult != null ? hitResult.getLocation()
-                .distanceToSqr(origin) : Double.MAX_VALUE;
+        final CogwheelChainWorld chainWorld = CogwheelChainWorld.get(mc.level);
+        chainWorld.validate(mc.level);
 
-        BlockPos bestController = null;
-        CogwheelChainShape bestShape = null;
-        float bestChainPosition = 0.0f;
-        Vec3 bestVec = null;
-
-        for (final Entry<BlockPos, List<CogwheelChainShape>> entry : levelStore.entries()) {
-            final List<CogwheelChainShape> chainShapes = entry.getValue();
-            if (chainShapes.isEmpty()) continue;
-
-            final BlockPos controllerPos = entry.getKey();
-            final Vec3 controllerBase = Vec3.atLowerCornerOf(controllerPos);
-            final CogwheelChainShape shape = chainShapes.getFirst();
-
-            final Vec3 localFrom = origin.subtract(controllerBase);
-            final Vec3 localTo = target.subtract(controllerBase);
-            final Vec3 intersect = shape.intersect(localFrom, localTo);
-            if (intersect == null) continue;
-
-            final Vec3 worldHit = intersect.add(controllerBase);
-            final double distance = worldHit.distanceToSqr(origin);
-            if (distance >= bestDistance) continue;
-
-            bestDistance = distance;
-            bestController = controllerPos;
-            bestShape = shape;
-            bestChainPosition = shape.getChainPosition(intersect);
-            bestVec = shape.getVec(controllerPos, bestChainPosition);
+        final ChainDriveShapeHelper.ChainShapeHit hit = ChainDriveShapeHelper.findClosestRayHit(
+                mc.level, origin, target, vanillaDistSq);
+        if (hit == null) {
+            clearSelection();
+            return;
         }
 
-        selectedController = bestController;
-        selectedShape = bestShape;
-        selectedChainPosition = bestChainPosition;
-        selectedBakedPosition = bestVec;
+        selectedController = hit.controllerPos();
+        selectedShape = hit.shape();
+        selectedChainPosition = hit.chainPosition();
+        selectedBakedPosition = hit.bakedPosition();
+
+        if (!player.isShiftKeyDown() && !CogwheelChainRidingHelper.isRiding()) {
+            Outliner.getInstance()
+                    .chaseAABB("CogwheelChainPointSelection", new AABB(selectedBakedPosition, selectedBakedPosition))
+                    .colored(Color.WHITE)
+                    .lineWidth(1 / 6f)
+                    .disableLineNormals();
+        }
     }
 
-    private static boolean isActive(final ItemStack mainHand) {
+    private static boolean isActive(final LocalPlayer player) {
+        return AllItems.WRENCH.isIn(player.getMainHandItem())
+                || AllItems.WRENCH.isIn(player.getOffhandItem())
+                || player.isHolding(AllItemTags.CHAIN_RIDEABLE::matches)
+                || CogwheelChainPlacementInteraction.isCompatibleCogwheelItem(player.getMainHandItem())
+                || CogwheelChainPlacementInteraction.isCompatibleCogwheelItem(player.getOffhandItem())
+                || CogwheelChainPartialEditInteractionHandler.hasActiveEditContext();
+    }
+
+    /**
+     * Attempts to mount the player onto the currently selected chain.
+     * Called from input event handlers when the player right-clicks while holding a CHAIN_RIDEABLE item.
+     *
+     * @return {@code true} if the player successfully began riding
+     */
+    public static boolean onUse() {
         final Minecraft mc = Minecraft.getInstance();
-        if (mc.player == null) {
-            return false;
-        }
-        return AllItems.WRENCH.isIn(mainHand);
+        if (mc.player == null || mc.level == null) return false;
+        if (selectedController == null) return false;
+        if (!mc.player.isHolding(AllItemTags.CHAIN_RIDEABLE::matches)) return false;
+        if (mc.player.isShiftKeyDown()) return false;
+
+        final CogwheelChainAttachment attachment = new CogwheelChainAttachment(
+                selectedController,
+                selectedChainPosition
+        );
+        if (!attachment.isValid(mc.level)) return false;
+
+        CogwheelChainRidingHelper.embark(attachment);
+        return true;
     }
 
     public static void drawCustomBlockSelection(final PoseStack ms, final MultiBufferSource buffer, final Vec3 camera) {
@@ -151,7 +145,11 @@ public class CogwheelChainInteractionHandler {
 
         final VertexConsumer vb = buffer.getBuffer(RenderType.lines());
         ms.pushPose();
-        ms.translate(selectedController.getX() - camera.x, selectedController.getY() - camera.y, selectedController.getZ() - camera.z);
+        ms.translate(
+                selectedController.getX() - camera.x,
+                selectedController.getY() - camera.y,
+                selectedController.getZ() - camera.z
+        );
         selectedShape.drawOutline(selectedController, ms, vb);
         ms.popPose();
     }
@@ -160,7 +158,6 @@ public class CogwheelChainInteractionHandler {
     public static void onClientTick(final ClientTickEvent.Post event) {
         clientTick();
     }
-
 
     @SubscribeEvent
     public static void onRenderWorld(final RenderLevelStageEvent event) {

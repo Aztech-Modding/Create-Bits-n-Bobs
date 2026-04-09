@@ -1,5 +1,6 @@
 package com.kipti.bnb.content.trinkets.light.headlamp;
 
+import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.trinkets.light.founation.LightBlock;
 import com.kipti.bnb.content.trinkets.light.headlamp.rendering.HeadlampConstants;
 import com.kipti.bnb.content.trinkets.light.lightbulb.LightbulbBlock;
@@ -244,16 +245,18 @@ public class HeadlampBlockEntity extends SmartBlockEntity implements SpecialBloc
         if (tag.contains("headlampPlacements", 7)) {
             final byte[] placements = tag.getByteArray("headlampPlacements");
             if (placements.length != activePlacements.length) {
-                throw new IllegalStateException("Active placements length mismatch: expected " + activePlacements.length + ", got " + placements.length);
+                CreateBitsnBobs.LOGGER.warn("Headlamp placements length mismatch: expected {}, got {}. Recovering with partial copy.", activePlacements.length, placements.length);
+                java.util.Arrays.fill(activePlacements, (byte) 0);
             }
-            System.arraycopy(placements, 0, activePlacements, 0, placements.length);
+            System.arraycopy(placements, 0, activePlacements, 0, Math.min(placements.length, activePlacements.length));
         } else if (tag.contains("activePlacements", 11)) {
             // Legacy migration: convert int[] to byte[]
             final int[] legacyPlacements = tag.getIntArray("activePlacements");
             if (legacyPlacements.length != activePlacements.length) {
-                throw new IllegalStateException("Active placements length mismatch: expected " + activePlacements.length + ", got " + legacyPlacements.length);
+                CreateBitsnBobs.LOGGER.warn("Legacy headlamp placements length mismatch: expected {}, got {}. Recovering with partial copy.", activePlacements.length, legacyPlacements.length);
+                java.util.Arrays.fill(activePlacements, (byte) 0);
             }
-            for (int i = 0; i < legacyPlacements.length; i++) {
+            for (int i = 0; i < Math.min(legacyPlacements.length, activePlacements.length); i++) {
                 activePlacements[i] = (byte) legacyPlacements[i];
             }
         } else {
@@ -497,7 +500,7 @@ public class HeadlampBlockEntity extends SmartBlockEntity implements SpecialBloc
 
     @Override
     public ItemRequirement getRequiredItems(final BlockState state) {
-        int numberOfHeadlamps = -1;
+        int numberOfHeadlamps = -1; //Theres already 1 headlamp in the block, so start at -1
         for (final byte placement : activePlacements)
             if (placement != 0)
                 numberOfHeadlamps++;

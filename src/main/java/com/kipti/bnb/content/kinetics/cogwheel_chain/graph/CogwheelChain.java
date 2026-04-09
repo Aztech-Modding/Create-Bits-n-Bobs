@@ -2,6 +2,8 @@ package com.kipti.bnb.content.kinetics.cogwheel_chain.graph;
 
 import com.cake.azimuth.behaviour.SuperBlockEntityBehaviour;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.behaviour.CogwheelChainBehaviour;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.segment.CogwheelChainSegment;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.segment.CogwheelChainSegmentBuilder;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.BnbCogwheelChainTypes;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.CogwheelChainType;
 import com.kipti.bnb.registry.core.BnbRegistries;
@@ -33,71 +35,74 @@ public class CogwheelChain {
 
     private List<PathedCogwheelNode> cogwheelNodes;
     private List<RenderedChainPathNode> renderedNodes;
+    private List<CogwheelChainSegment> cachedSegments;
     private CogwheelChainType type;
     private Item returnedItem;
     private boolean flipInsideOutside;
 
     public CogwheelChain(final CompoundTag tag) {
-        renderedNodes = new ArrayList<>();
-        cogwheelNodes = new ArrayList<>();
-        type = BnbCogwheelChainTypes.CHAIN.get();
-        returnedItem = Items.CHAIN;
-        read(tag);
+        this.renderedNodes = new ArrayList<>();
+        this.cogwheelNodes = new ArrayList<>();
+        this.type = BnbCogwheelChainTypes.CHAIN.get();
+        this.returnedItem = Items.CHAIN;
+        this.read(tag);
     }
 
     public void read(final CompoundTag tag) {
-        cogwheelNodes.clear();
+        this.cogwheelNodes.clear();
         final int cogWheelPosCount = tag.getInt("cogwheel_pos_count");
         for (int i = 0; i < cogWheelPosCount; i++) {
             final CompoundTag posTag = tag.getCompound("cogwheel_pos_" + i);
             final PathedCogwheelNode pos = PathedCogwheelNode.read(posTag);
-            cogwheelNodes.add(pos);
+            this.cogwheelNodes.add(pos);
         }
-        renderedNodes.clear();
-        renderedNodes.addAll(CogwheelChainGeometryBuilder.buildFullChainFromPathNodes(cogwheelNodes));
+        this.renderedNodes.clear();
+        this.renderedNodes.addAll(CogwheelChainGeometryBuilder.buildFullChainFromPathNodes(this.cogwheelNodes));
+        this.cachedSegments = null;
         if (tag.contains("chain_type")) {
             final ResourceLocation typeId = ResourceLocation.parse(tag.getString("chain_type"));
             final CogwheelChainType foundType = BnbRegistries.COGWHEEL_CHAIN_TYPES.get(typeId);
             if (foundType != null) {
-                type = foundType;
+                this.type = foundType;
             }
         }
         if (tag.contains("returned_item")) {
             final ResourceLocation itemId = ResourceLocation.parse(tag.getString("returned_item"));
             final Item foundItem = BuiltInRegistries.ITEM.get(itemId);
             if (foundItem != Items.AIR) {
-                returnedItem = foundItem;
+                this.returnedItem = foundItem;
             }
         }
-        updateInsideOutsideFlip();
+        this.updateInsideOutsideFlip();
     }
 
     private void updateInsideOutsideFlip() {
-        if (!type.getRenderType().usesConsistentInsideOutside()) {
-            flipInsideOutside = false;
+        if (!this.type.getRenderType().usesConsistentInsideOutside()) {
+            this.flipInsideOutside = false;
             return;
         }
 
         int sideSum = 0;
-        for (final PathedCogwheelNode node : cogwheelNodes) {
+        for (final PathedCogwheelNode node : this.cogwheelNodes) {
             sideSum += node.side();
         }
 
-        flipInsideOutside = sideSum < 0;
+        this.flipInsideOutside = sideSum < 0;
     }
 
     public CogwheelChain(final List<PathedCogwheelNode> path, final CogwheelChainType type, final Item returnedItem) {
         this.cogwheelNodes = path;
         this.renderedNodes = CogwheelChainGeometryBuilder.buildFullChainFromPathNodes(path);
+        this.cachedSegments = null;
         this.type = type;
         this.returnedItem = returnedItem;
-        updateInsideOutsideFlip();
+        this.updateInsideOutsideFlip();
     }
 
     public @Nullable PathedCogwheelNode getNodeFromControllerOffset(final Vec3i controllerOffset) {
         final Vec3i offsetFromStart = controllerOffset.multiply(-1);
 
-        for (final PathedCogwheelNode cogwheelNode : cogwheelNodes) {
+        for (final PathedCogwheelNode cogwheelNode : this.cogwheelNodes) {
             if (cogwheelNode.localPos().equals(offsetFromStart)) {
                 return cogwheelNode;
             }
@@ -120,59 +125,72 @@ public class CogwheelChain {
 
     public int getChainsRequired() {
         double length = 0;
-        for (int i = 0; i <= cogwheelNodes.size(); i++) {
-            final PathedCogwheelNode startNode = cogwheelNodes.get(i % cogwheelNodes.size());
-            final PathedCogwheelNode endNode = cogwheelNodes.get((i + 1) % cogwheelNodes.size());
+        for (int i = 0; i < this.cogwheelNodes.size(); i++) {
+            final PathedCogwheelNode startNode = this.cogwheelNodes.get(i);
+            final PathedCogwheelNode endNode = this.cogwheelNodes.get((i + 1) % this.cogwheelNodes.size());
             length += startNode.dist(endNode);
         }
         return PlacingCogwheelChain.getChainsRequiredForLength(length);
     }
 
     public void write(final CompoundTag tag) {
-        tag.putInt("cogwheel_pos_count", cogwheelNodes.size());
-        for (int i = 0; i < cogwheelNodes.size(); i++) {
+        tag.putInt("cogwheel_pos_count", this.cogwheelNodes.size());
+        for (int i = 0; i < this.cogwheelNodes.size(); i++) {
             final CompoundTag posTag = new CompoundTag();
-            cogwheelNodes.get(i).write(posTag);
+            this.cogwheelNodes.get(i).write(posTag);
             tag.put("cogwheel_pos_" + i, posTag);
         }
-        tag.putString("chain_type", type.getKey().toString());
-        tag.putString("returned_item", BuiltInRegistries.ITEM.getKey(returnedItem).toString());
+        tag.putString("chain_type", this.type.getKey().toString());
+        tag.putString("returned_item", BuiltInRegistries.ITEM.getKey(this.returnedItem).toString());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(renderedNodes);
+        return Objects.hashCode(this.renderedNodes);
     }
 
     @Override
     public boolean equals(final Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || this.getClass() != o.getClass()) return false;
         final CogwheelChain that = (CogwheelChain) o;
-        return Objects.equals(renderedNodes, that.renderedNodes);
+        return Objects.equals(this.renderedNodes, that.renderedNodes);
     }
 
     public void placeInLevel(final Level level, final PlacingCogwheelChain source) {
-        boolean isController = true;
         final BlockPos controllerPos = source.getFirstNode().pos();
         final int chainsUsed = source.getChainsRequiredInLoop();
 
         for (final PlacingCogwheelNode node : source.getVisitedNodes()) {
-            placeChainCogwheelInLevel(level, node, isController, chainsUsed, controllerPos);
+            if (level.getBlockEntity(node.pos()) instanceof final KineticBlockEntity kbe) {
+                kbe.detachKinetics();
+            }
+        }
+
+        boolean isController = true;
+        for (final PlacingCogwheelNode node : source.getVisitedNodes()) {
+            this.placeChainCogwheelInLevel(level, node, isController, chainsUsed, controllerPos);
             isController = false;
         }
 
-        //Try to get the kinetic block entity at controller, and update the kinetics
         final BlockEntity be = level.getBlockEntity(controllerPos);
         if (be instanceof final KineticBlockEntity kbe) {
-            kbe.detachKinetics();
             kbe.updateSpeed = true;
         } else {
-            throw new IllegalStateException("Expected a kinetic block entity at the controller position when placing a cogwheel chain, but found none! Position: " + controllerPos);
+            throw new IllegalStateException(
+                    "Expected a kinetic block entity at the controller position when placing a cogwheel chain, but found none! Position: " + controllerPos);
         }
     }
 
-    private void placeChainCogwheelInLevel(final Level level, final PlacingCogwheelNode node, final boolean isController, final int chainsUsed, final BlockPos controllerPos) {
-        final CogwheelChainBehaviour behaviour = SuperBlockEntityBehaviour.getOrThrow(level, node.pos(), CogwheelChainBehaviour.TYPE);
+    private void placeChainCogwheelInLevel(final Level level,
+                                           final PlacingCogwheelNode node,
+                                           final boolean isController,
+                                           final int chainsUsed,
+                                           final BlockPos controllerPos) {
+        final CogwheelChainBehaviour behaviour = SuperBlockEntityBehaviour.getOrThrow(
+                level,
+                node.pos(),
+                CogwheelChainBehaviour.TYPE
+        );
 
         if (isController) {
             behaviour.setAsController(this);
@@ -184,15 +202,48 @@ public class CogwheelChain {
         behaviour.sendData();
     }
 
+    /**
+     * Destroys this chain by clearing all member data and properly detaching kinetics.
+     * <p>
+     * Uses a three-phase approach to avoid race conditions with Create's kinetic BFS propagator:
+     * <ol>
+     *     <li>Clear chain data on all members so chain connections become invisible to the propagator</li>
+     *     <li>Detach kinetics on all members (only axis neighbours are visible, preventing re-propagation through dead chain links)</li>
+     *     <li>Force-clear any residual kinetic state and mark members for speed re-evaluation from non-chain neighbours</li>
+     * </ol>
+     */
     public void destroy(final Level level, final BlockPos worldPosition) {
-        for (final PathedCogwheelNode cogwheel : cogwheelNodes) {
+        final List<CogwheelChainBehaviour> behaviours = new ArrayList<>();
+        for (final PathedCogwheelNode cogwheel : this.cogwheelNodes) {
             final BlockPos pos = worldPosition.offset(cogwheel.localPos());
-            removeChainCogwheelFromLevelIfPresent(level, pos);
+            SuperBlockEntityBehaviour.getOptional(level, pos, CogwheelChainBehaviour.TYPE)
+                    .ifPresent(behaviours::add);
         }
+
+        for (final CogwheelChainBehaviour behaviour : behaviours) {
+            behaviour.clearChainData();
+        }
+
+        this.detachAndResetKinetics(behaviours);
     }
 
-    public static void removeChainCogwheelFromLevelIfPresent(final Level level, final BlockPos pos) {
-        SuperBlockEntityBehaviour.getOptional(level, pos, CogwheelChainBehaviour.TYPE).ifPresent(CogwheelChainBehaviour::disconnectFromChain);
+    private void detachAndResetKinetics(final List<CogwheelChainBehaviour> behaviours) {
+        for (final CogwheelChainBehaviour behaviour : behaviours) {
+            if (behaviour.getBlockEntity() instanceof final KineticBlockEntity kbe
+                    && kbe.getTheoreticalSpeed() != 0) {
+                kbe.detachKinetics();
+            }
+        }
+
+        for (final CogwheelChainBehaviour behaviour : behaviours) {
+            if (behaviour.getBlockEntity() instanceof final KineticBlockEntity kbe) {
+                if (kbe.getTheoreticalSpeed() != 0) {
+                    kbe.removeSource();
+                }
+                kbe.updateSpeed = true;
+            }
+            behaviour.sendData();
+        }
     }
 
     public void createDestroyEffects(final Level level, final BlockPos worldPosition) {
@@ -200,11 +251,11 @@ public class CogwheelChain {
             return;
         }
 
-        if (renderedNodes.size() < 2) {
+        if (this.renderedNodes.size() < 2) {
             return;
         }
 
-        final BlockState particleState = type.getBreakEffectsBlock().defaultBlockState();
+        final BlockState particleState = this.type.getBreakEffectsBlock().defaultBlockState();
         final BlockParticleOption particle = new BlockParticleOption(ParticleTypes.BLOCK, particleState);
         final Vec3 origin = Vec3.atLowerCornerOf(worldPosition);
 
@@ -214,14 +265,14 @@ public class CogwheelChain {
                 worldPosition,
                 soundType.getBreakSound(),
                 SoundSource.BLOCKS,
-                (soundType.getVolume() + 1.0F) / (cogwheelNodes.size() * 3f),
+                (soundType.getVolume() + 1.0F) / (this.cogwheelNodes.size() * 3f),
                 soundType.getPitch() * 0.8F
         );
 
-        final int size = renderedNodes.size();
+        final int size = this.renderedNodes.size();
         for (int i = 0; i < size; i++) {
-            final Vec3 a = renderedNodes.get(i).getPosition().add(origin);
-            final Vec3 b = renderedNodes.get((i + 1) % size).getPosition().add(origin);
+            final Vec3 a = this.renderedNodes.get(i).getPosition().add(origin);
+            final Vec3 b = this.renderedNodes.get((i + 1) % size).getPosition().add(origin);
             final Vec3 segment = b.subtract(a);
             final double distance = segment.length();
             if (distance < 1e-6) {
@@ -249,41 +300,53 @@ public class CogwheelChain {
     }
 
     /**
+     * Returns a lazily computed and cached list of {@link CogwheelChainSegment} instances
+     * representing the typed, distance-annotated geometry of this chain.
+     */
+    public List<CogwheelChainSegment> getSegments() {
+        if (this.cachedSegments == null) {
+            this.cachedSegments = CogwheelChainSegmentBuilder.buildSegments(this.renderedNodes);
+        }
+        return this.cachedSegments;
+    }
+
+    /**
      * All nodes in the chain, there are typically multiple, as the path wraps around cogwheels
      */
     public List<RenderedChainPathNode> getChainPathNodes() {
-        return renderedNodes;
+        return this.renderedNodes;
     }
 
     /**
      * Each cogwheel in the chain
      */
     public List<PathedCogwheelNode> getChainPathCogwheelNodes() {
-        return cogwheelNodes;
+        return this.cogwheelNodes;
     }
 
     /**
      * See {@link BnbCogwheelChainTypes} for available types (in this mod).
      */
     public CogwheelChainType getChainType() {
-        return type;
+        return this.type;
     }
 
     public Item getReturnedItem() {
-        return returnedItem;
+        return this.returnedItem;
     }
 
     public boolean shouldFlipInsideOutside() {
-        return flipInsideOutside;
+        return this.flipInsideOutside;
     }
 
     public void transform(final StructureTransform transform) {
         final List<PathedCogwheelNode> newNodes = new ArrayList<>();
-        for (final PathedCogwheelNode node : cogwheelNodes) {
+        for (final PathedCogwheelNode node : this.cogwheelNodes) {
             newNodes.add(node.transform(transform));
         }
-        cogwheelNodes = newNodes;
-        renderedNodes = CogwheelChainGeometryBuilder.buildFullChainFromPathNodes(cogwheelNodes);
+        this.cogwheelNodes = newNodes;
+        this.renderedNodes = CogwheelChainGeometryBuilder.buildFullChainFromPathNodes(this.cogwheelNodes);
+        this.cachedSegments = null;
     }
 }
 

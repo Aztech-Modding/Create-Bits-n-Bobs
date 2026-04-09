@@ -3,6 +3,7 @@ package com.kipti.bnb.foundation.client;
 import com.cake.struts.content.StrutPlacementEffects;
 import com.kipti.bnb.content.decoration.weathered_girder.WeatheredGirderWrenchBehaviour;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.placement.CogwheelChainPlacementEffect;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.riding.CogwheelChainRidingHelper;
 import com.kipti.bnb.content.trinkets.light.headlamp.rendering.pipeline.block_entity.HeadlampVertexBufferCache;
 import com.kipti.bnb.foundation.generation.PonderflatGeneratorSettings;
 import com.kipti.bnb.foundation.generation.PonderflatLevelSource;
@@ -30,6 +31,11 @@ public class ClientEvents {
     public static void onTickPost(final ClientTickEvent.Post event) {
         WeatheredGirderWrenchBehaviour.tick();
         HeadlampVertexBufferCache.tick();
+
+        final Minecraft mc = Minecraft.getInstance();
+        if (mc.level != null && mc.player != null) {
+            CogwheelChainRidingHelper.clientTick(mc.player);
+        }
     }
 
     @SubscribeEvent

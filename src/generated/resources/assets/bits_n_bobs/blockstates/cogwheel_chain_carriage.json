@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "bits_n_bobs:block/cogwheel_chain_carriage/block",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "bits_n_bobs:block/cogwheel_chain_carriage/block"
+    },
+    "facing=south": {
+      "model": "bits_n_bobs:block/cogwheel_chain_carriage/block",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "bits_n_bobs:block/cogwheel_chain_carriage/block",
+      "y": 270
+    }
+  }
+}

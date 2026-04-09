@@ -1,6 +1,6 @@
 package com.kipti.bnb.foundation.client;
 
-import com.kipti.bnb.content.decoration.truss.AlternatingTrussBlock;
+import com.kipti.bnb.content.decoration.truss.TrussBlock;
 import com.tterrag.registrate.providers.DataGenContext;
 import com.tterrag.registrate.providers.RegistrateBlockstateProvider;
 import net.minecraft.core.Direction;
@@ -17,7 +17,9 @@ public class BnbBlockStateGen {
 
     public static final int DEFAULT_ANGLE_OFFSET = 180;
 
-    public static <T extends Block> void directionalUvLockBlock(final DataGenContext<Block, T> ctx, final RegistrateBlockstateProvider prov, final Function<BlockState, ModelFile> modelFunc) {
+    public static <T extends Block> void directionalUvLockBlock(final DataGenContext<Block, T> ctx,
+                                                                final RegistrateBlockstateProvider prov,
+                                                                final Function<BlockState, ModelFile> modelFunc) {
         prov.getVariantBuilder(ctx.get())
                 .forAllStates(state -> {
                     final Direction dir = state.getValue(BlockStateProperties.FACING);
@@ -31,27 +33,34 @@ public class BnbBlockStateGen {
     }
 
     public static <T extends Block> void directionalBlockIgnoresWaterlogged(final DataGenContext<Block, T> ctx,
-                                                                            final RegistrateBlockstateProvider prov, final Function<BlockState, ModelFile> modelFunc, final boolean uvLock) {
+                                                                            final RegistrateBlockstateProvider prov,
+                                                                            final Function<BlockState, ModelFile> modelFunc,
+                                                                            final boolean uvLock) {
         prov.getVariantBuilder(ctx.getEntry())
-                .forAllStatesExcept(state -> {
-                    final Direction dir = state.getValue(BlockStateProperties.FACING);
-                    return ConfiguredModel.builder()
-                            .modelFile(modelFunc.apply(state))
-                            .rotationX(dir == Direction.DOWN ? 180
-                                    : dir.getAxis()
-                                    .isHorizontal() ? 90 : 0)
-                            .rotationY(dir.getAxis()
-                                    .isVertical() ? 0 : (((int) dir.toYRot()) + 180) % 360)
-                            .uvLock(uvLock)
-                            .build();
-                }, BlockStateProperties.WATERLOGGED);
+                .forAllStatesExcept(
+                        state -> {
+                            final Direction dir = state.getValue(BlockStateProperties.FACING);
+                            return ConfiguredModel.builder()
+                                    .modelFile(modelFunc.apply(state))
+                                    .rotationX(dir == Direction.DOWN ? 180
+                                                       : dir.getAxis()
+                                            .isHorizontal() ? 90 : 0)
+                                    .rotationY(dir.getAxis()
+                                                       .isVertical() ? 0 : (((int) dir.toYRot()) + 180) % 360)
+                                    .uvLock(uvLock)
+                                    .build();
+                        }, BlockStateProperties.WATERLOGGED
+                );
     }
 
     public static <T extends Block> void axisModel(final DataGenContext<Block, T> ctx,
                                                    final RegistrateBlockstateProvider prov) {
         prov.getVariantBuilder(ctx.get())
                 .forAllStates(state -> {
-                    final Direction dir = Direction.fromAxisAndDirection(state.getValue(RotatedPillarBlock.AXIS), Direction.AxisDirection.POSITIVE);
+                    final Direction dir = Direction.fromAxisAndDirection(
+                            state.getValue(RotatedPillarBlock.AXIS),
+                            Direction.AxisDirection.POSITIVE
+                    );
                     return ConfiguredModel.builder()
                             .modelFile(prov.models().getExistingFile(ctx.getId()))
                             .rotationX(dir == Direction.DOWN ? 180 : dir.getAxis().isHorizontal() ? 90 : 0)
@@ -60,13 +69,18 @@ public class BnbBlockStateGen {
                 });
     }
 
-    public static <T extends AlternatingTrussBlock> void alternatingTrussModel(final DataGenContext<Block, T> ctx, final RegistrateBlockstateProvider prov) {
+    public static <T extends TrussBlock> void alternatingTrussModel(final DataGenContext<Block, T> ctx,
+                                                                    final RegistrateBlockstateProvider prov) {
         prov.getVariantBuilder(ctx.get())
                 .forAllStates(state -> {
-                    final Direction dir = Direction.fromAxisAndDirection(state.getValue(RotatedPillarBlock.AXIS), Direction.AxisDirection.POSITIVE);
+                    final Direction dir = Direction.fromAxisAndDirection(
+                            state.getValue(RotatedPillarBlock.AXIS),
+                            Direction.AxisDirection.POSITIVE
+                    );
                     return ConfiguredModel.builder()
                             .modelFile(prov.models().getExistingFile(
-                                    prov.modLoc(ctx.getId().getPath() + (state.getValue(AlternatingTrussBlock.ALTERNATING) ? "_alternating" : ""))
+                                    prov.modLoc("block/industrial_truss/industrial_truss" + (state.getValue(
+                                            TrussBlock.ALTERNATING) ? "_alternating" : ""))
                             ))
                             .rotationX(dir == Direction.DOWN ? 180 : dir.getAxis().isHorizontal() ? 90 : 0)
                             .rotationY(dir.getAxis().isVertical() ? 0 : (((int) dir.toYRot()) + DEFAULT_ANGLE_OFFSET) % 360)

@@ -7,6 +7,7 @@ import com.simibubi.create.foundation.advancement.AllAdvancements;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
+import net.minecraft.world.item.Items;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
@@ -16,11 +17,20 @@ public class BnbAdvancements {
     public static final AzimuthAdvancementProvider HELPER =
             new AzimuthAdvancementProvider(CreateBitsnBobs.MOD_ID, "Bits 'n' Bobs Advancements");
 
-    public static final AzimuthAdvancement COOKIE_DOUGH = HELPER.create("cookie_dough", b -> b
-            .icon(BnbItems.COOKIE_DOUGH)
-            .title("But It Tastes So Good...")
-            .description("Eat cookie dough")
-            .after(() -> AllAdvancements.MIXER)
+    public static final AzimuthAdvancement COOKIE_DOUGH = HELPER.create(
+            "cookie_dough", b -> b
+                    .icon(BnbItems.COOKIE_DOUGH)
+                    .title("But It Tastes So Good...")
+                    .description("Eat cookie dough")
+                    .after(() -> AllAdvancements.MIXER)
+    );
+
+    public static final AzimuthAdvancement DYE_FLUID_COMPONENT = HELPER.create(
+            "dye_fluid_component", b -> b
+                    .icon(Items.RED_DYE)
+                    .title("Did you dye?")
+                    .description("Dye a fluid tank or pipe")
+                    .after(() -> AllAdvancements.PUMP)
     );
 
     public static void register() {
@@ -31,7 +41,8 @@ public class BnbAdvancements {
         HELPER.provideLang(consumer);
     }
 
-    public static DataProvider dataProvider(final PackOutput output, final CompletableFuture<HolderLookup.Provider> registries) {
+    public static DataProvider dataProvider(final PackOutput output,
+                                            final CompletableFuture<HolderLookup.Provider> registries) {
         return HELPER.dataProvider(output, registries);
     }
 
