@@ -49,6 +49,10 @@ public class DyeableTankBehaviour extends SuperBlockEntityBehaviour {
 
     @Nullable
     public DyeColor getColor() {
+        return this.color;
+    }
+
+    public DyeColor getDisplayedColor() {
         if (this.gayDye != null) {
             //Get offset to controller
             if (this.getBlockEntity() instanceof final FluidTankBlockEntity ftbe) {
@@ -56,7 +60,7 @@ public class DyeableTankBehaviour extends SuperBlockEntityBehaviour {
                 return this.gayDye.getDisplayedColor(localY);
             }
         }
-        return this.color;
+        return this.getColor();
     }
 
     public void applyColorClientOnly(@Nullable final DyeColor color) {
@@ -224,4 +228,5 @@ public class DyeableTankBehaviour extends SuperBlockEntityBehaviour {
             level.sendBlockUpdated(pos, this.getBlockState(), this.getBlockState(), 16);
         }
     }
+
 }

@@ -27,35 +27,39 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+
 import java.util.stream.Stream;
 
 public class BnbCommands {
 
     public static void register(final CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("bitsnbobs")
-                .requires(source -> source.hasPermission(0))
-                .then(Commands.literal("peek")
-                        .then(registerCogwheelChainControllerPeek()))
-                .then(registerGay()));
+                                    .requires(source -> source.hasPermission(0))
+                                    .then(Commands.literal("peek")
+                                                  .then(registerCogwheelChainControllerPeek()))
+                                    .then(registerGay()));
     }
 
     private static ArgumentBuilder<CommandSourceStack, ?> registerGay() {
         return Commands.literal("gay")
                 .requires(source -> source.hasPermission(2))
                 .then(Commands.argument("pos", BlockPosArgument.blockPos())
-                        .then(Commands.argument("animation", StringArgumentType.word())
-                                .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(
-                                        Stream.of(GayDye.AnimationType.values()).map(t -> t.name().toLowerCase()),
-                                        builder))
-                                .then(Commands.argument("pride", StringArgumentType.word())
-                                        .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(
-                                                Stream.of(GayDye.PrideType.values()).map(t -> t.name().toLowerCase()),
-                                                builder))
-                                        .executes(context -> gayFluidTank(
-                                                context.getSource(),
-                                                BlockPosArgument.getLoadedBlockPos(context, "pos"),
-                                                parseAnimationType(context),
-                                                parsePrideType(context))))));
+                              .then(Commands.argument("animation", StringArgumentType.word())
+                                            .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(
+                                                    Stream.of(GayDye.AnimationType.values()).map(t -> t.name().toLowerCase()),
+                                                    builder
+                                            ))
+                                            .then(Commands.argument("pride", StringArgumentType.word())
+                                                          .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(
+                                                                  Stream.of(GayDye.PrideType.values()).map(t -> t.name().toLowerCase()),
+                                                                  builder
+                                                          ))
+                                                          .executes(context -> gayFluidTank(
+                                                                  context.getSource(),
+                                                                  BlockPosArgument.getLoadedBlockPos(context, "pos"),
+                                                                  parseAnimationType(context),
+                                                                  parsePrideType(context)
+                                                          )))));
     }
 
     private static GayDye.AnimationType parseAnimationType(final CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
@@ -88,7 +92,7 @@ public class BnbCommands {
         }
 
         behaviour.applyGayDyeToEntireTank(new GayDye(animationType, prideType));
-        source.sendSuccess(() -> Component.literal("✨ bisexual swag applied ✨"), false);
+        source.sendSuccess(() -> Component.literal("swag applied ✨"), false);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -132,7 +136,10 @@ public class BnbCommands {
         }
 
         CatnipServices.NETWORK.sendToClient(player, new PeekCogwheelChainControllerHighlightPacket(controllerPos));
-        source.sendSuccess(() -> Component.literal("Highlighted cogwheel chain controller at " + controllerPos.toShortString() + "."), false);
+        source.sendSuccess(
+                () -> Component.literal("Highlighted cogwheel chain controller at " + controllerPos.toShortString() + "."),
+                false
+        );
         return Command.SINGLE_SUCCESS;
     }
 
@@ -141,10 +148,17 @@ public class BnbCommands {
         final Vec3 start = player.getEyePosition(1);
         final Vec3 look = player.getViewVector(1);
         final Vec3 end = start.add(look.x * distance, look.y * distance, look.z * distance);
-        return player.level().clip(new ClipContext(start, end, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
+        return player.level().clip(new ClipContext(
+                start,
+                end,
+                ClipContext.Block.OUTLINE,
+                ClipContext.Fluid.NONE,
+                player
+        ));
     }
 
-    private static @Nullable BlockPos resolveControllerPos(final BlockPos targetPos, final CogwheelChainBehaviour behaviour) {
+    private static @Nullable BlockPos resolveControllerPos(final BlockPos targetPos,
+                                                           final CogwheelChainBehaviour behaviour) {
         if (behaviour.isController()) {
             return targetPos;
         }

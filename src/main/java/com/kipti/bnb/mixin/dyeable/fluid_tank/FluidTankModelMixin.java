@@ -53,7 +53,7 @@ public class FluidTankModelMixin {
         );
         DyeColor color = null;
         if (behaviour != null) {
-            color = behaviour.getColor();
+            color = behaviour.getDisplayedColor();
         }
         if (color == null) {
             color = DyeableTransitionHelper.getPendingPlacementColor(world, pos);

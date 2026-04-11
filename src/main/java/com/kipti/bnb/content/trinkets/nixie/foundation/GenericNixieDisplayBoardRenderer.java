@@ -4,7 +4,6 @@ import com.kipti.bnb.content.trinkets.nixie.large_nixie_tube.LargeNixieTubeBlock
 import com.kipti.bnb.content.trinkets.nixie.nixie_board.NixieBoardBlockNixie;
 import com.kipti.bnb.mixin_accessor.FontAccess;
 import com.kipti.bnb.mixin_accessor.ReverseRenderableBakedGlyph;
-import com.kipti.bnb.registry.content.blocks.BnbTrinketBlocks;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
@@ -43,8 +42,7 @@ public class GenericNixieDisplayBoardRenderer extends SmartBlockEntityRenderer<G
             return; // No font set available, nothing to render
         }
 
-        //TODO remove these so many BnbBlocksBootstrap.NIXIE_BOARD.is(be.getBlockState().getBlock()) || BnbBlocksBootstrap.DYED_NIXIE_BOARD.contains(be.getBlockState().getBlock())
-        final boolean isNixieBoard = BnbTrinketBlocks.NIXIE_BOARD.is(be.getBlockState().getBlock()) || BnbTrinketBlocks.DYED_NIXIE_BOARD.contains(be.getBlockState().getBlock());
+        final boolean isNixieBoard = GenericNixieDisplayBlock.isNixieBoard(be.getBlockState().getBlock());
         final float scale = isNixieBoard ? 1f / 16f : 1f / 20f;
         final float offset = isNixieBoard ? 0 : 1f / 8f;
 

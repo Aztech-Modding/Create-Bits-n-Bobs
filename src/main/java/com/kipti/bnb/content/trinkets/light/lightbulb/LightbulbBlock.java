@@ -1,6 +1,6 @@
 package com.kipti.bnb.content.trinkets.light.lightbulb;
 
-import com.kipti.bnb.content.trinkets.light.founation.LightBlock;
+import com.kipti.bnb.content.trinkets.light.foundation.LightBlock;
 import com.kipti.bnb.registry.client.BnbShapes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;

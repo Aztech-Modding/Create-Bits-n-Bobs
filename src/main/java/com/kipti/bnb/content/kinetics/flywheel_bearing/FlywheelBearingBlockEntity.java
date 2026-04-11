@@ -223,10 +223,8 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
             return;
         }
 
-        if (clientPacket) {//TODO (?) implement network updates to the be so the client properly knows the correct information
-            this.clientFlywheelAbsorptionCapacityInNetwork = compound.getFloat("NetworkFlywheelAbsorptionCapacity");
-            this.clientFlywheelReleaseCapacityInNetwork = compound.getFloat("NetworkFlywheelReleaseCapacity");
-        }
+        this.clientFlywheelAbsorptionCapacityInNetwork = compound.getFloat("NetworkFlywheelAbsorptionCapacity");
+        this.clientFlywheelReleaseCapacityInNetwork = compound.getFloat("NetworkFlywheelReleaseCapacity");
 
         final float angleBefore = this.flywheelMovement.angle;
         this.running = compound.getBoolean("Running");

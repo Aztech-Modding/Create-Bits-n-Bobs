@@ -4,11 +4,11 @@ import com.kipti.bnb.content.kinetics.cogwheel_chain.placement.ChainInteractionF
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.CogwheelChainType;
 import com.kipti.bnb.registry.core.BnbConfigs;
 import com.mojang.serialization.Codec;
-import net.createmod.catnip.codecs.stream.CatnipStreamCodecBuilders;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -29,12 +29,15 @@ public class PlacingCogwheelChain {
             chain -> chain.visitedNodes
     );
 
+    public static final int MAX_NODES = 64;
+    public static final int MAX_CHAIN_BOUNDS = 32;
+    public static final double MAX_CHAIN_INTERACTION_DISTANCE_SQ = 3.0 * (MAX_CHAIN_BOUNDS + 10) * (MAX_CHAIN_BOUNDS + 10);
+
     public static final StreamCodec<RegistryFriendlyByteBuf, PlacingCogwheelChain> STREAM_CODEC = StreamCodec.composite(
-            CatnipStreamCodecBuilders.list(PlacingCogwheelNode.STREAM_CODEC),
+            PlacingCogwheelNode.STREAM_CODEC.apply(ByteBufCodecs.list(MAX_NODES)),
             chain -> chain.visitedNodes,
             PlacingCogwheelChain::new
     );
-    public static final Integer MAX_CHAIN_BOUNDS = 32;//TODO config
 
     private List<PlacingCogwheelNode> visitedNodes;
 
@@ -54,14 +57,14 @@ public class PlacingCogwheelChain {
         this.visitedNodes = new ArrayList<>(nodes);
     }
 
-    public int getChainsRequiredInLoop() {
-        return this.getChainsRequired(Vec3.atLowerCornerOf(this.visitedNodes.getLast().pos().subtract(this.visitedNodes.getFirst().pos())).length());
+    public int getChainsRequiredInLoop(final CogwheelChainType type) {
+        return this.getChainsRequired(Vec3.atLowerCornerOf(this.visitedNodes.getLast().pos().subtract(this.visitedNodes.getFirst().pos())).length(), type);
     }
 
     /**
      * Get the number of chains required to build this chain, given an extra length
      */
-    public int getChainsRequired(double length) {
+    public int getChainsRequired(double length, final CogwheelChainType type) {
         final float factor = BnbConfigs.server().COGWHEEL_CHAIN_DRIVE_COST_FACTOR.getF();
         if (factor == 0) {
             return 0;
@@ -71,15 +74,18 @@ public class PlacingCogwheelChain {
             final Vec3i offset = this.visitedNodes.get(i + 1).pos().subtract(this.visitedNodes.get(i).pos());
             length += Vec3.atLowerCornerOf(offset).length();
         }
-        return getChainsRequiredForLength(length);
+        return getChainsRequiredForLength(length, type);
     }
 
-    public static int getChainsRequiredForLength(final double length) {
+    public static int getChainsRequiredForLength(final double length, final CogwheelChainType type) {
         final float factor = BnbConfigs.server().COGWHEEL_CHAIN_DRIVE_COST_FACTOR.getF();
         if (factor == 0) {
             return 0;
         }
-        return (int) Math.max(Math.round(factor * length / 5), 1);
+        if (type.alwaysCostsOneItem()) {
+            return 1;
+        }
+        return (int) Math.max(Math.round(factor * type.getCostFactor() * length / 5), 1);
     }
 
     public boolean tryAddNode(final BlockPos newPos,

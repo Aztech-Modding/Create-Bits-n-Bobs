@@ -42,10 +42,36 @@ import org.jetbrains.annotations.Nullable;
 )
 public class CogwheelChainPlacementInteraction {
 
-    public static @Nullable PlacingCogwheelChain currentBuildingChain = null;
-    public static @Nullable ResourceKey<Level> currentChainLevel = null;
-    public static @Nullable CogwheelChainType currentChainType = null;
-    public static @Nullable Item currentChainItemType = null;
+    private static @Nullable PlacingCogwheelChain currentBuildingChain = null;
+    private static @Nullable ResourceKey<Level> currentChainLevel = null;
+    private static @Nullable CogwheelChainType currentChainType = null;
+    private static @Nullable Item currentChainItemType = null;
+
+    public static @Nullable PlacingCogwheelChain getCurrentBuildingChain() {
+        return currentBuildingChain;
+    }
+
+    public static @Nullable ResourceKey<Level> getCurrentChainLevel() {
+        return currentChainLevel;
+    }
+
+    public static @Nullable CogwheelChainType getCurrentChainType() {
+        return currentChainType;
+    }
+
+    public static @Nullable Item getCurrentChainItemType() {
+        return currentChainItemType;
+    }
+
+    public static void setPlacingChain(PlacingCogwheelChain buildingChain,
+                                       ResourceKey<Level> chainLevel,
+                                       CogwheelChainType chainType,
+                                       Item chainItemType) {
+        currentBuildingChain = buildingChain;
+        currentChainLevel = chainLevel;
+        currentChainType = chainType;
+        currentChainItemType = chainItemType;
+    }
 
     @SubscribeEvent
     public static void onClickInput(final InputEvent.InteractionKeyMappingTriggered event) {
@@ -152,15 +178,17 @@ public class CogwheelChainPlacementInteraction {
                                            final LocalPlayer player) {
         if (currentBuildingChain == null || currentChainLevel == null || !currentChainLevel.equals(level.dimension())) {
             CogwheelChainPartialEditInteractionHandler.clearEditState();
-            currentBuildingChain = new PlacingCogwheelChain(
-                    hitPos,
-                    targetedCandidate.axis(),
-                    targetedCandidate.isLarge(),
-                    targetedCandidate.hasSmallCogwheelOffset()
+            setPlacingChain(
+                    new PlacingCogwheelChain(
+                            hitPos,
+                            targetedCandidate.axis(),
+                            targetedCandidate.isLarge(),
+                            targetedCandidate.hasSmallCogwheelOffset()
+                    ),
+                    level.dimension(),
+                    heldChainType,
+                    chainItemInHand.getItem()
             );
-            currentChainLevel = level.dimension();
-            currentChainType = heldChainType;
-            currentChainItemType = chainItemInHand.getItem();
 
             player.displayClientMessage(Component.translatable("tooltip.bits_n_bobs.chain_drive_placing_hint"), true);
         } else {
@@ -214,11 +242,11 @@ public class CogwheelChainPlacementInteraction {
         if (!AllItems.WRENCH.isIn(main) && !AllItems.WRENCH.isIn(off))
             return false;
 
-        if (CogwheelChainInteractionHandler.selectedController == null)
+        if (CogwheelChainInteractionHandler.getSelectedController() == null)
             return false;
 
-        final BlockPos controllerPos = CogwheelChainInteractionHandler.selectedController;
-        final float chainPosition = CogwheelChainInteractionHandler.selectedChainPosition;
+        final BlockPos controllerPos = CogwheelChainInteractionHandler.getSelectedController();
+        final float chainPosition = CogwheelChainInteractionHandler.getSelectedChainPosition();
 
         final ClientLevel level = Minecraft.getInstance().level;
         if (level == null || !level.isLoaded(controllerPos))

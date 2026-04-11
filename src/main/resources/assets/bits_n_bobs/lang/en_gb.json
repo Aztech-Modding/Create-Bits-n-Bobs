@@ -5,6 +5,7 @@
   "bits_n_bobs.ponder.chain_cog_flat.header": "Connecting cogwheels with a chain",
   "bits_n_bobs.ponder.chain_cog_flat.text_1": "Chains can be used to connect 2 or more cogwheels",
   "bits_n_bobs.ponder.chain_cog_flat.text_2": "Gear ratios will be preserved across the chain",
+  "bits_n_bobs.ponder.foreign_label": "Bits n Bobs",
   "block.bits_n_bobs.andesite_tile_slab": "Andesite Tile Slab",
   "block.bits_n_bobs.andesite_tile_stairs": "Andesite Tile Stairs",
   "block.bits_n_bobs.andesite_tile_wall": "Andesite Tile Wall",

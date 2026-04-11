@@ -3,7 +3,6 @@ package com.kipti.bnb.content.trinkets.nixie.foundation;
 import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.trinkets.nixie.nixie_board.NixieBoardBlockNixie;
 import com.kipti.bnb.mixin_accessor.DynamicComponentMigrator;
-import com.kipti.bnb.registry.content.blocks.BnbTrinketBlocks;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.utility.DynamicComponent;
@@ -26,6 +25,7 @@ import java.util.function.Supplier;
 public class GenericNixieDisplayBlockEntity extends SmartBlockEntity {
 
     private static final int MAX_CHARS_IN_BLOCK = 3;
+    private static final int MAX_STRUCTURE_LENGTH = 100;
 
     private static final Logger log = LoggerFactory.getLogger(GenericNixieDisplayBlockEntity.class);
 
@@ -49,13 +49,23 @@ public class GenericNixieDisplayBlockEntity extends SmartBlockEntity {
     }
 
     public void inheritDataFrom(final GenericNixieDisplayBlockEntity be) {
-        this.customTextTop = be.customTextTop;
-        this.customTextBottom = be.customTextBottom;
+        this.customTextTop = deepCopyDynamicComponent(be.customTextTop);
+        this.customTextBottom = deepCopyDynamicComponent(be.customTextBottom);
         this.customTextStart = be.customTextStart;
 
         this.currentDisplayOption = be.currentDisplayOption;
 
         notifyUpdate();
+    }
+
+    private Optional<DynamicComponent> deepCopyDynamicComponent(Optional<DynamicComponent> source) {
+        return source.filter(DynamicComponent::isValid).map(component -> {
+            CompoundTag tag = new CompoundTag();
+            component.write(tag, this.level.registryAccess());
+            DynamicComponent copy = new DynamicComponent();
+            copy.read(this.worldPosition, tag, this.level.registryAccess());
+            return copy;
+        });
     }
 
     public ConfigurableDisplayOptions getCurrentDisplayOption() {
@@ -107,7 +117,7 @@ public class GenericNixieDisplayBlockEntity extends SmartBlockEntity {
         final Direction orientation = getBlockState().getValue(GenericNixieDisplayBlock.ORIENTATION);
         final Direction right = DoubleOrientedDirections.getLeft(facing, orientation).getOpposite();
         BlockPos currentPos = controller.getBlockPos();
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < MAX_STRUCTURE_LENGTH; i++) {
             final BlockEntity blockEntity = controller.level.getBlockEntity(currentPos);
             if (blockEntity instanceof final GenericNixieDisplayBlockEntity display && areStatesComprableForConnection(controller.getBlockState(), display.getBlockState())) {
                 consumer.accept(display);
@@ -135,10 +145,10 @@ public class GenericNixieDisplayBlockEntity extends SmartBlockEntity {
             return false;
         }
 
-        final boolean stateOneIsBoard = BnbTrinketBlocks.NIXIE_BOARD.is(state1.getBlock()) || BnbTrinketBlocks.DYED_NIXIE_BOARD.contains(state1.getBlock());
-        final boolean stateTwoIsBoard = BnbTrinketBlocks.NIXIE_BOARD.is(state2.getBlock()) || BnbTrinketBlocks.DYED_NIXIE_BOARD.contains(state2.getBlock());
-        final boolean stateOneIsTube = BnbTrinketBlocks.LARGE_NIXIE_TUBE.is(state1.getBlock()) || BnbTrinketBlocks.DYED_LARGE_NIXIE_TUBE.contains(state1.getBlock());
-        final boolean stateTwoIsTube = BnbTrinketBlocks.LARGE_NIXIE_TUBE.is(state2.getBlock()) || BnbTrinketBlocks.DYED_LARGE_NIXIE_TUBE.contains(state2.getBlock());
+        final boolean stateOneIsBoard = GenericNixieDisplayBlock.isNixieBoard(state1.getBlock());
+        final boolean stateTwoIsBoard = GenericNixieDisplayBlock.isNixieBoard(state2.getBlock());
+        final boolean stateOneIsTube = GenericNixieDisplayBlock.isLargeNixieTube(state1.getBlock());
+        final boolean stateTwoIsTube = GenericNixieDisplayBlock.isLargeNixieTube(state2.getBlock());
 
         if (!(stateOneIsBoard && stateTwoIsBoard) && !(stateOneIsTube && stateTwoIsTube)) return false;
         if (state1.getValue(GenericNixieDisplayBlock.FACING) != state2.getValue(GenericNixieDisplayBlock.FACING)) {
@@ -247,7 +257,7 @@ public class GenericNixieDisplayBlockEntity extends SmartBlockEntity {
         final Direction left = DoubleOrientedDirections.getLeft(facing, orientation);
         BlockPos leftPos = getBlockPos().relative(left);
         GenericNixieDisplayBlockEntity lastDisplay = this;
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < MAX_STRUCTURE_LENGTH; i++) {
             final BlockEntity blockEntity = level.getBlockEntity(leftPos);
             if (blockEntity instanceof final GenericNixieDisplayBlockEntity display && areStatesComprableForConnection(getBlockState(), display.getBlockState())) {
                 lastDisplay = display;
@@ -286,7 +296,7 @@ public class GenericNixieDisplayBlockEntity extends SmartBlockEntity {
                 getBlockState().getValue(GenericNixieDisplayBlock.ORIENTATION)
         ).getOpposite();
         int characterCount = 0;
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < MAX_STRUCTURE_LENGTH; i++) {
             final BlockPos nextPos = getBlockPos().relative(right, i);
             final BlockEntity blockEntity = level.getBlockEntity(nextPos);
             if (!areStatesComprableForConnection(getBlockState(), level.getBlockState(nextPos))) {

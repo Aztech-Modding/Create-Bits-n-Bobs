@@ -112,7 +112,7 @@ tasks.withType(ProcessResources).configureEach {
 
     inputs.properties replaceProperties
 
-    filesMatching(['META-INF/neoforge.mods.toml']) {
+    filesMatching(['META-INF/neoforge.mods.toml', '*.mixins.json']) {
         expand replaceProperties
     }
 }
@@ -131,7 +131,7 @@ jar {
 // ========================
 
 String getRelevantChangelog(String targetVersion) {
-    def changelogFile = file("CHANGELOG.md")
+    def changelogFile = file("changelog.md")
     if (!changelogFile.exists()) {
         return "No changelog found."
     }
@@ -154,7 +154,8 @@ String getRelevantChangelog(String targetVersion) {
                 capturing = true
                 continue
             }
-            if (entryMinecraftVersion == targetMinecraftVersion && entryModVersion > targetModVersion) {
+            if (entryMinecraftVersion == targetMinecraftVersion &&
+                    org.gradle.util.VersionNumber.parse(entryModVersion) > org.gradle.util.VersionNumber.parse(targetModVersion)) {
                 newerVersionsExist = true
             }
         } else if (capturing && line.trim()) {

@@ -22,7 +22,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.kipti.bnb.content.kinetics.cogwheel_chain.placement.ChainDriveDisplayRenderer.*;
-import static com.kipti.bnb.content.kinetics.cogwheel_chain.placement.CogwheelChainPlacementInteraction.*;
+import static com.kipti.bnb.content.kinetics.cogwheel_chain.placement.CogwheelChainPlacementInteraction.clearPlacingChain;
+import static com.kipti.bnb.content.kinetics.cogwheel_chain.placement.CogwheelChainPlacementInteraction.getChainItemInHand;
+import static com.kipti.bnb.content.kinetics.cogwheel_chain.placement.CogwheelChainPlacementInteraction.getCurrentBuildingChain;
+import static com.kipti.bnb.content.kinetics.cogwheel_chain.placement.CogwheelChainPlacementInteraction.getCurrentChainItemType;
+import static com.kipti.bnb.content.kinetics.cogwheel_chain.placement.CogwheelChainPlacementInteraction.getCurrentChainLevel;
+import static com.kipti.bnb.content.kinetics.cogwheel_chain.placement.CogwheelChainPlacementInteraction.getCurrentChainType;
 
 /**
  * Client-side display handler for the normal chain-building placement flow.
@@ -38,12 +43,12 @@ public class CogwheelChainPlacementEffect {
         if (Minecraft.getInstance().isPaused() || Minecraft.getInstance().hitResult == null) return;
 
         final ClientLevel level = Minecraft.getInstance().level;
-        if (level == null || currentChainLevel == null || currentBuildingChain == null || currentChainType == null || currentChainItemType == null) {
+        if (level == null || getCurrentChainLevel() == null || getCurrentBuildingChain() == null || getCurrentChainType() == null || getCurrentChainItemType() == null) {
             return;
         }
 
-        if (!currentChainLevel.equals(level.dimension()) || currentBuildingChain.checkMissingNodesInLevel(level, currentChainType)) {
-            CogwheelChainPlacementInteraction.clearPlacingChain();
+        if (!getCurrentChainLevel().equals(level.dimension()) || getCurrentBuildingChain().checkMissingNodesInLevel(level, getCurrentChainType())) {
+            clearPlacingChain();
             return;
         }
 
@@ -53,17 +58,17 @@ public class CogwheelChainPlacementEffect {
 
             if (!player.hasInfiniteMaterials()) {
                 final double additionalDistance = targetedPos != null ?
-                        Vec3.atLowerCornerOf(targetedPos.subtract(currentBuildingChain.getLastNode().pos())).length() : 0;
-                final int chainsRequired = currentBuildingChain.getChainsRequired(additionalDistance);
+                        Vec3.atLowerCornerOf(targetedPos.subtract(getCurrentBuildingChain().getLastNode().pos())).length() : 0;
+                final int chainsRequired = getCurrentBuildingChain().getChainsRequired(additionalDistance, getCurrentChainType());
 
-                final boolean hasEnough = ChainConveyorBlockEntity.getChainsFromInventory(player, currentChainItemType.getDefaultInstance(), chainsRequired, true);
-                BlueprintOverlayRenderer.displayChainRequirements(currentChainItemType, chainsRequired, hasEnough);
+                final boolean hasEnough = ChainConveyorBlockEntity.getChainsFromInventory(player, getCurrentChainItemType().getDefaultInstance(), chainsRequired, true);
+                BlueprintOverlayRenderer.displayChainRequirements(getCurrentChainItemType(), chainsRequired, hasEnough);
             }
         }
     }
 
     private static @Nullable BlockPos getTargetedBlockAndDisplay() {
-        if (currentBuildingChain == null || currentChainLevel == null)
+        if (getCurrentBuildingChain() == null || getCurrentChainLevel() == null)
             return null;
 
         final ClientLevel level = Minecraft.getInstance().level;
@@ -74,7 +79,7 @@ public class CogwheelChainPlacementEffect {
 
         renderExistingChainNodes(level);
 
-        final PlacingCogwheelNode lastNode = currentBuildingChain.getLastNode();
+        final PlacingCogwheelNode lastNode = getCurrentBuildingChain().getLastNode();
         final BlockPos targetedPos = hit.getBlockPos();
         final BlockState targetedState = level.getBlockState(targetedPos);
         final CogwheelChainCandidate candidate = CogwheelChainCandidate.getForBlock(targetedState);
@@ -88,8 +93,8 @@ public class CogwheelChainPlacementEffect {
     }
 
     private static void renderExistingChainNodes(final ClientLevel level) {
-        for (int i = 0; i < currentBuildingChain.getSize(); i++) {
-            ChainDriveDisplayRenderer.renderBlockOutline(level, currentBuildingChain.getNodes().get(i).pos(), VALID_COLOUR);
+        for (int i = 0; i < getCurrentBuildingChain().getSize(); i++) {
+            ChainDriveDisplayRenderer.renderBlockOutline(level, getCurrentBuildingChain().getNodes().get(i).pos(), VALID_COLOUR);
         }
         renderExistingChainConnections();
     }
@@ -104,7 +109,7 @@ public class CogwheelChainPlacementEffect {
                                                               final BlockPos targetedPos,
                                                               final BlockState targetedState,
                                                               final CogwheelChainCandidate candidate) {
-        if (!currentChainType.getCogwheelPredicate().test(targetedState.getBlock())) {
+        if (!getCurrentChainType().getCogwheelPredicate().test(targetedState.getBlock())) {
             ChainDriveDisplayRenderer.renderParticlesBetween(level, lastNode.center(), targetedPos.getCenter(), INVALID_COLOUR);
             return null;
         }
@@ -112,8 +117,8 @@ public class CogwheelChainPlacementEffect {
         final PlacingCogwheelNode targetNode = new PlacingCogwheelNode(
                 targetedPos, candidate.axis(), candidate.isLarge(), candidate.hasSmallCogwheelOffset()
         );
-        final @Nullable PlacingCogwheelNode previousNode = currentBuildingChain.getSize() >= 2
-                ? currentBuildingChain.getNodes().get(currentBuildingChain.getSize() - 2) : null;
+        final @Nullable PlacingCogwheelNode previousNode = getCurrentBuildingChain().getSize() >= 2
+                ? getCurrentBuildingChain().getNodes().get(getCurrentBuildingChain().getSize() - 2) : null;
 
         if (isConnectionValid(lastNode, targetNode, previousNode)) {
             renderTargetConnection(lastNode, targetNode);
@@ -148,7 +153,7 @@ public class CogwheelChainPlacementEffect {
                                               final PlacingCogwheelNode to,
                                               final @Nullable PlacingCogwheelNode previous) {
         try {
-            PlacingCogwheelChain.validateConnection(from, to, previous, currentChainType);
+            PlacingCogwheelChain.validateConnection(from, to, previous, getCurrentChainType());
             return true;
         } catch (final ChainInteractionFailedException ignored) {
             return false;
@@ -157,7 +162,7 @@ public class CogwheelChainPlacementEffect {
 
     private static void renderTargetConnection(final PlacingCogwheelNode lastNode,
                                                 final PlacingCogwheelNode targetNode) {
-        final int[] sides = ChainPlacementPathDisplayHelper.getPathDisplaySides(currentBuildingChain);
+        final int[] sides = ChainPlacementPathDisplayHelper.getPathDisplaySides(getCurrentBuildingChain());
         final int lastSide = sides.length > 0 ? sides[sides.length - 1] : 0;
 
         int targetSide = 0;
@@ -173,16 +178,16 @@ public class CogwheelChainPlacementEffect {
     }
 
     private static void renderExistingChainConnections() {
-        if (currentBuildingChain == null) return;
-        if (!lastPlannedNodes.equals(currentBuildingChain.getNodes())) {
-            lastPlannedNodes = new ArrayList<>(currentBuildingChain.getNodes());
+        if (getCurrentBuildingChain() == null) return;
+        if (!lastPlannedNodes.equals(getCurrentBuildingChain().getNodes())) {
+            lastPlannedNodes = new ArrayList<>(getCurrentBuildingChain().getNodes());
         }
 
-        final int[] sides = ChainPlacementPathDisplayHelper.getPathDisplaySides(currentBuildingChain);
+        final int[] sides = ChainPlacementPathDisplayHelper.getPathDisplaySides(getCurrentBuildingChain());
 
-        for (int i = 0; i < currentBuildingChain.getSize() - 1; i++) {
-            final PlacingCogwheelNode nodeA = currentBuildingChain.getNodes().get(i);
-            final PlacingCogwheelNode nodeB = currentBuildingChain.getNodes().get(i + 1);
+        for (int i = 0; i < getCurrentBuildingChain().getSize() - 1; i++) {
+            final PlacingCogwheelNode nodeA = getCurrentBuildingChain().getNodes().get(i);
+            final PlacingCogwheelNode nodeB = getCurrentBuildingChain().getNodes().get(i + 1);
             renderExistingSegment(nodeA, nodeB, sides[i], sides[i + 1]);
         }
     }

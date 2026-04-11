@@ -130,7 +130,7 @@ public class CogwheelChain {
             final PathedCogwheelNode endNode = this.cogwheelNodes.get((i + 1) % this.cogwheelNodes.size());
             length += startNode.dist(endNode);
         }
-        return PlacingCogwheelChain.getChainsRequiredForLength(length);
+        return PlacingCogwheelChain.getChainsRequiredForLength(length, this.type);
     }
 
     public void write(final CompoundTag tag) {
@@ -146,19 +146,21 @@ public class CogwheelChain {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(this.renderedNodes);
+        return Objects.hash(this.renderedNodes, this.type, this.returnedItem);
     }
 
     @Override
     public boolean equals(final Object o) {
         if (o == null || this.getClass() != o.getClass()) return false;
         final CogwheelChain that = (CogwheelChain) o;
-        return Objects.equals(this.renderedNodes, that.renderedNodes);
+        return Objects.equals(this.renderedNodes, that.renderedNodes)
+                && Objects.equals(this.type, that.type)
+                && Objects.equals(this.returnedItem, that.returnedItem);
     }
 
     public void placeInLevel(final Level level, final PlacingCogwheelChain source) {
         final BlockPos controllerPos = source.getFirstNode().pos();
-        final int chainsUsed = source.getChainsRequiredInLoop();
+        final int chainsUsed = source.getChainsRequiredInLoop(this.type);
 
         for (final PlacingCogwheelNode node : source.getVisitedNodes()) {
             if (level.getBlockEntity(node.pos()) instanceof final KineticBlockEntity kbe) {

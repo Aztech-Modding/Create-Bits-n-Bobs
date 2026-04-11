@@ -17,6 +17,7 @@ import net.createmod.catnip.config.ui.BaseConfigScreen;
 import net.createmod.catnip.render.SuperByteBufferCache;
 import net.createmod.ponder.foundation.PonderIndex;
 import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.network.chat.Component;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -27,7 +28,6 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.neoforged.neoforge.client.event.ModelEvent;
-import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 
 import java.util.function.Supplier;
@@ -40,7 +40,6 @@ public class CreateBitsnBobsClient {
 
         BnbInstanceTypes.init();
 
-        container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
         eventBus.addListener(this::onClientSetup);
         eventBus.addListener(this::registerAdditionalModels);
     }
@@ -51,7 +50,7 @@ public class CreateBitsnBobsClient {
 
     private static void clientInit() {
         PonderIndex.addPlugin(new BnbPonderPlugin());
-        PonderForeignLabelRegistry.register("bits_n_bobs", "BITS N BOBS");//TODO: localized component
+        PonderForeignLabelRegistry.register(CreateBitsnBobs.MOD_ID, Component.translatable("bits_n_bobs.ponder.foreign_label"));
 
         BnbPartialModels.register();
         BnbSpriteShifts.register();
@@ -60,6 +59,7 @@ public class CreateBitsnBobsClient {
 
         StrutsFlywheelCompatLoader.registerStrutVisual(BnbBlockEntities.GIRDER_STRUT.get());
 
+        // TODO: BaseConfigScreen.withButtonLabels only accepts String, not Component — cannot localize
         BaseConfigScreen.setDefaultActionFor(CreateBitsnBobs.MOD_ID, base -> base
                 .withButtonLabels(null, "Feature Settings", "Balancing Settings")
                 .withSpecs(null, BnbConfigs.common().specification, BnbConfigs.server().specification)
@@ -84,11 +84,11 @@ public class CreateBitsnBobsClient {
     private static class ModBusEvents {
         @SubscribeEvent
         public static void onLoadComplete(final FMLLoadCompleteEvent event) {
-            final ModContainer createContainer = ModList.get()
+            final ModContainer modContainer = ModList.get()
                     .getModContainerById(CreateBitsnBobs.MOD_ID)
-                    .orElseThrow(() -> new IllegalStateException("Create mod container missing on LoadComplete"));
+                    .orElseThrow(() -> new IllegalStateException("Bits n Bobs mod container missing on LoadComplete"));
             final Supplier<IConfigScreenFactory> configScreen = () -> (mc, previousScreen) -> new BaseConfigScreen(previousScreen, CreateBitsnBobs.MOD_ID);
-            createContainer.registerExtensionPoint(IConfigScreenFactory.class, configScreen);
+            modContainer.registerExtensionPoint(IConfigScreenFactory.class, configScreen);
         }
     }
 

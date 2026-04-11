@@ -56,7 +56,7 @@ public class CogwheelChainPartialEditInteractionHandler {
         if (player == null || level == null)
             return false;
 
-        if (CogwheelChainPlacementInteraction.currentBuildingChain != null)
+        if (CogwheelChainPlacementInteraction.getCurrentBuildingChain() != null)
             return false;
 
         if (currentEditContext != null) {
@@ -128,7 +128,7 @@ public class CogwheelChainPartialEditInteractionHandler {
 
     private static @Nullable CogwheelChainPartialEditContext resolveSelectedEditContext(final LocalPlayer player,
                                                                                         final ClientLevel level) {
-        final BlockPos controllerPos = CogwheelChainInteractionHandler.selectedController;
+        final BlockPos controllerPos = CogwheelChainInteractionHandler.getSelectedController();
         if (controllerPos == null || !level.isLoaded(controllerPos))
             return null;
 
@@ -140,7 +140,7 @@ public class CogwheelChainPartialEditInteractionHandler {
         if (CogwheelChainPlacementInteraction.getCompatibleCogwheelItemInHand(player, chain.getChainType()) == null)
             return null;
 
-        final float chainPosition = CogwheelChainInteractionHandler.selectedChainPosition;
+        final float chainPosition = CogwheelChainInteractionHandler.getSelectedChainPosition();
         final CogwheelChainSegment selectedSegment = resolveSelectedSegment(level, controllerPos, chainPosition);
         if (selectedSegment == null || selectedSegment.type() != CogwheelChainSegment.SegmentType.BETWEEN_NODES)
             return null;

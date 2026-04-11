@@ -1,4 +1,4 @@
-package com.kipti.bnb.content.trinkets.light.founation;
+package com.kipti.bnb.content.trinkets.light.foundation;
 
 import com.mojang.serialization.MapCodec;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
@@ -105,8 +105,9 @@ public class LightBlock extends DirectionalBlock implements IWrenchable {
             return InteractionResult.PASS;
         if (level.isClientSide)
             return InteractionResult.SUCCESS;
-        level.setBlock(pos, state.cycle(FORCED_ON), 3);
-        level.playSound(null, pos, SoundEvents.LEVER_CLICK, SoundSource.BLOCKS, 0.3F, state.getValue(FORCED_ON) ? 0.6F : 0.5F);
+        BlockState newState = state.cycle(FORCED_ON);
+        level.setBlock(pos, newState, 3);
+        level.playSound(null, pos, SoundEvents.LEVER_CLICK, SoundSource.BLOCKS, 0.3F, newState.getValue(FORCED_ON) ? 0.6F : 0.5F);
         return InteractionResult.SUCCESS;
     }
 
