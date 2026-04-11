@@ -12,9 +12,13 @@ public class HeadlampBlockItem extends BlockItem {
         super(block, properties);
     }
 
-    @Override //TODO FIX SHIFT-PLACE
+    @Override
     protected boolean canPlace(final @NotNull BlockPlaceContext context, final @NotNull BlockState state) {
-        return super.canPlace(context, state) || context.getLevel().getBlockState(context.getClickedPos()).getBlock() instanceof HeadlampBlock;
+        if (!context.isSecondaryUseActive()
+                && context.getLevel().getBlockState(context.getClickedPos()).getBlock() instanceof HeadlampBlock) {
+            return true;
+        }
+        return super.canPlace(context, state);
     }
 
     protected boolean placeBlock(final BlockPlaceContext context, final @NotNull BlockState state) {

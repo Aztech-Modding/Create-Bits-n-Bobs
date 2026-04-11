@@ -1,7 +1,7 @@
 package com.kipti.bnb.content.decoration.grating;
 
 import com.kipti.bnb.CreateBitsnBobs;
-import com.kipti.bnb.foundation.client.BnbBlockStateGen;
+import com.kipti.bnb.foundation.client.block_state_gen.BnbBlockStateGen;
 import com.tterrag.registrate.providers.DataGenContext;
 import com.tterrag.registrate.providers.RegistrateBlockstateProvider;
 import net.minecraft.core.Direction;
@@ -12,9 +12,9 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import java.util.Map;
 
 public class GratingBlockStateGen {
-    
+
     public static <T extends Block> void gratingEncasedShaftBlock(final DataGenContext<Block, T> ctx,
-                                                                   final RegistrateBlockstateProvider prov) {
+                                                                  final RegistrateBlockstateProvider prov) {
         for (final Direction dir : Direction.values()) {//Specifically not using forAllStates cause uh
             final Direction.Axis otherAxisA = dir.getAxis() == Direction.Axis.X ? Direction.Axis.Y : Direction.Axis.X;
             final Direction.Axis otherAxisB = dir.getAxis() == Direction.Axis.Z ? Direction.Axis.Y : Direction.Axis.Z;
@@ -68,7 +68,7 @@ public class GratingBlockStateGen {
     }
 
     public static <T extends Block> void gratingEncasedPipeBlock(final DataGenContext<Block, T> ctx,
-                                                                   final RegistrateBlockstateProvider prov) {
+                                                                 final RegistrateBlockstateProvider prov) {
         final Map<Direction, BooleanProperty> connectionProperties = Map.of(
                 Direction.UP, BlockStateProperties.UP,
                 Direction.DOWN, BlockStateProperties.DOWN,

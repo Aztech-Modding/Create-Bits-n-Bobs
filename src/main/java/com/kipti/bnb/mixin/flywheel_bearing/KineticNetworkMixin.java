@@ -100,12 +100,12 @@ public abstract class KineticNetworkMixin implements FlywheelAccessibleKineticNe
                 currentFlywheelStressReleaseCapacity != newFlywheelStressReleaseCapacity) {
             currentFlywheelStressAbsorptionCapacity = newFlywheelStressAbsorptionCapacity;
             currentFlywheelStressReleaseCapacity = newFlywheelStressReleaseCapacity;
-            bits_n_bob$syncToFlywheels();
+            bits_n_bobs$syncToFlywheels();
         }
     }
 
     @Unique
-    private void bits_n_bob$syncToFlywheels() {
+    private void bits_n_bobs$syncToFlywheels() {
         if (!bits_n_bobs$flywheelCapacitiesAllowedInServer())
             return;
 

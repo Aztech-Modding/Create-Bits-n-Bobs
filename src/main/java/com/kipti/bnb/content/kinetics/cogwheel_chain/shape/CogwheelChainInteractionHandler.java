@@ -36,10 +36,26 @@ import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 @EventBusSubscriber(Dist.CLIENT)
 public class CogwheelChainInteractionHandler {
 
-    public static BlockPos selectedController;
-    public static float selectedChainPosition;
-    public static Vec3 selectedBakedPosition;
-    public static CogwheelChainShape selectedShape;
+    private static BlockPos selectedController;
+    private static float selectedChainPosition;
+    private static Vec3 selectedBakedPosition;
+    private static CogwheelChainShape selectedShape;
+
+    public static BlockPos getSelectedController() {
+        return selectedController;
+    }
+
+    public static float getSelectedChainPosition() {
+        return selectedChainPosition;
+    }
+
+    public static Vec3 getSelectedBakedPosition() {
+        return selectedBakedPosition;
+    }
+
+    public static CogwheelChainShape getSelectedShape() {
+        return selectedShape;
+    }
 
     private static void clearSelection() {
         selectedController = null;

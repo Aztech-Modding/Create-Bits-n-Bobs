@@ -82,7 +82,7 @@ public record PartialEditCogwheelChainPacket(
             buf -> new PartialEditCogwheelChainPacket(
                     BlockPos.STREAM_CODEC.decode(buf),
                     BlockPos.STREAM_CODEC.decode(buf),
-                    Direction.values()[ByteBufCodecs.INT.decode(buf)],
+                    Direction.from3DDataValue(ByteBufCodecs.INT.decode(buf)),
                     ByteBufCodecs.INT.decode(buf),
                     ByteBufCodecs.FLOAT.decode(buf),
                     ByteBufCodecs.INT.decode(buf),
@@ -96,6 +96,11 @@ public record PartialEditCogwheelChainPacket(
 
     @Override
     public void handle(final ServerPlayer player) {
+        if (player.distanceToSqr(this.controllerPos.getX() + 0.5, this.controllerPos.getY() + 0.5, this.controllerPos.getZ() + 0.5) > PlacingCogwheelChain.MAX_CHAIN_INTERACTION_DISTANCE_SQ)
+            return;
+        if (player.distanceToSqr(this.newCogwheelPos.getX() + 0.5, this.newCogwheelPos.getY() + 0.5, this.newCogwheelPos.getZ() + 0.5) > 100)
+            return;
+
         final Level level = player.level();
         final CogwheelChainBehaviour behaviour = SuperBlockEntityBehaviour.get(level, this.controllerPos, CogwheelChainBehaviour.TYPE);
         if (behaviour == null || !behaviour.isController())

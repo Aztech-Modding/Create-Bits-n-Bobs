@@ -177,8 +177,8 @@ public class CogwheelChainType {
     }
 
     public double getCostFactor() {
-        return costFactor;
-    } //TODO: implement
+        return this.costFactor;
+    }
 
     public ChainRenderInfo getRenderType() {
         return chainRenderInfo;

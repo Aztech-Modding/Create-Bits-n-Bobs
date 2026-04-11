@@ -22,12 +22,9 @@ public class FlywheelMovementMechanics {
     /**
      * Base factor for the conversion literal kinetic energy in joules to stress units, read with {@link FlywheelMovementMechanics#getActualStressUnitsPerKeJoule()} to include config multiplier
      */
-    public static float STRESS_UNITS_PER_KE_JOULE = 8f;
+    public static final float STRESS_UNITS_PER_KE_JOULE = 8f;
 
-    /**
-     * Should be a config value too
-     */
-    public static float TRANSFER_CAPACITY_PER_ANGULAR_MASS = 5;
+    public static final float TRANSFER_CAPACITY_PER_ANGULAR_MASS = 5;
 
     public float maxAngularVelocity = (360f * 64) / (60 * 20);
     public float angularVelocity = 0;

@@ -28,6 +28,8 @@ import java.util.List;
  */
 public class CogwheelChainPathfinder {
 
+    private static final double EPSILON = 1e-6;
+
     public record PartialPathFrontierData(
             ImmutableList<PathedCogwheelNode> traversed,
             double distance,
@@ -242,7 +244,8 @@ public class CogwheelChainPathfinder {
         final Vec3 fromTangentOffset = getPathingTangentOnCog(to, from, -fromSide);
         final Vec3 toTangentOffset = getPathingTangentOnCog(from, to, toSide);
 
-        return sideAxis.multiply(diff).dot(fromTangentOffset) == 1 && upAxis.multiply(diff).dot(toTangentOffset) == -1;
+        return Math.abs(sideAxis.multiply(diff).dot(fromTangentOffset) - 1) < EPSILON
+                && Math.abs(upAxis.multiply(diff).dot(toTangentOffset) + 1) < EPSILON;
     }
 
     /*

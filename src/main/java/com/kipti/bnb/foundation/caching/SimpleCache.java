@@ -1,6 +1,5 @@
 package com.kipti.bnb.foundation.caching;
 
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -15,30 +14,29 @@ public class SimpleCache<K, V> {
     public SimpleCache(final int capacity, final Predicate<V> validator) {
         this.capacity = capacity;
 
-        // Thread-safe LRU Map
-        this.internalMap = Collections.synchronizedMap(new LinkedHashMap<>(capacity, 0.75f, true) {
+        this.internalMap = new LinkedHashMap<>(capacity, 0.75f, true) {
             @Override
             protected boolean removeEldestEntry(final Map.Entry<K, V> eldest) {
                 return size() > SimpleCache.this.capacity;
             }
-        });
+        };
         this.validator = validator;
     }
 
     public void put(final K key, final V value) {
-        internalMap.put(key, value);
+        synchronized (internalMap) {
+            internalMap.put(key, value);
+        }
     }
 
     /**
      * Get with a Validator.
      * Checks if the value is valid before returning it.
-     * * @param key The key to look up.
      *
-     * @param validator A function that returns true if the value is good, false if it is bad.
+     * @param key The key to look up.
      * @return The value if it exists AND is valid; otherwise null.
      */
     public V get(final K key) {
-        // We must synchronize to ensure atomic check-and-remove
         synchronized (internalMap) {
             final V value = internalMap.get(key);
 
@@ -46,9 +44,8 @@ public class SimpleCache<K, V> {
                 return null;
             }
 
-            // If the value fails the test (validator returns false)
             if (!validator.test(value)) {
-                internalMap.remove(key); // Auto-cleanup
+                internalMap.remove(key);
                 return null;
             }
 
@@ -57,15 +54,21 @@ public class SimpleCache<K, V> {
     }
 
     public void remove(final K key) {
-        internalMap.remove(key);
+        synchronized (internalMap) {
+            internalMap.remove(key);
+        }
     }
 
     public void clear() {
-        internalMap.clear();
+        synchronized (internalMap) {
+            internalMap.clear();
+        }
     }
 
     public int size() {
-        return internalMap.size();
+        synchronized (internalMap) {
+            return internalMap.size();
+        }
     }
 
     public void forEach(final BiConsumer<K, V> action) {

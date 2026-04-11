@@ -31,7 +31,7 @@ public class BnbPalettesVariantEntry {
     public BnbPalettesVariantEntry(final String name, final BnbPaletteStoneTypes paletteStoneVariants) {
         final ImmutableList.Builder<BlockEntry<? extends Block>> registeredBlocks = ImmutableList.builder();
         final ImmutableList.Builder<BlockEntry<? extends Block>> registeredPartials = ImmutableList.builder();
-        final NonNullSupplier<Block> baseBlock = paletteStoneVariants.baseBlock;
+        final NonNullSupplier<Block> baseBlock = paletteStoneVariants.getBaseBlock();
 
         for (final BnbPaletteBlockPattern pattern : paletteStoneVariants.variantTypes) {
             final BlockBuilder<? extends Block, CreateRegistrate> builder =

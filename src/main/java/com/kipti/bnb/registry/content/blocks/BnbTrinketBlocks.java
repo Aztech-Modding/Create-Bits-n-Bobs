@@ -5,7 +5,7 @@ import com.cake.azimuth.lang.LangDefault;
 import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.kinetics.throttle_lever.ThrottleLeverBlock;
 import com.kipti.bnb.content.trinkets.chair.ChairBlock;
-import com.kipti.bnb.content.trinkets.light.founation.LightBlock;
+import com.kipti.bnb.content.trinkets.light.foundation.LightBlock;
 import com.kipti.bnb.content.trinkets.light.headlamp.HeadlampBlock;
 import com.kipti.bnb.content.trinkets.light.headlamp.HeadlampBlockItem;
 import com.kipti.bnb.content.trinkets.light.lightbulb.LightbulbBlock;
@@ -207,10 +207,7 @@ public class BnbTrinketBlocks {
                                     ModelFile model = AssetLookup.partialBaseModel(c, p);
 
                                     int xRot = face == AttachFace.FLOOR ? 0 : face == AttachFace.WALL ? 90 : 180;
-                                    int yRot = (int) facing.toYRot();
-                                    if (face == AttachFace.CEILING) {
-                                        yRot = (yRot + 180) % 360;
-                                    }
+                                    int yRot = ((int) facing.toYRot() + 180) % 360;
 
                                     return ConfiguredModel.builder()
                                             .modelFile(model)

@@ -125,7 +125,10 @@ public class CogwheelChainBehaviourVisual extends RenderedBehaviourExtension.Beh
         }
 
         final List<ChainSegment> segments = CogwheelChainRenderGeometryBuilder.buildSegments(chain, Vec3.ZERO);
-        final double totalChainDistance = segments.stream().mapToDouble(ChainSegment::distance).sum();
+        double totalChainDistance = 0;
+        for (final ChainSegment segment : segments) {
+            totalChainDistance += segment.distance();
+        }
 
         if (totalChainDistance <= 1e-4) {
             deleteInstance();

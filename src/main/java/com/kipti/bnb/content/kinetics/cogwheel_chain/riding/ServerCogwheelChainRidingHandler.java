@@ -28,6 +28,11 @@ public class ServerCogwheelChainRidingHandler {
 			sync();
 	}
 
+	public static void reset() {
+		ridingPlayers.clear();
+		ticks = 0;
+	}
+
 	public static void tick() {
 		ticks++;
 		int before = ridingPlayers.size();
