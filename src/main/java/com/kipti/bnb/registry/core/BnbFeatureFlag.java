@@ -32,6 +32,12 @@ public enum BnbFeatureFlag {
             FeatureCategories.BLOCK, "Ability for the player to create chain drives using the flanged gear cogwheels.",
             BnbKineticBlocks.LARGE_FLANGED_COGWHEEL::get, BnbKineticBlocks.SMALL_FLANGED_COGWHEEL::get
     ),
+    GIGANTIC_COGWHEEL(
+            FeatureCategories.BLOCK,
+            "Availability of the Gigantic Cogwheel block.",
+            true,
+            BnbKineticBlocks.GIGANTIC_COGWHEEL::get
+    ),
 
     CHAIN_PULLEY(
             FeatureCategories.BLOCK,

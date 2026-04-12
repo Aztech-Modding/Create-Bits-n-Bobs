@@ -6,8 +6,8 @@ public enum BnbFeatureGroup {
             BnbFeatureFlag.COGWHEEL_CHAIN_DRIVES, BnbFeatureFlag.FLANGED_CHAIN_DRIVES, BnbFeatureFlag.CHAIN_PULLEY
     ),
     LIGHTS(
-            "Lights", "Bulk toggle for all light related features.",
-            BnbFeatureFlag.LIGHTBULB, BnbFeatureFlag.BRASS_LAMP, BnbFeatureFlag.HEADLAMP
+            "Lights", "Bulk toggle for light related features (Excluding the old brass lamp block).",
+            BnbFeatureFlag.LIGHTBULB, BnbFeatureFlag.HEADLAMP
     ),
     GIRDER_STRUTS(
             "Girder Struts",

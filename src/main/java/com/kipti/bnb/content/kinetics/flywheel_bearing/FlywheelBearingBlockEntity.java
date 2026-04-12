@@ -29,6 +29,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.AABB;
 
 import java.util.List;
 
@@ -551,5 +552,9 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
         this.sendData();
     }
 
+    @Override
+    public AABB getRenderBoundingBox() {
+        return super.getRenderBoundingBox().inflate(1);
+    }
 }
 
