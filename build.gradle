@@ -25,7 +25,12 @@ repositories {
     maven { url 'https://maven.createmod.net' }
     maven {
         name = 'azmod-maven'
-        url = uri("https://maven.azmod.net/${findProperty('azmod_repository') ?: 'releases'}")
+        url = "https://maven.azmod.net/releases"
+    }
+    
+    maven {
+        name = 'azmod-maven-snapshots'
+        url = "https://maven.azmod.net/snapshots"
     }
     // Add your extra repos from broken build
     maven { url = 'https://maven.squiddev.cc' } // CC: Tweaked
@@ -84,6 +89,8 @@ dependencies {
         exclude group: "maven.modrinth"
         exclude group: "me.fallenbreath"
     }
+
+    implementation("com.cake.autoload:autoload-neoforge-1.21.1:1.+")
 
     if (enable_cc_tweaked.toBoolean()) {
         compileOnly("cc.tweaked:cc-tweaked-$minecraft_version-core-api:$cc_tweaked_version")
