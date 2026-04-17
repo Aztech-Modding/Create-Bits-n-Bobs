@@ -38,8 +38,8 @@ public enum BnbPaletteStoneTypes {
     CRIMSITE(ADDITIONS_TO_BASE, r -> () -> AllPaletteStoneTypes.CRIMSITE.baseBlock.get(), (p) -> p.destroyTime(1.25f).mapColor(MapColor.COLOR_RED)),
     LIMESTONE(ADDITIONS_TO_BASE, r -> () -> AllPaletteStoneTypes.LIMESTONE.baseBlock.get(), (p) -> p.destroyTime(1.25f).mapColor(MapColor.SAND)),
     OCHRUM(ADDITIONS_TO_BASE, r -> () -> AllPaletteStoneTypes.OCHRUM.baseBlock.get(), (p) -> p.destroyTime(1.25f).mapColor(MapColor.TERRACOTTA_YELLOW)),
-    SCORIA(ADDITIONS_TO_BASE, r -> () -> AllPaletteStoneTypes.SCORIA.baseBlock.get(), (p) -> p.mapColor(MapColor.COLOR_BROWN)),
-    SCORCHIA(ADDITIONS_TO_BASE, r -> () -> AllPaletteStoneTypes.SCORCHIA.baseBlock.get(), (p) -> p.mapColor(MapColor.TERRACOTTA_GRAY)),
+    SCORIA(ADDITIONS_TO_BASE, r -> () -> AllPaletteStoneTypes.SCORIA.baseBlock.get(), (p) -> p.destroyTime(1.25f).mapColor(MapColor.COLOR_BROWN)),
+    SCORCHIA(ADDITIONS_TO_BASE, r -> () -> AllPaletteStoneTypes.SCORCHIA.baseBlock.get(), (p) -> p.destroyTime(1.25f).mapColor(MapColor.TERRACOTTA_GRAY)),
     VERIDIUM(ADDITIONS_TO_BASE, r -> () -> AllPaletteStoneTypes.VERIDIUM.baseBlock.get(), (p) -> p.destroyTime(1.25f).mapColor(MapColor.WARPED_NYLIUM)),
 
     ;
