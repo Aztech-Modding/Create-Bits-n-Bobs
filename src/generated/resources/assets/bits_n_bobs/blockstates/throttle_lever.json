@@ -1,108 +1,55 @@
 {
   "variants": {
-    "face=ceiling,facing=east,has_shaft=false": {
+    "face=ceiling,facing=east": {
       "model": "bits_n_bobs:block/throttle_lever/block",
       "x": 180,
       "y": 90
     },
-    "face=ceiling,facing=east,has_shaft=true": {
-      "model": "bits_n_bobs:block/throttle_lever/block_shaft",
-      "x": 180,
-      "y": 90
-    },
-    "face=ceiling,facing=north,has_shaft=false": {
+    "face=ceiling,facing=north": {
       "model": "bits_n_bobs:block/throttle_lever/block",
       "x": 180
     },
-    "face=ceiling,facing=north,has_shaft=true": {
-      "model": "bits_n_bobs:block/throttle_lever/block_shaft",
-      "x": 180
-    },
-    "face=ceiling,facing=south,has_shaft=false": {
+    "face=ceiling,facing=south": {
       "model": "bits_n_bobs:block/throttle_lever/block",
       "x": 180,
       "y": 180
     },
-    "face=ceiling,facing=south,has_shaft=true": {
-      "model": "bits_n_bobs:block/throttle_lever/block_shaft",
-      "x": 180,
-      "y": 180
-    },
-    "face=ceiling,facing=west,has_shaft=false": {
+    "face=ceiling,facing=west": {
       "model": "bits_n_bobs:block/throttle_lever/block",
       "x": 180,
       "y": 270
     },
-    "face=ceiling,facing=west,has_shaft=true": {
-      "model": "bits_n_bobs:block/throttle_lever/block_shaft",
-      "x": 180,
-      "y": 270
-    },
-    "face=floor,facing=east,has_shaft=false": {
+    "face=floor,facing=east": {
       "model": "bits_n_bobs:block/throttle_lever/block",
       "y": 270
     },
-    "face=floor,facing=east,has_shaft=true": {
-      "model": "bits_n_bobs:block/throttle_lever/block_shaft",
-      "y": 270
-    },
-    "face=floor,facing=north,has_shaft=false": {
+    "face=floor,facing=north": {
       "model": "bits_n_bobs:block/throttle_lever/block",
       "y": 180
     },
-    "face=floor,facing=north,has_shaft=true": {
-      "model": "bits_n_bobs:block/throttle_lever/block_shaft",
-      "y": 180
-    },
-    "face=floor,facing=south,has_shaft=false": {
+    "face=floor,facing=south": {
       "model": "bits_n_bobs:block/throttle_lever/block"
     },
-    "face=floor,facing=south,has_shaft=true": {
-      "model": "bits_n_bobs:block/throttle_lever/block_shaft"
-    },
-    "face=floor,facing=west,has_shaft=false": {
+    "face=floor,facing=west": {
       "model": "bits_n_bobs:block/throttle_lever/block",
       "y": 90
     },
-    "face=floor,facing=west,has_shaft=true": {
-      "model": "bits_n_bobs:block/throttle_lever/block_shaft",
-      "y": 90
-    },
-    "face=wall,facing=east,has_shaft=false": {
+    "face=wall,facing=east": {
       "model": "bits_n_bobs:block/throttle_lever/block",
       "x": 90,
       "y": 270
     },
-    "face=wall,facing=east,has_shaft=true": {
-      "model": "bits_n_bobs:block/throttle_lever/block_shaft",
-      "x": 90,
-      "y": 270
-    },
-    "face=wall,facing=north,has_shaft=false": {
+    "face=wall,facing=north": {
       "model": "bits_n_bobs:block/throttle_lever/block",
       "x": 90,
       "y": 180
     },
-    "face=wall,facing=north,has_shaft=true": {
-      "model": "bits_n_bobs:block/throttle_lever/block_shaft",
-      "x": 90,
-      "y": 180
-    },
-    "face=wall,facing=south,has_shaft=false": {
+    "face=wall,facing=south": {
       "model": "bits_n_bobs:block/throttle_lever/block",
       "x": 90
     },
-    "face=wall,facing=south,has_shaft=true": {
-      "model": "bits_n_bobs:block/throttle_lever/block_shaft",
-      "x": 90
-    },
-    "face=wall,facing=west,has_shaft=false": {
+    "face=wall,facing=west": {
       "model": "bits_n_bobs:block/throttle_lever/block",
-      "x": 90,
-      "y": 90
-    },
-    "face=wall,facing=west,has_shaft=true": {
-      "model": "bits_n_bobs:block/throttle_lever/block_shaft",
       "x": 90,
       "y": 90
     }
