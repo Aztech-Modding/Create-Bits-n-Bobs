@@ -1,9 +1,11 @@
 package com.kipti.bnb.registry.content.blocks;
 
+import com.cake.azimuth.lang.IncludeLangDefaults;
+import com.cake.azimuth.lang.LangDefault;
 import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.kinetics.throttle_lever.ThrottleLeverBlock;
 import com.kipti.bnb.content.trinkets.chair.ChairBlock;
-import com.kipti.bnb.content.trinkets.light.founation.LightBlock;
+import com.kipti.bnb.content.trinkets.light.foundation.LightBlock;
 import com.kipti.bnb.content.trinkets.light.headlamp.HeadlampBlock;
 import com.kipti.bnb.content.trinkets.light.headlamp.HeadlampBlockItem;
 import com.kipti.bnb.content.trinkets.light.lightbulb.LightbulbBlock;
@@ -54,6 +56,25 @@ import static com.simibubi.create.api.behaviour.movement.MovementBehaviour.movem
 import static com.simibubi.create.foundation.data.ModelGen.customItemModel;
 import static com.simibubi.create.foundation.data.TagGen.*;
 
+@IncludeLangDefaults({
+        @LangDefault(key = "block.bits_n_bobs.headlamp.tooltip.summary", value = "Can be dyed and placed _multiple times in same block_. Useful for trains or fancy signage too!"),
+        @LangDefault(key = "block.bits_n_bobs.headlamp.tooltip.condition1", value = "When R-Clicked with empty hand"),
+        @LangDefault(key = "block.bits_n_bobs.headlamp.tooltip.behaviour1", value = "Toggles if the lightbulb should be _always on_, irregardless of redstone power."),
+
+        @LangDefault(key = "block.bits_n_bobs.brass_lamp.tooltip.summary", value = "_It's not just a lightbulb_, this one's got a fancy brass casing."),
+        @LangDefault(key = "block.bits_n_bobs.brass_lamp.tooltip.condition1", value = "When R-Clicked with empty hand"),
+        @LangDefault(key = "block.bits_n_bobs.brass_lamp.tooltip.behaviour1", value = "Toggles if the lightbulb should be _always on_, irregardless of redstone power."),
+
+        @LangDefault(key = "block.bits_n_bobs.lightbulb.tooltip.summary", value = "_It's just a lightbulb_, what do you expect."),
+        @LangDefault(key = "block.bits_n_bobs.lightbulb.tooltip.condition1", value = "When R-Clicked with Wrench"),
+        @LangDefault(key = "block.bits_n_bobs.lightbulb.tooltip.behaviour1", value = "Toggles the lightbulb _cage variant_."),
+        @LangDefault(key = "block.bits_n_bobs.lightbulb.tooltip.condition2", value = "When R-Clicked with empty hand"),
+        @LangDefault(key = "block.bits_n_bobs.lightbulb.tooltip.behaviour2", value = "Toggles if the lightbulb should be _always on_, irregardless of redstone power."),
+
+        @LangDefault(key = "block.bits_n_bobs.chair.tooltip.summary", value = "Sit yourself down and enjoy the ride! Will anchor a player onto a moving _contraption_. Even _fancier than a seat_ for static furniture too! Comes in a variety of colours. Will form _corners_ and _flat backs_ when placed against other chairs and blocks accordingly"),
+        @LangDefault(key = "block.bits_n_bobs.chair.tooltip.condition1", value = "Right click on Chair"),
+        @LangDefault(key = "block.bits_n_bobs.chair.tooltip.behaviour1", value = "Sits the player on the _Chair_. Press L-shift to leave the _Chair_."),
+})
 public class BnbTrinketBlocks {
     public static final BlockEntry<NixieBoardBlockNixie> NIXIE_BOARD = REGISTRATE.block(
                     "nixie_board",
@@ -186,10 +207,7 @@ public class BnbTrinketBlocks {
                                     ModelFile model = AssetLookup.partialBaseModel(c, p);
 
                                     int xRot = face == AttachFace.FLOOR ? 0 : face == AttachFace.WALL ? 90 : 180;
-                                    int yRot = (int) facing.toYRot();
-                                    if (face == AttachFace.CEILING) {
-                                        yRot = (yRot + 180) % 360;
-                                    }
+                                    int yRot = ((int) facing.toYRot() + 180) % 360;
 
                                     return ConfiguredModel.builder()
                                             .modelFile(model)

@@ -1,5 +1,7 @@
 package com.kipti.bnb.registry.content.blocks.deco;
 
+import com.cake.azimuth.lang.IncludeLangDefaults;
+import com.cake.azimuth.lang.LangDefault;
 import com.cake.struts.content.StrutModelBuilder;
 import com.cake.struts.content.block.StrutBlockItem;
 import com.kipti.bnb.CreateBitsnBobs;
@@ -9,16 +11,12 @@ import com.kipti.bnb.content.decoration.grating.GratingPanelBlockItem;
 import com.kipti.bnb.content.decoration.grating.GratingPanelCTBehaviour;
 import com.kipti.bnb.content.decoration.strut.BnbStrutBlock;
 import com.kipti.bnb.content.decoration.strut.CableStrutBlock;
-import com.kipti.bnb.content.decoration.truss.TrussBlock;
-import com.kipti.bnb.content.decoration.truss.TrussBlockItem;
-import com.kipti.bnb.content.decoration.truss.TrussBlockStateGen;
-import com.kipti.bnb.content.decoration.truss.TrussPipeBlock;
-import com.kipti.bnb.content.decoration.truss.TrussEncasedShaftBlock;
+import com.kipti.bnb.content.decoration.truss.*;
 import com.kipti.bnb.content.decoration.weathered_girder.WeatheredConnectedGirderModel;
 import com.kipti.bnb.content.decoration.weathered_girder.WeatheredGirderBlock;
 import com.kipti.bnb.content.decoration.weathered_girder.WeatheredGirderBlockStateGenerator;
 import com.kipti.bnb.content.decoration.weathered_girder.WeatheredGirderEncasedShaftBlock;
-import com.kipti.bnb.foundation.client.BnbBlockStateGen;
+import com.kipti.bnb.foundation.client.block_state_gen.BnbBlockStateGen;
 import com.kipti.bnb.registry.client.BnbSpriteShifts;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllTags;
@@ -43,6 +41,10 @@ import static com.simibubi.create.foundation.data.CreateRegistrate.connectedText
 import static com.simibubi.create.foundation.data.ModelGen.customItemModel;
 import static com.simibubi.create.foundation.data.TagGen.pickaxeOnly;
 
+@IncludeLangDefaults({
+        @LangDefault(key = "block.bits_n_bobs.girder_strut.tooltip.summary", value = "A type of girder used to span a distance _between two anchor points_."),
+        @LangDefault(key = "message.bits_n_bobs.girder_strut.missing_anchors", value = "You need %s more Girder Struts"),
+})
 public class BnbDecorativeBlocks {
 
     public static final BlockEntry<WeatheredGirderBlock> WEATHERED_METAL_GIRDER = REGISTRATE.block(

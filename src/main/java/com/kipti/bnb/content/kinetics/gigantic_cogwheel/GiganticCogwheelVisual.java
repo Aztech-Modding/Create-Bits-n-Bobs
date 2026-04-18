@@ -33,10 +33,10 @@ public class GiganticCogwheelVisual extends KineticBlockEntityVisual<GiganticCog
     }
 
     private void setupInstance() {
-        this.lastMaterial = this.blockEntity.material;
+        this.lastMaterial = this.blockEntity.getMaterial();
         this.rotatingModel = this.instancerProvider().instancer(
                         AllInstanceTypes.ROTATING,
-                        MODEL_CACHE.get(new ModelKey(this.blockEntity.material))
+                        MODEL_CACHE.get(new ModelKey(this.blockEntity.getMaterial()))
                 )
                 .createInstance();
         this.rotatingModel.setup(this.blockEntity)
@@ -48,7 +48,7 @@ public class GiganticCogwheelVisual extends KineticBlockEntityVisual<GiganticCog
 
     @Override
     public void update(final float pt) {
-        if (this.lastMaterial != this.blockEntity.material) {
+        if (this.lastMaterial != this.blockEntity.getMaterial()) {
             this.rotatingModel.delete();
             this.setupInstance();
         } else {

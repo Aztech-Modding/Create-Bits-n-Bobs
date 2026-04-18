@@ -1,6 +1,7 @@
 package com.kipti.bnb.content.trinkets.light.headlamp;
 
-import com.kipti.bnb.content.trinkets.light.founation.LightBlock;
+import com.kipti.bnb.CreateBitsnBobs;
+import com.kipti.bnb.content.trinkets.light.foundation.LightBlock;
 import com.kipti.bnb.content.trinkets.light.headlamp.rendering.HeadlampConstants;
 import com.kipti.bnb.content.trinkets.light.lightbulb.LightbulbBlock;
 import com.kipti.bnb.foundation.BnbLang;
@@ -38,8 +39,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class HeadlampBlockEntity extends SmartBlockEntity implements SpecialBlockEntityItemRequirement, IHaveGoggleInformation {
 
@@ -56,8 +60,8 @@ public class HeadlampBlockEntity extends SmartBlockEntity implements SpecialBloc
     private VoxelShape cachedShape;
     private long cachedShapeKey = Long.MIN_VALUE;
 
-    public AbstractComputerBehaviour computerBehaviour;
-    public @Nullable CCLightAddressing addressing;
+    private AbstractComputerBehaviour computerBehaviour;
+    private @Nullable CCLightAddressing addressing;
 
     public HeadlampBlockEntity(final BlockEntityType<?> type, final BlockPos pos, final BlockState state) {
         super(type, pos, state);
@@ -68,9 +72,13 @@ public class HeadlampBlockEntity extends SmartBlockEntity implements SpecialBloc
             event.registerBlockEntity(
                     PeripheralCapability.get(),
                     BnbBlockEntities.HEADLAMP.get(),
-                    (be, context) -> be.computerBehaviour.getPeripheralCapability()
+                    (be, context) -> be.getComputerBehaviour().getPeripheralCapability()
             );
         }
+    }
+
+    public AbstractComputerBehaviour getComputerBehaviour() {
+        return this.computerBehaviour;
     }
 
     @Override
@@ -103,11 +111,6 @@ public class HeadlampBlockEntity extends SmartBlockEntity implements SpecialBloc
             }
         }
         return placements;
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
     }
 
     /**
@@ -159,45 +162,29 @@ public class HeadlampBlockEntity extends SmartBlockEntity implements SpecialBloc
                     return;
                 }
             }
-            tryExtendPlaceDyeColorIntoFullBlock(
-                    dyeColor, getBlockState().getValue(HeadlampBlock.FACING), new ArrayList<>(List.of(getBlockPos())), new ArrayList<>()
-            );
-            return; // No change in color
+            tryExtendPlaceDyeColorIntoFullBlock(dyeColor, getBlockState().getValue(HeadlampBlock.FACING));
+            return;
         }
         this.activePlacements[index] = i; // 0 - no color, 1 - no dye, 2-17 dye colors
         sendData();
     }
 
-    private void tryExtendPlaceDyeColorIntoFullBlock(final DyeColor dyeColor, final Direction facing, final List<BlockPos> frontier, final List<BlockPos> visited) {
-        if (frontier.isEmpty()) {
-            return; // No frontier to process
-        }
-        if (visited.size() > 32) {
-            return;
-        }
-        final BlockPos currentPos = frontier.remove(0);
-        if (visited.contains(currentPos)) {
-            tryExtendPlaceDyeColorIntoFullBlock(dyeColor, facing, frontier, visited);
-            return; // Already visited this relativePos
-        }
-        visited.add(currentPos);
+    private void tryExtendPlaceDyeColorIntoFullBlock(final DyeColor dyeColor, final Direction facing) {
+        ArrayDeque<BlockPos> queue = new ArrayDeque<>(List.of(getBlockPos()));
+        Set<BlockPos> visited = new HashSet<>();
+        while (!queue.isEmpty() && visited.size() <= 32) {
+            BlockPos current = queue.poll();
+            if (!visited.add(current)) continue;
 
-        if (level.getBlockEntity(currentPos) instanceof final HeadlampBlockEntity otherHeadlamp) {
-            if (otherHeadlamp.placeDyeColorIntoFullBlock(dyeColor)) {
-                return;
+            if (!(level.getBlockEntity(current) instanceof HeadlampBlockEntity otherHeadlamp)) continue;
+            if (otherHeadlamp.placeDyeColorIntoFullBlock(dyeColor)) continue;
+
+            for (final Direction direction : Direction.values()) {
+                if (direction.getAxis() != facing.getAxis()) {
+                    queue.add(current.relative(direction));
+                }
             }
         }
-
-        // Check adjacent blocks
-        final List<Direction> directions = List.of(
-                Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST, Direction.UP, Direction.DOWN
-        ).stream().filter(d -> d.getAxis() != facing.getAxis()).toList();
-        for (final Direction direction : directions) {
-            frontier.add(currentPos.relative(direction));
-        }
-
-        // Recursion :D
-        tryExtendPlaceDyeColorIntoFullBlock(dyeColor, facing, frontier, visited);
     }
 
     public boolean removeNearestHeadlamp(final Vec3 subtract, final Direction value) {
@@ -244,16 +231,18 @@ public class HeadlampBlockEntity extends SmartBlockEntity implements SpecialBloc
         if (tag.contains("headlampPlacements", 7)) {
             final byte[] placements = tag.getByteArray("headlampPlacements");
             if (placements.length != activePlacements.length) {
-                throw new IllegalStateException("Active placements length mismatch: expected " + activePlacements.length + ", got " + placements.length);
+                CreateBitsnBobs.LOGGER.warn("Headlamp placements length mismatch: expected {}, got {}. Recovering with partial copy.", activePlacements.length, placements.length);
+                java.util.Arrays.fill(activePlacements, (byte) 0);
             }
-            System.arraycopy(placements, 0, activePlacements, 0, placements.length);
+            System.arraycopy(placements, 0, activePlacements, 0, Math.min(placements.length, activePlacements.length));
         } else if (tag.contains("activePlacements", 11)) {
             // Legacy migration: convert int[] to byte[]
             final int[] legacyPlacements = tag.getIntArray("activePlacements");
             if (legacyPlacements.length != activePlacements.length) {
-                throw new IllegalStateException("Active placements length mismatch: expected " + activePlacements.length + ", got " + legacyPlacements.length);
+                CreateBitsnBobs.LOGGER.warn("Legacy headlamp placements length mismatch: expected {}, got {}. Recovering with partial copy.", activePlacements.length, legacyPlacements.length);
+                java.util.Arrays.fill(activePlacements, (byte) 0);
             }
-            for (int i = 0; i < legacyPlacements.length; i++) {
+            for (int i = 0; i < Math.min(legacyPlacements.length, activePlacements.length); i++) {
                 activePlacements[i] = (byte) legacyPlacements[i];
             }
         } else {
@@ -497,7 +486,7 @@ public class HeadlampBlockEntity extends SmartBlockEntity implements SpecialBloc
 
     @Override
     public ItemRequirement getRequiredItems(final BlockState state) {
-        int numberOfHeadlamps = -1;
+        int numberOfHeadlamps = -1; //Theres already 1 headlamp in the block, so start at -1
         for (final byte placement : activePlacements)
             if (placement != 0)
                 numberOfHeadlamps++;

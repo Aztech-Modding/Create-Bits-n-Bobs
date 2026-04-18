@@ -47,7 +47,7 @@ public enum BnbPaletteStoneTypes {
     private final Function<CreateRegistrate, NonNullSupplier<Block>> factory;
     private BnbPalettesVariantEntry variants;
 
-    public NonNullSupplier<Block> baseBlock;
+    private NonNullSupplier<Block> baseBlock;
     public final NonNullFunction<BlockBuilder<? extends Block, CreateRegistrate>, BlockBuilder<? extends Block, CreateRegistrate>> modifyProperties;
     public final BnbPaletteBlockPattern[] variantTypes;
     public TagKey<Item> materialTag;

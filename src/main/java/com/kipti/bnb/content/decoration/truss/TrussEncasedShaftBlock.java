@@ -55,7 +55,7 @@ public class TrussEncasedShaftBlock extends BnbEncasedShaftBlock {
                                               final @NotNull LevelAccessor level,
                                               final @NotNull BlockPos pos,
                                               final @NotNull BlockPos neighborPos) {
-        final Direction positiveAxis = Direction.get(Direction.AxisDirection.POSITIVE, state.getValue(AXIS));
+        final Direction positiveAxis = Direction.get(Direction.AxisDirection.POSITIVE, state.getValue(TRUSS_AXIS));
         if (direction == positiveAxis) {
             final boolean isAlternating = neighborState.hasProperty(ALTERNATING) && neighborState.getValue(ALTERNATING);
             return state.setValue(ALTERNATING, !isAlternating);
@@ -65,8 +65,10 @@ public class TrussEncasedShaftBlock extends BnbEncasedShaftBlock {
 
     @Override
     public @NotNull BlockState getStateForPlacement(final @NotNull BlockPlaceContext context) {
-        final BlockState state = super.getStateForPlacement(context);
-        final Direction positiveAxis = Direction.get(Direction.AxisDirection.POSITIVE, state.getValue(AXIS));
+        BlockState state = super.getStateForPlacement(context);
+        final Direction.Axis trussAxis = context.getNearestLookingDirection().getAxis();
+        state = state.setValue(TRUSS_AXIS, trussAxis);
+        final Direction positiveAxis = Direction.get(Direction.AxisDirection.POSITIVE, trussAxis);
         final BlockState neighborState = context.getLevel().getBlockState(context.getClickedPos().relative(positiveAxis));
         final boolean isAlternating = neighborState.hasProperty(ALTERNATING) && neighborState.getValue(ALTERNATING);
         return state.setValue(ALTERNATING, !isAlternating);

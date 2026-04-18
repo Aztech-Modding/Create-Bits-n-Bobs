@@ -1,4 +1,4 @@
-package com.kipti.bnb.foundation.client;
+package com.kipti.bnb.foundation.client.block_state_gen;
 
 import com.kipti.bnb.content.decoration.truss.TrussBlock;
 import com.tterrag.registrate.providers.DataGenContext;

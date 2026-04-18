@@ -60,7 +60,7 @@ public class GiganticCogwheelRenderer extends KineticBlockEntityRenderer<Giganti
 
 	@Override
 	protected SuperByteBuffer getRotatedModel(GiganticCogwheelBlockEntity be, BlockState state) {
-		ModelKey key = new ModelKey(state, be.material);
+		ModelKey key = new ModelKey(state, be.getMaterial());
 		return SuperByteBufferCache.getInstance().get(GIGANTIC_COGWHEEL_CACHE, key, () -> {
 			BakedModel model = generateModel(key.material());
 			Direction dir = Direction.fromAxisAndDirection(state.getValue(RotatedPillarKineticBlock.AXIS), AxisDirection.POSITIVE);

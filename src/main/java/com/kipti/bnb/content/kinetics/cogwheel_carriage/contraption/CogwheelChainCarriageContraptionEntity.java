@@ -66,6 +66,8 @@ public class CogwheelChainCarriageContraptionEntity extends OrientedContraptionE
             this.tickServer();
         }
 
+        if (this.isRemoved()) return;
+
         if (!this.getAttachment().isValid(this.level())) return;
 
         this.tickCommon();
@@ -211,7 +213,7 @@ public class CogwheelChainCarriageContraptionEntity extends OrientedContraptionE
                                    final HolderLookup.Provider registries,
                                    final boolean spawnPacket) {
         super.writeAdditional(compound, registries, spawnPacket);
-        compound.putDouble("ChainAttachmentDist", this.getAttachment().getDist());
+        compound.putFloat("ChainAttachmentDist", this.getAttachment().getDist());
     }
 
     @Override

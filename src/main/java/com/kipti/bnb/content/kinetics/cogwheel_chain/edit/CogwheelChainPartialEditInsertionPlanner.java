@@ -73,8 +73,8 @@ public class CogwheelChainPartialEditInsertionPlanner {
         if (rebuiltChain.maxBounds() > PlacingCogwheelChain.MAX_CHAIN_BOUNDS)
             return null;
 
-        final int oldCost = resolvedSegment.existingChain().getChainsRequiredInLoop();
-        final int newCost = rebuiltChain.getChainsRequiredInLoop();
+        final int oldCost = resolvedSegment.existingChain().getChainsRequiredInLoop(editContext.chainType());
+        final int newCost = rebuiltChain.getChainsRequiredInLoop(editContext.chainType());
         return new CogwheelChainPartialEditInsertionPlan(
                 resolvedSegment.startNode(),
                 resolvedSegment.endNode(),

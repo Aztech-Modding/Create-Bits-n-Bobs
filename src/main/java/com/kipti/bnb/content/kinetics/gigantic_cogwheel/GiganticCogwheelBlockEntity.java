@@ -31,12 +31,17 @@ import java.util.List;
  */
 public class GiganticCogwheelBlockEntity extends KineticBlockEntity {
 
-    public BlockState material;
+    private BlockState material;
+    private boolean reattached;
 
     public GiganticCogwheelBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         this.material = Blocks.SPRUCE_PLANKS.defaultBlockState();
         this.setLazyTickRate(20);
+    }
+
+    public BlockState getMaterial() {
+        return this.material;
     }
 
     public ItemInteractionResult applyMaterialIfValid(ItemStack stack) {
@@ -68,24 +73,24 @@ public class GiganticCogwheelBlockEntity extends KineticBlockEntity {
     public void lazyTick() {
         super.lazyTick();
         if (this.level == null || this.level.isClientSide) return;
-        final BlockState state = this.getBlockState();
-        if (!(state.getBlock() instanceof final GiganticCogwheelBlock gigantic)) return;
-        final Direction.Axis axis = gigantic.getRotationAxis(state);
-        for (final Direction dir : Direction.values()) {
+        if (this.reattached) return;
+        if (this.hasSource()) return;
+        BlockState state = this.getBlockState();
+        if (!(state.getBlock() instanceof GiganticCogwheelBlock gigantic)) return;
+        Direction.Axis axis = gigantic.getRotationAxis(state);
+        for (Direction dir : Direction.values()) {
             if (dir.getAxis() == axis) continue;
-            final BlockPos targetPos = this.worldPosition.relative(dir, 3);
-            final BlockState targetState = this.level.getBlockState(targetPos);
-            if (!(targetState.getBlock() instanceof final ICogWheel cog)) continue;
+            BlockPos targetPos = this.worldPosition.relative(dir, 3);
+            BlockState targetState = this.level.getBlockState(targetPos);
+            if (!(targetState.getBlock() instanceof ICogWheel cog)) continue;
             if (cog.isLargeCog()) continue;
             if (cog.getRotationAxis(targetState) != axis) continue;
-            final BlockEntity be = this.level.getBlockEntity(targetPos);
-            if (be instanceof final KineticBlockEntity kbe) {
-                if (kbe.hasSource() && !this.hasSource()) {
-                    kbe.detachKinetics();
-                    kbe.updateSpeed = true;
-                    kbe.attachKinetics();
-                    return;
-                }
+            BlockEntity be = this.level.getBlockEntity(targetPos);
+            if (be instanceof KineticBlockEntity kbe && kbe.hasSource()) {
+                this.updateSpeed = true;
+                this.attachKinetics();
+                this.reattached = true;
+                return;
             }
         }
     }

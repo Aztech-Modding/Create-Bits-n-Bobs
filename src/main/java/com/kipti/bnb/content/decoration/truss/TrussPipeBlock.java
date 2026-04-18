@@ -35,6 +35,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
@@ -112,7 +113,8 @@ public class TrussPipeBlock extends FluidPipeBlock implements EncasedBlock, Spec
                                final BlockHitResult ray) {
         DyeableTransitionHelper.saveCurrentDye(level, pos);
         FluidTransportBehaviour.cacheFlows(level, pos);
-        BlockState encased = EncasedPipeBlock.transferSixWayProperties(state, this.defaultBlockState());
+        BlockState encased = EncasedPipeBlock.transferSixWayProperties(state, this.defaultBlockState())
+                .setValue(BlockStateProperties.WATERLOGGED, state.getValue(BlockStateProperties.WATERLOGGED));
         final Direction.Axis trussAxis = player.getNearestViewDirection().getAxis();
         encased = encased.setValue(TRUSS_AXIS, trussAxis);
         final Direction positiveAxis = Direction.get(Direction.AxisDirection.POSITIVE, trussAxis);

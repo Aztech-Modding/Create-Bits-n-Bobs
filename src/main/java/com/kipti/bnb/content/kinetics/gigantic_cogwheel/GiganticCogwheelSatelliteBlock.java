@@ -89,11 +89,16 @@ public class GiganticCogwheelSatelliteBlock extends DirectionalBlock implements 
     }
 
     public static BlockPos getCenterPos(BlockGetter level, BlockPos pos, BlockState state) {
+        return getCenterPos(level, pos, state, 3);
+    }
+
+    private static BlockPos getCenterPos(BlockGetter level, BlockPos pos, BlockState state, int maxDepth) {
         Direction facing = state.getValue(FACING);
         BlockPos next = pos.relative(facing);
+        if (maxDepth <= 0) return next;
         BlockState nextState = level.getBlockState(next);
         if (nextState.getBlock() instanceof GiganticCogwheelSatelliteBlock)
-            return getCenterPos(level, next, nextState);
+            return getCenterPos(level, next, nextState, maxDepth - 1);
         return next;
     }
 

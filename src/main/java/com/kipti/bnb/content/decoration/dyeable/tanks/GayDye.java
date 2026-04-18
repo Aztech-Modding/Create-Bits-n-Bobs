@@ -27,12 +27,14 @@ public class GayDye {
             });
     private static final DyeColor[] TRANS_EVEN =
             reverse(new DyeColor[]{
+                    DyeColor.PINK,
                     DyeColor.WHITE,
+                    DyeColor.PINK,
                     DyeColor.LIGHT_BLUE,
                     DyeColor.PINK,
                     DyeColor.WHITE,
-                    DyeColor.LIGHT_BLUE,
                     DyeColor.PINK,
+                    DyeColor.LIGHT_BLUE,
             });
     private static final DyeColor[] MAYBE_SO_MUCH_AS_BISEXUAL =
             reverse(new DyeColor[]{

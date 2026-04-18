@@ -151,4 +151,3 @@
 # 1.21.1-1.0.0
 - Changes:
     - Belts can be right-clicked with glow ink sacs to make them glow
-    - TODO: all the other ones

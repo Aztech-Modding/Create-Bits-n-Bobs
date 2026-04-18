@@ -13,8 +13,8 @@ import net.minecraft.world.entity.player.Player;
 
 public class ServerCogwheelChainRidingHandler {
 
-	public static Object2IntMap<UUID> ridingPlayers = new Object2IntOpenHashMap<>();
-	public static int ticks;
+	private static final Object2IntMap<UUID> ridingPlayers = new Object2IntOpenHashMap<>();
+	private static int ticks;
 
 	public static void handleTTLPacket(Player player) {
 		int count = ridingPlayers.size();
@@ -26,6 +26,11 @@ public class ServerCogwheelChainRidingHandler {
 	public static void handleStopRidingPacket(Player player) {
 		if (ridingPlayers.removeInt(player.getUUID()) != 0)
 			sync();
+	}
+
+	public static void reset() {
+		ridingPlayers.clear();
+		ticks = 0;
 	}
 
 	public static void tick() {
@@ -42,12 +47,12 @@ public class ServerCogwheelChainRidingHandler {
 			}
 		}
 		int after = ridingPlayers.size();
-		if (ticks % 10 != 0 && before == after)
+		if (Math.floorMod(ticks, 10) != 0 && before == after)
 			return;
 		sync();
 	}
 
-	public static void sync() {
+	private static void sync() {
 		CatnipServices.NETWORK.sendToAllClients(new CogwheelChainRidingBroadcastPacket(ridingPlayers.keySet()));
 	}
 }

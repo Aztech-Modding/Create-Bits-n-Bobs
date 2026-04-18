@@ -1,6 +1,6 @@
 package com.kipti.bnb.content.trinkets.light.headlamp;
 
-import com.kipti.bnb.content.trinkets.light.founation.LightBlock;
+import com.kipti.bnb.content.trinkets.light.foundation.LightBlock;
 import com.kipti.bnb.registry.client.BnbShapes;
 import com.kipti.bnb.registry.content.BnbBlockEntities;
 import com.kipti.bnb.registry.content.blocks.BnbTrinketBlocks;
@@ -190,11 +190,6 @@ public class HeadlampBlock extends LightBlock implements IBE<HeadlampBlockEntity
             return headlampBlockEntity.canPlaceHeadlampIntoBlock(location.subtract(pos.getCenter()), state.getValue(FACING));
         }
         return super.canBeReplaced(state, useContext);
-    }
-
-    @Override
-    protected @NotNull VoxelShape getVisualShape(final @NotNull BlockState state, final @NotNull BlockGetter level, final @NotNull BlockPos pos, final @NotNull CollisionContext context) {
-        return super.getVisualShape(state, level, pos, context);
     }
 
     @Override

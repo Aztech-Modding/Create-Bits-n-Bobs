@@ -1,5 +1,7 @@
 package com.kipti.bnb;
 
+import com.cake.azimuth.lang.IncludeLangDefaults;
+import com.cake.azimuth.lang.LangDefault;
 import com.cake.azimuth.registration.BehaviourApplicators;
 import com.cake.azimuth.registration.VisualWrapperInterest;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.BnbCogwheelChainTypes;
@@ -34,6 +36,10 @@ import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(CreateBitsnBobs.MOD_ID)
+@IncludeLangDefaults({
+        @LangDefault(key = "tab.bits_n_bobs.base", value = CreateBitsnBobs.TAB_NAME),
+        @LangDefault(key = "tab.bits_n_bobs.deco", value = CreateBitsnBobs.DECO_NAME),
+})
 public class CreateBitsnBobs {
 
     public static final String MOD_ID = "bits_n_bobs";

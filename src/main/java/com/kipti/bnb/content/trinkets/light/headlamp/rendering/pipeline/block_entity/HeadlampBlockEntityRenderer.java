@@ -1,6 +1,6 @@
 package com.kipti.bnb.content.trinkets.light.headlamp.rendering.pipeline.block_entity;
 
-import com.kipti.bnb.content.trinkets.light.founation.LightBlock;
+import com.kipti.bnb.content.trinkets.light.foundation.LightBlock;
 import com.kipti.bnb.content.trinkets.light.headlamp.HeadlampBlock;
 import com.kipti.bnb.content.trinkets.light.headlamp.HeadlampBlockEntity;
 import com.mojang.blaze3d.vertex.PoseStack;

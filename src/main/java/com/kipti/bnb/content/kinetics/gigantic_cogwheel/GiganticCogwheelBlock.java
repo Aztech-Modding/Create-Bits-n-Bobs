@@ -148,7 +148,7 @@ public class GiganticCogwheelBlock extends RotatedPillarKineticBlock
                     continue;
 
                 if (!existing.canBeReplaced()) {
-                    level.destroyBlock(pos, false);
+                    level.destroyBlock(pos, true);
                     return;
                 }
 

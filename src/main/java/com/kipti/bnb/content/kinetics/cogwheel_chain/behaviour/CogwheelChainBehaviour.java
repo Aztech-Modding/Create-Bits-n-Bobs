@@ -23,7 +23,6 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.event.level.BlockEvent;
@@ -119,9 +118,9 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
 
     @Override
     public ItemRequirement getRequiredItems(final BlockState state) {
-        return this.isController() ? new ItemRequirement(
+        return this.isController() && this.controlledChain != null ? new ItemRequirement(
                 ItemRequirement.ItemUseType.CONSUME,
-                Blocks.CHAIN.asItem().getDefaultInstance().copyWithCount(this.controlledChain != null ? this.controlledChain.getChainsRequired() : 0)
+                this.controlledChain.getReturnedItem().getDefaultInstance().copyWithCount(this.controlledChain.getChainsRequired())
         ) : ItemRequirement.NONE;
     }
 
@@ -147,7 +146,8 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
         if (!this.isController()) controller.chainsToRefund = 0;
 
         final CogwheelChain chainSource = controller.controlledChain;
-        final ItemStack drops = chainSource == null ? ItemStack.EMPTY : chainSource.getReturnedItem().getDefaultInstance().copyWithCount(chainsToReturn);
+        final ItemStack drops = chainSource == null ? ItemStack.EMPTY : chainSource.getReturnedItem().getDefaultInstance().copyWithCount(
+                chainsToReturn);
         if (dropItemsInWorld) {
             Block.popResource(this.getLevel(), this.getPos(), drops);
         }
@@ -239,27 +239,20 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
     }
 
     private boolean isInSameChain(final CogwheelChainBehaviour otherBehaviour) {
-        return (this.controlledChain != null &&
-                otherBehaviour.controllerOffset != null &&
+        return (this.controlledChain != null && otherBehaviour.controllerOffset != null &&
                 otherBehaviour.controllerOffset.equals(this.getPos().subtract(otherBehaviour.getPos()))) ||
 
-                (otherBehaviour.controlledChain != null &&
-                        this.controllerOffset != null &&
+                (otherBehaviour.controlledChain != null && this.controllerOffset != null &&
                         this.controllerOffset.equals(otherBehaviour.getPos().subtract(this.getPos()))) ||
 
-                (otherBehaviour.controllerOffset != null &&
-                        this.controllerOffset != null &&
+                (otherBehaviour.controllerOffset != null && this.controllerOffset != null &&
                         this.controllerOffset.offset(this.getPos()).equals(otherBehaviour.controllerOffset.offset(
                                 otherBehaviour.getPos())));
     }
 
     public float getChainRotationFactor() {
         if (this.controlledChain != null) {
-            final PathedCogwheelNode controllerNode = this.controlledChain.getNodeFromControllerOffset(new Vec3i(
-                    0,
-                    0,
-                    0
-            ));
+            final PathedCogwheelNode controllerNode = this.controlledChain.getNodeFromControllerOffset(Vec3i.ZERO);
             if (controllerNode == null) return 0;
 
             return controllerNode.sideFactor();
@@ -440,7 +433,7 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
         if (result == null) return false;
 
         final int oldCost = controllerBehaviour.chainsToRefund;
-        final int newCost = result.placingChain().getChainsRequiredInLoop();
+        final int newCost = result.placingChain().getChainsRequiredInLoop(existingChain.getChainType());
         final int costDifference = oldCost - newCost;
 
         controllerBehaviour.destroyChain(false, true);

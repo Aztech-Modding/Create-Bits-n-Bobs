@@ -1,5 +1,7 @@
 package com.kipti.bnb.content.kinetics.flywheel_bearing;
 
+import com.cake.azimuth.lang.IncludeLangDefaults;
+import com.cake.azimuth.lang.LangDefault;
 import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.kinetics.flywheel_bearing.contraption.InertControlledContraptionEntity;
 import com.kipti.bnb.content.kinetics.flywheel_bearing.mechanics.FlywheelMovementMechanics;
@@ -33,7 +35,24 @@ import java.util.List;
 /**
  * Predominantly a copy of BearingBlockEntity with many adjustments and features cut for flywheel bearing behavior
  */
+@IncludeLangDefaults({
+        @LangDefault(key = "flywheel_stats", format = FlywheelBearingBlockEntity.TOOLTIP_FORMAT, value = "Flywheel Stats:"),
+        @LangDefault(key = "angular_mass", format = FlywheelBearingBlockEntity.TOOLTIP_FORMAT, value = "Angular Mass:"),
+        @LangDefault(key = "stored_stress", format = FlywheelBearingBlockEntity.TOOLTIP_FORMAT, value = "Stored Stress:"),
+        @LangDefault(key = "kinetic_transfer", format = FlywheelBearingBlockEntity.TOOLTIP_FORMAT, value = "Kinetic Transfer:"),
+        @LangDefault(key = "angular_mass.none", format = FlywheelBearingBlockEntity.TOOLTIP_FORMAT, value = "(none)"),
+        @LangDefault(key = "angular_mass.super_light", format = FlywheelBearingBlockEntity.TOOLTIP_FORMAT, value = "(super light)"),
+        @LangDefault(key = "angular_mass.light", format = FlywheelBearingBlockEntity.TOOLTIP_FORMAT, value = "(light)"),
+        @LangDefault(key = "angular_mass.medium", format = FlywheelBearingBlockEntity.TOOLTIP_FORMAT, value = "(medium)"),
+        @LangDefault(key = "angular_mass.heavy", format = FlywheelBearingBlockEntity.TOOLTIP_FORMAT, value = "(heavy)"),
+        @LangDefault(key = "angular_mass.super_heavy", format = FlywheelBearingBlockEntity.TOOLTIP_FORMAT, value = "(super heavy)"),
+        @LangDefault(key = "angular_mass.absurdly_heavy", format = FlywheelBearingBlockEntity.TOOLTIP_FORMAT, value = "(absurdly heavy)"),
+        @LangDefault(key = "empty", format = FlywheelBearingBlockEntity.TOOLTIP_FORMAT, value = "(empty)"),
+        @LangDefault(key = "full", format = FlywheelBearingBlockEntity.TOOLTIP_FORMAT, value = "(full)"),
+})
 public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity implements IControlContraption, IDisplayAssemblyExceptions {
+
+    public static final String TOOLTIP_FORMAT = "tooltip.bits_n_bobs.flywheel_bearing.%s";
 
     protected AssemblyException lastException;
     protected InertControlledContraptionEntity movedContraption;
@@ -204,10 +223,8 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
             return;
         }
 
-        if (clientPacket) {//TODO (?) implement network updates to the be so the client properly knows the correct information
-            this.clientFlywheelAbsorptionCapacityInNetwork = compound.getFloat("NetworkFlywheelAbsorptionCapacity");
-            this.clientFlywheelReleaseCapacityInNetwork = compound.getFloat("NetworkFlywheelReleaseCapacity");
-        }
+        this.clientFlywheelAbsorptionCapacityInNetwork = compound.getFloat("NetworkFlywheelAbsorptionCapacity");
+        this.clientFlywheelReleaseCapacityInNetwork = compound.getFloat("NetworkFlywheelReleaseCapacity");
 
         final float angleBefore = this.flywheelMovement.angle;
         this.running = compound.getBoolean("Running");
