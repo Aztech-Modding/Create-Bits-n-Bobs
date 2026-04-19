@@ -42,23 +42,33 @@ public record PlaceCogwheelChainPacket(
     @Override
     public void handle(final ServerPlayer player) {
         //Server side validation of the chain
-        if (worldSpacePartialChain.maxBounds() > PlacingCogwheelChain.MAX_CHAIN_BOUNDS)
+        if (this.worldSpacePartialChain.maxBounds() > PlacingCogwheelChain.MAX_CHAIN_BOUNDS)
             return;
 
-        if (worldSpacePartialChain.checkMissingNodesInLevel(player.level(), chainType))
+        if (this.worldSpacePartialChain.checkMissingNodesInLevel(player.level(), this.chainType))
             return;
 
-        final int chainsRequired = worldSpacePartialChain.getChainsRequiredInLoop(chainType);
+        final int chainsRequired = this.worldSpacePartialChain.getChainsRequiredInLoop(this.chainType);
 
-        final boolean hasEnough = player.hasInfiniteMaterials() || ChainConveyorBlockEntity.getChainsFromInventory(player, chainItemType.value().getDefaultInstance(), chainsRequired, true);
+        final boolean hasEnough = player.hasInfiniteMaterials() || ChainConveyorBlockEntity.getChainsFromInventory(
+                player,
+                this.chainItemType.value().getDefaultInstance(),
+                chainsRequired,
+                true
+        );
         if (!hasEnough)
             return;
         if (!player.hasInfiniteMaterials())
-            ChainConveyorBlockEntity.getChainsFromInventory(player, chainItemType.value().getDefaultInstance(), chainsRequired, false);
+            ChainConveyorBlockEntity.getChainsFromInventory(
+                    player,
+                    this.chainItemType.value().getDefaultInstance(),
+                    chainsRequired,
+                    false
+            );
 
         final List<PathedCogwheelNode> chainGeometry;
         try {
-            chainGeometry = CogwheelChainPathfinder.buildChainPath(worldSpacePartialChain);
+            chainGeometry = CogwheelChainPathfinder.buildChainPath(this.worldSpacePartialChain);
         } catch (final
         ChainInteractionFailedException ignored) { //We assume the client has been notified if the path was invalid, anything else is tampering
             return;
@@ -66,9 +76,9 @@ public record PlaceCogwheelChainPacket(
         if (chainGeometry == null)
             return;
 
-        final CogwheelChain chain = new CogwheelChain(chainGeometry, chainType, chainItemType.value());
+        final CogwheelChain chain = new CogwheelChain(chainGeometry, this.chainType, this.chainItemType.value());
 
-        chain.placeInLevel(player.level(), worldSpacePartialChain);
+        chain.placeInLevel(player.level(), this.worldSpacePartialChain);
     }
 
     @Override

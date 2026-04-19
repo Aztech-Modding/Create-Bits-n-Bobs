@@ -1,0 +1,26 @@
+{
+  "format_version": "1.21.11",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "1": "bits_n_bobs:block/industrial_truss",
+    "particle": "bits_n_bobs:block/industrial_truss"
+  },
+  "elements": [
+    {
+      "from": [2, 0, 2],
+      "to": [14, 16, 14],
+      "rotation": {"angle": 0, "axis": "y", "origin": [8, 8, 8]},
+      "faces": {
+        "north": {"uv": [0, 16, 12, 0], "texture": "#1"}
+      }
+    },
+    {
+      "from": [2, 16, 2],
+      "to": [14, 0, 14],
+      "rotation": {"angle": 0, "axis": "y", "origin": [8, 8, 8]},
+      "faces": {
+        "north": {"uv": [12, 16, 0, 0], "texture": "#1"}
+      }
+    }
+  ]
+}

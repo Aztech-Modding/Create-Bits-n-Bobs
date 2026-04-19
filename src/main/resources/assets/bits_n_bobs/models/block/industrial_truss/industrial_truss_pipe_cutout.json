@@ -1,0 +1,7 @@
+{
+  "parent": "bits_n_bobs:block/industrial_truss/industrial_truss_panel",
+  "textures": {
+    "1": "bits_n_bobs:block/industrial_truss_pipe_cutout",
+    "particle": "bits_n_bobs:block/industrial_truss"
+  }
+}

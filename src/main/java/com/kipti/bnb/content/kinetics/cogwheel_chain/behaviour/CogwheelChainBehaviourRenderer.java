@@ -34,7 +34,13 @@ public class CogwheelChainBehaviourRenderer extends BlockEntityBehaviourRenderer
     public static final int SEAM_DIST = 16;
 
     @Override
-    public void renderSafe(final SuperBlockEntityBehaviour behaviour, final KineticBlockEntity be, final float partialTicks, final PoseStack ms, final MultiBufferSource buffer, final int light, final int overlay) {
+    public void renderSafe(final SuperBlockEntityBehaviour behaviour,
+                           final KineticBlockEntity be,
+                           final float partialTicks,
+                           final PoseStack ms,
+                           final MultiBufferSource buffer,
+                           final int light,
+                           final int overlay) {
         super.renderSafe(behaviour, be, partialTicks, ms, buffer, light, overlay);
 
         if (!(behaviour instanceof final CogwheelChainBehaviour chainBehaviour))
@@ -61,7 +67,8 @@ public class CogwheelChainBehaviourRenderer extends BlockEntityBehaviourRenderer
             for (final ChainSegment segment : segments) {
                 final double stretchOffset = offset + segment.uvStart();
 
-                renderChain(be,
+                this.renderChain(
+                        be,
                         ms,
                         buffer,
                         segment.preFrom(),
@@ -74,7 +81,8 @@ public class CogwheelChainBehaviourRenderer extends BlockEntityBehaviourRenderer
                         (float) stretchOffset,
                         (float) chainTextureSquish,
                         type,
-                        flipInsideOutside);
+                        flipInsideOutside
+                );
             }
         }
     }
@@ -96,8 +104,20 @@ public class CogwheelChainBehaviourRenderer extends BlockEntityBehaviourRenderer
         final CogwheelChainType.ChainRenderInfo chainRenderInfo = type.getRenderType();
 
         // Calculate corners in world space for the segment ends
-        List<Vec3> destinationPoints = CogwheelChainRenderGeometryBuilder.getEndPointsForChainJoint(from, to, postTo, chainRenderInfo, toCogwheelAxis);
-        final List<Vec3> sourcePoints = CogwheelChainRenderGeometryBuilder.getEndPointsForChainJoint(preFrom, from, to, chainRenderInfo, fromCogwheelAxis);
+        List<Vec3> destinationPoints = CogwheelChainRenderGeometryBuilder.getEndPointsForChainJoint(
+                from,
+                to,
+                postTo,
+                chainRenderInfo,
+                toCogwheelAxis
+        );
+        final List<Vec3> sourcePoints = CogwheelChainRenderGeometryBuilder.getEndPointsForChainJoint(
+                preFrom,
+                from,
+                to,
+                chainRenderInfo,
+                fromCogwheelAxis
+        );
 
         //This is my shame, i couldnt find a deterministic way to order the points consistently between joints so here we are,
         //Matching it in a post process step
@@ -136,7 +156,16 @@ public class CogwheelChainBehaviourRenderer extends BlockEntityBehaviourRenderer
                     .setNormal(pose, 0.0F, 1.0F, 0.0F);
         };
 
-        ChainQuadBuilder.buildSegmentFaces(destinationPoints, sourcePoints, chainRenderInfo, minV, maxV, flipInsideOutside, emitter, true);
+        ChainQuadBuilder.buildSegmentFaces(
+                destinationPoints,
+                sourcePoints,
+                chainRenderInfo,
+                minV,
+                maxV,
+                flipInsideOutside,
+                emitter,
+                true
+        );
 
         ms.popPose();
     }
@@ -179,10 +208,74 @@ public class CogwheelChainBehaviourRenderer extends BlockEntityBehaviourRenderer
             final float crossUO = far ? 0 : w;
 
             // Two perpendicular cross planes, each double-sided
-            renderQuad(matrix4f, pose, vc, 0, length, 0, radius, 0, -radius, crossMinU, crossMaxU, minV, maxV, light1, light2);
-            renderQuad(matrix4f, pose, vc, 0, length, 0, -radius, 0, radius, crossMinU, crossMaxU, minV, maxV, light1, light2);
-            renderQuad(matrix4f, pose, vc, 0, length, radius, 0, -radius, 0, crossMinU + crossUO, crossMaxU + crossUO, minV, maxV, light1, light2);
-            renderQuad(matrix4f, pose, vc, 0, length, -radius, 0, radius, 0, crossMinU + crossUO, crossMaxU + crossUO, minV, maxV, light1, light2);
+            renderQuad(
+                    matrix4f,
+                    pose,
+                    vc,
+                    0,
+                    length,
+                    0,
+                    radius,
+                    0,
+                    -radius,
+                    crossMinU,
+                    crossMaxU,
+                    minV,
+                    maxV,
+                    light1,
+                    light2
+            );
+            renderQuad(
+                    matrix4f,
+                    pose,
+                    vc,
+                    0,
+                    length,
+                    0,
+                    -radius,
+                    0,
+                    radius,
+                    crossMinU,
+                    crossMaxU,
+                    minV,
+                    maxV,
+                    light1,
+                    light2
+            );
+            renderQuad(
+                    matrix4f,
+                    pose,
+                    vc,
+                    0,
+                    length,
+                    radius,
+                    0,
+                    -radius,
+                    0,
+                    crossMinU + crossUO,
+                    crossMaxU + crossUO,
+                    minV,
+                    maxV,
+                    light1,
+                    light2
+            );
+            renderQuad(
+                    matrix4f,
+                    pose,
+                    vc,
+                    0,
+                    length,
+                    -radius,
+                    0,
+                    radius,
+                    0,
+                    crossMinU + crossUO,
+                    crossMaxU + crossUO,
+                    minV,
+                    maxV,
+                    light1,
+                    light2
+            );
         } else {
             // SQUARE shape: rectangular beam with 4 single-sided faces
             final float halfW = far ? 1f / 16f : w / 2f;
@@ -191,29 +284,96 @@ public class CogwheelChainBehaviourRenderer extends BlockEntityBehaviourRenderer
             final float maxV = far ? h : length * textureSquish + minV;
 
             // Top face
-            renderQuad(matrix4f, pose, vc, 0, length, -halfW, halfH, halfW, halfH, h, h + w, minV, maxV, light1, light2);
+            renderQuad(
+                    matrix4f,
+                    pose,
+                    vc,
+                    0,
+                    length,
+                    -halfW,
+                    halfH,
+                    halfW,
+                    halfH,
+                    h,
+                    h + w,
+                    minV,
+                    maxV,
+                    light1,
+                    light2
+            );
             // Left face
             renderQuad(matrix4f, pose, vc, 0, length, -halfW, -halfH, -halfW, halfH, 0, h, minV, maxV, light1, light2);
             // Bottom face
-            renderQuad(matrix4f, pose, vc, 0, length, halfW, -halfH, -halfW, -halfH, h + w + h, h + w + h + w, minV, maxV, light1, light2);
+            renderQuad(
+                    matrix4f,
+                    pose,
+                    vc,
+                    0,
+                    length,
+                    halfW,
+                    -halfH,
+                    -halfW,
+                    -halfH,
+                    h + w + h,
+                    h + w + h + w,
+                    minV,
+                    maxV,
+                    light1,
+                    light2
+            );
             // Right face
-            renderQuad(matrix4f, pose, vc, 0, length, halfW, halfH, halfW, -halfH, h + w, h + w + h, minV, maxV, light1, light2);
+            renderQuad(
+                    matrix4f,
+                    pose,
+                    vc,
+                    0,
+                    length,
+                    halfW,
+                    halfH,
+                    halfW,
+                    -halfH,
+                    h + w,
+                    h + w + h,
+                    minV,
+                    maxV,
+                    light1,
+                    light2
+            );
         }
 
         ms.popPose();
     }
 
-    private static void renderQuad(final Matrix4f pPose, final PoseStack.Pose pNormal, final VertexConsumer pConsumer, final float pMinY, final float pMaxY,
-                                   final float pMinX, final float pMinZ, final float pMaxX, final float pMaxZ, final float pMinU, final float pMaxU, final float pMinV, final float pMaxV,
-                                   final int light1, final int light2) {
+    private static void renderQuad(final Matrix4f pPose,
+                                   final PoseStack.Pose pNormal,
+                                   final VertexConsumer pConsumer,
+                                   final float pMinY,
+                                   final float pMaxY,
+                                   final float pMinX,
+                                   final float pMinZ,
+                                   final float pMaxX,
+                                   final float pMaxZ,
+                                   final float pMinU,
+                                   final float pMaxU,
+                                   final float pMinV,
+                                   final float pMaxV,
+                                   final int light1,
+                                   final int light2) {
         addVertex(pPose, pNormal, pConsumer, pMaxY, pMinX, pMinZ, pMaxU, pMinV, light2);
         addVertex(pPose, pNormal, pConsumer, pMinY, pMinX, pMinZ, pMaxU, pMaxV, light1);
         addVertex(pPose, pNormal, pConsumer, pMinY, pMaxX, pMaxZ, pMinU, pMaxV, light1);
         addVertex(pPose, pNormal, pConsumer, pMaxY, pMaxX, pMaxZ, pMinU, pMinV, light2);
     }
 
-    private static void addVertex(final Matrix4f pPose, final PoseStack.Pose pNormal, final VertexConsumer pConsumer, final float pY, final float pX,
-                                  final float pZ, final float pU, final float pV, final int light) {
+    private static void addVertex(final Matrix4f pPose,
+                                  final PoseStack.Pose pNormal,
+                                  final VertexConsumer pConsumer,
+                                  final float pY,
+                                  final float pX,
+                                  final float pZ,
+                                  final float pU,
+                                  final float pV,
+                                  final int light) {
         pConsumer.addVertex(pPose, pX, pY, pZ)
                 .setColor(1.0f, 1.0f, 1.0f, 1.0f)
                 .setUv(pU, pV)
@@ -238,8 +398,10 @@ public class CogwheelChainBehaviourRenderer extends BlockEntityBehaviourRenderer
                              final boolean flipInsideOutside) {
         final Vec3 diff = to.subtract(from);
         final double yaw = Mth.RAD_TO_DEG * Mth.atan2(diff.x, diff.z);
-        final double pitch = Mth.RAD_TO_DEG * Mth.atan2(diff.y, diff.multiply(1, 0, 1)
-                .length());
+        final double pitch = Mth.RAD_TO_DEG * Mth.atan2(
+                diff.y, diff.multiply(1, 0, 1)
+                        .length()
+        );
 
         final BlockPos tilePos = be.getBlockPos();
 
@@ -263,7 +425,22 @@ public class CogwheelChainBehaviourRenderer extends BlockEntityBehaviourRenderer
                 .closerThan(from.lerp(to, 0.5), SEAM_DIST));
 
         if (close)
-            renderChainSlowerButWithoutGaps(ms, buffer, offset, textureSquish, preFrom, from, to, postTo, fromCogwheelAxis, toCogwheelAxis, light1, light2, type, flipInsideOutside);
+            renderChainSlowerButWithoutGaps(
+                    ms,
+                    buffer,
+                    offset,
+                    textureSquish,
+                    preFrom,
+                    from,
+                    to,
+                    postTo,
+                    fromCogwheelAxis,
+                    toCogwheelAxis,
+                    light1,
+                    light2,
+                    type,
+                    flipInsideOutside
+            );
         else {
             chain.rotateYDegrees((float) yaw);
             chain.rotateXDegrees(90 - (float) pitch);
@@ -271,7 +448,17 @@ public class CogwheelChainBehaviourRenderer extends BlockEntityBehaviourRenderer
             final float overextend = 0.05f;
             chain.translate(0, 8 / 16f - overextend / 2f, 0);
             chain.uncenter();
-            renderChainFastButWithGaps(ms, buffer, offset - overextend / 2f, textureSquish, (float) from.distanceTo(to) + overextend, light1, light2, far, type);
+            renderChainFastButWithGaps(
+                    ms,
+                    buffer,
+                    offset - overextend / 2f,
+                    textureSquish,
+                    (float) from.distanceTo(to) + overextend,
+                    light1,
+                    light2,
+                    far,
+                    type
+            );
         }
 
         ms.popPose();

@@ -1,6 +1,6 @@
 package com.kipti.bnb.foundation.ponder.scenes;
 
-import com.cake.azimuth.client.outlines.instructions.ExpandingOutlineInstruction;
+import com.cake.azimuth.utility.client.outlines.instructions.ExpandingOutlineInstruction;
 import com.kipti.bnb.foundation.ponder.instruction.ConveyChainRotationsInstruction;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.foundation.ponder.CreateSceneBuilder;

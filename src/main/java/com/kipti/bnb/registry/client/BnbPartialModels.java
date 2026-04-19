@@ -41,6 +41,7 @@ public class BnbPartialModels {
 
     GIGANTIC_COGWHEEL = block("gigantic_cogwheel/cogwheel"),
 
+    INDUSTRIAL_TRUSS_PANEL = block("industrial_truss/industrial_truss_panel"),
 
     THROTTLE_LEVER_HANDLE = block("throttle_lever/handle");
 

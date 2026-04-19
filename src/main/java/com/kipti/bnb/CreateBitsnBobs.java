@@ -16,7 +16,6 @@ import com.kipti.bnb.registry.datagen.BnbCreativeTabs;
 import com.kipti.bnb.registry.datagen.BnbDataConditions;
 import com.kipti.bnb.registry.datagen.BnbLangEntries;
 import com.mojang.logging.LogUtils;
-import com.simibubi.create.Create;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.item.ItemDescription;
 import com.simibubi.create.foundation.item.KineticStats;
@@ -25,7 +24,6 @@ import net.createmod.catnip.lang.FontHelper;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
-import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModLoadingContext;
@@ -51,8 +49,8 @@ public class CreateBitsnBobs {
     public static final CreateRegistrate REGISTRATE = CreateRegistrate.create(MOD_ID)
             .defaultCreativeTab((ResourceKey<CreativeModeTab>) null)
             .setTooltipModifierFactory(item ->
-                    new ItemDescription.Modifier(item, FontHelper.Palette.STANDARD_CREATE)
-                            .andThen(TooltipModifier.mapNull(KineticStats.create(item)))
+                                               new ItemDescription.Modifier(item, FontHelper.Palette.STANDARD_CREATE)
+                                                       .andThen(TooltipModifier.mapNull(KineticStats.create(item)))
             );
 
     public CreateBitsnBobs(final IEventBus modEventBus, final ModContainer modContainer) {
@@ -89,12 +87,12 @@ public class CreateBitsnBobs {
         modEventBus.addListener(CreateBitsnBobs::onRegister);
     }
 
-    private static void onRegister(RegisterEvent event) {
+    private static void onRegister(final RegisterEvent event) {
         BnbContraptionTypes.register();
     }
 
     private static void commonSetup(final FMLCommonSetupEvent event) {
-        BehaviourApplicators.resolveRegisteredTypes();
+        BehaviourApplicators.resolveRegisteredTypes();//TODO: CORRECT FUCKING LCOATION
         VisualWrapperInterest.resolve();
     }
 

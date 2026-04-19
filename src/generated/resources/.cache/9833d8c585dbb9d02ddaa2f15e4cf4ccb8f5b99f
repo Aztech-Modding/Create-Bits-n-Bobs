@@ -1,4 +1,4 @@
-// 1.21.1	2026-04-07T16:02:55.0202191	Registrate Provider for bits_n_bobs [Registries, Data Maps, Recipes, Advancements, Loot Tables, Tags (blocks), Tags (enchantments), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider]
+// 1.21.1	2026-04-17T16:26:08.7123878	Registrate Provider for bits_n_bobs [Registries, Data Maps, Recipes, Advancements, Loot Tables, Tags (blocks), Tags (enchantments), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider]
 bae96470ab6d0efb7a73bf4e5f0a82277358b272 assets/bits_n_bobs/blockstates/andesite_encased_flanged_cogwheel.json
 161eacda54e0ee43ba4ec50b5a179c7c27d6ab3a assets/bits_n_bobs/blockstates/andesite_encased_large_flanged_cogwheel.json
 70069cf32ef31f524297f96e15c560aa8e3e41ae assets/bits_n_bobs/blockstates/andesite_encased_piston_extension_pole.json
@@ -77,8 +77,6 @@ d846d6efd9c7af4d23d1720872128bc4538b174a assets/bits_n_bobs/blockstates/industri
 78a753abb4a9870d57c84ccdbd5588a43d3fd83a assets/bits_n_bobs/blockstates/industrial_iron_encased_piston_extension_pole.json
 4fc5fd890d43c32fc45f776cc70e5870f3906890 assets/bits_n_bobs/blockstates/industrial_iron_encased_shaft.json
 310dbdd4ac66788708b8c7ed3cf41d5108b235e9 assets/bits_n_bobs/blockstates/industrial_truss.json
-9464b0c661dde80c4f3ea8e209c08254009ed07d assets/bits_n_bobs/blockstates/industrial_truss_encased_pipe.json
-803cfe3b5330feff9635eda089d84da54e840a53 assets/bits_n_bobs/blockstates/industrial_truss_encased_shaft.json
 e8136731cacd838e4a712612bb730ec2dc7a41cc assets/bits_n_bobs/blockstates/large_flanged_cogwheel.json
 4db90e28dfc8d1b622b3336685268b883059c3fb assets/bits_n_bobs/blockstates/large_nixie_tube.json
 8cbed5c28515cb83f03dd9d53dda918ebfaa8768 assets/bits_n_bobs/blockstates/lightbulb.json
@@ -149,8 +147,8 @@ c0190afa39321b2f2c2ef4fc2365954911f2b89b assets/bits_n_bobs/blockstates/white_ch
 bbb308f65d8082773ca234d880ab5896c2390014 assets/bits_n_bobs/blockstates/yellow_chair.json
 4db90e28dfc8d1b622b3336685268b883059c3fb assets/bits_n_bobs/blockstates/yellow_large_nixie_tube.json
 98c1742a3f1ee6f357a35cadd1559b1d5f6d364a assets/bits_n_bobs/blockstates/yellow_nixie_board.json
-88a134046138b783a69deb44d541d67e4886a0d4 assets/bits_n_bobs/lang/en_ud.json
-1e51afe6d9358c4fde043fa52f68424c815b8ece assets/bits_n_bobs/lang/en_us.json
+f56f89833a987b6aaa9449a14188bdc282fb056f assets/bits_n_bobs/lang/en_ud.json
+de109c9afe6e3eb80d225fc6814453e08cbd6b18 assets/bits_n_bobs/lang/en_us.json
 42e62dfae8361f2959305f50adfaaffafe2b3e5a assets/bits_n_bobs/models/block/andesite_encased_flanged_cogwheel.json
 77e1dc1a5410d8439303b65e92d739dbf9cad9ef assets/bits_n_bobs/models/block/andesite_encased_flanged_cogwheel_bottom.json
 189ffb75ff304fd545f38f215657c4e114a6d435 assets/bits_n_bobs/models/block/andesite_encased_flanged_cogwheel_top.json
@@ -873,8 +871,6 @@ d7df8f808d06b2d711af078a304d71c10781ccbb data/bits_n_bobs/loot_table/blocks/indu
 75ecc9810b763da186ab8d4f4702d288445007c3 data/bits_n_bobs/loot_table/blocks/industrial_iron_encased_piston_extension_pole.json
 c1247cf128b7f420d66bea5f86c849e459407e1f data/bits_n_bobs/loot_table/blocks/industrial_iron_encased_shaft.json
 540f92adfc94ff33c152fa9664d16f5784921924 data/bits_n_bobs/loot_table/blocks/industrial_truss.json
-1a2e6a6b50d21a740283adf1354ae0b9eea10f97 data/bits_n_bobs/loot_table/blocks/industrial_truss_encased_pipe.json
-83d53abd0bd540fb42b5dfa86223e81443c301e1 data/bits_n_bobs/loot_table/blocks/industrial_truss_encased_shaft.json
 98d13cca15a8f9781216b2f253d79c226c7c88ba data/bits_n_bobs/loot_table/blocks/large_flanged_cogwheel.json
 9878885bce5197bd45d4838870e99f27d97de8cb data/bits_n_bobs/loot_table/blocks/large_nixie_tube.json
 cb08e9889baa220e148c29e0515af34412b266ee data/bits_n_bobs/loot_table/blocks/lightbulb.json
@@ -1144,7 +1140,7 @@ f1f656352662478775cd9db2d1ca8f7aac574145 data/create/tags/item/stone_types/verid
 de30238a3ec01e43241a56c5c283d45aae3597b7 data/c/tags/item/ropes.json
 033f75b4c401f8616e1d2b8a61c46886cd9a5bc2 data/minecraft/tags/block/climbable.json
 83e51315030256cd957187762e5bd942601affb8 data/minecraft/tags/block/mineable/axe.json
-f9212871e95a8a289e3ed07025295e2d1eede181 data/minecraft/tags/block/mineable/pickaxe.json
+10b17d39b9d5e8f999a7b2861e3ae5393e1c3fdc data/minecraft/tags/block/mineable/pickaxe.json
 ed62c06140a0397feee5c79128d399c64719a198 data/minecraft/tags/block/slabs.json
 10c05d7d5af60bb17cc6d8618bd4354ba3dd741a data/minecraft/tags/block/stairs.json
 b8e4b52b0eaeafeb7c3642ce0fe41d29e6b0dbb0 data/minecraft/tags/block/walls.json
