@@ -12,6 +12,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 
 public class CogwheelChainCarriageContraptionEntity extends OrientedContraptionEntity {
 
@@ -32,6 +33,8 @@ public class CogwheelChainCarriageContraptionEntity extends OrientedContraptionE
 
     protected Vec3 frontShoeDir = Vec3.ZERO;
     protected Vec3 backShoeDir = Vec3.ZERO;
+    private boolean hasPendingChainAttachmentDist;
+    private float pendingChainAttachmentDist;
 
     public CogwheelChainCarriageContraptionEntity(final EntityType<?> type, final Level level) {
         super(type, level);
@@ -51,12 +54,15 @@ public class CogwheelChainCarriageContraptionEntity extends OrientedContraptionE
         return entity;
     }
 
+    @Nullable
     public CogwheelChainAttachment getAttachment() {
         if (!(this.contraption instanceof final CogwheelChainCarriageContraption cccc)) {
-            throw new IllegalStateException(
-                    "A CogwheelChainCarriageContraptionEntity must have a CogwheelChainCarriageContraption contraption!");
+            return null;
         }
-        return cccc.getCarriageAttachment();
+        final CogwheelChainAttachment attachment = cccc.getCarriageAttachment();
+        if (attachment == null) return null;
+        this.applyPendingAttachmentDist(attachment);
+        return attachment;
     }
 
     @Override
@@ -68,32 +74,32 @@ public class CogwheelChainCarriageContraptionEntity extends OrientedContraptionE
 
         if (this.isRemoved()) return;
 
-        if (!this.getAttachment().isValid(this.level())) return;
+        final CogwheelChainAttachment attachment = this.getAttachment();
+        if (attachment == null || !attachment.isValid(this.level())) return;
 
-        this.tickCommon();
+        if (!this.tickCommon(attachment)) return;
         if (this.level().isClientSide) {
-            this.tickClient();
+            this.tickClient(attachment);
         }
         this.tickActors();
         if (!this.level().isClientSide) {
-            this.tickServerSync();
+            this.tickServerSync(attachment);
         }
     }
 
-    private void tickServerSync() {
+    private void tickServerSync(final CogwheelChainAttachment attachment) {
         if (this.tickCount % 60 == 0) {
             CatnipServices.NETWORK.sendToClientsTrackingEntity(
                     this,
                     new CogwheelChainCarriageUpdateDistPacket(
                             this.getId(),
-                            this.getAttachment().getDist()
+                            attachment.getDist()
                     )
             );
         }
     }
 
-    private void tickClient() {
-        final CogwheelChainAttachment attachment = this.getAttachment();
+    private void tickClient(final CogwheelChainAttachment attachment) {
         final float velocity = attachment.getDistPerTick(this.level());
 
         this.clientChasingChainAttachmentDist = attachment.wrapDist(
@@ -101,7 +107,7 @@ public class CogwheelChainCarriageContraptionEntity extends OrientedContraptionE
                 this.clientChasingChainAttachmentDist + (velocity * this.currentClientChasingRate)
         );
 
-        final float serverDist = this.getAttachment().getDist();
+        final float serverDist = attachment.getDist();
         final float clientServerDiff = attachment.getMinWrappedDist(
                 this.level(), this.clientChasingChainAttachmentDist,
                 serverDist
@@ -144,33 +150,45 @@ public class CogwheelChainCarriageContraptionEntity extends OrientedContraptionE
 
     private void tickServer() {
         final Level level = this.level();
-        if (!this.getAttachment().isValid(level) || this.disassembleNextTick) {
+        final CogwheelChainAttachment attachment = this.getAttachment();
+        if (attachment == null) return;
+
+        if (!attachment.isValid(level) || this.disassembleNextTick) {
             this.disassemble();
             this.discard();
         }
     }
 
-    private void tickCommon() {
+    private boolean tickCommon(final CogwheelChainAttachment attachment) {
         final Level level = this.level();
 
-        final CogwheelChainAttachment attachment = this.getAttachment();
         final float previousDist = attachment.getDist();
         attachment.tick(level);
 
-        if (this.isVerticalSegmentBlocked(level, attachment.getDist(), previousDist)) {
-            attachment.setDist(previousDist);
-            this.notifyVerticalBlock(level);
-            return;
+        if (!attachment.isValid(level)) {
+            return false;
         }
 
-        this.updatePositionFromChain(level);
-        this.updateYawFromChain(level);
+        if (this.isVerticalSegmentBlocked(level, attachment, attachment.getDist(), previousDist)) {
+            attachment.setDist(previousDist);
+            this.notifyVerticalBlock(level);
+            return true;
+        }
+
+        if (!this.updatePositionFromChain(level, attachment)) {
+            return false;
+        }
+        this.updateYawFromChain(level, attachment);
+        return true;
     }
 
-    private boolean isVerticalSegmentBlocked(final Level level, final float dist, final float previousDist) {
+    private boolean isVerticalSegmentBlocked(final Level level,
+                                             final CogwheelChainAttachment attachment,
+                                             final float dist,
+                                             final float previousDist) {
         final float velocity = dist - previousDist;
-        final CogwheelChainSegment advancingSegment = this.getAttachment().getSegmentAtOffset(level, velocity);
-        final CogwheelChainSegment currentSegment = this.getAttachment().getSegmentAtOffset(level, previousDist - dist);
+        final CogwheelChainSegment advancingSegment = attachment.getSegmentAtOffset(level, velocity);
+        final CogwheelChainSegment currentSegment = attachment.getSegmentAtOffset(level, previousDist - dist);
 
         if (advancingSegment == null || currentSegment == null) return false;
 
@@ -181,20 +199,20 @@ public class CogwheelChainCarriageContraptionEntity extends OrientedContraptionE
         //TODO: copy train tooltiop logic
     }
 
-    private void updatePositionFromChain(final Level level) {
-        final CogwheelChainAttachment attachment = this.getAttachment();
+    private boolean updatePositionFromChain(final Level level, final CogwheelChainAttachment attachment) {
         final float offset = this.getChainRenderOffset(level, attachment);
         final Vec3 newPos = attachment
-                .getCurrentPosition(level, offset);
+                .getCurrentPositionIfPresent(level, offset);
+        if (newPos == null) return false;
         this.setPos(newPos.x, newPos.y - 1.5, newPos.z);
+        return true;
     }
 
     private float getChainRenderOffset(final Level level, final CogwheelChainAttachment attachment) {
         return level.isClientSide ? this.clientChasingChainAttachmentDist - attachment.getDist() : 0;
     }
 
-    private void updateYawFromChain(final Level level) {
-        final CogwheelChainAttachment attachment = this.getAttachment();
+    private void updateYawFromChain(final Level level, final CogwheelChainAttachment attachment) {
         final float offset = this.getChainRenderOffset(level, attachment);
         final Vec3 direction = attachment.getCurrentDirection(level, offset);
 
@@ -213,20 +231,46 @@ public class CogwheelChainCarriageContraptionEntity extends OrientedContraptionE
                                    final HolderLookup.Provider registries,
                                    final boolean spawnPacket) {
         super.writeAdditional(compound, registries, spawnPacket);
-        compound.putFloat("ChainAttachmentDist", this.getAttachment().getDist());
+        final CogwheelChainAttachment attachment = this.getAttachment();
+        if (attachment != null) {
+            compound.putFloat("ChainAttachmentDist", attachment.getDist());
+        } else if (this.hasPendingChainAttachmentDist) {
+            compound.putFloat("ChainAttachmentDist", this.pendingChainAttachmentDist);
+        }
     }
 
     @Override
     protected void readAdditional(final CompoundTag compound, final boolean spawnPacket) {
         super.readAdditional(compound, spawnPacket);
-        this.getAttachment().setDist(compound.getFloat("ChainAttachmentDist"));
-        if (spawnPacket) {
-            this.clientChasingChainAttachmentDist = compound.getFloat("ChainAttachmentDist");
+        if (compound.contains("ChainAttachmentDist")) {
+            final float attachmentDist = compound.getFloat("ChainAttachmentDist");
+            this.setAttachmentDist(attachmentDist);
+            if (spawnPacket) {
+                this.clientChasingChainAttachmentDist = attachmentDist;
+            }
         }
     }
 
     public void setDistFromServer(final float dist) {
-        this.getAttachment().setDist(dist);
+        final CogwheelChainAttachment attachment = this.getAttachment();
+        if (attachment == null || !attachment.isValid(this.level())) return;
+        attachment.setDist(dist);
+    }
+
+    private void setAttachmentDist(final float dist) {
+        final CogwheelChainAttachment attachment = this.getAttachment();
+        if (attachment == null) {
+            this.pendingChainAttachmentDist = dist;
+            this.hasPendingChainAttachmentDist = true;
+            return;
+        }
+        attachment.setDist(dist);
+    }
+
+    private void applyPendingAttachmentDist(final CogwheelChainAttachment attachment) {
+        if (!this.hasPendingChainAttachmentDist) return;
+        attachment.setDist(this.pendingChainAttachmentDist);
+        this.hasPendingChainAttachmentDist = false;
     }
 
     public Vec3 getFrontShoeDir(final float partialTicks) {

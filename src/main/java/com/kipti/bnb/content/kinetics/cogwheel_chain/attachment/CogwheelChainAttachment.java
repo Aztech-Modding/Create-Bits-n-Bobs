@@ -33,9 +33,10 @@ public class CogwheelChainAttachment {
 
     public boolean isWrappedDistFurther(final Level level,
                                         final float clientChasingChainAttachmentDist,
-                                        final float chainAttachmentDist,
-                                        final float signum) {
+                                         final float chainAttachmentDist,
+                                         final float signum) {
         final float length = this.getTotalLength(level);
+        if (length <= 0) return false;
         //Find the closest distance (i.e. straight or wrapped dist) then whichever is first in the signum direction
         final float straightDist = Math.abs(clientChasingChainAttachmentDist - chainAttachmentDist);
         final float wrappedDist = length - straightDist;
@@ -93,13 +94,22 @@ public class CogwheelChainAttachment {
      * Resolves the world position at {@code dist + offset} along the chain.
      */
     public Vec3 getCurrentPosition(final Level level, final float offset) {
+        final Vec3 position = this.getCurrentPositionIfPresent(level, offset);
+        if (position == null) return Vec3.ZERO;
+        return position;
+    }
+
+    @Nullable
+    public Vec3 getCurrentPositionIfPresent(final Level level, final float offset) {
         final CogwheelChain chain = CogwheelChainWorld.get(level).getChain(this.controllerPos);
-        if (chain == null) return Vec3.ZERO;
+        if (chain == null) return null;
 
         final List<CogwheelChainSegment> segments = chain.getSegments();
-        if (segments.isEmpty()) return Vec3.ZERO;
+        if (segments.isEmpty()) return null;
 
         final float totalLength = segments.getLast().endDist();
+        if (totalLength <= 0) return null;
+
         final float dist = wrapDist(this.dist + offset, totalLength);
 
         return this.resolvePositionOnSegments(segments, dist);
@@ -116,6 +126,8 @@ public class CogwheelChainAttachment {
         if (segments.isEmpty()) return null;
 
         final float totalLength = segments.getLast().endDist();
+        if (totalLength <= 0) return null;
+
         final float dist = wrapDist(this.dist, totalLength);
 
         return findSegmentAtDist(segments, dist);
@@ -182,6 +194,8 @@ public class CogwheelChainAttachment {
         if (segments.isEmpty()) return null;
 
         final float totalLength = segments.getLast().endDist();
+        if (totalLength <= 0) return null;
+
         final float dist = wrapDist(this.dist + offset, totalLength);
 
         return findSegmentAtDist(segments, dist);
@@ -197,9 +211,10 @@ public class CogwheelChainAttachment {
         return segments.getLast().endDist();
     }
 
+    @Nullable
     private Vec3 resolvePositionOnSegments(final List<CogwheelChainSegment> segments, final float pos) {
         final CogwheelChainSegment segment = findSegmentAtDist(segments, pos);
-        if (segment == null) return Vec3.ZERO;
+        if (segment == null) return null;
 
         final float t = segment.length() > 0 ? (pos - segment.startDist()) / segment.length() : 0;
         final Vec3 localPos = segment.fromPosition().lerp(segment.toPosition(), t);
@@ -230,13 +245,20 @@ public class CogwheelChainAttachment {
     }
 
     private Vec3 getSmoothedCurrentDirection(final List<CogwheelChainSegment> segments, final float dist) {
+        if (segments.isEmpty()) return Vec3.ZERO;
+
+        final float totalLength = segments.getLast().endDist();
+        if (totalLength <= 0) return Vec3.ZERO;
+
         final float backDist = dist - 0.2f;
         final float frontDist = dist + 0.2f;
+        final Vec3 backPosition = this.resolvePositionOnSegments(segments, wrapDist(backDist, totalLength));
+        final Vec3 frontPosition = this.resolvePositionOnSegments(segments, wrapDist(frontDist, totalLength));
+        if (backPosition == null || frontPosition == null) return Vec3.ZERO;
 
-        return this.resolvePositionOnSegments(segments, frontDist).subtract(this.resolvePositionOnSegments(
-                segments,
-                backDist
-        )).normalize();
+        final Vec3 direction = frontPosition.subtract(backPosition);
+        if (direction.lengthSqr() < 1e-8) return Vec3.ZERO;
+        return direction.normalize();
 //        final CogwheelChainSegment backSegment = findSegmentAtDist(segments, backDist);
 //        final CogwheelChainSegment frontSegment = findSegmentAtDist(segments, frontDist);
 //        if (backSegment == null || frontSegment == null) return Vec3.ZERO;
@@ -253,6 +275,7 @@ public class CogwheelChainAttachment {
     public Vec3 getCurrentDirection(final Level level, final float offset) {
         final @Nullable List<CogwheelChainSegment> segments = this.getCurrentCogwheelChainSegments(level);
         if (segments == null) return Vec3.ZERO;
+        if (segments.isEmpty()) return Vec3.ZERO;
         return this.getSmoothedCurrentDirection(segments, this.dist + offset);
     }
 
@@ -265,9 +288,10 @@ public class CogwheelChainAttachment {
     }
 
     public float getMinWrappedDist(final Level level,
-                                   final float clientChasingChainAttachmentDist,
-                                   final float chainAttachmentDist) {
+                                    final float clientChasingChainAttachmentDist,
+                                    final float chainAttachmentDist) {
         final float length = this.getTotalLength(level);
+        if (length <= 0) return Math.abs(clientChasingChainAttachmentDist - chainAttachmentDist);
         return Math.min(
                 Math.abs(clientChasingChainAttachmentDist - chainAttachmentDist),
                 length - Math.abs(clientChasingChainAttachmentDist - chainAttachmentDist)

@@ -1,5 +1,6 @@
 package com.kipti.bnb.content.kinetics.cogwheel_carriage.contraption;
 
+import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.attachment.CogwheelChainAttachment;
 import com.kipti.bnb.registry.content.BnbContraptionTypes;
 import com.simibubi.create.api.contraption.ContraptionType;
@@ -12,6 +13,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Queue;
 
@@ -44,10 +46,10 @@ public class CogwheelChainCarriageContraption extends Contraption {
     public void onEntityInitialize(final Level world, final AbstractContraptionEntity contraptionEntity) {
         super.onEntityInitialize(world, contraptionEntity);
         if (contraptionEntity instanceof final CogwheelChainCarriageContraptionEntity cccce) {
-            cccce.setInitialOrientation(Direction.fromAxisAndDirection(
-                    this.facing.getAxis(),
-                    Direction.AxisDirection.NEGATIVE
-            ));
+            if (this.facing == null) {
+                return;
+            }
+            cccce.setInitialOrientation(this.facing);
         }
     }
 
@@ -83,7 +85,9 @@ public class CogwheelChainCarriageContraption extends Contraption {
             final CompoundTag attachmentTag = new CompoundTag();
             this.carriageAttachment.write(attachmentTag);
             tag.put("CenterAttachment", attachmentTag);
-            tag.putInt("AnchorFacing", this.facing.ordinal());
+            if (this.facing != null) {
+                tag.putInt("AnchorFacing", this.facing.ordinal());
+            }
         }
 
         return tag;
@@ -93,11 +97,42 @@ public class CogwheelChainCarriageContraption extends Contraption {
     public void readNBT(final Level level, final CompoundTag nbt, final boolean spawnData) {
         if (nbt.contains("CenterAttachment")) {
             this.carriageAttachment = CogwheelChainAttachment.read(nbt.getCompound("CenterAttachment"));
-            this.facing = Direction.values()[nbt.getInt("AnchorFacing")];
+            final Direction anchorFacing = readHorizontalDirection(nbt, "AnchorFacing");
+            if (anchorFacing != null) {
+                this.facing = anchorFacing;
+            }
         }
         super.readNBT(level, nbt, spawnData);
     }
 
+    @Nullable
+    private static Direction readHorizontalDirection(final CompoundTag nbt, final String key) {
+        if (!nbt.contains(key)) {
+            return null;
+        }
+        final int directionIndex = nbt.getInt(key);
+        final Direction[] directions = Direction.values();
+        if (directionIndex < 0 || directionIndex >= directions.length) {
+            warnInvalidHorizontalDirection(key, directionIndex);
+            return null;
+        }
+        final Direction direction = directions[directionIndex];
+        if (direction.getAxis().isVertical()) {
+            warnInvalidHorizontalDirection(key, directionIndex);
+            return null;
+        }
+        return direction;
+    }
+
+    private static void warnInvalidHorizontalDirection(final String key, final int directionIndex) {
+        CreateBitsnBobs.LOGGER.warn(
+                "Ignoring invalid {} value {} while reading cogwheel chain carriage contraption",
+                key,
+                directionIndex
+        );
+    }
+
+    @Nullable
     public CogwheelChainAttachment getCarriageAttachment() {
         return this.carriageAttachment;
     }

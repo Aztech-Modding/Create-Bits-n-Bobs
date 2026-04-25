@@ -29,9 +29,16 @@ public class CogwheelChainAttachmentHelper {
      */
     @Nullable
     public static CogwheelChainAttachment findNearestAttachment(final Level level, final Vec3 worldPos) {
+        return findNearestAttachment(level, worldPos, Double.MAX_VALUE);
+    }
+
+    @Nullable
+    public static CogwheelChainAttachment findNearestAttachment(final Level level,
+                                                                final Vec3 worldPos,
+                                                                final double maxDistanceSq) {
         final CogwheelChainWorld chainWorld = CogwheelChainWorld.get(level);
 
-        double bestDistSq = Double.MAX_VALUE;
+        double bestDistSq = maxDistanceSq;
         BlockPos bestController = null;
         float bestChainDist = 0;
 

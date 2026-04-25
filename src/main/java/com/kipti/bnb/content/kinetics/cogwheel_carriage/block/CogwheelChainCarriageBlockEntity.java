@@ -8,6 +8,7 @@ import com.kipti.bnb.content.kinetics.cogwheel_chain.attachment.CogwheelChainAtt
 import com.kipti.bnb.content.kinetics.cogwheel_chain.attachment.CogwheelChainAttachmentHelper;
 import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.content.contraptions.AssemblyException;
+import com.simibubi.create.content.contraptions.IDisplayAssemblyExceptions;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import net.minecraft.core.BlockPos;
@@ -21,9 +22,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 @IncludeLangDefaults(
-        @LangDefault(key = "bits_n_bobs.no_chain_to_attach_to", format = CogwheelChainCarriageBlockEntity.ASSEMBLY_EXCEPTION_FORMAT, value = "No chain to attach to!")
+        @LangDefault(key = "bits_n_bobs.no_chain_to_attach_to", format = CogwheelChainCarriageBlockEntity.ASSEMBLY_EXCEPTION_FORMAT, value = "No cogwheel chain in range to attach to!")
 )
-public class CogwheelChainCarriageBlockEntity extends SmartBlockEntity {
+public class CogwheelChainCarriageBlockEntity extends SmartBlockEntity implements IDisplayAssemblyExceptions {
 
     public static final String ASSEMBLY_EXCEPTION_FORMAT = "create.gui.assembly.exception.%s";
 
@@ -49,11 +50,16 @@ public class CogwheelChainCarriageBlockEntity extends SmartBlockEntity {
         if (this.assembleNextTick) {
             this.assembleNextTick = false;
             this.assemble();
+            this.notifyUpdate();
         }
     }
 
     private void assemble() {
-        final CogwheelChainAttachment attachment = CogwheelChainAttachmentHelper.findNearestAttachment(this.level, this.getBlockPos().getCenter());
+        final CogwheelChainAttachment attachment = CogwheelChainAttachmentHelper.findNearestAttachment(
+                this.level,
+                this.getBlockPos().getCenter().add(0, 1, 0),
+                1
+        );
         if (attachment == null) {
             this.lastException = new AssemblyException("bits_n_bobs.no_chain_to_attach_to");
             return;
@@ -99,5 +105,10 @@ public class CogwheelChainCarriageBlockEntity extends SmartBlockEntity {
     protected void read(final CompoundTag tag, final HolderLookup.Provider registries, final boolean clientPacket) {
         super.read(tag, registries, clientPacket);
         this.lastException = AssemblyException.read(tag, registries);
+    }
+
+    @Override
+    public AssemblyException getLastAssemblyException() {
+        return this.lastException;
     }
 }

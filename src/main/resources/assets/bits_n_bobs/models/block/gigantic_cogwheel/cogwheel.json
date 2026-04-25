@@ -1,7 +1,7 @@
 {
   "parent": "block/block",
   "loader": "neoforge:obj",
-  "model": "bits_n_bobs:models/block/gigantic_cogwheel/gigantic_cogwheel.obj",
+  "model": "bits_n_bobs:models/block/gigantic_cogwheel/slightly_less_gigantic_cogwheel.obj",
   "flip_v": true,
   "ambientocclusion": false,
   "textures": {
