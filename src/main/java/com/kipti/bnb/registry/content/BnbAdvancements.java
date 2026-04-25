@@ -17,14 +17,6 @@ public class BnbAdvancements {
     public static final AzimuthAdvancementProvider HELPER =
             new AzimuthAdvancementProvider(CreateBitsnBobs.MOD_ID, "Bits 'n' Bobs Advancements");
 
-    public static final AzimuthAdvancement COOKIE_DOUGH = HELPER.create(
-            "cookie_dough", b -> b
-                    .icon(BnbItems.COOKIE_DOUGH)
-                    .title("But It Tastes So Good...")
-                    .description("Eat cookie dough")
-                    .after(() -> AllAdvancements.MIXER)
-    );
-
     public static final AzimuthAdvancement DYE_FLUID_COMPONENT = HELPER.create(
             "dye_fluid_component", b -> b
                     .icon(Items.RED_DYE)

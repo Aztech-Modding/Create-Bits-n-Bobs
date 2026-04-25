@@ -28,19 +28,31 @@ public class BnbCreativeTabs {
     private static final DeferredRegister<CreativeModeTab> REGISTER =
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, CreateBitsnBobs.MOD_ID);
 
-    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> BASE_CREATIVE_TAB = REGISTER.register("bnb_based",
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> BASE_CREATIVE_TAB = REGISTER.register(
+            "bnb_based",
             () -> CreativeModeTab.builder()
                     .title(Component.translatable("tab." + CreateBitsnBobs.MOD_ID + ".base"))
                     .withTabsBefore(AllCreativeModeTabs.PALETTES_CREATIVE_TAB.getId())
                     .icon(BnbKineticBlocks.SMALL_FLANGED_COGWHEEL::asStack)
-                    .displayItems((p, o) -> buildCreativeTabContents(p, o, () -> BnbCreativeTabs.BASE_CREATIVE_TAB)).build());
+                    .displayItems((p, o) -> buildCreativeTabContents(
+                            p,
+                            o,
+                            () -> BnbCreativeTabs.BASE_CREATIVE_TAB
+                    )).build()
+    );
 
-    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> PALETTES_CREATIVE_TAB = REGISTER.register("bnb_palettes",
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> PALETTES_CREATIVE_TAB = REGISTER.register(
+            "bnb_palettes",
             () -> CreativeModeTab.builder()
                     .title(Component.translatable("tab." + CreateBitsnBobs.MOD_ID + ".deco"))
                     .withTabsBefore(BnbCreativeTabs.BASE_CREATIVE_TAB.getId())
                     .icon(() -> BnbPaletteStoneTypes.ASURINE.getVariants().registeredBlocks.getFirst().asStack())
-                    .displayItems((p, o) -> buildCreativeTabContents(p, o, () -> BnbCreativeTabs.PALETTES_CREATIVE_TAB)).build());
+                    .displayItems((p, o) -> buildCreativeTabContents(
+                            p,
+                            o,
+                            () -> BnbCreativeTabs.PALETTES_CREATIVE_TAB
+                    )).build()
+    );
 
     private static boolean matchesBlockFilter(final BlockItem item) {
         if (BnbTrinketBlocks.CHAIRS.contains(item.getBlock()) && !BnbTrinketBlocks.CHAIRS.get(DyeColor.RED).is(item.getBlock()))
@@ -58,9 +70,14 @@ public class BnbCreativeTabs {
         REGISTER.register(modEventBus);
     }
 
-    private static void buildCreativeTabContents(final CreativeModeTab.ItemDisplayParameters parameters, final CreativeModeTab.Output output, final Supplier<DeferredHolder<CreativeModeTab, CreativeModeTab>> tabToGet) {
+    private static void buildCreativeTabContents(final CreativeModeTab.ItemDisplayParameters parameters,
+                                                 final CreativeModeTab.Output output,
+                                                 final Supplier<DeferredHolder<CreativeModeTab, CreativeModeTab>> tabToGet) {
         for (final RegistryEntry<Item, Item> item : CreateBitsnBobs.REGISTRATE.getAll(Registries.ITEM)) {
-            if (!CreateRegistrate.isInCreativeTab(item, tabToGet.get()) || !(item.get() instanceof final BlockItem blockItem) || !BnbFeatureFlag.isEnabled(blockItem))
+            if (!CreateRegistrate.isInCreativeTab(
+                    item,
+                    tabToGet.get()
+            ) || !(item.get() instanceof final BlockItem blockItem) || !BnbFeatureFlag.isEnabled(blockItem))
                 continue;
 
             if (matchesSearchOnlyBlockFilter(blockItem))
@@ -80,7 +97,7 @@ public class BnbCreativeTabs {
 
     private static boolean matchesItemFilter(final Item item) {
         //Ignore testing / fake items
-        return !BnbItems.ICON_LIGHTBULB.is(item) && !BnbItems.TEST_ROPE.is(item);
+        return !BnbItems.TEST_ROPE.is(item);
     }
 
 }

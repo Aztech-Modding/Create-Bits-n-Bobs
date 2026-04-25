@@ -1,7 +1,6 @@
 package com.kipti.bnb.registry.core;
 
 import com.kipti.bnb.foundation.config.conditions.BnbFeatureEnabledCondition;
-import com.kipti.bnb.registry.content.BnbItems;
 import com.kipti.bnb.registry.content.blocks.BnbBracketBlocks;
 import com.kipti.bnb.registry.content.blocks.BnbKineticBlocks;
 import com.kipti.bnb.registry.content.blocks.BnbTrinketBlocks;
@@ -147,10 +146,6 @@ public enum BnbFeatureFlag {
             BnbExtraEncasedBlocks.WEATHERED_IRON_ENCASED_SHAFT::get,
             BnbExtraEncasedBlocks.WEATHERED_IRON_ENCASED_COGWHEEL::get,
             BnbExtraEncasedBlocks.WEATHERED_IRON_ENCASED_LARGE_COGWHEEL::get
-    ),
-
-    COOKIE_DOUGH(
-            FeatureCategories.ITEM, "Availability of the Cookie Dough item.", BnbItems.COOKIE_DOUGH
     ),
 
     DYEABLE_PIPES(FeatureCategories.BEHAVIOUR, "Ability to dye fluid pipes."),

@@ -1,0 +1,33 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "bits_n_bobs:feature_item_enabled",
+      "item": "bits_n_bobs:cogwheel_chain_carriage"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "N": {
+      "item": "minecraft:iron_nugget"
+    },
+    "P": {
+      "item": "create:iron_sheet"
+    },
+    "W": {
+      "tag": "minecraft:wool"
+    },
+    "C": {
+      "item": "create:andesite_casing"
+    }
+  },
+  "pattern": [
+    "PN",
+    "W ",
+    "C "
+  ],
+  "result": {
+    "count": 1,
+    "id": "bits_n_bobs:cogwheel_chain_carriage"
+  }
+}
