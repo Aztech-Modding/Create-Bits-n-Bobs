@@ -1,4 +1,4 @@
-package com.kipti.bnb.content.decoration.dyeable.pipes;
+package com.kipti.bnb.content.decoration.dyeable.simple;
 
 import com.kipti.bnb.content.decoration.dyeable.DyeableBlockItemHelper;
 import net.minecraft.core.BlockPos;
@@ -14,9 +14,9 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
-public class DyeablePipeBlockItem extends BlockItem {
+public class SimpleDyeableBlockItem extends BlockItem {
 
-    public DyeablePipeBlockItem(final Block block, final Item.Properties properties) {
+    public SimpleDyeableBlockItem(final Block block, final Item.Properties properties) {
         super(block, properties);
     }
 
@@ -32,7 +32,7 @@ public class DyeablePipeBlockItem extends BlockItem {
                 DyeableBlockItemHelper.applyColorClientOnly(
                         context.getLevel(),
                         context.getClickedPos(),
-                        DyeablePipeBehaviour.TYPE,
+                        SimpleDyeableBehaviour.TYPE,
                         offhandDye
                 );
             }
@@ -56,7 +56,7 @@ public class DyeablePipeBlockItem extends BlockItem {
         if (player != null) {
             final DyeColor color = DyeableBlockItemHelper.getOffhandDyeColor(player);
             if (color != null) {
-                DyeableBlockItemHelper.setColor(level, pos, DyeablePipeBehaviour.TYPE, color);
+                DyeableBlockItemHelper.setColor(level, pos, SimpleDyeableBehaviour.TYPE, color);
             }
         }
         return result;

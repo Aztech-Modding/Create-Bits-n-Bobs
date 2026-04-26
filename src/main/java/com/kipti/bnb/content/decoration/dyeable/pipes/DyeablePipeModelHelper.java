@@ -11,12 +11,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public final class DyeablePipeModelHelper {
+public class DyeablePipeModelHelper {
 
     public static final ModelProperty<DyeColor> PIPE_DYE_COLOR = new ModelProperty<>();
-
-    private DyeablePipeModelHelper() {
-    }
 
     public static @Nullable DyeColor getDyeColor(final ModelData data) {
         if (!data.has(PIPE_DYE_COLOR)) {

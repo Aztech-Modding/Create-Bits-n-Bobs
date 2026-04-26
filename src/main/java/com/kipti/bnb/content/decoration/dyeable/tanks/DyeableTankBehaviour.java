@@ -1,6 +1,6 @@
 package com.kipti.bnb.content.decoration.dyeable.tanks;
 
-import com.cake.azimuth.behaviour.SuperBlockEntityBehaviour;
+import com.kipti.bnb.content.decoration.dyeable.BaseDyeableBehaviour;
 import com.kipti.bnb.registry.content.BnbAdvancements;
 import com.simibubi.create.api.connectivity.ConnectivityHandler;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
@@ -19,12 +19,9 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import org.jetbrains.annotations.Nullable;
 
-public class DyeableTankBehaviour extends SuperBlockEntityBehaviour {
+public class DyeableTankBehaviour extends BaseDyeableBehaviour {
 
     public static final BehaviourType<DyeableTankBehaviour> TYPE = new BehaviourType<>("dyeable_fluid_tank");
-
-    @Nullable
-    private DyeColor color;
 
     @Nullable
     private GayDye gayDye;
@@ -48,39 +45,14 @@ public class DyeableTankBehaviour extends SuperBlockEntityBehaviour {
     }
 
     @Nullable
-    public DyeColor getColor() {
-        return this.color;
-    }
-
     public DyeColor getDisplayedColor() {
         if (this.gayDye != null) {
-            //Get offset to controller
             if (this.getBlockEntity() instanceof final FluidTankBlockEntity ftbe) {
                 final int localY = this.getPos().subtract(ftbe.getController()).getY();
                 return this.gayDye.getDisplayedColor(localY);
             }
         }
         return this.getColor();
-    }
-
-    public void applyColorClientOnly(@Nullable final DyeColor color) {
-        if (this.color == color) {
-            return;
-        }
-        this.color = color;
-        this.refreshRenderedModel();
-    }
-
-    public void setColor(@Nullable final DyeColor color) {
-        if (this.color == color) {
-            return;
-        }
-        this.color = color;
-        if (this.hasLevel() && this.getLevel().isClientSide) {
-            this.refreshRenderedModel();
-        } else {
-            this.blockEntity.notifyUpdate();
-        }
     }
 
     @Override
@@ -127,11 +99,7 @@ public class DyeableTankBehaviour extends SuperBlockEntityBehaviour {
 
     public void setGayDye(@Nullable final GayDye gayDye) {
         this.gayDye = gayDye;
-        if (this.hasLevel() && this.getLevel().isClientSide) {
-            this.refreshRenderedModel();
-        } else {
-            this.blockEntity.notifyUpdate();
-        }
+        this.refreshOrNotifyUpdate();
     }
 
     public void applyGayDyeToEntireTank(final GayDye gayDye) {
@@ -185,12 +153,11 @@ public class DyeableTankBehaviour extends SuperBlockEntityBehaviour {
     }
 
     @Override
-    public void write(final CompoundTag nbt, final HolderLookup.Provider registries, final boolean clientPacket) {
-        super.write(nbt, registries, clientPacket);
-        if (this.color != null) {
-            nbt.putInt("DyeColor", this.color.getId());
-        }
-
+    protected void writeAdditionalDyeData(
+            final CompoundTag nbt,
+            final HolderLookup.Provider registries,
+            final boolean clientPacket
+    ) {
         if (this.gayDye != null) {
             final CompoundTag gay = new CompoundTag();
             this.gayDye.write(gay);
@@ -199,34 +166,18 @@ public class DyeableTankBehaviour extends SuperBlockEntityBehaviour {
     }
 
     @Override
-    public void read(final CompoundTag nbt, final HolderLookup.Provider registries, final boolean clientPacket) {
-        super.read(nbt, registries, clientPacket);
-        final DyeColor previousColor = this.color;
-        if (nbt.contains("DyeColor")) {
-            this.color = DyeColor.byId(nbt.getInt("DyeColor"));
-        } else {
-            this.color = null;
-        }
-
+    protected boolean readAdditionalDyeData(
+            final CompoundTag nbt,
+            final HolderLookup.Provider registries,
+            final boolean clientPacket
+    ) {
         final GayDye previousGayDye = this.gayDye;
         if (nbt.contains("Gay")) {
             this.gayDye = GayDye.read(nbt.getCompound("Gay"));
         } else {
             this.gayDye = null;
         }
-
-        if (clientPacket && (previousColor != this.color || previousGayDye != this.gayDye)) {
-            this.refreshRenderedModel();
-        }
-    }
-
-    public void refreshRenderedModel() {
-        this.blockEntity.requestModelDataUpdate();
-        if (this.hasLevel()) {
-            final Level level = this.getLevel();
-            final BlockPos pos = this.getPos();
-            level.sendBlockUpdated(pos, this.getBlockState(), this.getBlockState(), 16);
-        }
+        return previousGayDye != this.gayDye;
     }
 
 }

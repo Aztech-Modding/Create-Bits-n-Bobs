@@ -1,7 +1,7 @@
 package com.kipti.bnb.content.decoration.dyeable.pipes;
 
-import com.cake.azimuth.behaviour.SuperBlockEntityBehaviour;
-import com.kipti.bnb.content.decoration.dyeable.DyeableTransitionHelper;
+import com.kipti.bnb.content.decoration.dyeable.BaseDyeableBehaviour;
+import com.kipti.bnb.content.decoration.dyeable.DyeableBlockItemHelper;
 import com.kipti.bnb.registry.content.BnbAdvancements;
 import com.simibubi.create.content.fluids.FluidPropagator;
 import com.simibubi.create.content.fluids.pipes.FluidPipeBlock;
@@ -10,8 +10,6 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BehaviourType;
 import net.createmod.catnip.data.Iterate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
@@ -24,12 +22,9 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import org.jetbrains.annotations.Nullable;
 
-public class DyeablePipeBehaviour extends SuperBlockEntityBehaviour {
+public class DyeablePipeBehaviour extends BaseDyeableBehaviour {
 
     public static final BehaviourType<DyeablePipeBehaviour> TYPE = new BehaviourType<>("dyeable_pipe");
-
-    @Nullable
-    private DyeColor color;
 
     public DyeablePipeBehaviour(final SmartBlockEntity be) {
         super(be);
@@ -40,35 +35,9 @@ public class DyeablePipeBehaviour extends SuperBlockEntityBehaviour {
         return TYPE;
     }
 
-    @Nullable
-    public DyeColor getColor() {
-        return this.color;
-    }
-
-    /**
-     * Sets the color on the client side only, triggering an immediate visual refresh.
-     * Used by {@link DyeablePipeBlockItem} during placement for instant feedback.
-     */
-    public void applyColorClientOnly(@Nullable final DyeColor color) {
-        if (this.color == color) {
-            return;
-        }
-        this.color = color;
-        this.refreshRenderedModel();
-    }
-
-    public void setColor(@Nullable final DyeColor color) {
-        if (this.color == color) {
-            return;
-        }
-
-        this.color = color;
+    @Override
+    protected void onColorChanged(@Nullable final DyeColor color) {
         this.refreshPipeState();
-        if (this.hasLevel() && this.getLevel().isClientSide) {
-            this.refreshRenderedModel();
-        } else {
-            this.blockEntity.notifyUpdate();
-        }
     }
 
     @Override
@@ -100,43 +69,11 @@ public class DyeablePipeBehaviour extends SuperBlockEntityBehaviour {
 
         final Level level = (Level) event.getLevel();
         final BlockPos pos = event.getPos();
-        DyeableTransitionHelper.consumePendingPlacementColor(level, pos);
+        DyeableBlockItemHelper.consumePendingPlacementColor(level, pos);
 
-        final ItemStack offhand = player.getOffhandItem();
-        if (offhand.getItem() instanceof final DyeItem dyeItem) {
-            this.setColor(dyeItem.getDyeColor());
-        }
-    }
-
-    @Override
-    public void write(final CompoundTag nbt, final HolderLookup.Provider registries, final boolean clientPacket) {
-        super.write(nbt, registries, clientPacket);
-        if (this.color != null) {
-            nbt.putInt("DyeColor", this.color.getId());
-        }
-    }
-
-    @Override
-    public void read(final CompoundTag nbt, final HolderLookup.Provider registries, final boolean clientPacket) {
-        super.read(nbt, registries, clientPacket);
-        final DyeColor previousColor = this.color;
-        if (nbt.contains("DyeColor")) {
-            this.color = DyeColor.byId(nbt.getInt("DyeColor"));
-        } else {
-            this.color = null;
-        }
-
-        if (clientPacket && previousColor != this.color) {
-            this.refreshRenderedModel();
-        }
-    }
-
-    public void refreshRenderedModel() {
-        this.blockEntity.requestModelDataUpdate();
-        if (this.hasLevel()) {
-            final Level level = this.getLevel();
-            final BlockPos pos = this.getPos();
-            level.sendBlockUpdated(pos, this.getBlockState(), this.getBlockState(), 16);
+        final DyeColor color = DyeableBlockItemHelper.getOffhandDyeColor(player);
+        if (color != null) {
+            this.setColor(color);
         }
     }
 

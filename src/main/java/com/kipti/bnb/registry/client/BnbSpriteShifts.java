@@ -105,6 +105,46 @@ public class BnbSpriteShifts {
             "fluid_tank_window_single",
             "dyed_fluid_tank"
     );
+    public static final Map<DyeColor, SpriteShiftEntry> DYED_BOILER_GAUGE = getDyedSpriteShifts(
+            "create",
+            "boiler_gauge",
+            "dyed_fluid_tank"
+    );
+    public static final Map<DyeColor, SpriteShiftEntry> DYED_PUMP = getDyedSpriteShifts(
+            "create",
+            "pump",
+            "dyed_pump"
+    );
+    public static final Map<DyeColor, SpriteShiftEntry> DYED_SMART_PIPE_1 = getDyedSpriteShifts(
+            "create",
+            "smart_pipe_1",
+            "dyed_smart_pipe"
+    );
+    public static final Map<DyeColor, SpriteShiftEntry> DYED_SMART_PIPE_2 = getDyedSpriteShifts(
+            "create",
+            "smart_pipe_2",
+            "dyed_smart_pipe"
+    );
+    public static final Map<DyeColor, SpriteShiftEntry> DYED_STEAM_ENGINE = getDyedSpriteShifts(
+            "create",
+            "engine",
+            "dyed_steam_engine"
+    );
+    public static final Map<DyeColor, SpriteShiftEntry> DYED_VALVE_CLOSED = getDyedSpriteShifts(
+            "create",
+            "valve_closed",
+            "dyed_valve"
+    );
+    public static final Map<DyeColor, SpriteShiftEntry> DYED_VALVE_OPEN = getDyedSpriteShifts(
+            "create",
+            "valve_open",
+            "dyed_valve"
+    );
+    public static final Map<DyeColor, SpriteShiftEntry> DYED_FLUID_VALVE = getDyedSpriteShifts(
+            "create",
+            "fluid_valve",
+            "dyed_valve"
+    );
 
     public static Map<DyeColor, SpriteShiftEntry> getDyedSpriteShifts(
             final String sourceNamespace,

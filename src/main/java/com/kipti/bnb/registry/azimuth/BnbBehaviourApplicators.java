@@ -3,6 +3,7 @@ package com.kipti.bnb.registry.azimuth;
 import com.cake.azimuth.registration.BehaviourApplicators;
 import com.cake.azimuth.registration.VisualWrapperInterest;
 import com.kipti.bnb.content.decoration.dyeable.pipes.DyeablePipeBehaviour;
+import com.kipti.bnb.content.decoration.dyeable.simple.SimpleDyeableBehaviour;
 import com.kipti.bnb.content.decoration.dyeable.tanks.DyeableTankBehaviour;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.behaviour.CogwheelChainBehaviour;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChainCandidate;
@@ -27,6 +28,7 @@ public class BnbBehaviourApplicators {
         );
         registerDyeablePipeBehaviours();
         registerDyeableFluidTankBehaviour();
+        registerSimpleDyeableBehaviours();
     }
 
     private static void registerDyeablePipeBehaviours() {
@@ -44,6 +46,17 @@ public class BnbBehaviourApplicators {
                 AllBlockEntityTypes.FLUID_TANK,
                 be -> List.of(new DyeableTankBehaviour(be))
         );
+    }
+
+    private static void registerSimpleDyeableBehaviours() {
+        registerSimpleDyeableBehaviour(AllBlockEntityTypes.MECHANICAL_PUMP);
+        registerSimpleDyeableBehaviour(AllBlockEntityTypes.SMART_FLUID_PIPE);
+        registerSimpleDyeableBehaviour(AllBlockEntityTypes.FLUID_VALVE);
+        registerSimpleDyeableBehaviour(AllBlockEntityTypes.STEAM_ENGINE);
+    }
+
+    private static void registerSimpleDyeableBehaviour(final Supplier<? extends BlockEntityType<?>> typeSupplier) {
+        BehaviourApplicators.registerForType(typeSupplier, be -> List.of(new SimpleDyeableBehaviour(be)));
     }
 
     private static boolean isSomeCogwheelBlockEntity(final BlockEntityType<?> type) {
