@@ -4,6 +4,7 @@ import com.cake.azimuth.behaviour.SuperBlockEntityBehaviour;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.behaviour.CogwheelChainBehaviour;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChain;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.segment.CogwheelChainSegment;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.shape.ChainCoordinateSpace;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.world.CogwheelChainWorld;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -20,8 +21,6 @@ import java.util.List;
  * driving cogwheels rotate.
  */
 public class CogwheelChainAttachment {
-
-    private static final float DIRECTION_SAMPLING_RANGE = 0.1f; //Range ahead of the current pos to sample for the direction
 
     private final BlockPos controllerPos;
     private float dist;
@@ -112,7 +111,8 @@ public class CogwheelChainAttachment {
 
         final float dist = wrapDist(this.dist + offset, totalLength);
 
-        return this.resolvePositionOnSegments(segments, dist);
+        final ChainCoordinateSpace coordinateSpace = ChainCoordinateSpace.forLogical(level, this.controllerPos);
+        return this.resolvePositionOnSegments(coordinateSpace, segments, dist);
     }
 
     /**
@@ -212,13 +212,14 @@ public class CogwheelChainAttachment {
     }
 
     @Nullable
-    private Vec3 resolvePositionOnSegments(final List<CogwheelChainSegment> segments, final float pos) {
+    private Vec3 resolvePositionOnSegments(final ChainCoordinateSpace coordinateSpace,
+                                           final List<CogwheelChainSegment> segments,
+                                           final float pos) {
         final CogwheelChainSegment segment = findSegmentAtDist(segments, pos);
         if (segment == null) return null;
 
         final float t = segment.length() > 0 ? (pos - segment.startDist()) / segment.length() : 0;
-        final Vec3 localPos = segment.fromPosition().lerp(segment.toPosition(), t);
-        return localPos.add(Vec3.atLowerCornerOf(this.controllerPos));
+        return coordinateSpace.toWorld(segment.fromPosition().lerp(segment.toPosition(), t));
     }
 
     @Nullable
@@ -244,7 +245,9 @@ public class CogwheelChainAttachment {
         return wrapped < 0 ? wrapped + totalLength : wrapped;
     }
 
-    private Vec3 getSmoothedCurrentDirection(final List<CogwheelChainSegment> segments, final float dist) {
+    private Vec3 getSmoothedCurrentDirection(final ChainCoordinateSpace coordinateSpace,
+                                             final List<CogwheelChainSegment> segments,
+                                             final float dist) {
         if (segments.isEmpty()) return Vec3.ZERO;
 
         final float totalLength = segments.getLast().endDist();
@@ -252,31 +255,21 @@ public class CogwheelChainAttachment {
 
         final float backDist = dist - 0.2f;
         final float frontDist = dist + 0.2f;
-        final Vec3 backPosition = this.resolvePositionOnSegments(segments, wrapDist(backDist, totalLength));
-        final Vec3 frontPosition = this.resolvePositionOnSegments(segments, wrapDist(frontDist, totalLength));
+        final Vec3 backPosition = this.resolvePositionOnSegments(coordinateSpace, segments, wrapDist(backDist, totalLength));
+        final Vec3 frontPosition = this.resolvePositionOnSegments(coordinateSpace, segments, wrapDist(frontDist, totalLength));
         if (backPosition == null || frontPosition == null) return Vec3.ZERO;
 
         final Vec3 direction = frontPosition.subtract(backPosition);
         if (direction.lengthSqr() < 1e-8) return Vec3.ZERO;
         return direction.normalize();
-//        final CogwheelChainSegment backSegment = findSegmentAtDist(segments, backDist);
-//        final CogwheelChainSegment frontSegment = findSegmentAtDist(segments, frontDist);
-//        if (backSegment == null || frontSegment == null) return Vec3.ZERO;
-//
-//        final Vec3 backDirection = backSegment.toPosition().subtract(backSegment.fromPosition()).normalize();
-//        final Vec3 frontDirection = frontSegment.toPosition().subtract(frontSegment.fromPosition()).normalize();
-//
-//        final float pointOfChange = (backSegment.endDist() + frontSegment.startDist()) / 2f;
-//        final float lerpFrom = (pointOfChange - backDist) / (frontDist - backDist);
-//
-//        return frontDirection.lerp(backDirection, lerpFrom);
     }
 
     public Vec3 getCurrentDirection(final Level level, final float offset) {
         final @Nullable List<CogwheelChainSegment> segments = this.getCurrentCogwheelChainSegments(level);
         if (segments == null) return Vec3.ZERO;
         if (segments.isEmpty()) return Vec3.ZERO;
-        return this.getSmoothedCurrentDirection(segments, this.dist + offset);
+        final ChainCoordinateSpace coordinateSpace = ChainCoordinateSpace.forLogical(level, this.controllerPos);
+        return this.getSmoothedCurrentDirection(coordinateSpace, segments, this.dist + offset);
     }
 
     public Vec3 getCurrentDirection(final Level level) {

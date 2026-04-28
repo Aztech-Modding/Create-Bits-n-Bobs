@@ -30,9 +30,6 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RenderHighlightEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 
-/**
- * Client-side selection and outline handling for cogwheel chains.
- */
 @EventBusSubscriber(Dist.CLIENT)
 public class CogwheelChainInteractionHandler {
 
@@ -99,7 +96,7 @@ public class CogwheelChainInteractionHandler {
         final CogwheelChainWorld chainWorld = CogwheelChainWorld.get(mc.level);
         chainWorld.validate(mc.level);
 
-        final ChainDriveShapeHelper.ChainShapeHit hit = ChainDriveShapeHelper.findClosestRayHit(
+        final ChainDriveShapeHelper.ChainShapeHit hit = ChainDriveShapeHelper.findClosestRenderedRayHit(
                 mc.level, origin, target, vanillaDistSq);
         if (hit == null) {
             clearSelection();
@@ -129,12 +126,6 @@ public class CogwheelChainInteractionHandler {
                 || CogwheelChainPartialEditInteractionHandler.hasActiveEditContext();
     }
 
-    /**
-     * Attempts to mount the player onto the currently selected chain.
-     * Called from input event handlers when the player right-clicks while holding a CHAIN_RIDEABLE item.
-     *
-     * @return {@code true} if the player successfully began riding
-     */
     public static boolean onUse() {
         final Minecraft mc = Minecraft.getInstance();
         if (mc.player == null || mc.level == null) return false;
@@ -161,12 +152,9 @@ public class CogwheelChainInteractionHandler {
 
         final VertexConsumer vb = buffer.getBuffer(RenderType.lines());
         ms.pushPose();
-        ms.translate(
-                selectedController.getX() - camera.x,
-                selectedController.getY() - camera.y,
-                selectedController.getZ() - camera.z
-        );
-        selectedShape.drawOutline(selectedController, ms, vb);
+        final ChainCoordinateSpace coordinateSpace = ChainCoordinateSpace.forRender(mc.level, selectedController);
+        ms.translate(-camera.x, -camera.y, -camera.z);
+        selectedShape.drawOutline(ms, vb, coordinateSpace::toWorld);
         ms.popPose();
     }
 

@@ -6,7 +6,6 @@ import com.kipti.bnb.content.kinetics.cogwheel_chain.render.CogwheelChainRenderG
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.CogwheelChainType;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -15,6 +14,7 @@ import org.joml.Matrix4f;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.UnaryOperator;
 
 public class CogwheelChainWholeShape extends CogwheelChainShape {
 
@@ -54,36 +54,36 @@ public class CogwheelChainWholeShape extends CogwheelChainShape {
         this.radius = baseRadius + INFLATE_PIXELS;
         this.closedLoop = pointsLocal.size() > 2
                 && pointsLocal.getFirst().distanceToSqr(pointsLocal.getLast()) > MIN_LENGTH_SQR;
-        this.segmentCount = closedLoop ? pointsLocal.size() : pointsLocal.size() - 1;
+        this.segmentCount = this.closedLoop ? pointsLocal.size() : pointsLocal.size() - 1;
 
         final int n = pointsLocal.size();
-        this.cumulativeLengths = new float[segmentCount + 1];
+        this.cumulativeLengths = new float[this.segmentCount + 1];
         float lengthSum = 0f;
-        for (int segmentIndex = 0; segmentIndex < segmentCount; segmentIndex++) {
-            final Vec3 a = pointsLocal.get(segmentStartIndex(segmentIndex));
-            final Vec3 b = pointsLocal.get(segmentEndIndex(segmentIndex));
+        for (int segmentIndex = 0; segmentIndex < this.segmentCount; segmentIndex++) {
+            final Vec3 a = pointsLocal.get(this.segmentStartIndex(segmentIndex));
+            final Vec3 b = pointsLocal.get(this.segmentEndIndex(segmentIndex));
             lengthSum += (float) a.distanceTo(b);
-            cumulativeLengths[segmentIndex + 1] = lengthSum;
+            this.cumulativeLengths[segmentIndex + 1] = lengthSum;
         }
         this.totalLength = lengthSum;
 
-        AABB box = new AABB(pointsLocal.get(0), pointsLocal.get(0)).inflate(radius);
+        AABB box = new AABB(pointsLocal.get(0), pointsLocal.get(0)).inflate(this.radius);
         for (int i = 1; i < n; i++) {
-            box = box.minmax(new AABB(pointsLocal.get(i), pointsLocal.get(i)).inflate(radius));
+            box = box.minmax(new AABB(pointsLocal.get(i), pointsLocal.get(i)).inflate(this.radius));
         }
         this.bounds = box;
 
         this.tangentAtVertex = new Vec3[n];
         this.uAtVertex = new Vec3[n];
         this.vAtVertex = new Vec3[n];
-        buildFrames();
+        this.buildFrames();
     }
 
     @Override
     @Nullable
     public Vec3 intersect(final Vec3 from, final Vec3 to) {
-        if (points.size() < 2) return null;
-        final AABB expandedBounds = bounds.inflate(radius);
+        if (this.points.size() < 2) return null;
+        final AABB expandedBounds = this.bounds.inflate(this.radius);
         if (!expandedBounds.contains(from) && expandedBounds.clip(from, to).isEmpty()) return null;
 
         final Vec3 rayDir = to.subtract(from);
@@ -92,17 +92,17 @@ public class CogwheelChainWholeShape extends CogwheelChainShape {
         double bestDistanceSq = Double.POSITIVE_INFINITY;
         Vec3 bestHit = null;
 
-        for (int i = 0; i < segmentCount; i++) {
-            final int startIndex = segmentStartIndex(i);
-            final int endIndex = segmentEndIndex(i);
-            final Vec3 a = points.get(startIndex);
-            final Vec3 b = points.get(endIndex);
+        for (int i = 0; i < this.segmentCount; i++) {
+            final int startIndex = this.segmentStartIndex(i);
+            final int endIndex = this.segmentEndIndex(i);
+            final Vec3 a = this.points.get(startIndex);
+            final Vec3 b = this.points.get(endIndex);
             final Vec3 segment = b.subtract(a);
             final double segmentLen = segment.length();
             if (segmentLen * segmentLen < MIN_LENGTH_SQR) continue;
 
             final Vec3 segmentTangent = segment.scale(1.0 / segmentLen);
-            final Frame frame = frameForSegment(startIndex, endIndex, 0.5, segmentTangent);
+            final Frame frame = this.frameForSegment(startIndex, endIndex, 0.5, segmentTangent);
             final Vec3 segmentCenter = a.add(segment.scale(0.5));
             final double halfLength = segmentLen * 0.5 + TANGENT_EXTENSION_PIXELS;
 
@@ -114,8 +114,8 @@ public class CogwheelChainWholeShape extends CogwheelChainShape {
                     frame.u,
                     frame.v,
                     halfLength,
-                    radius,
-                    radius
+                    this.radius,
+                    this.radius
             );
             if (Double.isNaN(rayT)) continue;
 
@@ -183,14 +183,14 @@ public class CogwheelChainWholeShape extends CogwheelChainShape {
 
     @Override
     public float getChainPosition(final Vec3 intersection) {
-        if (segmentCount <= 0) return 0f;
+        if (this.segmentCount <= 0) return 0f;
         int bestSeg = 0;
         double bestDistSq = Double.POSITIVE_INFINITY;
         double bestT = 0;
 
-        for (int i = 0; i < segmentCount; i++) {
-            final Vec3 a = points.get(segmentStartIndex(i));
-            final Vec3 b = points.get(segmentEndIndex(i));
+        for (int i = 0; i < this.segmentCount; i++) {
+            final Vec3 a = this.points.get(this.segmentStartIndex(i));
+            final Vec3 b = this.points.get(this.segmentEndIndex(i));
             final Vec3 ab = b.subtract(a);
             final Vec3 ap = intersection.subtract(a);
             final double lenSq = ab.lengthSqr();
@@ -203,30 +203,34 @@ public class CogwheelChainWholeShape extends CogwheelChainShape {
                 bestT = t;
             }
         }
-        final double segLen = points.get(segmentStartIndex(bestSeg)).distanceTo(points.get(segmentEndIndex(bestSeg)));
-        return cumulativeLengths[bestSeg] + (float) (bestT * segLen);
+        final double segLen = this.points.get(this.segmentStartIndex(bestSeg))
+                .distanceTo(this.points.get(this.segmentEndIndex(bestSeg)));
+        return this.cumulativeLengths[bestSeg] + (float) (bestT * segLen);
     }
 
     @Override
-    protected void drawOutline(final BlockPos anchor, final PoseStack ms, final VertexConsumer vb) {
-        if (segmentCount <= 0) return;
+    protected void drawOutline(final PoseStack ms, final VertexConsumer vb, final UnaryOperator<Vec3> positionTransform) {
+        if (this.segmentCount <= 0) return;
 
-        final float r = (float) radius;
+        final float r = (float) this.radius;
         final int color = 0x66000000;
 
-        for (int i = 0; i < segmentCount; i++) {
-            final int startIndex = segmentStartIndex(i);
-            final int endIndex = segmentEndIndex(i);
-            final Vec3 p0 = points.get(startIndex);
-            final Vec3 p1 = points.get(endIndex);
+        for (int i = 0; i < this.segmentCount; i++) {
+            final int startIndex = this.segmentStartIndex(i);
+            final int endIndex = this.segmentEndIndex(i);
+            final Vec3 p0 = this.points.get(startIndex);
+            final Vec3 p1 = this.points.get(endIndex);
 
-            final Vec3 u0 = uAtVertex[startIndex];
-            final Vec3 v0 = vAtVertex[startIndex];
-            final Vec3 u1 = uAtVertex[endIndex];
-            final Vec3 v1 = vAtVertex[endIndex];
+            final Vec3 u0 = this.uAtVertex[startIndex];
+            final Vec3 v0 = this.vAtVertex[startIndex];
+            final Vec3 u1 = this.uAtVertex[endIndex];
+            final Vec3 v1 = this.vAtVertex[endIndex];
 
-            final List<Vec3> startCorners = getCorners(p0, u0, v0, r);
-            final List<Vec3> endCorners = getPointsInClosestOrder(getCorners(p1, u1, v1, r), startCorners);
+            final List<Vec3> startCorners = transformPoints(getCorners(p0, u0, v0, r), positionTransform);
+            final List<Vec3> endCorners = getPointsInClosestOrder(
+                    transformPoints(getCorners(p1, u1, v1, r), positionTransform),
+                    startCorners
+            );
 
             for (int cornerIndex = 0; cornerIndex < 4; cornerIndex++) {
                 line(vb, ms, startCorners.get(cornerIndex), endCorners.get(cornerIndex), color);
@@ -240,12 +244,12 @@ public class CogwheelChainWholeShape extends CogwheelChainShape {
                     color);
         }
 
-        if (!closedLoop) {
-            final int last = points.size() - 1;
-            final Vec3 pn = points.get(last);
-            final Vec3 un = uAtVertex[last];
-            final Vec3 vn = vAtVertex[last];
-            final List<Vec3> endCorners = getCorners(pn, un, vn, r);
+        if (!this.closedLoop) {
+            final int last = this.points.size() - 1;
+            final Vec3 pn = this.points.get(last);
+            final Vec3 un = this.uAtVertex[last];
+            final Vec3 vn = this.vAtVertex[last];
+            final List<Vec3> endCorners = transformPoints(getCorners(pn, un, vn, r), positionTransform);
             drawRing(vb, ms,
                     endCorners.get(0),
                     endCorners.get(1),
@@ -253,6 +257,14 @@ public class CogwheelChainWholeShape extends CogwheelChainShape {
                     endCorners.get(3),
                     color);
         }
+    }
+
+    private static List<Vec3> transformPoints(final List<Vec3> points, final UnaryOperator<Vec3> positionTransform) {
+        final ArrayList<Vec3> transformed = new ArrayList<>(points.size());
+        for (final Vec3 point : points) {
+            transformed.add(positionTransform.apply(point));
+        }
+        return transformed;
     }
 
     private static List<Vec3> getCorners(final Vec3 center, final Vec3 u, final Vec3 v, final float radius) {
@@ -280,44 +292,44 @@ public class CogwheelChainWholeShape extends CogwheelChainShape {
     }
 
     private void buildFrames() {
-        final int n = points.size();
+        final int n = this.points.size();
         if (n == 0) return;
 
         for (int i = 0; i < n; i++) {
             final Vec3 tangent;
-            if (closedLoop) {
+            if (this.closedLoop) {
                 final int prev = (i - 1 + n) % n;
                 final int next = (i + 1) % n;
-                final Vec3 in = safeDirection(points.get(i).subtract(points.get(prev)));
-                final Vec3 out = safeDirection(points.get(next).subtract(points.get(i)));
+                final Vec3 in = safeDirection(this.points.get(i).subtract(this.points.get(prev)));
+                final Vec3 out = safeDirection(this.points.get(next).subtract(this.points.get(i)));
                 tangent = safeDirection(in.add(out));
             } else if (i == 0) {
-                tangent = safeDirection(points.get(1).subtract(points.get(0)));
+                tangent = safeDirection(this.points.get(1).subtract(this.points.get(0)));
             } else if (i == n - 1) {
-                tangent = safeDirection(points.get(n - 1).subtract(points.get(n - 2)));
+                tangent = safeDirection(this.points.get(n - 1).subtract(this.points.get(n - 2)));
             } else {
-                final Vec3 in = safeDirection(points.get(i).subtract(points.get(i - 1)));
-                final Vec3 out = safeDirection(points.get(i + 1).subtract(points.get(i)));
+                final Vec3 in = safeDirection(this.points.get(i).subtract(this.points.get(i - 1)));
+                final Vec3 out = safeDirection(this.points.get(i + 1).subtract(this.points.get(i)));
                 tangent = safeDirection(in.add(out));
             }
-            tangentAtVertex[i] = tangent;
+            this.tangentAtVertex[i] = tangent;
         }
 
         for (int i = 0; i < n; i++) {
-            final Vec3 tangent = tangentAtVertex[i];
+            final Vec3 tangent = this.tangentAtVertex[i];
             final Vec3 u;
             if (i == 0) {
                 u = perpendicularUnit(tangent);
             } else {
-                Vec3 projected = uAtVertex[i - 1].subtract(tangent.scale(uAtVertex[i - 1].dot(tangent)));
+                Vec3 projected = this.uAtVertex[i - 1].subtract(tangent.scale(this.uAtVertex[i - 1].dot(tangent)));
                 if (projected.lengthSqr() < MIN_LENGTH_SQR) {
                     projected = perpendicularUnit(tangent);
                 }
                 u = projected.normalize();
             }
             final Vec3 v = safeDirection(tangent.cross(u));
-            uAtVertex[i] = u;
-            vAtVertex[i] = v;
+            this.uAtVertex[i] = u;
+            this.vAtVertex[i] = v;
         }
     }
 
@@ -335,7 +347,7 @@ public class CogwheelChainWholeShape extends CogwheelChainShape {
     }
 
     private Frame frameForSegment(final int startIndex, final int endIndex, final double segT, final Vec3 segmentTangent) {
-        Vec3 u = uAtVertex[startIndex].lerp(uAtVertex[endIndex], segT);
+        Vec3 u = this.uAtVertex[startIndex].lerp(this.uAtVertex[endIndex], segT);
         u = u.subtract(segmentTangent.scale(u.dot(segmentTangent)));
         if (u.lengthSqr() < MIN_LENGTH_SQR) {
             u = perpendicularUnit(segmentTangent);
@@ -347,26 +359,26 @@ public class CogwheelChainWholeShape extends CogwheelChainShape {
     }
 
     @Override
-    public Vec3 getVec(final BlockPos anchor, final float position) {
-        if (segmentCount <= 0 || totalLength <= 0f) return points.get(0).add(Vec3.atLowerCornerOf(anchor));
+    public Vec3 getLocalVec(final float position) {
+        if (this.segmentCount <= 0 || this.totalLength <= 0f) return this.points.get(0);
 
         final float pos;
-        if (closedLoop) {
-            final float wrapped = position % totalLength;
-            pos = wrapped < 0 ? wrapped + totalLength : wrapped;
+        if (this.closedLoop) {
+            final float wrapped = position % this.totalLength;
+            pos = wrapped < 0 ? wrapped + this.totalLength : wrapped;
         } else {
-            pos = Mth.clamp(position, 0f, totalLength);
+            pos = Mth.clamp(position, 0f, this.totalLength);
         }
 
         int seg = 0;
-        while (seg < segmentCount - 1 && cumulativeLengths[seg + 1] <= pos) seg++;
+        while (seg < this.segmentCount - 1 && this.cumulativeLengths[seg + 1] <= pos) seg++;
 
-        final Vec3 a = points.get(segmentStartIndex(seg));
-        final Vec3 b = points.get(segmentEndIndex(seg));
-        final float segStart = cumulativeLengths[seg];
+        final Vec3 a = this.points.get(this.segmentStartIndex(seg));
+        final Vec3 b = this.points.get(this.segmentEndIndex(seg));
+        final float segStart = this.cumulativeLengths[seg];
         final float segLen = (float) a.distanceTo(b);
         final float t = segLen > 0 ? (pos - segStart) / segLen : 0f;
-        return a.lerp(b, Mth.clamp(t, 0, 1)).add(Vec3.atLowerCornerOf(anchor));
+        return a.lerp(b, Mth.clamp(t, 0, 1));
     }
 
     private int segmentStartIndex(final int segmentIndex) {
@@ -374,8 +386,8 @@ public class CogwheelChainWholeShape extends CogwheelChainShape {
     }
 
     private int segmentEndIndex(final int segmentIndex) {
-        if (closedLoop) {
-            return (segmentIndex + 1) % points.size();
+        if (this.closedLoop) {
+            return (segmentIndex + 1) % this.points.size();
         }
         return segmentIndex + 1;
     }

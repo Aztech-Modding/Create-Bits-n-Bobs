@@ -110,9 +110,7 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
 
     @Override
     public void destroy() {
-        if (!this.tryReplaceWithResidualChain(false)) {
-            this.destroyChain(true, false);
-        }
+        this.destroyChain(false, false);
         super.destroy();
     }
 

@@ -3,13 +3,10 @@ package com.kipti.bnb.content.kinetics.cogwheel_chain.shape;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.Mth;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Matrix4f;
 
-import java.util.List;
+import java.util.function.UnaryOperator;
 
 public abstract class CogwheelChainShape {
 
@@ -18,9 +15,13 @@ public abstract class CogwheelChainShape {
 
     public abstract float getChainPosition(Vec3 intersection);
 
-    protected abstract void drawOutline(BlockPos anchor, PoseStack ms, VertexConsumer vb);
+    protected abstract void drawOutline(PoseStack ms, VertexConsumer vb, UnaryOperator<Vec3> positionTransform);
 
-    public abstract Vec3 getVec(BlockPos anchor, float position);
+    public abstract Vec3 getLocalVec(float position);
+
+    public Vec3 getVec(final BlockPos anchor, final float position) {
+        return this.getLocalVec(position).add(Vec3.atLowerCornerOf(anchor));
+    }
 
 }
 

@@ -27,7 +27,7 @@ repositories {
         name = 'azmod-maven'
         url = "https://maven.azmod.net/releases"
     }
-    
+
     maven {
         name = 'azmod-maven-snapshots'
         url = "https://maven.azmod.net/snapshots"
@@ -39,6 +39,18 @@ repositories {
     maven {
         name = 'BlameJared Maven (CrT / Bookshelf)'
         url = 'https://maven.blamejared.com'
+    }
+    exclusiveContent {
+        forRepository {
+            maven {
+                url = "https://maven.ryanhcode.dev/releases"
+                name = "RyanHCode Maven"
+            }
+        }
+        filter {
+            includeGroup("dev.ryanhcode.sable")
+            includeGroup("dev.ryanhcode.sable-companion")
+        }
     }
 }
 
@@ -77,6 +89,7 @@ dependencies {
     implementation "net.neoforged:neoforge:${neo_version}"
     implementation("com.cake.azimuth:azimuth:${azimuth_version}")
     implementation("com.cake.struts:struts:${struts_version}")
+
     compileOnly("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
     implementation("net.createmod.ponder:ponder-neoforge:${ponder_version}+mc${minecraft_version}")
     runtimeOnly("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
@@ -91,6 +104,12 @@ dependencies {
     }
 
     implementation("com.cake.autoload:autoload-neoforge-1.21.1:1.+")
+
+    jarJar(api("dev.ryanhcode.sable-companion:sable-companion-common-${project.minecraft_version}:[${project.sable_companion_version},)")) {
+        version {
+            prefer project.sable_companion_version
+        }
+    }
 
     if (enable_cc_tweaked.toBoolean()) {
         compileOnly("cc.tweaked:cc-tweaked-$minecraft_version-core-api:$cc_tweaked_version")
