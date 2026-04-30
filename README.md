@@ -10,18 +10,15 @@ The following terms apply **only** to development branches, including but not li
 * `compat-and-casings`
 * any branch containing unmerged commits not present in a stable release branch (e.g. `main`, `1.20.1`)
 
-#### Permissions & Limitations
+These builds are in active development. It is highly likely that you will encounter issues regarding:
+  * Game stability
+  * Integrity of world/save data
+  * Content being removed
 
-* Building and running the mod from these branches is permitted for personal use and testing purposes.
-* These builds are experimental. No guarantee is provided regarding:
+### Permissions & Limitations
 
-  * stability
-  * correctness of behavior
-  * integrity of world/save data
-
-#### Redistribution
-
-* Redistribution of builds from development branches is **not permitted**.
+* Building and running the mod from these branches for experimentation and testing purposes **is permitted**.
+* To prevent harm, redistribution of builds from development branches is **not permitted**.
 
 ## Translations [![Crowdin](https://badges.crowdin.net/create-bits-n-bobs/localized.svg)](https://crowdin.com/project/create-bits-n-bobs)
 Translation contributions are avaliable on [crowdin](https://crowdin.oreostack.uk/)! Please [join the discord](https://discord.com/invite/CA2dfuFxcV) for communications about translating or to request a new language.
