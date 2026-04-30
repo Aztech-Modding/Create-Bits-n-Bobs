@@ -4,7 +4,7 @@ Avaliable on [Curseforge](https://www.curseforge.com/minecraft/mc-mods/create-bi
 
 ## Development Branch Usage Notice
 
-The following terms apply **only** to development branches, including but not limited to:
+The following terms apply **only** to development branches, including:
 
 * `contraptions-and-control`
 * `compat-and-casings`
