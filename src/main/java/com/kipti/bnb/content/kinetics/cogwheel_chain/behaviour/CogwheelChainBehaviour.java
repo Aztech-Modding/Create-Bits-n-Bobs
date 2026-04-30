@@ -47,6 +47,7 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
     @Nullable
     private Vec3i controllerOffset = null;
 
+    private boolean invalidNextTick = false;
     private int chainsToRefund = 0;
     @Nullable
     private BlockPos registeredControllerPos = null;
@@ -63,8 +64,10 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
             return;
         }
         if (this.controlledChain != null) {
-            if (!this.controlledChain.checkIntegrity(this.getLevel(), this.getPos())) {
-                this.destroyForInvalidShape();
+            if (this.controlledChain.checkIntegrity(this.getLevel(), this.getPos())) {
+                this.tickStructureValid();
+            } else {
+                this.tickStructureInvalid();
             }
         } else {
             if (this.controllerOffset != null && this.getLevel() != null) {
@@ -73,12 +76,27 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
                 this.<CogwheelChainBehaviour>getSameBehaviourOptional(controllerPos)
                         .ifPresentOrElse(
                                 controller -> {
-                                    if (!controller.isInSameChain(this)) {
-                                        this.destroyForInvalidShape();
+                                    if (controller.isInSameChain(this)) {
+                                        this.tickStructureValid();
+                                    } else {
+                                        this.tickStructureInvalid();
                                     }
-                                }, this::destroyForInvalidShape
+                                },
+                                this::tickStructureInvalid
                         );
             }
+        }
+    }
+
+    private void tickStructureValid() {
+        this.invalidNextTick = false;
+    }
+
+    private void tickStructureInvalid() {
+        if (this.invalidNextTick) {
+            this.destroyForInvalidShape();
+        } else {
+            this.invalidNextTick = true;
         }
     }
 
@@ -252,22 +270,21 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
 
     public float getChainRotationFactor() {
         if (this.controlledChain != null) {
-            final PathedCogwheelNode controllerNode = this.controlledChain.getNodeFromControllerOffset(Vec3i.ZERO);
-            if (controllerNode == null) return 0;
-
-            return controllerNode.sideFactor();
+            return getSideFactorFromChain(this.controlledChain, Vec3i.ZERO);
         }
 
         if (this.getLevel() == null || this.controllerOffset == null) return 0;
 
         final BlockPos controllerPos = this.getPos().offset(this.controllerOffset);
         return this.<CogwheelChainBehaviour>getSameBehaviourOptional(controllerPos)
-                .map(controller -> {
-                    if (controller.controlledChain == null) return 0f;
+                .map(controller -> getSideFactorFromChain(controller.controlledChain, this.controllerOffset))
+                .orElse(0f);
+    }
 
-                    final PathedCogwheelNode nodeInChain = controller.controlledChain.getNodeFromControllerOffset(this.controllerOffset);
-                    return nodeInChain == null ? 0f : nodeInChain.sideFactor();
-                }).orElse(0f);
+    private static float getSideFactorFromChain(final @Nullable CogwheelChain chain, final Vec3i memberOffset) {
+        if (chain == null) return 0f;
+        final PathedCogwheelNode node = chain.getNodeFromControllerOffset(memberOffset);
+        return node == null ? 0f : node.sideFactor();
     }
 
     private void writeConnectionInfo(final CompoundTag compound) {

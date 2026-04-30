@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Custom BlockItem for fluid pipes that sets the dye color immediately during placement,
+ * Custom BlockItem for fluid pipes that sets the dye color immediately before placement,
  * eliminating the visual desync where connections appear incorrect for a tick.
  */
 public class DyeablePipeBlockItem extends BlockItem {

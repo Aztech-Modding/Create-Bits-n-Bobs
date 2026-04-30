@@ -1,5 +1,7 @@
 package com.kipti.bnb.registry.datagen;
 
+import com.cake.azimuth.lang.IncludeLangDefaults;
+import com.cake.azimuth.lang.LangDefault;
 import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.registry.content.BnbItems;
 import com.kipti.bnb.registry.content.blocks.BnbKineticBlocks;
@@ -23,6 +25,10 @@ import org.jetbrains.annotations.ApiStatus;
 
 import java.util.function.Supplier;
 
+@IncludeLangDefaults({
+        @LangDefault(key = "tab.bits_n_bobs.base", value = CreateBitsnBobs.TAB_NAME),
+        @LangDefault(key = "tab.bits_n_bobs.deco", value = CreateBitsnBobs.DECO_NAME),
+})
 public class BnbCreativeTabs {
 
     private static final DeferredRegister<CreativeModeTab> REGISTER =

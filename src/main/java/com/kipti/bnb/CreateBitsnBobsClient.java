@@ -1,5 +1,7 @@
 package com.kipti.bnb;
 
+import com.cake.azimuth.lang.IncludeLangDefaults;
+import com.cake.azimuth.lang.LangDefault;
 import com.cake.azimuth.ponder.PonderForeignLabelRegistry;
 import com.cake.struts.compat.flywheel.StrutsFlywheelCompatLoader;
 import com.cake.struts.content.StrutModelManipulator;
@@ -32,6 +34,7 @@ import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 
 import java.util.function.Supplier;
 
+@IncludeLangDefaults(@LangDefault(key = "bits_n_bobs.ponder.foreign_label", value = "Bits n Bobs"))
 @Mod(value = CreateBitsnBobs.MOD_ID, dist = Dist.CLIENT)
 public class CreateBitsnBobsClient {
 

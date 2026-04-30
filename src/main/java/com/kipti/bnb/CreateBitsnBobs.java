@@ -1,9 +1,5 @@
 package com.kipti.bnb;
 
-import com.cake.azimuth.lang.IncludeLangDefaults;
-import com.cake.azimuth.lang.LangDefault;
-import com.cake.azimuth.registration.BehaviourApplicators;
-import com.cake.azimuth.registration.VisualWrapperInterest;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.BnbCogwheelChainTypes;
 import com.kipti.bnb.network.BnbPackets;
 import com.kipti.bnb.registry.azimuth.BnbBehaviourApplicators;
@@ -28,16 +24,11 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(CreateBitsnBobs.MOD_ID)
-@IncludeLangDefaults({
-        @LangDefault(key = "tab.bits_n_bobs.base", value = CreateBitsnBobs.TAB_NAME),
-        @LangDefault(key = "tab.bits_n_bobs.deco", value = CreateBitsnBobs.DECO_NAME),
-})
 public class CreateBitsnBobs {
 
     public static final String MOD_ID = "bits_n_bobs";
@@ -79,8 +70,6 @@ public class CreateBitsnBobs {
         BnbLangEntries.register();
         BnbTags.registerDataGenerators();
 
-        modEventBus.addListener(CreateBitsnBobs::commonSetup);
-
         BnbConfigs.register(modLoadingContext, modContainer);
 
         BnbBehaviourApplicators.register();
@@ -89,11 +78,6 @@ public class CreateBitsnBobs {
 
     private static void onRegister(final RegisterEvent event) {
         BnbContraptionTypes.register();
-    }
-
-    private static void commonSetup(final FMLCommonSetupEvent event) {
-        BehaviourApplicators.resolveRegisteredTypes();//TODO: CORRECT FUCKING LCOATION
-        VisualWrapperInterest.resolve();
     }
 
     public static ResourceLocation asResource(final String s) {
