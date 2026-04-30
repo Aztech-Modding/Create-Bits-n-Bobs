@@ -2,28 +2,10 @@
 
 Avaliable on [Curseforge](https://www.curseforge.com/minecraft/mc-mods/create-bits-n-bobs) and [Modrinth](https://modrinth.com/mod/create-bits-n-bobs)
 
-## Development Branch Usage Notice
-
-The following terms apply **only** to development branches, including:
-
-* `contraptions-and-control`
-* `compat-and-casings`
-* any branch containing unmerged commits not present in a stable release branch (e.g. `main`, `1.20.1`)
-
-These builds are in active development. It is highly likely that you will encounter issues regarding:
-  * Game stability
-  * Integrity of world/save data
-  * Content being removed
-
-### Permissions & Limitations
-
-* Building and running the mod from these branches for experimentation and testing purposes **is permitted**.
-* To prevent harm, redistribution of builds from development branches is **not permitted**.
-
 ## Translations [![Crowdin](https://badges.crowdin.net/create-bits-n-bobs/localized.svg)](https://crowdin.com/project/create-bits-n-bobs)
 Translation contributions are avaliable on [crowdin](https://crowdin.oreostack.uk/)! Please [join the discord](https://discord.com/invite/CA2dfuFxcV) for communications about translating or to request a new language.
 
-The following languages have been machine translated and we would be very greatful to have proper translations for:
+The following languages have been machine translated and we would be very grateful to have proper translations for:
 - Polish
 - French
 - French (Canadian)
@@ -41,3 +23,21 @@ The following languages are supported from human translators (❤️), but help 
 - Spanish (Mexican)
 - Pirate english
 - Italian
+
+## Development Branch Usage Notice
+
+The following terms apply **only** to development branches, including:
+
+* `contraptions-and-control`
+* `compat-and-casings`
+* any branch containing unmerged commits not present in a stable release branch (e.g. `main`, `1.20.1`)
+
+These builds are in active development. It is highly likely that you will encounter issues regarding:
+  * Game stability
+  * Integrity of world/save data
+  * Content being removed
+
+### Permissions & Limitations
+
+* Building and running the mod from these branches for experimentation and testing purposes **is permitted**.
+* To prevent harm, redistribution of builds from development branches is **not permitted**.
