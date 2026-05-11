@@ -15,6 +15,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
@@ -31,7 +32,8 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import org.jetbrains.annotations.Nullable;
 
-import static com.kipti.bnb.content.kinetics.cogwheel_chain.placement.ChainDriveDisplayRenderer.*;
+import static com.kipti.bnb.content.kinetics.cogwheel_chain.placement.ChainDriveDisplayRenderer.INVALID_COLOUR;
+import static com.kipti.bnb.content.kinetics.cogwheel_chain.placement.ChainDriveDisplayRenderer.VALID_COLOUR;
 
 /**
  * Client-side display handler for cogwheel chain partial edit previews.
@@ -91,6 +93,7 @@ public class CogwheelChainPartialEditDisplayHandler {
         }
 
         if (insertionPlan != null) {
+            player.displayClientMessage(Component.empty(), true);
             renderValidPlacement(level, placement, insertionPlan);
             renderCostOverlay(player, editContext, insertionPlan);
             return;
@@ -103,9 +106,15 @@ public class CogwheelChainPartialEditDisplayHandler {
     }
 
     private static void renderValidPlacement(final ClientLevel level,
-                                              final ProposedPlacement placement,
-                                              final CogwheelChainPartialEditInsertionPlan insertionPlan) {
-        ChainDriveDisplayRenderer.renderBlockOutline(level, placement.pos(), placement.placementState(), VALID_COLOUR, "partial_edit_preview");
+                                             final ProposedPlacement placement,
+                                             final CogwheelChainPartialEditInsertionPlan insertionPlan) {
+        ChainDriveDisplayRenderer.renderBlockOutline(
+                level,
+                placement.pos(),
+                placement.placementState(),
+                VALID_COLOUR,
+                "partial_edit_preview"
+        );
 
         final int[] displaySides = ChainPlacementPathDisplayHelper.getPathDisplaySides(insertionPlan.rebuiltChain());
         ChainDriveDisplayRenderer.renderConnectionSegment(
@@ -129,9 +138,15 @@ public class CogwheelChainPartialEditDisplayHandler {
     }
 
     private static void renderInvalidPlacement(final ClientLevel level,
-                                                final CogwheelChainPartialEditContext editContext,
-                                                final ProposedPlacement placement) {
-        ChainDriveDisplayRenderer.renderBlockOutline(level, placement.pos(), placement.placementState(), INVALID_COLOUR, "partial_edit_preview");
+                                               final CogwheelChainPartialEditContext editContext,
+                                               final ProposedPlacement placement) {
+        ChainDriveDisplayRenderer.renderBlockOutline(
+                level,
+                placement.pos(),
+                placement.placementState(),
+                INVALID_COLOUR,
+                "partial_edit_preview"
+        );
 
         final Vec3 startCenter = editContext.startNode().center();
         final Vec3 proposedCenter = placement.pos().getCenter();
@@ -175,8 +190,10 @@ public class CogwheelChainPartialEditDisplayHandler {
                 axis, baseCandidate.isLarge(), baseCandidate.hasSmallCogwheelOffset());
 
         final BlockPlaceContext placeContext = new BlockPlaceContext(
-                new UseOnContext(level, player, InteractionHand.MAIN_HAND, heldCogwheel,
-                        new BlockHitResult(Vec3.atCenterOf(placementPos), blockHit.getDirection(), placementPos, false)));
+                new UseOnContext(
+                        level, player, InteractionHand.MAIN_HAND, heldCogwheel,
+                        new BlockHitResult(Vec3.atCenterOf(placementPos), blockHit.getDirection(), placementPos, false)
+                ));
         final BlockState placementState = cogwheelBlock.getStateForPlacement(placeContext);
         if (placementState == null) return null;
 
@@ -184,8 +201,8 @@ public class CogwheelChainPartialEditDisplayHandler {
     }
 
     private static void renderCostOverlay(final LocalPlayer player,
-                                           final CogwheelChainPartialEditContext editContext,
-                                           final CogwheelChainPartialEditInsertionPlan insertionPlan) {
+                                          final CogwheelChainPartialEditContext editContext,
+                                          final CogwheelChainPartialEditInsertionPlan insertionPlan) {
         if (player.hasInfiniteMaterials() || insertionPlan.costDelta() == 0) {
             return;
         }

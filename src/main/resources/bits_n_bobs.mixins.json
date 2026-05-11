@@ -18,6 +18,7 @@
     "ServerGamePacketListenerImplAccessor",
     "dyeable.fluid_tank.ConnectivityHandlerMixin",
     "dyeable.fluid_tank.FluidTankItemMixin",
+    "dyeable.fluid_tank.FluidTankRendererMixin",
     "dyeable.pipes.AxisPipeBlockTransitionMixin",
     "dyeable.pipes.EncasedPipeBlockTransitionMixin",
     "dyeable.pipes.FluidPipeBlockMixin",

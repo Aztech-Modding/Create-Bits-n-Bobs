@@ -16,7 +16,6 @@ import com.simibubi.create.foundation.render.RenderTypes;
 import dev.engine_room.flywheel.lib.transform.PoseTransformStack;
 import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.createmod.catnip.animation.AnimationTickHolder;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
@@ -85,6 +84,92 @@ public class CogwheelChainBehaviourRenderer extends BlockEntityBehaviourRenderer
                 );
             }
         }
+    }
+
+
+    private void renderChain(final KineticBlockEntity be,
+                             final PoseStack ms,
+                             final MultiBufferSource buffer,
+                             final Vec3 preFrom,
+                             final Vec3 from,
+                             final Vec3 to,
+                             final Vec3 postTo,
+                             final Vec3 fromCogwheelAxis,
+                             final Vec3 toCogwheelAxis,
+                             final Function<Vector3f, Integer> lighter,
+                             final float offset,
+                             final float textureSquish,
+                             final CogwheelChainType type,
+                             final boolean flipInsideOutside) {
+        final Vec3 diff = to.subtract(from);
+        final double yaw = Mth.RAD_TO_DEG * Mth.atan2(diff.x, diff.z);
+        final double pitch = Mth.RAD_TO_DEG * Mth.atan2(
+                diff.y, diff.multiply(1, 0, 1)
+                        .length()
+        );
+
+        final BlockPos tilePos = be.getBlockPos();
+
+        final Vec3 startOffset = from.subtract(Vec3.atCenterOf(tilePos));
+
+        ms.pushPose();
+        final PoseTransformStack chain = TransformStack.of(ms);
+        chain.center();
+        chain.translate(startOffset);
+
+        final int light1 = lighter.apply(new Vector3f((float) from.x, (float) from.y, (float) from.z));
+        final int light2 = lighter.apply(new Vector3f((float) to.x, (float) to.y, (float) to.z));
+
+        final boolean inShipyardLod = ShipyardHelper.isProbablyInShipyard(BlockPos.containing(from));
+
+//        final boolean far = !inShipyardLod && (Minecraft.getInstance().level == be.getLevel() && !Minecraft.getInstance()
+//                .getBlockEntityRenderDispatcher().camera.getPosition()
+//                .closerThan(from.lerp(to, 0.5), MIP_DISTANCE));
+//        final boolean close = inShipyardLod || (Minecraft.getInstance().level == be.getLevel() && Minecraft.getInstance()
+//                .getBlockEntityRenderDispatcher().camera.getPosition()
+//                .closerThan(from.lerp(to, 0.5), SEAM_DIST));
+
+        final boolean far = false;
+        final boolean close = true;
+
+        if (close)
+            renderChainSlowerButWithoutGaps(
+                    ms,
+                    buffer,
+                    offset,
+                    textureSquish,
+                    preFrom,
+                    from,
+                    to,
+                    postTo,
+                    fromCogwheelAxis,
+                    toCogwheelAxis,
+                    light1,
+                    light2,
+                    type,
+                    flipInsideOutside
+            );
+        else {
+            chain.rotateYDegrees((float) yaw);
+            chain.rotateXDegrees(90 - (float) pitch);
+            chain.rotateYDegrees(45);
+            final float overextend = 0.05f;
+            chain.translate(0, 8 / 16f - overextend / 2f, 0);
+            chain.uncenter();
+            renderChainFastButWithGaps(
+                    ms,
+                    buffer,
+                    offset - overextend / 2f,
+                    textureSquish,
+                    (float) from.distanceTo(to) + overextend,
+                    light1,
+                    light2,
+                    far,
+                    type
+            );
+        }
+
+        ms.popPose();
     }
 
     private static void renderChainSlowerButWithoutGaps(final PoseStack ms,
@@ -202,9 +287,9 @@ public class CogwheelChainBehaviourRenderer extends BlockEntityBehaviourRenderer
         if (info.getVertexShape() == CogwheelChainType.VertexShape.CROSS) {
             final float radius = far ? 1f / 16f : w / 2f;
             final float minV = far ? 0 : offset * textureSquish;
-            final float maxV = far ? h : length * textureSquish + minV;
-            final float crossMinU = far ? w : 0;
-            final float crossMaxU = far ? w + 1f / 16f : w;
+            final float maxV = far ? 1 / 16f : length * textureSquish + minV;
+            final float crossMinU = far ? 3 / 16f : 0;
+            final float crossMaxU = far ? 4 / 16f : w;
             final float crossUO = far ? 0 : w;
 
             // Two perpendicular cross planes, each double-sided
@@ -302,7 +387,23 @@ public class CogwheelChainBehaviourRenderer extends BlockEntityBehaviourRenderer
                     light2
             );
             // Left face
-            renderQuad(matrix4f, pose, vc, 0, length, -halfW, -halfH, -halfW, halfH, 0, h, minV, maxV, light1, light2);
+            renderQuad(
+                    matrix4f,
+                    pose,
+                    vc,
+                    0,
+                    length,
+                    -halfW,
+                    -halfH,
+                    -halfW,
+                    halfH,
+                    0,
+                    h,
+                    minV,
+                    maxV,
+                    light1,
+                    light2
+            );
             // Bottom face
             renderQuad(
                     matrix4f,
@@ -382,85 +483,4 @@ public class CogwheelChainBehaviourRenderer extends BlockEntityBehaviourRenderer
                 .setNormal(pNormal, 0.0F, 1.0F, 0.0F);
     }
 
-    private void renderChain(final KineticBlockEntity be,
-                             final PoseStack ms,
-                             final MultiBufferSource buffer,
-                             final Vec3 preFrom,
-                             final Vec3 from,
-                             final Vec3 to,
-                             final Vec3 postTo,
-                             final Vec3 fromCogwheelAxis,
-                             final Vec3 toCogwheelAxis,
-                             final Function<Vector3f, Integer> lighter,
-                             final float offset,
-                             final float textureSquish,
-                             final CogwheelChainType type,
-                             final boolean flipInsideOutside) {
-        final Vec3 diff = to.subtract(from);
-        final double yaw = Mth.RAD_TO_DEG * Mth.atan2(diff.x, diff.z);
-        final double pitch = Mth.RAD_TO_DEG * Mth.atan2(
-                diff.y, diff.multiply(1, 0, 1)
-                        .length()
-        );
-
-        final BlockPos tilePos = be.getBlockPos();
-
-        final Vec3 startOffset = from.subtract(Vec3.atCenterOf(tilePos));
-
-        ms.pushPose();
-        final PoseTransformStack chain = TransformStack.of(ms);
-        chain.center();
-        chain.translate(startOffset);
-
-        final int light1 = lighter.apply(new Vector3f((float) from.x, (float) from.y, (float) from.z));
-        final int light2 = lighter.apply(new Vector3f((float) to.x, (float) to.y, (float) to.z));
-
-        final boolean inShipyardLod = ShipyardHelper.isProbablyInShipyard(BlockPos.containing(from));
-
-        final boolean far = !inShipyardLod && (Minecraft.getInstance().level == be.getLevel() && !Minecraft.getInstance()
-                .getBlockEntityRenderDispatcher().camera.getPosition()
-                .closerThan(from.lerp(to, 0.5), MIP_DISTANCE));
-        final boolean close = inShipyardLod || (Minecraft.getInstance().level == be.getLevel() && Minecraft.getInstance()
-                .getBlockEntityRenderDispatcher().camera.getPosition()
-                .closerThan(from.lerp(to, 0.5), SEAM_DIST));
-
-        if (close)
-            renderChainSlowerButWithoutGaps(
-                    ms,
-                    buffer,
-                    offset,
-                    textureSquish,
-                    preFrom,
-                    from,
-                    to,
-                    postTo,
-                    fromCogwheelAxis,
-                    toCogwheelAxis,
-                    light1,
-                    light2,
-                    type,
-                    flipInsideOutside
-            );
-        else {
-            chain.rotateYDegrees((float) yaw);
-            chain.rotateXDegrees(90 - (float) pitch);
-            chain.rotateYDegrees(45);
-            final float overextend = 0.05f;
-            chain.translate(0, 8 / 16f - overextend / 2f, 0);
-            chain.uncenter();
-            renderChainFastButWithGaps(
-                    ms,
-                    buffer,
-                    offset - overextend / 2f,
-                    textureSquish,
-                    (float) from.distanceTo(to) + overextend,
-                    light1,
-                    light2,
-                    far,
-                    type
-            );
-        }
-
-        ms.popPose();
-    }
 }

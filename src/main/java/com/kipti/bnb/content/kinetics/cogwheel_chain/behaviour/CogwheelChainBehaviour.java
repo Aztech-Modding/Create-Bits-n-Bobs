@@ -53,7 +53,7 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
 
     public CogwheelChainBehaviour(final SmartBlockEntity be) {
         super(be);
-        this.setLazyTickRate(5);
+        this.setLazyTickRate(20);
     }
 
     @Override
@@ -387,7 +387,7 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
     @Override
     public BehaviourVisualFactory getVisualFactory() {
         return (context, behaviour, blockEntity, parentVisual, partialTick) -> {
-            if (!(blockEntity instanceof final KineticBlockEntity kineticBlockEntity) || behaviour != this) {
+            if (!(blockEntity instanceof final KineticBlockEntity kineticBlockEntity)) {
                 return null;
             }
             return new CogwheelChainBehaviourVisual(context, kineticBlockEntity, this, parentVisual);
@@ -436,8 +436,9 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
 
         controllerBehaviour.destroyChain(false, true);
 
-        if (!result.chain().checkIntegrity(this.getLevel(), controllerWorldPos)) return false;
-        result.chain().placeInLevel(this.getLevel(), result.placingChain());
+        if (!result.chain().checkIntegrity(this.getLevel(), result.placingChain().getNodes().getFirst().pos()))
+            return false;
+        result.chain().placeInLevel(this.getLevel(), result.placingChain(), isCreative);
 
         if (!isCreative && costDifference > 0) {
             final ItemStack drops = existingChain.getReturnedItem().getDefaultInstance().copyWithCount(costDifference);
