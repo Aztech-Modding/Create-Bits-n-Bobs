@@ -78,7 +78,7 @@ public record PlaceCogwheelChainPacket(
 
         final CogwheelChain chain = new CogwheelChain(chainGeometry, this.chainType, this.chainItemType.value());
 
-        chain.placeInLevel(player.level(), this.worldSpacePartialChain);
+        chain.placeInLevel(player.level(), this.worldSpacePartialChain, player.isCreative());
     }
 
     @Override

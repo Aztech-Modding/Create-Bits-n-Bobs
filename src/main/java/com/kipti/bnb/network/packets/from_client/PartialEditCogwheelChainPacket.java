@@ -6,11 +6,7 @@ import com.kipti.bnb.content.kinetics.cogwheel_chain.behaviour.CogwheelChainBeha
 import com.kipti.bnb.content.kinetics.cogwheel_chain.edit.CogwheelChainPartialEditContext;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.edit.CogwheelChainPartialEditInsertionPlan;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.edit.CogwheelChainPartialEditInsertionPlanner;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChain;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChainPathfinder;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.PathedCogwheelNode;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.PlacingCogwheelChain;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.PlacingCogwheelNode;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.*;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.placement.ChainInteractionFailedException;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.segment.CogwheelChainSegment;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.CogwheelChainType;
@@ -96,13 +92,25 @@ public record PartialEditCogwheelChainPacket(
 
     @Override
     public void handle(final ServerPlayer player) {
-        if (player.distanceToSqr(this.controllerPos.getX() + 0.5, this.controllerPos.getY() + 0.5, this.controllerPos.getZ() + 0.5) > PlacingCogwheelChain.MAX_CHAIN_INTERACTION_DISTANCE_SQ)
+        if (player.distanceToSqr(
+                this.controllerPos.getX() + 0.5,
+                this.controllerPos.getY() + 0.5,
+                this.controllerPos.getZ() + 0.5
+        ) > PlacingCogwheelChain.MAX_CHAIN_INTERACTION_DISTANCE_SQ)
             return;
-        if (player.distanceToSqr(this.newCogwheelPos.getX() + 0.5, this.newCogwheelPos.getY() + 0.5, this.newCogwheelPos.getZ() + 0.5) > 100)
+        if (player.distanceToSqr(
+                this.newCogwheelPos.getX() + 0.5,
+                this.newCogwheelPos.getY() + 0.5,
+                this.newCogwheelPos.getZ() + 0.5
+        ) > 100)
             return;
 
         final Level level = player.level();
-        final CogwheelChainBehaviour behaviour = SuperBlockEntityBehaviour.get(level, this.controllerPos, CogwheelChainBehaviour.TYPE);
+        final CogwheelChainBehaviour behaviour = SuperBlockEntityBehaviour.get(
+                level,
+                this.controllerPos,
+                CogwheelChainBehaviour.TYPE
+        );
         if (behaviour == null || !behaviour.isController())
             return;
 
@@ -110,7 +118,10 @@ public record PartialEditCogwheelChainPacket(
         if (existingChain == null || existingChain.getReturnedItem() != this.chainItemType.value())
             return;
 
-        final InteractionHand interactionHand = InteractionHand.values()[Math.min(this.hand, InteractionHand.values().length - 1)];
+        final InteractionHand interactionHand = InteractionHand.values()[Math.min(
+                this.hand,
+                InteractionHand.values().length - 1
+        )];
         final ItemStack heldStack = player.getItemInHand(interactionHand);
         if (!(heldStack.getItem() instanceof final BlockItem blockItem))
             return;
@@ -119,7 +130,13 @@ public record PartialEditCogwheelChainPacket(
         if (!originalState.canBeReplaced())
             return;
 
-        final BlockState placementState = this.resolvePlacementState(level, player, interactionHand, heldStack, blockItem);
+        final BlockState placementState = this.resolvePlacementState(
+                level,
+                player,
+                interactionHand,
+                heldStack,
+                blockItem
+        );
         if (placementState == null)
             return;
 
@@ -155,26 +172,47 @@ public record PartialEditCogwheelChainPacket(
         }
 
         final int addedCost = insertionPlan.addedCost();
-        if (!player.hasInfiniteMaterials() && !this.tryConsumeChains(player, existingChain.getReturnedItem(), addedCost)) {
+        if (!player.hasInfiniteMaterials() && !this.tryConsumeChains(
+                player,
+                existingChain.getReturnedItem(),
+                addedCost
+        )) {
             level.setBlock(this.newCogwheelPos, originalState, Block.UPDATE_ALL);
             return;
         }
 
-        final PlacingCogwheelChain existingWorldChain = CogwheelChainPartialEditInsertionPlanner.toWorldChain(existingChain, this.controllerPos);
+        final PlacingCogwheelChain existingWorldChain = CogwheelChainPartialEditInsertionPlanner.toWorldChain(
+                existingChain,
+                this.controllerPos
+        );
         final CogwheelChain rebuiltCogwheelChain = new CogwheelChain(
                 chainGeometry,
                 existingChain.getChainType(),
                 existingChain.getReturnedItem()
         );
 
+        final boolean isCreative = player.hasInfiniteMaterials();
+
         try {
-            this.replaceChain(level, behaviour, rebuiltCogwheelChain, rebuiltChain, existingChain, existingWorldChain);
+            this.replaceChain(
+                    level,
+                    behaviour,
+                    rebuiltCogwheelChain,
+                    rebuiltChain,
+                    existingChain,
+                    existingWorldChain,
+                    isCreative
+            );
         } catch (final RuntimeException exception) {
             level.setBlock(this.newCogwheelPos, originalState, Block.UPDATE_ALL);
             if (!player.hasInfiniteMaterials()) {
                 this.refundChains(player, existingChain.getReturnedItem(), addedCost);
             }
-            CreateBitsnBobs.LOGGER.error("Failed to apply partial cogwheel-chain edit at {}", this.controllerPos, exception);
+            CreateBitsnBobs.LOGGER.error(
+                    "Failed to apply partial cogwheel-chain edit at {}",
+                    this.controllerPos,
+                    exception
+            );
             return;
         }
 
@@ -268,25 +306,31 @@ public record PartialEditCogwheelChainPacket(
                               final CogwheelChain rebuiltCogwheelChain,
                               final PlacingCogwheelChain rebuiltChain,
                               final CogwheelChain existingChain,
-                              final PlacingCogwheelChain existingWorldChain) {
+                              final PlacingCogwheelChain existingWorldChain,
+                              final boolean isCreative) {
         behaviour.clearStoredChains();
         behaviour.destroyChain(false, false);
 
         try {
-            rebuiltCogwheelChain.placeInLevel(level, rebuiltChain);
+            rebuiltCogwheelChain.placeInLevel(level, rebuiltChain, isCreative);
         } catch (final RuntimeException exception) {
-            this.restoreChain(level, existingChain, existingWorldChain);
+            this.restoreChain(level, existingChain, existingWorldChain, isCreative);
             throw exception;
         }
     }
 
     private void restoreChain(final Level level,
                               final CogwheelChain existingChain,
-                              final PlacingCogwheelChain existingWorldChain) {
+                              final PlacingCogwheelChain existingWorldChain,
+                              final boolean isCreative) {
         try {
-            existingChain.placeInLevel(level, existingWorldChain);
+            existingChain.placeInLevel(level, existingWorldChain, isCreative);
         } catch (final RuntimeException restoreException) {
-            CreateBitsnBobs.LOGGER.error("Failed to restore cogwheel chain after partial edit failure at {}", this.controllerPos, restoreException);
+            CreateBitsnBobs.LOGGER.error(
+                    "Failed to restore cogwheel chain after partial edit failure at {}",
+                    this.controllerPos,
+                    restoreException
+            );
         }
     }
 

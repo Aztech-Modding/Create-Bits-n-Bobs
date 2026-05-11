@@ -27,6 +27,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+//TODO: remove, this feature is just shit
 @Mixin(BeltBlock.class)
 public class BeltBlockMixin extends HorizontalKineticBlock implements IBE<BeltBlockEntity> {
 
@@ -35,14 +36,16 @@ public class BeltBlockMixin extends HorizontalKineticBlock implements IBE<BeltBl
     }
 
     @Inject(method = "createBlockStateDefinition", at = @At("TAIL"))
-    private void bits_n_bobs$createBlockStateDefinitionWithGlowingProperty(final StateDefinition.Builder<Block, BlockState> builder, final CallbackInfo ci) {
+    private void bits_n_bobs$createBlockStateDefinitionWithGlowingProperty(final StateDefinition.Builder<Block, BlockState> builder,
+                                                                           final CallbackInfo ci) {
         builder.add(BnbCreateBlockEdits.GLOWING);
     }
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    private void bits_n_bobs$constructorWithDefaultGlowing(final BlockBehaviour.Properties properties, final CallbackInfo ci) {
-        registerDefaultState(
-                defaultBlockState()
+    private void bits_n_bobs$constructorWithDefaultGlowing(final BlockBehaviour.Properties properties,
+                                                           final CallbackInfo ci) {
+        this.registerDefaultState(
+                this.defaultBlockState()
                         .setValue(BnbCreateBlockEdits.GLOWING, false)
         );
     }
@@ -66,14 +69,20 @@ public class BeltBlockMixin extends HorizontalKineticBlock implements IBE<BeltBl
         final boolean stateIsGlowing = state.getValue(BnbCreateBlockEdits.GLOWING);
 
         if (!stateIsGlowing)
-            withBlockEntityDo(level, pos, be -> {
-                for (final BlockPos blockPos : BeltBlock.getBeltChain(level, be.getController())) {
-                    final BeltBlockEntity belt = BeltHelper.getSegmentBE(level, blockPos);
-                    if (belt == null)
-                        continue;
-                    level.setBlock(blockPos, level.getBlockState(blockPos).setValue(BnbCreateBlockEdits.GLOWING, true), Block.UPDATE_ALL | Block.UPDATE_MOVE_BY_PISTON);
-                }
-            });
+            this.withBlockEntityDo(
+                    level, pos, be -> {
+                        for (final BlockPos blockPos : BeltBlock.getBeltChain(level, be.getController())) {
+                            final BeltBlockEntity belt = BeltHelper.getSegmentBE(level, blockPos);
+                            if (belt == null)
+                                continue;
+                            level.setBlock(
+                                    blockPos,
+                                    level.getBlockState(blockPos).setValue(BnbCreateBlockEdits.GLOWING, true),
+                                    Block.UPDATE_ALL | Block.UPDATE_MOVE_BY_PISTON
+                            );
+                        }
+                    }
+            );
         cir.setReturnValue(ItemInteractionResult.SUCCESS);
     }
 
