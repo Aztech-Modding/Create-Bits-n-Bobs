@@ -59,6 +59,12 @@ public class GayDye {
         this.animationTick++;
     }
 
+    public GayDye copy() {
+        final GayDye copy = new GayDye(this.animationType, this.prideType);
+        copy.animationTick = this.animationTick;
+        return copy;
+    }
+
     public void write(final CompoundTag tag) {
         tag.putInt("GayDyeAnimationTick", this.animationTick);
         tag.putInt("GayDyeAnimationType", this.animationType.ordinal());

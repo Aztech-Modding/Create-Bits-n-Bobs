@@ -43,6 +43,8 @@ import static com.simibubi.create.foundation.data.TagGen.pickaxeOnly;
 
 @IncludeLangDefaults({
         @LangDefault(key = "block.bits_n_bobs.girder_strut.tooltip.summary", value = "A type of girder used to span a distance _between two anchor points_."),
+        @LangDefault(key = "block.bits_n_bobs.industrial_truss.tooltip.summary", value = "This one is uhh missing stuff to encase pipes and shafts so stay attuned"),
+        @LangDefault(key = "block.bits_n_bobs.industrial_grating_panel.tooltip.summary", value = "This one is uhh missing stuff to encase pipes and shafts so stay attuned"),
         @LangDefault(key = "message.bits_n_bobs.girder_strut.missing_anchors", value = "You need %s more Girder Struts"),
 })
 public class BnbDecorativeBlocks {
@@ -286,34 +288,6 @@ public class BnbDecorativeBlocks {
 //                            ))
 //            ))
 //            .addLayer(() -> RenderType::cutout)
-//            .register();
-//
-//    public static final BlockEntry<TrussPipeBlock> INDUSTRIAL_TRUSS_ENCASED_PIPE = CreateBitsnBobs.REGISTRATE.block(
-//                    "industrial_truss_encased_pipe",
-//                    TrussPipeBlock::new
-//            )
-//            .properties(p -> p.mapColor(MapColor.METAL)
-//                    .strength(0.1f, 6.0f)
-//                    .sound(SoundType.METAL)
-//                    .isSuffocating((state, level, pos) -> false)
-//                    .isViewBlocking((state, level, pos) -> false)
-//                    .noOcclusion())
-//            .transform(TagGen.pickaxeOnly())
-//            .blockstate(TrussBlockStateGen::trussBeamsBaseModel)
-//            .onRegister(CreateRegistrate.blockModel(() -> TrussPipeModel::new))
-//            .addLayer(() -> RenderType::cutout)
-//            .loot((p, b) -> p.add(
-//                    b, p.createSingleItemTable(INDUSTRIAL_TRUSS.get())
-//                            .withPool(p.applyExplosionCondition(
-//                                    AllBlocks.FLUID_PIPE.get(), LootPool.lootPool()
-//                                            .setRolls(ConstantValue
-//                                                              .exactly(1.0F))
-//                                            .add(LootItem.lootTableItem(
-//                                                    AllBlocks.FLUID_PIPE
-//                                                            .get()))
-//                            ))
-//            ))
-//            .transform(EncasingRegistry.addVariantTo(AllBlocks.FLUID_PIPE))
 //            .register();
 
     public static void register() {

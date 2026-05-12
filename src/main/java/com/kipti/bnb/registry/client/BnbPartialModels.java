@@ -41,9 +41,11 @@ public class BnbPartialModels {
 
     GIGANTIC_COGWHEEL = block("gigantic_cogwheel/cogwheel"),
 
-    INDUSTRIAL_TRUSS_PANEL = block("industrial_truss/industrial_truss_panel"),
+            INDUSTRIAL_TRUSS_BEAMS = block("industrial_truss/industrial_truss_beams"),
+            INDUSTRIAL_TRUSS_PANEL = block("industrial_truss/industrial_truss_panel"),
+            INDUSTRIAL_TRUSS_PIPE_CUTOUT = block("industrial_truss/industrial_truss_pipe_cutout"),
 
-    THROTTLE_LEVER_HANDLE = block("throttle_lever/handle");
+            THROTTLE_LEVER_HANDLE = block("throttle_lever/handle");
 
 
     public static final Map<Direction, PartialModel> WEATHERED_METAL_GIRDER_BRACKETS = new EnumMap<>(Direction.class);

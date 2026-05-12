@@ -6,7 +6,6 @@ import com.kipti.bnb.registry.content.blocks.BnbKineticBlocks;
 import com.kipti.bnb.registry.content.blocks.BnbTrinketBlocks;
 import com.kipti.bnb.registry.content.blocks.deco.BnbDecorativeBlocks;
 import com.kipti.bnb.registry.content.blocks.encased.BnbExtraEncasedBlocks;
-import com.kipti.bnb.registry.content.blocks.encased.BnbSpecialEncasedBlocks;
 import com.kipti.bnb.registry.worldgen.BnbPaletteStoneTypes;
 import com.simibubi.create.foundation.block.DyedBlockList;
 import com.tterrag.registrate.util.entry.BlockEntry;
@@ -101,20 +100,19 @@ public enum BnbFeatureFlag {
     INDUSTRIAL_GRATING(
             FeatureCategories.BLOCK,
             "Availability of the industrial grating blocks.",
-            true,
             BnbDecorativeBlocks.INDUSTRIAL_GRATING::get,
-            BnbDecorativeBlocks.INDUSTRIAL_GRATING_PANEL::get,
-            BnbSpecialEncasedBlocks.INDUSTRIAL_GRATING_PANEL::get,
-            BnbSpecialEncasedBlocks.INDUSTRIAL_GRATING_PANEL_PIPE::get
+            BnbDecorativeBlocks.INDUSTRIAL_GRATING_PANEL::get
+//            BnbSpecialEncasedBlocks.INDUSTRIAL_GRATING_PANEL::get,
+//            BnbSpecialEncasedBlocks.INDUSTRIAL_GRATING_PANEL_PIPE::get
     ),
     INDUSTRIAL_TRUSS(
-            FeatureCategories.BLOCK, "Availability of the industrial truss blocks.", true,
+            FeatureCategories.BLOCK, "Availability of the industrial truss blocks.",
             BnbDecorativeBlocks.INDUSTRIAL_TRUSS::get
 //            BnbDecorativeBlocks.INDUSTRIAL_TRUSS_ENCASED_SHAFT::get,
 //            BnbDecorativeBlocks.INDUSTRIAL_TRUSS_ENCASED_PIPE::get
     ),
     COGWHEEL_CHAIN_CARRIAGE(
-            FeatureCategories.BLOCK, "Availability of the Cogwheel Chain Carriage block.", true,
+            FeatureCategories.BLOCK, "Availability of the Cogwheel Chain Carriage block.",
             BnbKineticBlocks.COGWHEEL_CHAIN_CARRIAGE::get
     ),
     THROTTLE_LEVER(

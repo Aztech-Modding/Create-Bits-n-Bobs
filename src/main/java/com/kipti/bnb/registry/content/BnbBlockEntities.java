@@ -24,9 +24,7 @@ import com.kipti.bnb.registry.content.blocks.BnbTrinketBlocks;
 import com.kipti.bnb.registry.content.blocks.deco.BnbDecorativeBlocks;
 import com.kipti.bnb.registry.content.blocks.encased.BnbEncasedListBlocks;
 import com.kipti.bnb.registry.content.blocks.encased.BnbExtraEncasedBlocks;
-import com.kipti.bnb.registry.content.blocks.encased.BnbSpecialEncasedBlocks;
 import com.simibubi.create.AllBlocks;
-import com.simibubi.create.content.fluids.pipes.FluidPipeBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 import com.simibubi.create.content.kinetics.base.ShaftRenderer;
@@ -66,20 +64,20 @@ public class BnbBlockEntities {
             .validBlocks(
                     BnbDecorativeBlocks.WEATHERED_METAL_GIRDER_ENCASED_SHAFT,
                     BnbExtraEncasedBlocks.INDUSTRIAL_IRON_ENCASED_SHAFT,
-                    BnbExtraEncasedBlocks.WEATHERED_IRON_ENCASED_SHAFT,
-                    BnbSpecialEncasedBlocks.INDUSTRIAL_GRATING_PANEL
+                    BnbExtraEncasedBlocks.WEATHERED_IRON_ENCASED_SHAFT
+//                    BnbSpecialEncasedBlocks.INDUSTRIAL_GRATING_PANEL
 //                    BnbDecorativeBlocks.INDUSTRIAL_TRUSS_ENCASED_SHAFT
             )
             .renderer(() -> ShaftRenderer::new)
             .register();
-
-    public static final BlockEntityEntry<FluidPipeBlockEntity> ENCASED_PIPE = REGISTRATE
-            .blockEntity("encased_pipe", FluidPipeBlockEntity::new)
-            .validBlocks(
-                    BnbSpecialEncasedBlocks.INDUSTRIAL_GRATING_PANEL_PIPE
+//
+//    public static final BlockEntityEntry<FluidPipeBlockEntity> ENCASED_PIPE = REGISTRATE
+//            .blockEntity("encased_pipe", FluidPipeBlockEntity::new)
+//            .validBlocks(
+//                    BnbSpecialEncasedBlocks.INDUSTRIAL_GRATING_PANEL_PIPE,
 //                    BnbDecorativeBlocks.INDUSTRIAL_TRUSS_ENCASED_PIPE
-            )
-            .register();
+//            )
+//            .register();
 
     public static final BlockEntityEntry<SimpleKineticBlockEntity> ENCASED_COGWHEEL = REGISTRATE
             .blockEntity("encased_cogwheel", SimpleKineticBlockEntity::new)

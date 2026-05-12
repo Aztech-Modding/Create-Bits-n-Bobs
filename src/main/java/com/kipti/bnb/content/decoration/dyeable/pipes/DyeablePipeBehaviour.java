@@ -89,22 +89,11 @@ public class DyeablePipeBehaviour extends BaseDyeableBehaviour {
         refreshPipeState(level, pos, state, true);
     }
 
-    /**
-     * Recalculates a pipe's connection shape based on its current dye color and neighbours.
-     * When {@code propagateToNeighbors} is false the refresh is limited to this block only,
-     * which avoids cascading neighbour updates (useful in ponder scenes).
-     */
     public static void refreshPipeState(final Level level,
                                         final BlockPos pos,
                                         BlockState state,
                                         final boolean propagateToNeighbors) {
         if (state.getBlock() instanceof final FluidPipeBlock pipeBlock) {
-            // Start from defaultBlockState (prevStateSides=0) instead of copying the current
-            // connections. If we copied them, Create's fallback at:
-            //   if (prevStateSides == 2) return prevState;
-            // would fire whenever dye filtering produces 0 valid connections, silently
-            // keeping the old (wrong) corner/straight shape. Starting fresh ensures
-            // the block always gets a shape consistent with what color filtering allows.
             BlockState baseState = pipeBlock.defaultBlockState();
             if (state.hasProperty(BlockStateProperties.WATERLOGGED)) {
                 baseState = baseState.setValue(

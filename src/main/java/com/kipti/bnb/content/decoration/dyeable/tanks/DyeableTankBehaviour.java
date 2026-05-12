@@ -19,6 +19,8 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.Consumer;
+
 public class DyeableTankBehaviour extends BaseDyeableBehaviour {
 
     public static final BehaviourType<DyeableTankBehaviour> TYPE = new BehaviourType<>("dyeable_fluid_tank");
@@ -44,15 +46,18 @@ public class DyeableTankBehaviour extends BaseDyeableBehaviour {
         return TYPE;
     }
 
+    @Override
+    protected void onColorChanged(@Nullable final DyeColor color) {
+        this.refreshConnectedPipes();
+    }
+
     @Nullable
     public DyeColor getDisplayedColor() {
-        if (this.gayDye != null) {
-            if (this.getBlockEntity() instanceof final FluidTankBlockEntity ftbe) {
-                final int localY = this.getPos().subtract(ftbe.getController()).getY();
-                return this.gayDye.getDisplayedColor(localY);
-            }
+        if (this.gayDye == null || !(this.getBlockEntity() instanceof final FluidTankBlockEntity ftbe)) {
+            return this.getColor();
         }
-        return this.getColor();
+        final int localY = this.getPos().subtract(ftbe.getController()).getY();
+        return this.gayDye.getDisplayedColor(localY);
     }
 
     @Override
@@ -98,54 +103,47 @@ public class DyeableTankBehaviour extends BaseDyeableBehaviour {
     }
 
     public void setGayDye(@Nullable final GayDye gayDye) {
-        this.gayDye = gayDye;
+        this.gayDye = gayDye == null ? null : gayDye.copy();
         this.refreshOrNotifyUpdate();
     }
 
     public void applyGayDyeToEntireTank(final GayDye gayDye) {
-        final FluidTankBlockEntity tankBE = (FluidTankBlockEntity) this.blockEntity;
-        final FluidTankBlockEntity controllerBE = tankBE.getControllerBE();
-
-        if (controllerBE == null) {
-            this.setGayDye(gayDye);
-            return;
-        }
-
-        final Level level = this.getLevel();
-        final BlockPos controllerPos = controllerBE.getBlockPos();
-
-        for (int x = 0; x < controllerBE.getWidth(); x++) {
-            for (int y = 0; y < controllerBE.getHeight(); y++) {
-                for (int z = 0; z < controllerBE.getWidth(); z++) {
-                    final BlockPos pos = controllerPos.offset(x, y, z);
-                    final DyeableTankBehaviour behaviour = BlockEntityBehaviour.get(level, pos, TYPE);
-                    if (behaviour != null) {
-                        behaviour.setGayDye(gayDye);
-                    }
-                }
-            }
-        }
+        this.forEachTankPart(behaviour -> behaviour.setGayDye(gayDye));
     }
 
     private void dyeEntireTank(@Nullable final DyeColor color) {
+        this.forEachTankPart(behaviour -> behaviour.setColor(color));
+    }
+
+    private void refreshConnectedPipes() {
+        if (!this.hasLevel()) {
+            return;
+        }
+        this.getLevel()
+                .updateNeighborsAt(this.getPos(), this.getBlockState().getBlock());
+    }
+
+    private void forEachTankPart(final Consumer<DyeableTankBehaviour> action) {
+        if (!this.hasLevel()) {
+            return;
+        }
+
         final FluidTankBlockEntity tankBE = (FluidTankBlockEntity) this.blockEntity;
         final FluidTankBlockEntity controllerBE = tankBE.getControllerBE();
-
         if (controllerBE == null) {
-            this.setColor(color);
+            action.accept(this);
             return;
         }
 
         final Level level = this.getLevel();
         final BlockPos controllerPos = controllerBE.getBlockPos();
-
         for (int x = 0; x < controllerBE.getWidth(); x++) {
             for (int y = 0; y < controllerBE.getHeight(); y++) {
                 for (int z = 0; z < controllerBE.getWidth(); z++) {
                     final BlockPos pos = controllerPos.offset(x, y, z);
                     final DyeableTankBehaviour behaviour = BlockEntityBehaviour.get(level, pos, TYPE);
                     if (behaviour != null) {
-                        behaviour.setColor(color);
+                        action.accept(behaviour);
                     }
                 }
             }
