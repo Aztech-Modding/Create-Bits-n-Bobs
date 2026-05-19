@@ -62,7 +62,7 @@ public class BnbShapes {
             GIGANTIC_COGWHEEL = shape(GIGANTIC_COGWHEEL_PLATE).add(SIX_VOXEL_POLE.get(Direction.Axis.Y)).forAxis(),
             GIGANTIC_COGWHEEL_SATELLITE = shape(GIGANTIC_COGWHEEL_PLATE).forAxis();
 
-    public static final VoxelShaper ALTERNATING_TRUSS = shape(1, 0, 1, 15, 16, 15)
+    public static final VoxelShaper TRUSS = shape(1, 0, 1, 15, 16, 15)
             .add(cuboid(0, 0, 0, 3, 16, 3))
             .add(cuboid(13, 0, 0, 16, 16, 3))
             .add(cuboid(0, 0, 13, 3, 16, 16))

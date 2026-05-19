@@ -107,7 +107,7 @@ public enum BnbFeatureFlag {
     ),
     INDUSTRIAL_TRUSS(
             FeatureCategories.BLOCK, "Availability of the industrial truss blocks.",
-            BnbDecorativeBlocks.INDUSTRIAL_TRUSS::get
+            BnbDecorativeBlocks.METAL_TRUSS::get
 //            BnbDecorativeBlocks.INDUSTRIAL_TRUSS_ENCASED_SHAFT::get,
 //            BnbDecorativeBlocks.INDUSTRIAL_TRUSS_ENCASED_PIPE::get
     ),

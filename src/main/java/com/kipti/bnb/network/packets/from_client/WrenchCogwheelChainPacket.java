@@ -1,7 +1,7 @@
 package com.kipti.bnb.network.packets.from_client;
 
+import com.kipti.bnb.content.kinetics.cogwheel_chain.behaviour.CogwheelChainBehaviour;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.PlacingCogwheelChain;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.shape.CogwheelChainBreakerHelper;
 import com.kipti.bnb.network.BnbPackets;
 import net.createmod.catnip.net.base.ServerboundPacketPayload;
 import net.minecraft.core.BlockPos;
@@ -26,10 +26,14 @@ public record WrenchCogwheelChainPacket(
 
     @Override
     public void handle(final ServerPlayer player) {
-        if (player.distanceToSqr(this.controllerPos.getX() + 0.5, this.controllerPos.getY() + 0.5, this.controllerPos.getZ() + 0.5) > PlacingCogwheelChain.MAX_CHAIN_INTERACTION_DISTANCE_SQ)
+        if (player.distanceToSqr(
+                this.controllerPos.getX() + 0.5,
+                this.controllerPos.getY() + 0.5,
+                this.controllerPos.getZ() + 0.5
+        ) > PlacingCogwheelChain.MAX_CHAIN_INTERACTION_DISTANCE_SQ)
             return;
 
-        CogwheelChainBreakerHelper.breakChain(player.level(), this.controllerPos, player);
+        CogwheelChainBehaviour.breakChain(player.level(), this.controllerPos, player);
     }
 
     @Override
