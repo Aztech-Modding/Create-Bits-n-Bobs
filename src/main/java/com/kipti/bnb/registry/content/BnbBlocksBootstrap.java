@@ -4,9 +4,8 @@ import com.kipti.bnb.registry.content.blocks.BnbBracketBlocks;
 import com.kipti.bnb.registry.content.blocks.BnbKineticBlocks;
 import com.kipti.bnb.registry.content.blocks.BnbTrinketBlocks;
 import com.kipti.bnb.registry.content.blocks.deco.BnbDecorativeBlocks;
-import com.kipti.bnb.registry.content.blocks.encased.BnbEncasedListBlocks;
+import com.kipti.bnb.registry.content.blocks.encased.BnbEncasedBlockLists;
 import com.kipti.bnb.registry.content.blocks.encased.BnbExtraEncasedBlocks;
-import com.kipti.bnb.registry.content.blocks.encased.BnbSpecialEncasedBlocks;
 
 public class BnbBlocksBootstrap {
 
@@ -19,9 +18,8 @@ public class BnbBlocksBootstrap {
         BnbDecorativeBlocks.register();
 
         //Non item blocks
-        BnbEncasedListBlocks.register();
+        BnbEncasedBlockLists.register();
         BnbExtraEncasedBlocks.register();
-        BnbSpecialEncasedBlocks.register();
     }
 
 }

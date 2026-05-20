@@ -22,7 +22,7 @@ import com.kipti.bnb.foundation.client.GenericBlockEntityRenderModels;
 import com.kipti.bnb.registry.content.blocks.BnbKineticBlocks;
 import com.kipti.bnb.registry.content.blocks.BnbTrinketBlocks;
 import com.kipti.bnb.registry.content.blocks.deco.BnbDecorativeBlocks;
-import com.kipti.bnb.registry.content.blocks.encased.BnbEncasedListBlocks;
+import com.kipti.bnb.registry.content.blocks.encased.BnbEncasedBlockLists;
 import com.kipti.bnb.registry.content.blocks.encased.BnbExtraEncasedBlocks;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.fluids.pipes.StraightPipeBlockEntity;
@@ -65,7 +65,8 @@ public class BnbBlockEntities {
             .validBlocks(
                     BnbDecorativeBlocks.WEATHERED_METAL_GIRDER_ENCASED_SHAFT,
                     BnbExtraEncasedBlocks.INDUSTRIAL_IRON_ENCASED_SHAFT,
-                    BnbExtraEncasedBlocks.WEATHERED_IRON_ENCASED_SHAFT
+                    BnbExtraEncasedBlocks.WEATHERED_IRON_ENCASED_SHAFT,
+                    BnbDecorativeBlocks.METAL_TRUSS_SHAFT
 //                    BnbSpecialEncasedBlocks.INDUSTRIAL_GRATING_PANEL
 //                    BnbDecorativeBlocks.INDUSTRIAL_TRUSS_ENCASED_SHAFT
             )
@@ -150,9 +151,12 @@ public class BnbBlockEntities {
                                     Models.partial(GenericBlockEntityRenderModels.REGISTRY.get(blockEntity.getBlockState().getBlock()))
                             ), true
             )
-            .validBlocks(BnbKineticBlocks.SMALL_FLANGED_COGWHEEL, BnbKineticBlocks.LARGE_FLANGED_COGWHEEL)
-            .validBlocks(BnbEncasedListBlocks.ENCASED_LARGE_FLANGED_COGWHEEL.toArray())
-            .validBlocks(BnbEncasedListBlocks.ENCASED_FLANGED_COGWHEEL.toArray())
+            .validBlocks(
+                    BnbKineticBlocks.SMALL_FLANGED_COGWHEEL,
+                    BnbKineticBlocks.LARGE_FLANGED_COGWHEEL
+            )
+            .validBlocks(BnbEncasedBlockLists.ENCASED_LARGE_FLANGED_COGWHEEL.toArray())
+            .validBlocks(BnbEncasedBlockLists.ENCASED_FLANGED_COGWHEEL.toArray())
             .renderer(() -> KineticBlockEntityRenderer::new)
             .register();
 

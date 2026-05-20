@@ -1,6 +1,7 @@
 package com.kipti.bnb.content.decoration.truss;
 
 import com.kipti.bnb.registry.client.BnbShapes;
+import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.RotatedPillarBlock;
@@ -9,7 +10,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.NonNull;
 
-public class TrussBlock extends RotatedPillarBlock {
+public class TrussBlock extends RotatedPillarBlock implements IWrenchable {
 
     public TrussBlock(final Properties properties) {
         super(properties);

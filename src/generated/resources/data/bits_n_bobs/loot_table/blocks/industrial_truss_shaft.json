@@ -11,11 +11,11 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "create:fluid_pipe"
+          "name": "create:shaft"
         }
       ],
       "rolls": 1.0
     }
   ],
-  "random_sequence": "bits_n_bobs:blocks/industrial_truss_pipe"
+  "random_sequence": "bits_n_bobs:blocks/industrial_truss_shaft"
 }
