@@ -4,7 +4,6 @@ import com.cake.azimuth.behaviour.SuperBlockEntityBehaviour;
 import com.cake.azimuth.behaviour.extensions.ItemRequirementBehaviourExtension;
 import com.cake.azimuth.behaviour.extensions.KineticBehaviourExtension;
 import com.cake.azimuth.behaviour.extensions.RenderedBehaviourExtension;
-import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChain;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChainCandidate;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.PathedCogwheelNode;
@@ -21,7 +20,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -51,17 +52,48 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
     @Nullable
     private BlockPos registeredControllerPos = null;
 
+    private boolean checkIntegrityNextTick = false;
+
     public CogwheelChainBehaviour(final SmartBlockEntity be) {
         super(be);
         this.setLazyTickRate(20);
     }
 
+    public static void breakChain(final Level level, final BlockPos pos, @Nullable final Player player) {
+        final CogwheelChainBehaviour behaviour = get(level, pos, TYPE);
+        if (behaviour == null)
+            return;
+
+        final boolean infinite = player != null && player.hasInfiniteMaterials();
+        final ItemStack drops = behaviour.destroyChain(player == null, true);
+
+        if (player != null && !infinite && !drops.isEmpty()) {
+            player.getInventory().placeItemBackInInventory(drops);
+        }
+    }
+
     @Override
     public void lazyTick() {
         super.lazyTick();
-        if (this.isClientLevel()) {
+        if (this.isClientSide()) {
             return;
         }
+        this.checkIntegrity();
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        if (this.isClientSide()) {
+            return;
+        }
+        if (this.isPartOfChain() && this.checkIntegrityNextTick) {
+            this.checkIntegrity();
+            this.checkIntegrityNextTick = false;
+        }
+    }
+
+    private void checkIntegrity() {
         if (this.controlledChain != null) {
             if (!this.controlledChain.checkIntegrity(this.getLevel(), this.getPos())) {
                 this.destroyForInvalidShape();
@@ -100,6 +132,7 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
         if (this.isPartOfChain() && this.getBlockEntity() instanceof final KineticBlockEntity kbe) {
             kbe.updateSpeed = true;
         }
+        this.checkIntegrity();
     }
 
     @Override
@@ -109,9 +142,16 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
     }
 
     @Override
-    public void destroy() {
-        this.destroyChain(false, false);
-        super.destroy();
+    public void remove() {
+        super.remove();
+        if (this.isClientSide()) return;
+        if (this.isController())
+            this.destroyChain(false, false);
+        else {
+            final CogwheelChainBehaviour controllerBehaviour = this.resolveControllerBehaviour();
+            if (controllerBehaviour == null) return;
+            controllerBehaviour.checkIntegrityNextTick = true;
+        }
     }
 
     @Override
@@ -123,11 +163,7 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
     }
 
     public void destroyForInvalidShape() {
-        this.destroyChain(true, false);
-    }
-
-    public void destroyChain(final boolean dropItemsInWorld) {
-        this.destroyChain(dropItemsInWorld, false);
+        this.destroyChain(true, true);
     }
 
     public ItemStack destroyChain(final boolean dropItemsInWorld, final boolean effects) {
@@ -135,13 +171,13 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
 
         final CogwheelChainBehaviour controller = this.resolveControllerBehaviour();
         if (controller == null) {
-            CreateBitsnBobs.LOGGER.warn("Failed to destroy chain with missing chain data at {}", this.getPos());
+            //Orphaned so assume the original chain was broken so do nothing
             this.disconnectFromChain();
             return ItemStack.EMPTY;
         }
 
         final int chainsToReturn = controller.chainsToRefund;
-        if (!this.isController()) controller.chainsToRefund = 0;
+        controller.chainsToRefund = 0;
 
         final CogwheelChain chainSource = controller.controlledChain;
         final ItemStack drops = chainSource == null ? ItemStack.EMPTY : chainSource.getReturnedItem().getDefaultInstance().copyWithCount(
@@ -508,6 +544,17 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
             return;
         }
         chainWorld.remove(this.getPos());
+    }
+
+    @Override
+    public void removeFromLevel(final boolean isMoving) {
+        super.removeFromLevel(isMoving);
+        if (this.isClientSide()) return;
+        if (!isMoving) {
+            this.destroyChain(true, true);
+        } else {
+            this.destroyChain(false, false);
+        }
     }
 
 }

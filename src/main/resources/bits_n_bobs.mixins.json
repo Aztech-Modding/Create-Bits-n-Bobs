@@ -16,6 +16,7 @@
     "RotationPropagatorMixin",
     "ServerEntityMixin",
     "ServerGamePacketListenerImplAccessor",
+    "chair.ContraptionMixin",
     "dyeable.fluid_tank.ConnectivityHandlerMixin",
     "dyeable.fluid_tank.FluidTankItemMixin",
     "dyeable.fluid_tank.FluidTankRendererMixin",

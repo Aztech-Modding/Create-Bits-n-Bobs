@@ -1,7 +1,7 @@
 package com.kipti.bnb.mixin.encasable_piston_poles;
 
 import com.kipti.bnb.content.kinetics.encased_blocks.piston_pole.EncasedPistonExtensionPoleBlock;
-import com.kipti.bnb.registry.content.blocks.encased.BnbEncasedListBlocks;
+import com.kipti.bnb.registry.content.blocks.encased.BnbEncasedBlockLists;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.simibubi.create.AllBlocks;
@@ -37,7 +37,7 @@ public class PistonContraptionMixin extends TranslatingContraption {
                                       final Direction.Axis axis,
                                       final Operation<Boolean> original) {
         return original.call(instance, state, axis) ||
-                (BnbEncasedListBlocks.ENCASED_PISTON_EXTENSION_POLE.isIn(state) && state.getValue(
+                (BnbEncasedBlockLists.ENCASED_PISTON_EXTENSION_POLE.isIn(state) && state.getValue(
                         EncasedPistonExtensionPoleBlock.FACING).getAxis() == axis && !state.getValue(
                         EncasedPistonExtensionPoleBlock.EMPTY));
     }
@@ -47,7 +47,7 @@ public class PistonContraptionMixin extends TranslatingContraption {
                                                                    BlockState state,
                                                                    final CompoundTag nbt,
                                                                    final Operation<StructureTemplate.StructureBlockInfo> original) {
-        if (BnbEncasedListBlocks.ENCASED_PISTON_EXTENSION_POLE.isIn(state))
+        if (BnbEncasedBlockLists.ENCASED_PISTON_EXTENSION_POLE.isIn(state))
             state = BlockHelper.copyProperties(state, AllBlocks.PISTON_EXTENSION_POLE.getDefaultState());
         return original.call(pos, state, nbt);
     }
@@ -58,7 +58,7 @@ public class PistonContraptionMixin extends TranslatingContraption {
                                         final BlockState state,
                                         final CallbackInfoReturnable<Boolean> cir) {
         final BlockState existingState = world.getBlockState(pos);
-        if (BnbEncasedListBlocks.ENCASED_PISTON_EXTENSION_POLE.isIn(existingState) && state.is(AllBlocks.PISTON_EXTENSION_POLE)) {
+        if (BnbEncasedBlockLists.ENCASED_PISTON_EXTENSION_POLE.isIn(existingState) && state.is(AllBlocks.PISTON_EXTENSION_POLE)) {
             if (existingState.getValue(EncasedPistonExtensionPoleBlock.EMPTY)) {
                 world.setBlock(
                         pos,
@@ -76,7 +76,7 @@ public class PistonContraptionMixin extends TranslatingContraption {
                                       final BlockState state,
                                       final CallbackInfoReturnable<Boolean> cir) {
         final BlockState existingState = world.getBlockState(pos);
-        if (BnbEncasedListBlocks.ENCASED_PISTON_EXTENSION_POLE.isIn(existingState) && state.is(AllBlocks.PISTON_EXTENSION_POLE)) {
+        if (BnbEncasedBlockLists.ENCASED_PISTON_EXTENSION_POLE.isIn(existingState) && state.is(AllBlocks.PISTON_EXTENSION_POLE)) {
             if (!existingState.getValue(EncasedPistonExtensionPoleBlock.EMPTY)) {
                 world.setBlock(
                         pos,

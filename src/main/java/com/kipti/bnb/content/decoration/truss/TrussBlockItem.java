@@ -1,6 +1,19 @@
 package com.kipti.bnb.content.decoration.truss;
 
+import com.kipti.bnb.registry.content.blocks.deco.BnbDecorativeBlocks;
+import com.simibubi.create.AllBlocks;
+import com.simibubi.create.content.fluids.FluidTransportBehaviour;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.PipeBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import org.jspecify.annotations.NonNull;
 
 public class TrussBlockItem extends BlockItem {
 
@@ -8,51 +21,54 @@ public class TrussBlockItem extends BlockItem {
         super(block, properties);
     }
 
-//    @Override
-//    public @NotNull InteractionResult place(final BlockPlaceContext context) {
-//        final InteractionResult result = super.place(context);
-//        if (!result.consumesAction()) {
-//            return result;
-//        }
-//
-//        this.tryPlaceOffhandShaft(context);
-//        return result;
-//    }
-//
-//    private void tryPlaceOffhandShaft(final BlockPlaceContext context) {
-//        final Player player = context.getPlayer();
-//        if (player == null || context.getHand() != InteractionHand.MAIN_HAND) {
-//            return;
-//        }
-//
-//        final ItemStack offhandStack = player.getOffhandItem();
-//        if (!AllBlocks.SHAFT.isIn(offhandStack)) {
-//            return;
-//        }
-//
-//        final Level level = context.getLevel();
-//        final BlockState placedState = level.getBlockState(context.getClickedPos());
-//        if (!(placedState.getBlock() instanceof final TrussBlock trussBlock)) {
-//            return;
-//        }
-//
-//        KineticBlockEntity.switchToBlockState(
-//                level,
-//                context.getClickedPos(),
-//                trussBlock.getEncasedShaftState(placedState, player.getNearestViewDirection().getAxis())
-//        );
-//        level.playSound(null, context.getClickedPos(), SoundEvents.METAL_HIT, SoundSource.BLOCKS, 0.5f, 1.25f);
-//        this.consumeOffhandShaft(level, player, offhandStack);
-//    }
-//
-//    private void consumeOffhandShaft(final Level level, final Player player, final ItemStack offhandStack) {
-//        if (level.isClientSide || player.isCreative()) {
-//            return;
-//        }
-//
-//        offhandStack.shrink(1);
-//        if (offhandStack.isEmpty()) {
-//            player.setItemInHand(InteractionHand.OFF_HAND, ItemStack.EMPTY);
-//        }
-//    }
+    @Override
+    public @NonNull InteractionResult useOn(final UseOnContext context) {
+        final BlockPos clickedPos = context.getClickedPos();
+        final Level level = context.getLevel();
+
+        final BlockState clickedState = level.getBlockState(clickedPos);
+
+        if (AllBlocks.FLUID_PIPE.is(clickedState.getBlock())) {
+            FluidTransportBehaviour.cacheFlows(level, clickedPos);
+            level.setBlockAndUpdate(
+                    clickedPos, BnbDecorativeBlocks.METAL_TRUSS_PIPE.getDefaultState()
+                            .setValue(TrussFluidPipe.AXIS, this.getAxisOfPipe(clickedState, context.getClickedFace()))
+                            .setValue(
+                                    BlockStateProperties.WATERLOGGED,
+                                    clickedState.getValue(BlockStateProperties.WATERLOGGED)
+                            )
+            );
+            FluidTransportBehaviour.loadFlows(level, clickedPos);
+            level.playSound(
+                    context.getPlayer(),
+                    clickedPos,
+                    BnbDecorativeBlocks.METAL_TRUSS_PIPE.get().getSoundType(
+                            clickedState,
+                            level,
+                            clickedPos,
+                            context.getPlayer()
+                    ).getPlaceSound(),
+                    SoundSource.BLOCKS,
+                    0.5f,
+                    1.25f
+            );
+            return InteractionResult.SUCCESS;
+        }
+
+        return super.useOn(context);
+    }
+
+    private Direction.Axis getAxisOfPipe(final BlockState clickedState, final Direction clickedFace) {
+        Direction.Axis singlePipeAxis = null;
+        for (final Direction direction : Direction.values()) {
+            if (clickedState.getValue(PipeBlock.PROPERTY_BY_DIRECTION.get(direction))) {
+                if (singlePipeAxis == null) {
+                    singlePipeAxis = direction.getAxis();
+                } else if (singlePipeAxis != direction.getAxis()) {
+                    return clickedFace.getAxis();
+                }
+            }
+        }
+        return singlePipeAxis;
+    }
 }

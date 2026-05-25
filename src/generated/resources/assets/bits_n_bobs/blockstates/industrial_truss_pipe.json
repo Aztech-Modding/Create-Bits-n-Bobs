@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "bits_n_bobs:block/industrial_truss/industrial_truss_pipe",
+      "x": 90,
+      "y": 90
+    },
+    "axis=y": {
+      "model": "bits_n_bobs:block/industrial_truss/industrial_truss_pipe"
+    },
+    "axis=z": {
+      "model": "bits_n_bobs:block/industrial_truss/industrial_truss_pipe",
+      "x": 90
+    }
+  }
+}

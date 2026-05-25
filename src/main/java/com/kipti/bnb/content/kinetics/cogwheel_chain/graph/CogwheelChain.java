@@ -9,7 +9,6 @@ import com.kipti.bnb.content.kinetics.cogwheel_chain.types.CogwheelChainType;
 import com.kipti.bnb.registry.core.BnbRegistries;
 import com.simibubi.create.content.contraptions.StructureTransform;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
-import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.BlockParticleOption;
@@ -25,7 +24,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
@@ -118,7 +116,6 @@ public class CogwheelChain {
             if (!level.isLoaded(pos)) continue; //Skip checks if unloaded
             final BlockState state = level.getBlockState(pos);
             final CogwheelChainCandidate candidate = CogwheelChainCandidate.getForBlock(state);
-            Outliner.getInstance().showAABB("cogwheel_chain_integrity" + pos.hashCode(), new AABB(pos));
             if (candidate == null || !candidate.isConsistentWithNode(node)) {
                 return false;
             }

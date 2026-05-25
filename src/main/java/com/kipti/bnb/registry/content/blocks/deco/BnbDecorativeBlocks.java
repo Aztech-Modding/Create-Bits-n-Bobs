@@ -11,9 +11,7 @@ import com.kipti.bnb.content.decoration.grating.GratingPanelBlockItem;
 import com.kipti.bnb.content.decoration.grating.GratingPanelCTBehaviour;
 import com.kipti.bnb.content.decoration.strut.BnbStrutBlock;
 import com.kipti.bnb.content.decoration.strut.CableStrutBlock;
-import com.kipti.bnb.content.decoration.truss.TrussBlock;
-import com.kipti.bnb.content.decoration.truss.TrussBlockItem;
-import com.kipti.bnb.content.decoration.truss.TrussBlockStateGen;
+import com.kipti.bnb.content.decoration.truss.*;
 import com.kipti.bnb.content.decoration.weathered_girder.WeatheredConnectedGirderModel;
 import com.kipti.bnb.content.decoration.weathered_girder.WeatheredGirderBlock;
 import com.kipti.bnb.content.decoration.weathered_girder.WeatheredGirderBlockStateGenerator;
@@ -22,19 +20,25 @@ import com.kipti.bnb.foundation.client.block_state_gen.BnbBlockStateGen;
 import com.kipti.bnb.registry.client.BnbSpriteShifts;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllTags;
+import com.simibubi.create.content.decoration.encasing.EncasingRegistry;
 import com.simibubi.create.foundation.block.connected.SimpleCTBehaviour;
+import com.simibubi.create.foundation.data.BlockStateGen;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.data.SharedProperties;
 import com.simibubi.create.foundation.data.TagGen;
 import com.simibubi.create.foundation.item.ItemDescription;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
 
 import static com.kipti.bnb.CreateBitsnBobs.REGISTRATE;
 import static com.simibubi.create.foundation.data.CreateRegistrate.connectedTextures;
@@ -137,36 +141,6 @@ public class BnbDecorativeBlocks {
             .build()
             .register();
 
-    // public static final BlockEntry<BnbStrutBlock> WOODEN_GIRDER_STRUT =
-    // REGISTRATE.block(
-    // "wooden_girder_strut",
-    // p -> new BnbStrutBlock(
-    // p,
-    // BnbStrutDefinitions.WOODEN_MODEL
-    // )
-    // )
-    // .initialProperties(SharedProperties::wooden)
-    // .transform(axeOnly())
-    // .properties(p -> p.noOcclusion()
-    // .sound(SoundType.WOOD))
-    // .blockstate((c, p) -> p.directionalBlock(
-    // c.get(),
-    // (state) -> p.models().getExistingFile(CreateBitsnBobs.asResource(
-    // "block/girder_strut/wooden_girder_strut_attachment")
-    // )
-    // ))
-    // .onRegister(CreateRegistrate.blockModel(() -> StrutModelBuilder::new))
-    // .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
-    // .item(StrutBlockItem::new)
-    // .model((c, p) ->
-    // p.withExistingParent(
-    // c.getName(),
-    // CreateBitsnBobs.asResource("block/girder_strut/wooden_girder_item")
-    // )
-    // )
-    // .build()
-    // .register();
-
     public static final BlockEntry<CableStrutBlock> CABLE_GIRDER_STRUT = REGISTRATE.block(
                     "cable_girder_strut",
                     p -> new CableStrutBlock(
@@ -240,20 +214,24 @@ public class BnbDecorativeBlocks {
             .build()
             .register();
 
-    public static final BlockEntry<TrussBlock> INDUSTRIAL_TRUSS = CreateBitsnBobs.REGISTRATE.block(
+    public static final BlockEntry<TrussBlock> METAL_TRUSS = CreateBitsnBobs.REGISTRATE.block(
                     "industrial_truss",
                     TrussBlock::new
             )
+            .initialProperties(SharedProperties::stone)
+            .transform(pickaxeOnly())
+            .lang("Metal Truss")
             .properties(p -> p.mapColor(MapColor.METAL)
-                    .strength(0.1f, 6.0f)
                     .sound(SoundType.METAL)
                     .isSuffocating((state, level, pos) -> false)
                     .isViewBlocking((state, level, pos) -> false)
                     .noOcclusion())
-            .transform(TagGen.pickaxeOnly())
-            .blockstate(TrussBlockStateGen::alternatingTrussModel)
-            .onRegister(connectedTextures(
-                    () -> new GratingPanelCTBehaviour(BnbSpriteShifts.INDUSTRIAL_GRATING)))
+            .blockstate((c, p) -> BlockStateGen.axisBlock(
+                    c, p,
+                    (s) -> p.models().getExistingFile(CreateBitsnBobs.asResource(
+                            "block/industrial_truss/industrial_truss"))
+            ))
+            .onRegister(CreateRegistrate.blockModel(() -> TrussBlockModel::new))
             .addLayer(() -> RenderType::cutout)
             .item(TrussBlockItem::new)
             .model((c, p) -> p.withExistingParent(
@@ -261,6 +239,49 @@ public class BnbDecorativeBlocks {
                     CreateBitsnBobs.asResource("block/industrial_truss/industrial_truss")
             ))
             .build()
+            .register();
+
+    public static final BlockEntry<TrussFluidPipe> METAL_TRUSS_PIPE =
+            REGISTRATE.block("industrial_truss_pipe", TrussFluidPipe::new)
+                    .lang("Metal Truss Pipe")
+                    .initialProperties(SharedProperties::copperMetal)
+                    .transform(pickaxeOnly())
+                    .properties(p -> p.noOcclusion())
+                    .addLayer(() -> RenderType::cutoutMipped)
+                    .blockstate((c, p) -> {
+                        p.getVariantBuilder(c.getEntry())
+                                .forAllStatesExcept(
+                                        state -> {
+                                            Direction.Axis axis = state.getValue(BlockStateProperties.AXIS);
+                                            return ConfiguredModel.builder()
+                                                    .modelFile(p.models()
+                                                                       .getExistingFile(p.modLoc(
+                                                                               "block/industrial_truss/industrial_truss_pipe")))
+                                                    .uvLock(false)
+                                                    .rotationX(axis == Direction.Axis.Y ? 0 : 90)
+                                                    .rotationY(axis == Direction.Axis.X ? 90 : 0)
+                                                    .build();
+                                        }, BlockStateProperties.WATERLOGGED
+                                );
+                    })
+                    .onRegister(CreateRegistrate.blockModel(() -> TrussPipeBlockModel::withTrussAO))
+                    .loot((p, b) -> p.dropOther(b, AllBlocks.FLUID_PIPE.get()))
+                    .register();
+
+    public static final BlockEntry<TrussShaftBlock> METAL_TRUSS_SHAFT = REGISTRATE
+            .block("industrial_truss_shaft", p -> new TrussShaftBlock(p, BnbDecorativeBlocks.METAL_TRUSS::get))
+            .initialProperties(SharedProperties::stone)
+            .transform(pickaxeOnly())
+            .blockstate((c, p) -> BlockStateGen.axisBlock(
+                    c, p,
+                    (s) -> p.models().getExistingFile(
+                            CreateBitsnBobs.asResource("block/industrial_truss/industrial_truss"))
+            ))
+            .properties(BlockBehaviour.Properties::noOcclusion)
+            .loot((p, lb) -> p.dropOther(lb, AllBlocks.SHAFT.get()))
+            .properties(p -> p.mapColor(MapColor.COLOR_GRAY))
+            .transform(EncasingRegistry.addVariantTo(AllBlocks.SHAFT))
+            .onRegister(CreateRegistrate.blockModel(() -> TrussBlockModel::new))
             .register();
 
 //    public static final BlockEntry<TrussEncasedShaftBlock> INDUSTRIAL_TRUSS_ENCASED_SHAFT = CreateBitsnBobs.REGISTRATE

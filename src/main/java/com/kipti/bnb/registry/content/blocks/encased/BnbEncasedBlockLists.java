@@ -28,7 +28,7 @@ import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import static com.kipti.bnb.CreateBitsnBobs.REGISTRATE;
 import static com.simibubi.create.foundation.data.TagGen.axeOrPickaxe;
 
-public class BnbEncasedListBlocks {
+public class BnbEncasedBlockLists {
 
     public static final EncasedBlockList<EncasedPistonExtensionPoleBlock> ENCASED_PISTON_EXTENSION_POLE = new EncasedBlockList<>(
             (casing) -> REGISTRATE
