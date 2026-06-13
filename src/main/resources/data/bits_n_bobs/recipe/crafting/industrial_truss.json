@@ -1,0 +1,27 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "bits_n_bobs:feature_item_enabled",
+      "item": "bits_n_bobs:industrial_truss"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "N": {
+      "tag": "c:nuggets/iron"
+    },
+    "P": {
+      "tag": "c:plates/iron"
+    }
+  },
+  "pattern": [
+    "PPP",
+    "NNN",
+    "PPP"
+  ],
+  "result": {
+    "count": 8,
+    "id": "bits_n_bobs:industrial_truss"
+  }
+}

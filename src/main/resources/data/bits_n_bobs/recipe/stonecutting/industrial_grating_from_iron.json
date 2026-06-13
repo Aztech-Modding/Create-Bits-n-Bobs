@@ -1,0 +1,16 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "bits_n_bobs:feature_item_enabled",
+      "item": "bits_n_bobs:industrial_grating"
+    }
+  ],
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "tag": "c:ingots/iron"
+  },
+  "result": {
+    "count": 3,
+    "id": "bits_n_bobs:industrial_grating"
+  }
+}

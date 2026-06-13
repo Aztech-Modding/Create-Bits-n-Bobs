@@ -1,0 +1,27 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "bits_n_bobs:feature_item_enabled",
+      "item": "bits_n_bobs:cable_strut"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "A": {
+      "item": "create:andesite_alloy"
+    },
+    "G": {
+      "tag": "c:nuggets/iron"
+    }
+  },
+  "pattern": [
+    "A  ",
+    "GGG",
+    "  A"
+  ],
+  "result": {
+    "count": 6,
+    "id": "bits_n_bobs:cable_girder_strut"
+  }
+}

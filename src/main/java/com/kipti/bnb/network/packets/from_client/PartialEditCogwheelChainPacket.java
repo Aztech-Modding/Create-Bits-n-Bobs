@@ -3,7 +3,7 @@ package com.kipti.bnb.network.packets.from_client;
 import com.cake.azimuth.behaviour.SuperBlockEntityBehaviour;
 import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.behaviour.CogwheelChainBehaviour;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.edit.CogwheelChainPartialEditContext;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.edit.CogwheelChainPartialEdit;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.edit.CogwheelChainPartialEditInsertionPlan;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.edit.CogwheelChainPartialEditInsertionPlanner;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.*;
@@ -142,7 +142,7 @@ public record PartialEditCogwheelChainPacket(
 
         level.setBlock(this.newCogwheelPos, placementState, Block.UPDATE_ALL);
 
-        final CogwheelChainPartialEditContext editContext = this.resolveEditContext(existingChain);
+        final CogwheelChainPartialEdit editContext = this.resolveEditContext(existingChain);
         if (editContext == null) {
             level.setBlock(this.newCogwheelPos, originalState, Block.UPDATE_ALL);
             return;
@@ -236,7 +236,7 @@ public record PartialEditCogwheelChainPacket(
         return blockItem.getBlock().getStateForPlacement(placeContext);
     }
 
-    private @Nullable CogwheelChainPartialEditContext resolveEditContext(final CogwheelChain existingChain) {
+    private @Nullable CogwheelChainPartialEdit resolveEditContext(final CogwheelChain existingChain) {
         final CogwheelChainSegment authoritativeSegment = CogwheelChainPartialEditInsertionPlanner.resolveBetweenNodesSegment(
                 existingChain,
                 this.startNodeIndex
@@ -244,8 +244,8 @@ public record PartialEditCogwheelChainPacket(
         if (authoritativeSegment == null || !this.isWithinSelectedSegment(authoritativeSegment))
             return null;
 
-        return new CogwheelChainPartialEditContext(
-                this.controllerPos,
+        return new CogwheelChainPartialEdit(
+                this.controllerPos.immutable(),
                 this.chainPosition,
                 authoritativeSegment,
                 this.startNodeIndex,

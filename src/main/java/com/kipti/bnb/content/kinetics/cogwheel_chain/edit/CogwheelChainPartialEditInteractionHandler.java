@@ -44,7 +44,7 @@ import java.util.List;
 )
 public class CogwheelChainPartialEditInteractionHandler {
 
-    private static @Nullable CogwheelChainPartialEditContext currentEditContext = null;
+    private static @Nullable CogwheelChainPartialEdit currentEditContext = null;
     private static @Nullable ProposedPlacement proposedPlacement = null;
 
     /**
@@ -74,7 +74,7 @@ public class CogwheelChainPartialEditInteractionHandler {
     }
 
     private static boolean tryEnterEditMode(final LocalPlayer player, final ClientLevel level) {
-        final CogwheelChainPartialEditContext editContext = resolveSelectedEditContext(player, level);
+        final CogwheelChainPartialEdit editContext = resolveSelectedEditContext(player, level);
         if (editContext == null)
             return false;
 
@@ -92,7 +92,7 @@ public class CogwheelChainPartialEditInteractionHandler {
         if (placement == null)
             return true;
 
-        final CogwheelChainPartialEditContext editContext = currentEditContext;
+        final CogwheelChainPartialEdit editContext = currentEditContext;
         if (editContext == null)
             return true;
 
@@ -126,8 +126,8 @@ public class CogwheelChainPartialEditInteractionHandler {
         return null;
     }
 
-    private static @Nullable CogwheelChainPartialEditContext resolveSelectedEditContext(final LocalPlayer player,
-                                                                                        final ClientLevel level) {
+    private static @Nullable CogwheelChainPartialEdit resolveSelectedEditContext(final LocalPlayer player,
+                                                                                 final ClientLevel level) {
         final BlockPos controllerPos = CogwheelChainInteractionHandler.getSelectedController();
         if (controllerPos == null || !level.isLoaded(controllerPos))
             return null;
@@ -149,8 +149,8 @@ public class CogwheelChainPartialEditInteractionHandler {
         if (segmentNodes == null)
             return null;
 
-        return new CogwheelChainPartialEditContext(
-                controllerPos,
+        return new CogwheelChainPartialEdit(
+                controllerPos.immutable(),
                 chainPosition,
                 selectedSegment,
                 segmentNodes.startNodeIndex(),
@@ -211,7 +211,7 @@ public class CogwheelChainPartialEditInteractionHandler {
         return currentEditContext != null;
     }
 
-    public static @Nullable CogwheelChainPartialEditContext getCurrentEditContext() {
+    public static @Nullable CogwheelChainPartialEdit getCurrentEditContext() {
         return currentEditContext;
     }
 

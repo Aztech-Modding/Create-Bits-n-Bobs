@@ -15,13 +15,22 @@ public class GratingBlock extends Block implements IWrenchable {
     }
 
     @Override
-    protected boolean propagatesSkylightDown(final @NotNull BlockState state, final @NotNull BlockGetter level, final @NotNull BlockPos pos) {
+    protected boolean propagatesSkylightDown(final @NotNull BlockState state,
+                                             final @NotNull BlockGetter level,
+                                             final @NotNull BlockPos pos) {
         return true;
     }
 
     @Override
-    protected boolean skipRendering(final @NotNull BlockState state, final BlockState adjacentState, final @NotNull Direction direction) {
-        return adjacentState.getBlock() instanceof GratingBlock && !(adjacentState.getBlock() instanceof GratingPanelBlock) || super.skipRendering(state, adjacentState, direction);
+    protected boolean skipRendering(final @NotNull BlockState state,
+                                    final BlockState adjacentState,
+                                    final @NotNull Direction direction) {
+        return adjacentState.getBlock() instanceof GratingBlock && !(adjacentState.getBlock() instanceof GratingPanelBlock) || super.skipRendering(
+                state,
+                adjacentState,
+                direction
+        );
     }
+
 }
 

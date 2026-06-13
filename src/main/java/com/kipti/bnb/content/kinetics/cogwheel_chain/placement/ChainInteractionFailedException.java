@@ -17,6 +17,7 @@ import net.minecraft.network.chat.MutableComponent;
         @LangDefault(key = "axis_change_forbidden_by_type", format = ChainInteractionFailedException.LANG_KEY_FORMAT, value = "This chain type does not allow axis changes!"),
         @LangDefault(key = "pathfinding_failed_at_node", format = ChainInteractionFailedException.LANG_KEY_FORMAT, value = "Couldn't find valid path between two nodes! (Try inserting more nodes?)"),
         @LangDefault(key = "pathfinding_failed", format = ChainInteractionFailedException.LANG_KEY_FORMAT, value = "Couldn't find valid path across chain! (Try inserting more nodes?)"),
+        @LangDefault(key = "not_enough_material", format = ChainInteractionFailedException.LANG_KEY_FORMAT, value = "Not enough materials to complete the chain!"),
 })
 public class ChainInteractionFailedException extends Exception {
 

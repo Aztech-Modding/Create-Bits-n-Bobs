@@ -215,6 +215,7 @@
   "message.bits_n_bobs.cogwheel_chain.chain_addition_aborted.config_forbids": "Server has disabled chain drives!",
   "message.bits_n_bobs.cogwheel_chain.chain_addition_aborted.no_cogwheel_connection": "Connections with cogwheels must be at right angles!",
   "message.bits_n_bobs.cogwheel_chain.chain_addition_aborted.no_path_to_cogwheel": "No valid path to cogwheel!",
+  "message.bits_n_bobs.cogwheel_chain.chain_addition_aborted.not_enough_material": "Not enough materials to complete the chain!",
   "message.bits_n_bobs.cogwheel_chain.chain_addition_aborted.not_flat_connection": "Connections of the same direction must be flat!",
   "message.bits_n_bobs.cogwheel_chain.chain_addition_aborted.not_valid_axis_change": "Large cogwheels must share a tangent to change axis!",
   "message.bits_n_bobs.cogwheel_chain.chain_addition_aborted.out_of_bounds": "Cogwheel exceeds maximum bounds!",

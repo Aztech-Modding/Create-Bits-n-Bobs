@@ -1,10 +1,6 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.edit;
 
-import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChain;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChainCandidate;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.PathedCogwheelNode;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.PlacingCogwheelChain;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.PlacingCogwheelNode;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.*;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.placement.ChainInteractionFailedException;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.segment.CogwheelChainSegment;
 import net.minecraft.core.BlockPos;
@@ -24,7 +20,7 @@ public class CogwheelChainPartialEditInsertionPlanner {
      * Used server-side after the cogwheel block has been placed.
      */
     public static @Nullable CogwheelChainPartialEditInsertionPlan plan(final CogwheelChain existingChain,
-                                                                       final CogwheelChainPartialEditContext editContext,
+                                                                       final CogwheelChainPartialEdit editContext,
                                                                        final BlockPos proposedPos,
                                                                        final BlockState proposedState) {
         final CogwheelChainCandidate candidate = CogwheelChainCandidate.getForBlock(proposedState);
@@ -44,7 +40,7 @@ public class CogwheelChainPartialEditInsertionPlanner {
      * Used client-side for preview when the cogwheel block has not yet been placed.
      */
     public static @Nullable CogwheelChainPartialEditInsertionPlan planWithCandidate(final CogwheelChain existingChain,
-                                                                                    final CogwheelChainPartialEditContext editContext,
+                                                                                    final CogwheelChainPartialEdit editContext,
                                                                                     final BlockPos proposedPos,
                                                                                     final CogwheelChainCandidate candidate)
             throws ChainInteractionFailedException {
@@ -119,7 +115,7 @@ public class CogwheelChainPartialEditInsertionPlanner {
     }
 
     private static @Nullable ResolvedSegment resolveSegment(final CogwheelChain existingChain,
-                                                            final CogwheelChainPartialEditContext editContext) {
+                                                            final CogwheelChainPartialEdit editContext) {
         final List<PathedCogwheelNode> existingNodes = existingChain.getChainPathCogwheelNodes();
         if (existingNodes.size() < 2) {
             return null;
@@ -165,7 +161,8 @@ public class CogwheelChainPartialEditInsertionPlanner {
         return worldNodes;
     }
 
-    private static boolean containsNodeAt(final List<PlacingCogwheelNode> existingWorldNodes, final BlockPos proposedPos) {
+    private static boolean containsNodeAt(final List<PlacingCogwheelNode> existingWorldNodes,
+                                          final BlockPos proposedPos) {
         for (final PlacingCogwheelNode existingNode : existingWorldNodes) {
             if (existingNode.pos().equals(proposedPos)) {
                 return true;

@@ -26,6 +26,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import org.jetbrains.annotations.Nullable;
 
@@ -128,7 +129,7 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
     @Override
     public void initialize() {
         super.initialize();
-        this.syncControllerRegistration();
+        this.updateControlledChain();
         if (this.isPartOfChain() && this.getBlockEntity() instanceof final KineticBlockEntity kbe) {
             kbe.updateSpeed = true;
         }
@@ -137,7 +138,7 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
 
     @Override
     public void unload() {
-        this.unregisterController();
+        this.unregisterControlledChain();
         super.unload();
     }
 
@@ -244,7 +245,7 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
         } else {
             this.controlledChain = null;
         }
-        this.syncControllerRegistration();
+        this.updateControlledChain();
     }
 
     @Override
@@ -322,7 +323,7 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
     public void setAsController(final CogwheelChain cogwheelChain) {
         this.controlledChain = cogwheelChain;
         this.controllerOffset = null;
-        this.syncControllerRegistration();
+        this.updateControlledChain();
     }
 
     @Override
@@ -366,7 +367,7 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
     }
 
     public void setController(final Vec3i offset) {
-        this.unregisterController();
+        this.unregisterControlledChain();
         this.controlledChain = null;
         this.controllerOffset = offset;
     }
@@ -403,7 +404,7 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
             final Vec3i transformedOffset = transform.applyWithoutOffset(new BlockPos(this.controllerOffset));
             this.setController(transformedOffset);
         }
-        this.syncControllerRegistration();
+        this.updateControlledChain();
     }
 
     public boolean isPartOfChain() {
@@ -418,6 +419,11 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
     @Override
     public BehaviourRenderSupplier getRenderer() {
         return BnbBlockEntityBehaviourRenderers.COGWHEEL_CHAIN;
+    }
+
+    @Override
+    public @Nullable AABB getRenderBoundingBox() {
+        return this.controlledChain != null ? this.controlledChain.getRenderBounds().move(this.getPos()) : null;
     }
 
     @Override
@@ -505,21 +511,22 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
      * through dead chain links.
      */
     public void clearChainData() {
-        this.unregisterController();
+        this.unregisterControlledChain();
         this.controlledChain = null;
         this.controllerOffset = null;
         this.chainsToRefund = 0;
+        this.invalidateRenderBoundingBox();
     }
 
-    private void syncControllerRegistration() {
+    private void updateControlledChain() {
         if (this.controlledChain == null) {
-            this.unregisterController();
+            this.unregisterControlledChain();
             return;
         }
-        this.registerController();
+        this.registerControlledChain();
     }
 
-    private void registerController() {
+    private void registerControlledChain() {
         if (!this.hasLevel() || this.controlledChain == null) {
             return;
         }
@@ -532,7 +539,7 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
         this.registeredControllerPos = currentPos;
     }
 
-    private void unregisterController() {
+    private void unregisterControlledChain() {
         if (!this.hasLevel()) {
             this.registeredControllerPos = null;
             return;

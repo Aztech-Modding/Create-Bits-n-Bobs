@@ -115,7 +115,7 @@ public class TrussFluidPipe extends AxisPipeBlock implements IBE<StraightPipeBlo
                                        final Player player) {
         if (target instanceof BlockHitResult)
             return ((BlockHitResult) target).getDirection()
-                    .getAxis() == state.getValue(AXIS) ? AllBlocks.FLUID_PIPE.asStack() : BnbDecorativeBlocks.METAL_TRUSS.asStack();
+                    .getAxis() == state.getValue(AXIS) ? AllBlocks.FLUID_PIPE.asStack() : BnbDecorativeBlocks.INDUSTRIAL_TRUSS.asStack();
         return super.getCloneItemStack(state, target, level, pos, player);
     }
 

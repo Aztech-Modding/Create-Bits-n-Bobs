@@ -173,7 +173,7 @@ public class BnbDecorativeBlocks {
                     GratingBlock::new
             )
             .properties(p -> p.mapColor(MapColor.METAL)
-                    .strength(0.1f, 6.0f)
+                    .strength(0.6f, 6.0f)
                     .sound(SoundType.METAL)
                     .noOcclusion()
                     .isSuffocating((state, level, pos) -> false)
@@ -191,7 +191,7 @@ public class BnbDecorativeBlocks {
             )
             .properties(p -> p.mapColor(MapColor.METAL)
                     .noOcclusion()
-                    .strength(0.1f, 6.0f)
+                    .strength(0.6f, 6.0f)
                     .sound(SoundType.METAL)
                     .isSuffocating((state, level, pos) -> false)
                     .isViewBlocking((state, level, pos) -> false))
@@ -214,7 +214,7 @@ public class BnbDecorativeBlocks {
             .build()
             .register();
 
-    public static final BlockEntry<TrussBlock> METAL_TRUSS = CreateBitsnBobs.REGISTRATE.block(
+    public static final BlockEntry<TrussBlock> INDUSTRIAL_TRUSS = CreateBitsnBobs.REGISTRATE.block(
                     "industrial_truss",
                     TrussBlock::new
             )
@@ -269,7 +269,7 @@ public class BnbDecorativeBlocks {
                     .register();
 
     public static final BlockEntry<TrussShaftBlock> METAL_TRUSS_SHAFT = REGISTRATE
-            .block("industrial_truss_shaft", p -> new TrussShaftBlock(p, BnbDecorativeBlocks.METAL_TRUSS::get))
+            .block("industrial_truss_shaft", p -> new TrussShaftBlock(p, BnbDecorativeBlocks.INDUSTRIAL_TRUSS::get))
             .initialProperties(SharedProperties::stone)
             .transform(pickaxeOnly())
             .blockstate((c, p) -> BlockStateGen.axisBlock(

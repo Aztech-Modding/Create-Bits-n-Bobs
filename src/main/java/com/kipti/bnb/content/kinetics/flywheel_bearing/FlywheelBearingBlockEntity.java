@@ -553,8 +553,8 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
     }
 
     @Override
-    public AABB getRenderBoundingBox() {
-        return super.getRenderBoundingBox().inflate(1);
+    protected AABB createRenderBoundingBox() {
+        return super.createRenderBoundingBox().inflate(1);
     }
 }
 

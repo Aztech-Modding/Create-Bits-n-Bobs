@@ -9,7 +9,7 @@ import net.minecraft.world.item.Item;
 /**
  * Captures the exact chain segment a partial edit session is anchored to.
  */
-public record CogwheelChainPartialEditContext(
+public record CogwheelChainPartialEdit(
         BlockPos controllerPos,
         float chainPosition,
         CogwheelChainSegment segment,
@@ -20,8 +20,4 @@ public record CogwheelChainPartialEditContext(
         CogwheelChainType chainType,
         Item chainItemType
 ) {
-
-    public CogwheelChainPartialEditContext {
-        controllerPos = controllerPos.immutable();
-    }
 }

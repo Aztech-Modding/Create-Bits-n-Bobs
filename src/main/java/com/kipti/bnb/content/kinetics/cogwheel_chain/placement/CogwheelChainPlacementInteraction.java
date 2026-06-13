@@ -11,6 +11,7 @@ import com.kipti.bnb.network.packets.from_client.PlaceCogwheelChainPacket;
 import com.kipti.bnb.network.packets.from_client.WrenchCogwheelChainPacket;
 import com.kipti.bnb.registry.core.BnbFeatureFlag;
 import com.simibubi.create.AllItems;
+import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorBlockEntity;
 import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -215,6 +216,19 @@ public class CogwheelChainPlacementInteraction {
                 }
 
                 if (completed) {
+                    final int chainsRequired = getCurrentBuildingChain().getChainsRequiredInLoop(getCurrentChainType());
+
+                    final boolean hasEnough = ChainConveyorBlockEntity.getChainsFromInventory(
+                            player,
+                            getCurrentChainItemType().getDefaultInstance(),
+                            chainsRequired,
+                            true
+                    );
+
+                    if (!hasEnough) {
+                        throw new ChainInteractionFailedException("not_enough_material");
+                    }
+
                     CatnipServices.NETWORK.sendToServer(new PlaceCogwheelChainPacket(
                             currentBuildingChain,
                             currentChainType,

@@ -29,9 +29,6 @@ import java.util.function.Function;
 
 public class CogwheelChainBehaviourRenderer extends BlockEntityBehaviourRenderer<KineticBlockEntity> {
 
-    public static final int MIP_DISTANCE = 48;
-    public static final int SEAM_DIST = 16;
-
     @Override
     public void renderSafe(final SuperBlockEntityBehaviour behaviour,
                            final KineticBlockEntity be,
