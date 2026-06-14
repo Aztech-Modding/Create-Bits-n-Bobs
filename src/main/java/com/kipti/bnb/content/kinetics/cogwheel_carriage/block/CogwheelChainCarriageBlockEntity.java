@@ -12,8 +12,10 @@ import com.simibubi.create.content.contraptions.IDisplayAssemblyExceptions;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -64,6 +66,15 @@ public class CogwheelChainCarriageBlockEntity extends SmartBlockEntity implement
             this.lastException = new AssemblyException("bits_n_bobs.no_chain_to_attach_to");
             return;
         }
+
+        //Change our current block direction to match the attachment
+        final Vec3 facing = attachment.getCurrentDirection(this.level);
+        final Direction nearestDirection = Direction.getNearest(facing.x, facing.y, facing.z);
+
+        this.level.setBlock(
+                this.getBlockPos(), this.getBlockState().setValue(CogwheelChainCarriageBlock.FACING, nearestDirection),
+                Block.UPDATE_ALL
+        );
 
         final CogwheelChainCarriageContraption contraption =
                 new CogwheelChainCarriageContraption(attachment);

@@ -225,7 +225,7 @@ public class CogwheelChainPlacementInteraction {
                             true
                     );
 
-                    if (!hasEnough) {
+                    if (!hasEnough && !player.hasInfiniteMaterials()) {
                         throw new ChainInteractionFailedException("not_enough_material");
                     }
 

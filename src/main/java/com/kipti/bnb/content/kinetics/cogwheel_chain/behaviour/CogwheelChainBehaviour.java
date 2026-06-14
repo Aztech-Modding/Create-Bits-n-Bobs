@@ -519,6 +519,7 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
     }
 
     private void updateControlledChain() {
+        this.invalidateRenderBoundingBox();
         if (this.controlledChain == null) {
             this.unregisterControlledChain();
             return;
