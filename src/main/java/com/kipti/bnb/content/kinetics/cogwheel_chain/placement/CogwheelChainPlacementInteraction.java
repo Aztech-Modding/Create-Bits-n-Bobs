@@ -19,6 +19,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -189,6 +190,7 @@ public class CogwheelChainPlacementInteraction {
                     heldChainType,
                     chainItemInHand.getItem()
             );
+            player.displayClientMessage(Component.translatable("tooltip.bits_n_bobs.chain_drive_placing_hint"), true);
         } else {
             if (currentBuildingChain.getLastNode().pos().equals(hitPos)) {
                 currentBuildingChain.getNodes().removeLast();

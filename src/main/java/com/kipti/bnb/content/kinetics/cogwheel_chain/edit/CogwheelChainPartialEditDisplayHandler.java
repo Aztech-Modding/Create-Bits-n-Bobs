@@ -14,7 +14,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.BlockItem;
@@ -172,9 +171,6 @@ public class CogwheelChainPartialEditDisplayHandler {
         if (baseCandidate == null)
             return null;
 
-        final Direction.Axis axis = blockHit.getDirection().getAxis();
-        final CogwheelChainCandidate candidate = new CogwheelChainCandidate(
-                axis, baseCandidate.isLarge(), baseCandidate.hasSmallCogwheelOffset());
 
         final BlockPlaceContext placeContext = new BlockPlaceContext(
                 new UseOnContext(
@@ -184,6 +180,7 @@ public class CogwheelChainPartialEditDisplayHandler {
         final BlockState placementState = cogwheelBlock.getStateForPlacement(placeContext);
         if (placementState == null) return null;
 
+        final CogwheelChainCandidate candidate = CogwheelChainCandidate.getForBlock(placementState);
         return new ProposedPlacement(placementPos, candidate, blockHit.getDirection(), placementState);
     }
 

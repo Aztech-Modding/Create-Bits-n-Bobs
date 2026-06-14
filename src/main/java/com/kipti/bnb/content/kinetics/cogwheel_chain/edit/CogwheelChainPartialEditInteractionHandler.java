@@ -28,17 +28,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-/**
- * Client-side state and entry handling for segment-targeted partial chain edits.
- * <p>
- * Flow:
- * <ol>
- *   <li>Player holds cogwheel, right-clicks a chain segment between two cogs → enters edit mode</li>
- *   <li>Display handler shows preview of proposed insertion as the player looks around</li>
- *   <li>Player right-clicks on a valid block surface → cogwheel is placed AND inserted into the chain</li>
- *   <li>Shift+right-click cancels at any point</li>
- * </ol>
- */
 @IncludeLangDefaults(
         @LangDefault(key = "tooltip.bits_n_bobs.chain_drive_partial_edit_hint", value = "Inserting cogwheel into chain drive")
 )
@@ -47,9 +36,6 @@ public class CogwheelChainPartialEditInteractionHandler {
     private static @Nullable CogwheelChainPartialEdit currentEditContext = null;
     private static @Nullable ProposedPlacement proposedPlacement = null;
 
-    /**
-     * @return {@code true} if the interaction was handled by this handler
-     */
     public static boolean onRightClick() {
         final LocalPlayer player = Minecraft.getInstance().player;
         final ClientLevel level = Minecraft.getInstance().level;
