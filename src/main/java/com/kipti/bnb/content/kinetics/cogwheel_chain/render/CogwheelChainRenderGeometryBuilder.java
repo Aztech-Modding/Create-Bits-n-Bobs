@@ -14,6 +14,7 @@ import java.util.stream.Stream;
 
 public class CogwheelChainRenderGeometryBuilder {
 
+    //TODO: this is the most stupid offence to memory allocation ever made no wonder renderers SUCK compared to flywheel, cache this or just straight up blow up with hammers
     public static List<ChainSegment> buildSegments(final CogwheelChain chain, final Vec3 origin) {
         if (chain == null || chain.getChainPathNodes().isEmpty()) {
             return List.of();
@@ -61,7 +62,8 @@ public class CogwheelChainRenderGeometryBuilder {
         return totalDistance;
     }
 
-    public static List<Vec3> getPointsInClosestOrder(final List<Vec3> destinationPoints, final List<Vec3> sourcePoints) {
+    public static List<Vec3> getPointsInClosestOrder(final List<Vec3> destinationPoints,
+                                                     final List<Vec3> sourcePoints) {
         if (destinationPoints.size() != 4 || sourcePoints.size() != 4) {
             return new ArrayList<>(destinationPoints);
         }
@@ -107,8 +109,13 @@ public class CogwheelChainRenderGeometryBuilder {
         return best;
     }
 
-    public static List<Vec3> getEndPointsForChainJoint(final Vec3 before, final Vec3 point, final Vec3 after, final CogwheelChainType.ChainRenderInfo chainRenderInfo, final Vec3 cogwheelAxis) {
-        final float radius = (float) ((chainRenderInfo.getVertexShape() == CogwheelChainType.VertexShape.CROSS ? Math.sqrt(2f) / 2f : 1f) * 1f / 16f);
+    public static List<Vec3> getEndPointsForChainJoint(final Vec3 before,
+                                                       final Vec3 point,
+                                                       final Vec3 after,
+                                                       final CogwheelChainType.ChainRenderInfo chainRenderInfo,
+                                                       final Vec3 cogwheelAxis) {
+        final float radius = (float) ((chainRenderInfo.getVertexShape() == CogwheelChainType.VertexShape.CROSS ? Math.sqrt(
+                2f) / 2f : 1f) * 1f / 16f);
         final Vec3 dirToBefore = point.subtract(before).normalize();
         final Vec3 dirToAfter = after.subtract(point).normalize();
 
@@ -146,7 +153,8 @@ public class CogwheelChainRenderGeometryBuilder {
         final Vec3 localAxis1Direction = new Vec3(localAxis1Joml.x, localAxis1Joml.y, localAxis1Joml.z).normalize();
         final Vec3 localAxis1 = localAxis1Direction.scale(chainRenderInfo.getHeight() / 2f);
         final Vector3f localAxis2Joml = transform.transform(0f, 0f, 1f, new Vector3f());
-        final Vec3 localAxis2 = new Vec3(localAxis2Joml.x, localAxis2Joml.y, localAxis2Joml.z).normalize().scale(chainRenderInfo.getWidth() / 2f);
+        final Vec3 localAxis2 = new Vec3(localAxis2Joml.x, localAxis2Joml.y, localAxis2Joml.z).normalize().scale(
+                chainRenderInfo.getWidth() / 2f);
 
         return Stream.of(
                         point.add(localAxis1.add(localAxis2).scale(radius)),

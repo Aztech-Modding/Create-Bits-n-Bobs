@@ -42,7 +42,9 @@ public class CogwheelChainPathfinder {
             return this.distance > other.distance ? this : other;
         }
 
-        public PartialPathFrontierData extend(final PathedCogwheelNode nextNode, final double additionalDistance, final int additionalSelfIntersections) {
+        public PartialPathFrontierData extend(final PathedCogwheelNode nextNode,
+                                              final double additionalDistance,
+                                              final int additionalSelfIntersections) {
             final ArrayList<PathedCogwheelNode> newTraversed = new ArrayList<>(this.traversed);
             newTraversed.add(nextNode);
             return new PartialPathFrontierData(
@@ -85,7 +87,15 @@ public class CogwheelChainPathfinder {
 
                 for (int toSide = 1; toSide >= -1; toSide -= 2) {
                     if (isValidPathStep(prevNode, fromSide, nextNode, toSide)) {
-                        final PartialPathFrontierData extended = computeExtendedPath(prevNode, nextNode, fromSide, toSide, fromPath, nextNextNode, chain.getSize());
+                        final PartialPathFrontierData extended = computeExtendedPath(
+                                prevNode,
+                                nextNode,
+                                fromSide,
+                                toSide,
+                                fromPath,
+                                nextNextNode,
+                                chain.getSize()
+                        );
                         if (toSide == 1) {
                             nextLeftPath = merge(nextLeftPath, extended);
                         } else {
@@ -117,11 +127,18 @@ public class CogwheelChainPathfinder {
         return finalTraversed;
     }
 
-    private static PartialPathFrontierData merge(final PartialPathFrontierData existing, final PartialPathFrontierData candidate) {
+    private static PartialPathFrontierData merge(final PartialPathFrontierData existing,
+                                                 final PartialPathFrontierData candidate) {
         return existing == null ? candidate : existing.compare(candidate);
     }
 
-    private static PartialPathFrontierData computeExtendedPath(final PlacingCogwheelNode prevNode, final PlacingCogwheelNode nextNode, final int fromSide, final int toSide, final PartialPathFrontierData fromPath, final PlacingCogwheelNode nextNextNode, final int size) {
+    private static PartialPathFrontierData computeExtendedPath(final PlacingCogwheelNode prevNode,
+                                                               final PlacingCogwheelNode nextNode,
+                                                               final int fromSide,
+                                                               final int toSide,
+                                                               final PartialPathFrontierData fromPath,
+                                                               final PlacingCogwheelNode nextNextNode,
+                                                               final int size) {
         final Vec3 fromPos = prevNode.center().add(
                 getPathingTangentOnCog(nextNode, prevNode, -fromSide)
         );
@@ -134,7 +151,10 @@ public class CogwheelChainPathfinder {
         final double distance = fromPos.distanceTo(toPos) + (getArcDistanceOnCog(
                 new PathedCogwheelNode(prevNode, fromSide),
                 new PathedCogwheelNode(nextNode, toSide),
-                new PathedCogwheelNode(nextNextNode, isValidPathStep(nextNode, toSide, nextNextNode, toSide) ? toSide : -toSide)
+                new PathedCogwheelNode(
+                        nextNextNode,
+                        isValidPathStep(nextNode, toSide, nextNextNode, toSide) ? toSide : -toSide
+                )
         )) * 10f;
 
         final int selfIntersections = nextNextNode == prevNode ? (toSide != fromSide ? 1 : 0) : (traversedSize < 2 ? 0 :
@@ -152,7 +172,9 @@ public class CogwheelChainPathfinder {
         );
     }
 
-    private static double getArcDistanceOnCog(final PathedCogwheelNode prevNode, final PathedCogwheelNode currentNode, final PathedCogwheelNode nextNode) {
+    private static double getArcDistanceOnCog(final PathedCogwheelNode prevNode,
+                                              final PathedCogwheelNode currentNode,
+                                              final PathedCogwheelNode nextNode) {
         final Vec3 fromTangent = CogwheelChainGeometryBuilder.getTangentPointOnCircle(prevNode, currentNode, true);
         final Vec3 toTangent = CogwheelChainGeometryBuilder.getTangentPointOnCircle(nextNode, currentNode, false);
 
@@ -166,9 +188,10 @@ public class CogwheelChainPathfinder {
         }
 
         final double angle = Math.acos(
-                Math.max(-1.0, Math.min(1.0,
-                        fromTangent.normalize().dot(toTangent.normalize())
-                ))
+                Math.clamp(
+                        fromTangent.normalize().dot(toTangent.normalize()),
+                        -1.0, 1.0
+                )
         );
 
         final double radius = currentNode.isLarge() ? 1.0f : 0.5f;
@@ -199,7 +222,11 @@ public class CogwheelChainPathfinder {
         ) ? 1 : 0;
     }
 
-    private static boolean doLinesIntersectOnPlane(final Vec3 axis, final Vec3 fromStart, final Vec3 fromEndWhichIsAroundCenter, final Vec3 toStartWhichIsAroundCenter, final Vec3 toEnd) {
+    private static boolean doLinesIntersectOnPlane(final Vec3 axis,
+                                                   final Vec3 fromStart,
+                                                   final Vec3 fromEndWhichIsAroundCenter,
+                                                   final Vec3 toStartWhichIsAroundCenter,
+                                                   final Vec3 toEnd) {
         final Vec3 fromDir = fromEndWhichIsAroundCenter.subtract(fromStart);
         final Vec3 toDir = toEnd.subtract(toStartWhichIsAroundCenter);
 
@@ -217,20 +244,27 @@ public class CogwheelChainPathfinder {
         return t >= 0 && t <= 1 && u >= 0 && u <= 1;
     }
 
-    public static boolean isValidPathStepOutOf(final PlacingCogwheelNode nodeA, final PlacingCogwheelNode nodeB, final int side) {
+    public static boolean isValidPathStepOutOf(final PlacingCogwheelNode nodeA,
+                                               final PlacingCogwheelNode nodeB,
+                                               final int side) {
         return isValidPathStep(nodeA, side, nodeB, 1) || isValidPathStep(nodeA, side, nodeB, -1);
     }
 
-    public static boolean isValidPathStepInto(final PlacingCogwheelNode nodeA, final PlacingCogwheelNode nodeB, final int side) {
+    public static boolean isValidPathStepInto(final PlacingCogwheelNode nodeA,
+                                              final PlacingCogwheelNode nodeB,
+                                              final int side) {
         return isValidPathStep(nodeA, 1, nodeB, side) || isValidPathStep(nodeA, -1, nodeB, side);
     }
 
     /**
-     * Check if the combination is valid, predominantly dedicated to axis changes
+     * Check if the combination is valid
      */
-    public static boolean isValidPathStep(final PlacingCogwheelNode from, final int fromSide, final PlacingCogwheelNode to, final int toSide) {
+    public static boolean isValidPathStep(final PlacingCogwheelNode from,
+                                          final int fromSide,
+                                          final PlacingCogwheelNode to,
+                                          final int toSide) {
         if (from.rotationAxis() == to.rotationAxis()) {
-            return true;
+            return from.pos().get(from.rotationAxis()) == to.pos().get(to.rotationAxis());
         }
         if (!from.isLarge() || !to.isLarge()) {
             return false;
@@ -251,7 +285,8 @@ public class CogwheelChainPathfinder {
     /*
      * Get a list of sides (on the last node) which have any valid path to the new node
      * */
-    public static List<Integer> getValidPathSteps(final PlacingCogwheelNode lastNode, final PlacingCogwheelNode newNode) {
+    public static List<Integer> getValidPathSteps(final PlacingCogwheelNode lastNode,
+                                                  final PlacingCogwheelNode newNode) {
         final List<Integer> validSides = new ArrayList<>();
         for (int side = 1; side >= -1; side -= 2) {
             if (isValidPathStep(lastNode, side, newNode, 1) || isValidPathStep(lastNode, side, newNode, -1)) {
@@ -262,10 +297,22 @@ public class CogwheelChainPathfinder {
     }
 
     public static Vec3 getPathingTangentOnCog(final ICogwheelNode from, final ICogwheelNode to, final int toSide) {
-        return getPathingTangentOnCog(from.center(), from.rotationAxisVec(), to.center(), to.isLarge(), to.rotationAxisVec(), toSide);
+        return getPathingTangentOnCog(
+                from.center(),
+                from.rotationAxisVec(),
+                to.center(),
+                to.isLarge(),
+                to.rotationAxisVec(),
+                toSide
+        );
     }
 
-    public static Vec3 getPathingTangentOnCog(final Vec3 fromCenter, final Vec3 fromRotationAxis, final Vec3 toCenter, final boolean toLarge, final Vec3 toRotationAxis, final int toSide) {
+    public static Vec3 getPathingTangentOnCog(final Vec3 fromCenter,
+                                              final Vec3 fromRotationAxis,
+                                              final Vec3 toCenter,
+                                              final boolean toLarge,
+                                              final Vec3 toRotationAxis,
+                                              final int toSide) {
         final double toRadius = toLarge ? 1.0f : 0.5f;
 
         Vec3 differenceTo = toCenter.subtract(fromCenter);

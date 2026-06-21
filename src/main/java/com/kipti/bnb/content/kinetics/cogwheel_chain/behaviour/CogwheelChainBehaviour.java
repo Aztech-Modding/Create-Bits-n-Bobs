@@ -61,16 +61,6 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
     }
 
     public static void breakChain(final Level level, final BlockPos pos, @Nullable final Player player) {
-        final CogwheelChainBehaviour behaviour = get(level, pos, TYPE);
-        if (behaviour == null)
-            return;
-
-        final boolean infinite = player != null && player.hasInfiniteMaterials();
-        final ItemStack drops = behaviour.destroyChain(player == null, true);
-
-        if (player != null && !infinite && !drops.isEmpty()) {
-            player.getInventory().placeItemBackInInventory(drops);
-        }
     }
 
     @Override
@@ -172,7 +162,7 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
 
         final CogwheelChainBehaviour controller = this.resolveControllerBehaviour();
         if (controller == null) {
-            //Orphaned so assume the original chain was broken so do nothing
+            //Orphaned so assume the original chain was broken, do nothing
             this.disconnectFromChain();
             return ItemStack.EMPTY;
         }

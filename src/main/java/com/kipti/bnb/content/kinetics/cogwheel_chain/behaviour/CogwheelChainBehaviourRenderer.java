@@ -53,8 +53,7 @@ public class CogwheelChainBehaviourRenderer extends BlockEntityBehaviourRenderer
 
             final float offset = rotationsPerTick == 0 ? 0 : (float) (Math.PI * 2 * rotationsPerTick * time);
 
-            final Vec3 origin = Vec3.atLowerCornerOf(be.getBlockPos());
-            final List<ChainSegment> segments = CogwheelChainRenderGeometryBuilder.buildSegments(chain, origin);
+            final List<ChainSegment> segments = CogwheelChainRenderGeometryBuilder.buildSegments(chain, Vec3.ZERO);
             final double totalChainDistance = segments.stream().mapToDouble(ChainSegment::distance).sum();
             if (totalChainDistance <= 1e-4) {
                 return;
@@ -105,14 +104,9 @@ public class CogwheelChainBehaviourRenderer extends BlockEntityBehaviourRenderer
                         .length()
         );
 
-        final BlockPos tilePos = be.getBlockPos();
-
-        final Vec3 startOffset = from.subtract(Vec3.atCenterOf(tilePos));
-
         ms.pushPose();
         final PoseTransformStack chain = TransformStack.of(ms);
-        chain.center();
-        chain.translate(startOffset);
+        chain.translate(from);
 
         final int light1 = lighter.apply(new Vector3f((float) from.x, (float) from.y, (float) from.z));
         final int light2 = lighter.apply(new Vector3f((float) to.x, (float) to.y, (float) to.z));
