@@ -47,9 +47,7 @@ import static com.simibubi.create.foundation.data.TagGen.pickaxeOnly;
 
 @IncludeLangDefaults({
         @LangDefault(key = "block.bits_n_bobs.girder_strut.tooltip.summary", value = "A type of girder used to span a distance _between two anchor points_."),
-        @LangDefault(key = "block.bits_n_bobs.industrial_truss.tooltip.summary", value = "This one is uhh missing stuff to encase pipes and shafts so stay attuned"),
-        @LangDefault(key = "block.bits_n_bobs.industrial_grating_panel.tooltip.summary", value = "This one is uhh missing stuff to encase pipes and shafts so stay attuned"),
-        @LangDefault(key = "message.bits_n_bobs.girder_strut.missing_anchors", value = "You need %s more Girder Struts"),
+        @LangDefault(key = "block.bits_n_bobs.industrial_truss.tooltip.summary", value = "Can be used to _encase pipes and shafts_."),
 })
 public class BnbDecorativeBlocks {
 
@@ -241,8 +239,8 @@ public class BnbDecorativeBlocks {
             .build()
             .register();
 
-    public static final BlockEntry<TrussFluidPipe> METAL_TRUSS_PIPE =
-            REGISTRATE.block("industrial_truss_pipe", TrussFluidPipe::new)
+    public static final BlockEntry<TrussFluidPipeBlock> METAL_TRUSS_PIPE =
+            REGISTRATE.block("industrial_truss_pipe", TrussFluidPipeBlock::new)
                     .lang("Metal Truss Pipe")
                     .initialProperties(SharedProperties::copperMetal)
                     .transform(pickaxeOnly())

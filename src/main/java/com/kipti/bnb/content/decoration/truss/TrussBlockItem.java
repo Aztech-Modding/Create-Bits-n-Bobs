@@ -1,5 +1,6 @@
 package com.kipti.bnb.content.decoration.truss;
 
+import com.kipti.bnb.content.decoration.dyeable.DyeableTransitionHelper;
 import com.kipti.bnb.registry.content.blocks.deco.BnbDecorativeBlocks;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.fluids.FluidTransportBehaviour;
@@ -30,14 +31,19 @@ public class TrussBlockItem extends BlockItem {
 
         if (AllBlocks.FLUID_PIPE.is(clickedState.getBlock())) {
             FluidTransportBehaviour.cacheFlows(level, clickedPos);
+            DyeableTransitionHelper.saveCurrentDye(level, clickedPos);
             level.setBlockAndUpdate(
                     clickedPos, BnbDecorativeBlocks.METAL_TRUSS_PIPE.getDefaultState()
-                            .setValue(TrussFluidPipe.AXIS, this.getAxisOfPipe(clickedState, context.getClickedFace()))
+                            .setValue(
+                                    TrussFluidPipeBlock.AXIS,
+                                    this.getAxisOfPipe(clickedState, context.getClickedFace())
+                            )
                             .setValue(
                                     BlockStateProperties.WATERLOGGED,
                                     clickedState.getValue(BlockStateProperties.WATERLOGGED)
                             )
             );
+            DyeableTransitionHelper.applyPreviousDye(level, clickedPos);
             FluidTransportBehaviour.loadFlows(level, clickedPos);
             level.playSound(
                     context.getPlayer(),

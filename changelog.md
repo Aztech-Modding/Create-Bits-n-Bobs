@@ -229,3 +229,10 @@
 
 - Changes:
     - Fixed residual chain creation missing certain integrity checks
+
+# 1.21.1-2.1.6-beta
+
+- First public beta release of Bits n Bobs 2.0.0
+- Changes since to 2.1.4:
+    - Trusses now have proper dyed and visual behavior when encasing pipes
+    - Fixed encasing blocks breaking the chain they are a part of

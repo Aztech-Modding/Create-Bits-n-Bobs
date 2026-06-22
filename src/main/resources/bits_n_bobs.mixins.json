@@ -38,7 +38,8 @@
     "presets.ChunkGeneratorsMixin",
     "presets.WorldDimensionsMixin",
     "presets.WorldPresetsBootstrapMixin",
-    "presets.WorldPresetsMixin"
+    "presets.WorldPresetsMixin",
+    "truss_pipe.FluidTransportBehaviourMixin"
   ],
   "client": [
     "BakedGlyphMixin",

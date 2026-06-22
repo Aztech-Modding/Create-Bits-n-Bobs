@@ -1,5 +1,6 @@
 package com.kipti.bnb.content.decoration.truss;
 
+import com.kipti.bnb.content.decoration.dyeable.DyeableTransitionHelper;
 import com.kipti.bnb.registry.client.BnbShapes;
 import com.kipti.bnb.registry.content.BnbBlockEntities;
 import com.kipti.bnb.registry.content.blocks.deco.BnbDecorativeBlocks;
@@ -8,7 +9,6 @@ import com.simibubi.create.api.schematic.requirement.SpecialBlockItemRequirement
 import com.simibubi.create.content.fluids.FluidTransportBehaviour;
 import com.simibubi.create.content.fluids.pipes.AxisPipeBlock;
 import com.simibubi.create.content.fluids.pipes.FluidPipeBlock;
-import com.simibubi.create.content.fluids.pipes.StraightPipeBlockEntity;
 import com.simibubi.create.content.schematics.requirement.ItemRequirement;
 import com.simibubi.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;
@@ -34,9 +34,9 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
-public class TrussFluidPipe extends AxisPipeBlock implements IBE<StraightPipeBlockEntity>, SimpleWaterloggedBlock, SpecialBlockItemRequirement {
+public class TrussFluidPipeBlock extends AxisPipeBlock implements IBE<TrussFluidPipeBlockEntity>, SimpleWaterloggedBlock, SpecialBlockItemRequirement {
 
-    public TrussFluidPipe(final Properties properties) {
+    public TrussFluidPipeBlock(final Properties properties) {
         super(properties);
     }
 
@@ -66,12 +66,12 @@ public class TrussFluidPipe extends AxisPipeBlock implements IBE<StraightPipeBlo
     }
 
     @Override
-    public Class<StraightPipeBlockEntity> getBlockEntityClass() {
-        return StraightPipeBlockEntity.class;
+    public Class<TrussFluidPipeBlockEntity> getBlockEntityClass() {
+        return TrussFluidPipeBlockEntity.class;
     }
 
     @Override
-    public BlockEntityType<? extends StraightPipeBlockEntity> getBlockEntityType() {
+    public BlockEntityType<? extends TrussFluidPipeBlockEntity> getBlockEntityType() {
         return BnbBlockEntities.METAL_TRUSS_PIPE.get();
     }
 
@@ -99,11 +99,13 @@ public class TrussFluidPipe extends AxisPipeBlock implements IBE<StraightPipeBlo
         );
 
         FluidTransportBehaviour.cacheFlows(world, pos);
+        DyeableTransitionHelper.saveCurrentDye(world, pos);
         world.setBlockAndUpdate(
                 pos, AllBlocks.FLUID_PIPE.get()
                         .updateBlockState(equivalentPipe, firstFound, null, world, pos)
         );
         FluidTransportBehaviour.loadFlows(world, pos);
+        DyeableTransitionHelper.applyPreviousDye(world, pos);
         return InteractionResult.SUCCESS;
     }
 

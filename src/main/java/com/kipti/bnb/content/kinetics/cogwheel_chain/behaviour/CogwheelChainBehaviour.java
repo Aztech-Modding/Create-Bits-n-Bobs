@@ -136,6 +136,9 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
     public void remove() {
         super.remove();
         if (this.isClientSide()) return;
+
+        if (this.tryTransferOnRemoval()) return;
+
         if (this.isController())
             this.destroyChain(false, false);
         else {
@@ -143,6 +146,38 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
             if (controllerBehaviour == null) return;
             controllerBehaviour.checkIntegrityNextTick = true;
         }
+    }
+
+    /**
+     * See if we are being replaced by a compatible block entity and try transfer our info, ensuring we check integrity next tick
+     *
+     * @return
+     *
+     */
+    private boolean tryTransferOnRemoval() {
+        final CogwheelChainBehaviour controllerBehaviour = this.resolveControllerBehaviour();
+        if (controllerBehaviour == null) return false;
+
+        final BlockState replacingState = this.getLevel().getBlockState(this.getPos());
+        final PathedCogwheelNode thisNode = controllerBehaviour.getControlledChain().getNodeFromControllerOffset(
+                this.controllerOffset == null ? Vec3i.ZERO : this.controllerOffset
+        );
+        final CogwheelChainCandidate replacingCandidate = CogwheelChainCandidate.getForBlock(replacingState);
+        if (replacingCandidate == null || thisNode == null || !replacingCandidate.isConsistentWithNode(thisNode))
+            return false;
+
+        final BlockEntity replacingBlockEntity = this.getLevel().getBlockEntity(this.getPos());
+        final CogwheelChainBehaviour replacingBehaviour = this.getSameBehaviour(replacingBlockEntity);
+
+        if (replacingBehaviour == null)
+            return false;
+
+        replacingBehaviour.chainsToRefund = this.chainsToRefund;
+        replacingBehaviour.controlledChain = this.controlledChain;
+        replacingBehaviour.controllerOffset = this.controllerOffset;
+        replacingBehaviour.sendData();
+        replacingBehaviour.updateControlledChain();
+        return true;
     }
 
     @Override

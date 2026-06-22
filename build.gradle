@@ -200,23 +200,25 @@ publishMods {
     file = jar.archiveFile
     def changelogText = getRelevantChangelog(minecraft_version + "-" + mod_version)
     changelog = changelogText
-    type = STABLE
+    type = BETA
     modLoaders.add("neoforge")
-    displayName = "${mod_name} ${mod_version} NeoForge ${minecraft_version}"
+    displayName = "${mod_name} BETA ${mod_version} NeoForge ${minecraft_version}"
 
-    curseforge {
-        projectId = "1398383"
-        projectSlug = "create-bits-n-bobs"
-        accessToken = findProperty('curseforgePublishToken')
-        minecraftVersions.add("1.21.1")
-        requires("create")
-    }
+//    curseforge {
+//        projectId = "1398383"
+//        projectSlug = "create-bits-n-bobs"
+//        accessToken = findProperty('curseforgePublishToken')
+//        minecraftVersions.add("1.21.1")
+//        requires("create")
+//    }
 
     modrinth {
         projectId = "T8bvmqVZ"
         accessToken = findProperty('modrinthPublishToken')
         minecraftVersions.add("1.21.1")
         requires("create")
+        requires("azimuth-api")
+        requires("strut-your-stuff")
     }
 
     discord {
@@ -230,3 +232,4 @@ publishMods {
         style { look = "CLASSIC" }
     }
 }
+

@@ -1,5 +1,6 @@
 package com.kipti.bnb.mixin.dyeable.pipes;
 
+import com.kipti.bnb.content.decoration.dyeable.DyeableTransitionHelper;
 import com.kipti.bnb.content.decoration.dyeable.pipes.DyeablePipeBehaviour;
 import com.kipti.bnb.content.decoration.dyeable.pipes.DyeablePipeModelHelper;
 import com.simibubi.create.content.fluids.PipeAttachmentModel;
@@ -9,6 +10,7 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.model.data.ModelData;
@@ -32,8 +34,12 @@ public class PipeAttachmentModelMixin {
             final CallbackInfoReturnable<ModelData.Builder> cir
     ) {
         final DyeablePipeBehaviour behaviour = BlockEntityBehaviour.get(world, pos, DyeablePipeBehaviour.TYPE);
-        if (behaviour != null && behaviour.getColor() != null) {
-            builder.with(DyeablePipeModelHelper.PIPE_DYE_COLOR, behaviour.getColor());
+        if (behaviour != null) {
+            DyeColor color = behaviour.getColor();
+            color = color == null ? DyeableTransitionHelper.getPendingPlacementColor(world, pos) : color;
+            if (color != null) {
+                builder.with(DyeablePipeModelHelper.PIPE_DYE_COLOR, color);
+            }
         }
     }
 
@@ -46,7 +52,7 @@ public class PipeAttachmentModelMixin {
             final RenderType renderType,
             final CallbackInfoReturnable<List<BakedQuad>> cir
     ) {
-        final var color = DyeablePipeModelHelper.getDyeColor(data);
+        final DyeColor color = DyeablePipeModelHelper.getDyeColor(data);
         if (color == null) {
             return;
         }

@@ -2,20 +2,21 @@
 	"format_version": "1.21.11",
 	"credit": "Made with Blockbench by cak :)",
 	"render_type": "minecraft:cutout",
+	"texture_size": [32, 32],
 	"textures": {
 		"1": "create:block/pipes",
 		"particle": "block/copper_block"
 	},
 	"elements": [
 		{
-			"from": [4, 0, 4],
-			"to": [12, 16, 12],
+			"from": [4, 4, 4],
+			"to": [12, 12, 12],
 			"rotation": {"angle": 0, "axis": "y", "origin": [8, 8, 8]},
 			"faces": {
-				"north": {"uv": [4, 8, 8, 0], "texture": "#1"},
-				"east": {"uv": [4, 8, 8, 0], "texture": "#1"},
-				"south": {"uv": [4, 8, 8, 0], "texture": "#1"},
-				"west": {"uv": [4, 0, 8, 8], "rotation": 180, "texture": "#1"}
+				"north": {"uv": [4, 6, 8, 2], "texture": "#1"},
+				"east": {"uv": [4, 6, 8, 2], "texture": "#1"},
+				"south": {"uv": [4, 6, 8, 2], "texture": "#1"},
+				"west": {"uv": [4, 2, 8, 6], "rotation": 180, "texture": "#1"}
 			}
 		}
 	],

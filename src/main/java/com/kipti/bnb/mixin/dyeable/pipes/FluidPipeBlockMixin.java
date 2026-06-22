@@ -3,6 +3,7 @@ package com.kipti.bnb.mixin.dyeable.pipes;
 import com.kipti.bnb.content.decoration.dyeable.DyeableTransitionHelper;
 import com.kipti.bnb.content.decoration.dyeable.pipes.DyeablePipeBehaviour;
 import com.kipti.bnb.content.decoration.dyeable.tanks.DyeableTankBehaviour;
+import com.kipti.bnb.content.decoration.truss.TrussFluidPipeBlock;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.simibubi.create.content.fluids.pipes.FluidPipeBlock;
@@ -85,7 +86,7 @@ public class FluidPipeBlockMixin {
 
         final @Nullable DyeColor selfColor = bnb$getEffectiveColor(world, pos);
 
-        if (FluidPipeBlock.isPipe(neighbourState)) {
+        if (FluidPipeBlock.isPipe(neighbourState) || neighbourState.getBlock() instanceof TrussFluidPipeBlock) {
             final @Nullable DyeColor neighbourColor = bnb$getEffectiveColor(world, neighbourPos);
             return bnb$areDyeColorsCompatible(selfColor, neighbourColor);
         }

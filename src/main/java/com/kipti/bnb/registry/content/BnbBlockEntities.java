@@ -2,6 +2,7 @@ package com.kipti.bnb.registry.content;
 
 import com.cake.struts.content.block.StrutBlockEntity;
 import com.cake.struts.content.block.StrutBlockEntityRenderer;
+import com.kipti.bnb.content.decoration.truss.TrussFluidPipeBlockEntity;
 import com.kipti.bnb.content.kinetics.chain_pulley.ChainPulleyBlockEntity;
 import com.kipti.bnb.content.kinetics.chain_pulley.ChainPulleyRenderer;
 import com.kipti.bnb.content.kinetics.cogwheel_carriage.block.CogwheelChainCarriageBlockEntity;
@@ -25,7 +26,6 @@ import com.kipti.bnb.registry.content.blocks.deco.BnbDecorativeBlocks;
 import com.kipti.bnb.registry.content.blocks.encased.BnbEncasedBlockLists;
 import com.kipti.bnb.registry.content.blocks.encased.BnbExtraEncasedBlocks;
 import com.simibubi.create.AllBlocks;
-import com.simibubi.create.content.fluids.pipes.StraightPipeBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 import com.simibubi.create.content.kinetics.base.ShaftRenderer;
@@ -178,8 +178,8 @@ public class BnbBlockEntities {
             .validBlock(BnbKineticBlocks.COGWHEEL_CHAIN_CARRIAGE)
             .register();
 
-    public static final BlockEntityEntry<StraightPipeBlockEntity> METAL_TRUSS_PIPE = REGISTRATE
-            .blockEntity("industrial_truss_pipe", StraightPipeBlockEntity::new)
+    public static final BlockEntityEntry<TrussFluidPipeBlockEntity> METAL_TRUSS_PIPE = REGISTRATE
+            .blockEntity("industrial_truss_pipe", TrussFluidPipeBlockEntity::new)
             .validBlock(BnbDecorativeBlocks.METAL_TRUSS_PIPE)
             .register();
 
