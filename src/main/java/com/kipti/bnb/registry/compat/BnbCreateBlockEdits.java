@@ -1,6 +1,7 @@
 package com.kipti.bnb.registry.compat;
 
-import com.cake.azimuth.registration.CreateBlockEdits;
+import com.cake.azimuth.foundation.preconstruct.AzPreConstructEventListener;
+import com.cake.azimuth.registration.event.RegisterCreateBlockEditsEvent;
 import com.kipti.bnb.content.decoration.dyeable.pipes.DyeablePipeBlockItem;
 import com.kipti.bnb.content.decoration.dyeable.simple.SimpleDyeableBlockItem;
 import com.kipti.bnb.content.decoration.dyeable.simple.SteamEngineModel;
@@ -13,22 +14,21 @@ public class BnbCreateBlockEdits {
 
     public static final BooleanProperty GLOWING = BooleanProperty.create("glowing");
 
-    @SuppressWarnings("unchecked")
-    @CreateBlockEdits.Registrator
-    public static void register() {
-        CreateBlockEdits.forBlock(
+    @AzPreConstructEventListener
+    public static void register(final RegisterCreateBlockEditsEvent event) {
+        event.forBlock(
                 "belt", builder ->
                         builder.properties(p -> p.emissiveRendering((a, b, c) -> a.hasProperty(GLOWING) && a.getValue(
                                 GLOWING)))
         );
 
-        CreateBlockEdits.forBlockItem("fluid_pipe", DyeablePipeBlockItem::new);
-        CreateBlockEdits.forBlockItem("mechanical_pump", SimpleDyeableBlockItem::new);
-        CreateBlockEdits.forBlockItem("smart_fluid_pipe", SimpleDyeableBlockItem::new);
-        CreateBlockEdits.forBlockItem("fluid_valve", SimpleDyeableBlockItem::new);
-        CreateBlockEdits.forBlockItem("steam_engine", SimpleDyeableBlockItem::new);
+        event.forBlockItem("fluid_pipe", DyeablePipeBlockItem::new);
+        event.forBlockItem("mechanical_pump", SimpleDyeableBlockItem::new);
+        event.forBlockItem("smart_fluid_pipe", SimpleDyeableBlockItem::new);
+        event.forBlockItem("fluid_valve", SimpleDyeableBlockItem::new);
+        event.forBlockItem("steam_engine", SimpleDyeableBlockItem::new);
 
-        CreateBlockEdits.forBlock(
+        event.forBlock(
                 "steam_engine",
                 builder -> ((BlockBuilder<SteamEngineBlock, CreateRegistrate>) builder).onRegister(CreateRegistrate.blockModel(
                         () -> SteamEngineModel::new))

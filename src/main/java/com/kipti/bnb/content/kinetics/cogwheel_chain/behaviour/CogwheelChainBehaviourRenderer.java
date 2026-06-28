@@ -16,6 +16,7 @@ import com.simibubi.create.foundation.render.RenderTypes;
 import dev.engine_room.flywheel.lib.transform.PoseTransformStack;
 import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.createmod.catnip.animation.AnimationTickHolder;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
@@ -26,6 +27,8 @@ import org.joml.Vector3f;
 
 import java.util.List;
 import java.util.function.Function;
+
+import static com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorRenderer.MIP_DISTANCE;
 
 public class CogwheelChainBehaviourRenderer extends BlockEntityBehaviourRenderer<KineticBlockEntity> {
 
@@ -111,17 +114,18 @@ public class CogwheelChainBehaviourRenderer extends BlockEntityBehaviourRenderer
         final int light1 = lighter.apply(new Vector3f((float) from.x, (float) from.y, (float) from.z));
         final int light2 = lighter.apply(new Vector3f((float) to.x, (float) to.y, (float) to.z));
 
-        final boolean inShipyardLod = ShipyardHelper.isProbablyInShipyard(BlockPos.containing(from));
+        final Vec3 worldCenter = from.lerp(to, 0.5).add(be.getBlockPos().getCenter());
+        final boolean inShipyardLod = ShipyardHelper.isProbablyInShipyard(BlockPos.containing(worldCenter));
 
-//        final boolean far = !inShipyardLod && (Minecraft.getInstance().level == be.getLevel() && !Minecraft.getInstance()
-//                .getBlockEntityRenderDispatcher().camera.getPosition()
-//                .closerThan(from.lerp(to, 0.5), MIP_DISTANCE));
-//        final boolean close = inShipyardLod || (Minecraft.getInstance().level == be.getLevel() && Minecraft.getInstance()
-//                .getBlockEntityRenderDispatcher().camera.getPosition()
-//                .closerThan(from.lerp(to, 0.5), SEAM_DIST));
+        final boolean far = !inShipyardLod && !(Minecraft.getInstance().level == be.getLevel() && !Minecraft.getInstance()
+                .getBlockEntityRenderDispatcher().camera.getPosition()
+                .closerThan(worldCenter, MIP_DISTANCE));
+        final boolean close = inShipyardLod || (Minecraft.getInstance().level == be.getLevel() && Minecraft.getInstance()
+                .getBlockEntityRenderDispatcher().camera.getPosition()
+                .closerThan(worldCenter, MIP_DISTANCE * 0.5));
 
-        final boolean far = false;
-        final boolean close = true;
+//        final boolean far = false;
+//        final boolean close = true;
 
         if (close)
             renderChainSlowerButWithoutGaps(

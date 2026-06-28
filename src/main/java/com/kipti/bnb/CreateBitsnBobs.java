@@ -3,7 +3,6 @@ package com.kipti.bnb;
 import com.cake.azimuth.lang.IncludeLangDefaults;
 import com.cake.azimuth.lang.LangDefault;
 import com.cake.azimuth.registration.BehaviourApplicators;
-import com.cake.azimuth.registration.VisualWrapperInterest;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.BnbCogwheelChainTypes;
 import com.kipti.bnb.network.BnbPackets;
 import com.kipti.bnb.registry.azimuth.BnbBehaviourApplicators;
@@ -92,8 +91,7 @@ public class CreateBitsnBobs {
     }
 
     private static void commonSetup(final FMLCommonSetupEvent event) {
-        BehaviourApplicators.resolveRegisteredTypes();//TODO: CORRECT FUCKING LCOATION
-        VisualWrapperInterest.resolve();
+        BehaviourApplicators.resolveRegisteredTypes();//TODO: CORRECT FUCKING LCOATION - edit: wtf this mean???
     }
 
     public static ResourceLocation asResource(final String s) {

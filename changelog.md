@@ -236,3 +236,7 @@
 - Changes since to 2.1.4:
     - Trusses now have proper dyed and visual behavior when encasing pipes
     - Fixed encasing blocks breaking the chain they are a part of
+
+# 1.21.1-2.1.7-beta
+
+- Fixed chipped incompatibility (And possibly other mods), where chains would not render with flywheel enabled.

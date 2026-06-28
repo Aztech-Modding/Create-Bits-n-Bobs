@@ -1,7 +1,9 @@
 package com.kipti.bnb.registry.azimuth;
 
+import com.cake.azimuth.foundation.preconstruct.AzPreConstructEventListener;
 import com.cake.azimuth.registration.BehaviourApplicators;
 import com.cake.azimuth.registration.VisualWrapperInterest;
+import com.cake.azimuth.registration.event.RegisterVisualWrapperInterestEvent;
 import com.kipti.bnb.content.decoration.dyeable.pipes.DyeablePipeBehaviour;
 import com.kipti.bnb.content.decoration.dyeable.simple.SimpleDyeableBehaviour;
 import com.kipti.bnb.content.decoration.dyeable.tanks.DyeableTankBehaviour;
@@ -16,6 +18,13 @@ import java.util.function.Supplier;
 
 public class BnbBehaviourApplicators {
 
+    @AzPreConstructEventListener
+    public static void registerVisualWrapperInterest(final RegisterVisualWrapperInterestEvent event) {
+        VisualWrapperInterest.registerInterest(
+                BnbBehaviourApplicators::isSomeCogwheelBlockEntity
+        );
+    }
+
     public static void register() {
         BehaviourApplicators.register(be -> {
             if (CogwheelChainCandidate.isValidCandidate(be.getBlockState())) {
@@ -23,9 +32,6 @@ public class BnbBehaviourApplicators {
             }
             return null;
         });
-        VisualWrapperInterest.registerInterest(
-                BnbBehaviourApplicators::isSomeCogwheelBlockEntity
-        );
         registerDyeablePipeBehaviours();
         registerDyeableFluidTankBehaviour();
         registerSimpleDyeableBehaviours();
