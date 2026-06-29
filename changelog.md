@@ -240,3 +240,7 @@
 # 1.21.1-2.1.7-beta
 
 - Fixed chipped incompatibility (And possibly other mods), where chains would not render with flywheel enabled.
+
+# 1.21.1-2.1.8-beta
+
+- Fixed bug in reload listeners

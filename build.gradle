@@ -116,6 +116,7 @@ dependencies {
         compileOnly("cc.tweaked:cc-tweaked-$minecraft_version-forge-api:$cc_tweaked_version")
         runtimeOnly("cc.tweaked:cc-tweaked-$minecraft_version-forge:$cc_tweaked_version")
     }
+
 }
 
 tasks.withType(JavaCompile).configureEach {

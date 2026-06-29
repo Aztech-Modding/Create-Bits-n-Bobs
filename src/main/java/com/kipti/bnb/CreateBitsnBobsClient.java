@@ -50,7 +50,10 @@ public class CreateBitsnBobsClient {
 
     private static void clientInit() {
         PonderIndex.addPlugin(new BnbPonderPlugin());
-        PonderForeignLabelRegistry.register(CreateBitsnBobs.MOD_ID, Component.translatable("bits_n_bobs.ponder.foreign_label"));
+        PonderForeignLabelRegistry.register(
+                CreateBitsnBobs.MOD_ID,
+                Component.translatable("bits_n_bobs.ponder.foreign_label")
+        );
 
         BnbPartialModels.register();
         BnbSpriteShifts.register();
@@ -60,9 +63,10 @@ public class CreateBitsnBobsClient {
         StrutsFlywheelCompatLoader.registerStrutVisual(BnbBlockEntities.GIRDER_STRUT.get());
 
         // TODO: BaseConfigScreen.withButtonLabels only accepts String, not Component — cannot localize
-        BaseConfigScreen.setDefaultActionFor(CreateBitsnBobs.MOD_ID, base -> base
-                .withButtonLabels(null, "Feature Settings", "Balancing Settings")
-                .withSpecs(null, BnbConfigs.common().specification, BnbConfigs.server().specification)
+        BaseConfigScreen.setDefaultActionFor(
+                CreateBitsnBobs.MOD_ID, base -> base
+                        .withButtonLabels(null, "Feature Settings", "Balancing Settings")
+                        .withSpecs(null, BnbConfigs.common().specification, BnbConfigs.server().specification)
         );
     }
 
@@ -77,7 +81,6 @@ public class CreateBitsnBobsClient {
         StrutModelManipulator.invalidateMeshes();
         HeadlampRenderCache.clearCaches();
         HeadlampVertexBufferCache.clear();
-        SuperByteBufferCache.getInstance().invalidate(GiganticCogwheelRenderer.GIGANTIC_COGWHEEL_CACHE);
     }
 
     @EventBusSubscriber(Dist.CLIENT)
@@ -87,7 +90,10 @@ public class CreateBitsnBobsClient {
             final ModContainer modContainer = ModList.get()
                     .getModContainerById(CreateBitsnBobs.MOD_ID)
                     .orElseThrow(() -> new IllegalStateException("Bits n Bobs mod container missing on LoadComplete"));
-            final Supplier<IConfigScreenFactory> configScreen = () -> (mc, previousScreen) -> new BaseConfigScreen(previousScreen, CreateBitsnBobs.MOD_ID);
+            final Supplier<IConfigScreenFactory> configScreen = () -> (mc, previousScreen) -> new BaseConfigScreen(
+                    previousScreen,
+                    CreateBitsnBobs.MOD_ID
+            );
             modContainer.registerExtensionPoint(IConfigScreenFactory.class, configScreen);
         }
     }
