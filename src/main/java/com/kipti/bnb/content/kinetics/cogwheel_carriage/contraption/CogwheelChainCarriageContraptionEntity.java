@@ -285,4 +285,12 @@ public class CogwheelChainCarriageContraptionEntity extends OrientedContraptionE
         this.disassembleNextTick = true;
     }
 
+    @Override
+    public void lerpTo(final double p_19896_,
+                       final double p_19897_,
+                       final double p_19898_,
+                       final float p_19899_,
+                       final float p_19900_,
+                       final int p_19901_) {
+    }
 }

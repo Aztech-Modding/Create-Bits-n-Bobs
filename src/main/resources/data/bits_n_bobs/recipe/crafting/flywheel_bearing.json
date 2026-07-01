@@ -1,0 +1,33 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "bits_n_bobs:feature_item_enabled",
+      "item": "bits_n_bobs:flywheel_bearing"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "S": {
+      "tag": "minecraft:wooden_slabs"
+    },
+    "G": {
+      "item": "create:large_cogwheel"
+    },
+    "C": {
+      "item": "create:brass_casing"
+    },
+    "A": {
+      "item": "create:andesite_alloy"
+    }
+  },
+  "pattern": [
+    " S ",
+    "ACA",
+    " G "
+  ],
+  "result": {
+    "count": 1,
+    "id": "bits_n_bobs:flywheel_bearing"
+  }
+}

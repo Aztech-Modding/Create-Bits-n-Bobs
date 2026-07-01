@@ -244,3 +244,8 @@
 # 1.21.1-2.1.8-beta
 
 - Fixed bug in reload listeners
+
+# 1.21.1-2.1.9-beta
+
+- Attempted to fix lerping issue on carriage contraptions
+- Added recipe for flywheel bearing
