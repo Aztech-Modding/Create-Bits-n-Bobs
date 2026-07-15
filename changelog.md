@@ -255,3 +255,8 @@
 - Properly linked pipe config to dyeing action so it can actually be disabled.
 - Changed all toLowerCase() calls to toLowerCase(Locale.ROOT) to avoid issues with Turkish locale.
 - Cleanup missing assets in log
+
+# 1.21.1-2.1.11-beta
+
+- Improved feature flag group behaviour
+- Improved chain config behaviour

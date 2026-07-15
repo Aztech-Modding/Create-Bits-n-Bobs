@@ -15,10 +15,7 @@ import java.util.List;
  * nodes with differing positions produce
  * {@link CogwheelChainSegment.SegmentType#BETWEEN_NODES BETWEEN_NODES} segments.
  */
-public final class CogwheelChainSegmentBuilder {
-
-    private CogwheelChainSegmentBuilder() {
-    }
+public class CogwheelChainSegmentBuilder {
 
     /**
      * Builds a segment list from the given rendered path nodes.

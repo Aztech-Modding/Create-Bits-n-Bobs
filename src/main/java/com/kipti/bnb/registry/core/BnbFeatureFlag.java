@@ -81,7 +81,8 @@ public enum BnbFeatureFlag {
             BnbTrinketBlocks.LIGHTBULB::get
     ),
     BRASS_LAMP(
-            FeatureCategories.BLOCK, "Availability of the Brass Lamp block.",
+            FeatureCategories.BLOCK, "Availability of the Brass Lamp block. (Legacy)",
+            false, false,
             BnbTrinketBlocks.BRASS_LAMP::get
     ),
     HEADLAMP(
