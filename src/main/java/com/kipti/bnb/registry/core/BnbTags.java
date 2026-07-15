@@ -1,6 +1,7 @@
 package com.kipti.bnb.registry.core;
 
 import com.kipti.bnb.CreateBitsnBobs;
+import com.kipti.bnb.registry.content.blocks.BnbKineticBlocks;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllTags;
 import com.tterrag.registrate.providers.ProviderType;
@@ -52,7 +53,9 @@ public class BnbTags {
         COGWHEEL_CHAIN_NO_SMALL_OFFSET,
 
         CHAIRS,
-        EXTRA_COGWHEEL_CHAIN_CANDIDATES;
+
+        EXTRA_COGWHEEL_CHAIN_CANDIDATES,
+        DEDICATED_COGWHEEL_CHAIN_COMPONENT;
 
         public final TagKey<Block> tag;
 
@@ -96,6 +99,10 @@ public class BnbTags {
                     .addTag(BlockTags.WOODEN_SLABS)
                     .addTag(BlockTags.WOODEN_STAIRS)
                     .remove(AllBlocks.INDUSTRIAL_IRON_BLOCK.getKey());
+
+            prov.addTag(BnbBlockTags.DEDICATED_COGWHEEL_CHAIN_COMPONENT.tag)
+                    .add(BnbKineticBlocks.LARGE_FLANGED_COGWHEEL.getKey())
+                    .add(BnbKineticBlocks.SMALL_FLANGED_COGWHEEL.getKey());
         });
     }
 

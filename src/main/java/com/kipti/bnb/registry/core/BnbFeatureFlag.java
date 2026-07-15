@@ -23,9 +23,9 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public enum BnbFeatureFlag {
-    COGWHEEL_CHAIN_DRIVES(
+    UNDEDICATED_COGWHEEL_CHAIN_DRIVES(
             FeatureCategories.BEHAVIOUR,
-            "Ability for the player to create chain drives using create's cogwheels specifically."
+            "Ability for the player to create chain drives on components that are not dedicated for chains (i.e. not flanged)"
     ),
     FLANGED_CHAIN_DRIVES(
             FeatureCategories.BLOCK, "Ability for the player to create chain drives using the flanged gear cogwheels.",

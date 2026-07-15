@@ -1,6 +1,7 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.graph;
 
 import com.kipti.bnb.content.kinetics.cogwheel_chain.block.IExclusiveCogwheelChainBlock;
+import com.kipti.bnb.registry.core.BnbFeatureFlag;
 import com.kipti.bnb.registry.core.BnbTags;
 import com.simibubi.create.content.kinetics.simpleRelays.ICogWheel;
 import net.minecraft.core.Direction;
@@ -30,7 +31,13 @@ public record CogwheelChainCandidate(Direction.Axis axis, boolean isLarge, boole
     }
 
     public static boolean isValidCandidate(final Block block) {
-        return block instanceof ICogWheel || block instanceof IExclusiveCogwheelChainBlock || BnbTags.BnbBlockTags.EXTRA_COGWHEEL_CHAIN_CANDIDATES.matches(block);
+        if (!BnbTags.BnbBlockTags.DEDICATED_COGWHEEL_CHAIN_COMPONENT.matches(block) &&
+                !BnbFeatureFlag.UNDEDICATED_COGWHEEL_CHAIN_DRIVES.isEnabled())
+            return false;
+
+        return block instanceof ICogWheel ||
+                block instanceof IExclusiveCogwheelChainBlock ||
+                BnbTags.BnbBlockTags.EXTRA_COGWHEEL_CHAIN_CANDIDATES.matches(block);
     }
 
     public static boolean isLargeCogwheel(final BlockState state) {
@@ -62,11 +69,11 @@ public record CogwheelChainCandidate(Direction.Axis axis, boolean isLarge, boole
     }
 
     public boolean isConsistentWithNode(final ICogwheelNode node) {
-        if (node.isLarge() != isLarge)
+        if (node.isLarge() != this.isLarge)
             return false;
-        if (node.rotationAxis() != axis)
+        if (node.rotationAxis() != this.axis)
             return false;
-        return node.hasSmallCogwheelOffset() == hasSmallCogwheelOffset;
+        return node.hasSmallCogwheelOffset() == this.hasSmallCogwheelOffset;
     }
 }
 

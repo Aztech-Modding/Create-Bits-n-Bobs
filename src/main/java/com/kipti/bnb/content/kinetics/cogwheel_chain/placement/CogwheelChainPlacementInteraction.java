@@ -9,7 +9,6 @@ import com.kipti.bnb.content.kinetics.cogwheel_chain.shape.CogwheelChainInteract
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.CogwheelChainType;
 import com.kipti.bnb.network.packets.from_client.PlaceCogwheelChainPacket;
 import com.kipti.bnb.network.packets.from_client.WrenchCogwheelChainPacket;
-import com.kipti.bnb.registry.core.BnbFeatureFlag;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorBlockEntity;
 import net.createmod.catnip.platform.CatnipServices;
@@ -129,11 +128,6 @@ public class CogwheelChainPlacementInteraction {
 
         if (targetedCandidate == null) {
             return currentBuildingChain != null;
-        }
-
-        if (!BnbFeatureFlag.COGWHEEL_CHAIN_DRIVES.isEnabled()) {
-            player.displayClientMessage(new ChainInteractionFailedException("config_forbids").getComponent(), true);
-            return true;
         }
 
         if (!heldChainType.getCogwheelPredicate().test(targetedState.getBlock())) {

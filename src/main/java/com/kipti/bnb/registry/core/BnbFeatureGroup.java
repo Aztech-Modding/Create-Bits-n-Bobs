@@ -3,7 +3,7 @@ package com.kipti.bnb.registry.core;
 public enum BnbFeatureGroup {
     CHAIN_DRIVES(
             "Chain Drives", "Bulk toggle for all chain drive related features.",
-            BnbFeatureFlag.COGWHEEL_CHAIN_DRIVES, BnbFeatureFlag.FLANGED_CHAIN_DRIVES, BnbFeatureFlag.CHAIN_PULLEY
+            BnbFeatureFlag.UNDEDICATED_COGWHEEL_CHAIN_DRIVES, BnbFeatureFlag.FLANGED_CHAIN_DRIVES, BnbFeatureFlag.COGWHEEL_CHAIN_CARRIAGE
     ),
     LIGHTS(
             "Lights", "Bulk toggle for light related features (Excluding the old brass lamp block).",
