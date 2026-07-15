@@ -73,7 +73,7 @@ public class CreateBitsnBobsClient {
     private void registerAdditionalModels(final ModelEvent.RegisterAdditional event) {
         event.register(ModelResourceLocation.standalone(BnbStrutDefinitions.NORMAL_MODEL.segmentModelLocation()));
         event.register(ModelResourceLocation.standalone(BnbStrutDefinitions.WEATHERED_MODEL.segmentModelLocation()));
-        event.register(ModelResourceLocation.standalone(BnbStrutDefinitions.WOODEN_MODEL.segmentModelLocation()));
+//        event.register(ModelResourceLocation.standalone(BnbStrutDefinitions.WOODEN_MODEL.segmentModelLocation()));
         event.register(ModelResourceLocation.standalone(BnbStrutDefinitions.CABLE_MODEL.segmentModelLocation()));
     }
 

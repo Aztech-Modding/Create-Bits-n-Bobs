@@ -2,6 +2,7 @@ package com.kipti.bnb.content.decoration.dyeable.tanks;
 
 import com.kipti.bnb.content.decoration.dyeable.BaseDyeableBehaviour;
 import com.kipti.bnb.registry.content.BnbAdvancements;
+import com.kipti.bnb.registry.core.BnbFeatureFlag;
 import com.simibubi.create.api.connectivity.ConnectivityHandler;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
@@ -62,6 +63,8 @@ public class DyeableTankBehaviour extends BaseDyeableBehaviour {
 
     @Override
     public void onItemUse(final PlayerInteractEvent.RightClickBlock event) {
+        if (!this.isDyeingEnabled()) return;
+
         final ItemStack stack = event.getItemStack();
         if (!(stack.getItem() instanceof final DyeItem dyeItem)) {
             return;
@@ -82,6 +85,11 @@ public class DyeableTankBehaviour extends BaseDyeableBehaviour {
 
         event.setCanceled(true);
         event.setCancellationResult(InteractionResult.SUCCESS);
+    }
+
+    @Override
+    public boolean isDyeingEnabled() {
+        return BnbFeatureFlag.DYEABLE_TANKS.isEnabled();
     }
 
     private void dyeSingle(@Nullable final DyeColor color) {

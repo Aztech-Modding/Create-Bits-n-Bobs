@@ -2,7 +2,6 @@ package com.kipti.bnb.content.decoration.dyeable.pipes;
 
 import com.kipti.bnb.content.decoration.dyeable.BaseDyeableBehaviour;
 import com.kipti.bnb.content.decoration.dyeable.DyeableBlockItemHelper;
-import com.kipti.bnb.registry.content.BnbAdvancements;
 import com.simibubi.create.content.fluids.FluidPropagator;
 import com.simibubi.create.content.fluids.pipes.FluidPipeBlock;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
@@ -10,15 +9,11 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BehaviourType;
 import net.createmod.catnip.data.Iterate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.DyeItem;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,24 +33,6 @@ public class DyeablePipeBehaviour extends BaseDyeableBehaviour {
     @Override
     protected void onColorChanged(@Nullable final DyeColor color) {
         this.refreshPipeState();
-    }
-
-    @Override
-    public void onItemUse(final PlayerInteractEvent.RightClickBlock event) {
-        final ItemStack stack = event.getItemStack();
-        if (!(stack.getItem() instanceof final DyeItem dyeItem)) {
-            return;
-        }
-
-        if (!event.getLevel().isClientSide) {
-            if (event.getEntity() instanceof final Player player) {
-                BnbAdvancements.DYE_FLUID_COMPONENT.awardTo(player);
-            }
-            this.setColor(dyeItem.getDyeColor());
-        }
-
-        event.setCanceled(true);
-        event.setCancellationResult(InteractionResult.SUCCESS);
     }
 
     @Override

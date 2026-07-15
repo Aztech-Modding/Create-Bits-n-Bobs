@@ -28,38 +28,39 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Locale;
 import java.util.stream.Stream;
 
 public class BnbCommands {
 
     public static void register(final CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("bitsnbobs")
-                                    .requires(source -> source.hasPermission(0))
-                                    .then(Commands.literal("peek")
-                                                  .then(registerCogwheelChainControllerPeek()))
-                                    .then(registerGay()));
+                .requires(source -> source.hasPermission(0))
+                .then(Commands.literal("peek")
+                        .then(registerCogwheelChainControllerPeek()))
+                .then(registerGay()));
     }
 
     private static ArgumentBuilder<CommandSourceStack, ?> registerGay() {
         return Commands.literal("gay")
                 .requires(source -> source.hasPermission(2))
                 .then(Commands.argument("pos", BlockPosArgument.blockPos())
-                              .then(Commands.argument("animation", StringArgumentType.word())
-                                            .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(
-                                                    Stream.of(GayDye.AnimationType.values()).map(t -> t.name().toLowerCase()),
-                                                    builder
-                                            ))
-                                            .then(Commands.argument("pride", StringArgumentType.word())
-                                                          .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(
-                                                                  Stream.of(GayDye.PrideType.values()).map(t -> t.name().toLowerCase()),
-                                                                  builder
-                                                          ))
-                                                          .executes(context -> gayFluidTank(
-                                                                  context.getSource(),
-                                                                  BlockPosArgument.getLoadedBlockPos(context, "pos"),
-                                                                  parseAnimationType(context),
-                                                                  parsePrideType(context)
-                                                          )))));
+                        .then(Commands.argument("animation", StringArgumentType.word())
+                                .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(
+                                        Stream.of(GayDye.AnimationType.values()).map(t -> t.name().toLowerCase(Locale.ROOT)),
+                                        builder
+                                ))
+                                .then(Commands.argument("pride", StringArgumentType.word())
+                                        .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(
+                                                Stream.of(GayDye.PrideType.values()).map(t -> t.name().toLowerCase(Locale.ROOT)),
+                                                builder
+                                        ))
+                                        .executes(context -> gayFluidTank(
+                                                context.getSource(),
+                                                BlockPosArgument.getLoadedBlockPos(context, "pos"),
+                                                parseAnimationType(context),
+                                                parsePrideType(context)
+                                        )))));
     }
 
     private static GayDye.AnimationType parseAnimationType(final CommandContext<CommandSourceStack> context) throws CommandSyntaxException {

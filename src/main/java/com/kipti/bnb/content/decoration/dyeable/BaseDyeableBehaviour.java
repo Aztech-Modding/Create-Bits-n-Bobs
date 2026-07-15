@@ -1,12 +1,19 @@
 package com.kipti.bnb.content.decoration.dyeable;
 
 import com.cake.azimuth.behaviour.SuperBlockEntityBehaviour;
+import com.kipti.bnb.registry.content.BnbAdvancements;
+import com.kipti.bnb.registry.core.BnbFeatureFlag;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.DyeItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class BaseDyeableBehaviour extends SuperBlockEntityBehaviour {
@@ -16,6 +23,31 @@ public abstract class BaseDyeableBehaviour extends SuperBlockEntityBehaviour {
 
     protected BaseDyeableBehaviour(final SmartBlockEntity be) {
         super(be);
+    }
+
+
+    @Override
+    public void onItemUse(final PlayerInteractEvent.RightClickBlock event) {
+        if (!this.isDyeingEnabled()) return;
+
+        final ItemStack stack = event.getItemStack();
+        if (!(stack.getItem() instanceof final DyeItem dyeItem)) {
+            return;
+        }
+
+        if (!event.getLevel().isClientSide) {
+            if (event.getEntity() instanceof final Player player) {
+                BnbAdvancements.DYE_FLUID_COMPONENT.awardTo(player);
+            }
+            this.setColor(dyeItem.getDyeColor());
+        }
+
+        event.setCanceled(true);
+        event.setCancellationResult(InteractionResult.SUCCESS);
+    }
+
+    public boolean isDyeingEnabled() {
+        return BnbFeatureFlag.DYEABLE_PIPES.isEnabled();
     }
 
     @Nullable

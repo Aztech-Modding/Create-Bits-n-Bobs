@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import static com.kipti.bnb.registry.core.FeatureCategories.*;
@@ -34,7 +35,7 @@ public class BnbCommonConfig extends ConfigBase {
         for (final BnbFeatureGroup featureGroup : BnbFeatureGroup.values()) {
             final ConfigBool configBool = this.b(
                     true,
-                    this.enumToCamelCase(featureGroup.name().toLowerCase()),
+                    this.enumToCamelCase(featureGroup.name().toLowerCase(Locale.ROOT)),
                     featureGroup.getDescription()
             );
             map.put(featureGroup, configBool);
@@ -56,7 +57,7 @@ public class BnbCommonConfig extends ConfigBase {
                 }
                 final ConfigBool configBool = this.b(
                         flag.getDefaultState(),
-                        this.enumToCamelCase(flag.name().toLowerCase()),
+                        this.enumToCamelCase(flag.name().toLowerCase(Locale.ROOT)),
                         flag.getDescription()
                 );
                 map.put(flag, configBool);

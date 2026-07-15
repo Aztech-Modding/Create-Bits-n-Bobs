@@ -249,3 +249,9 @@
 
 - Attempted to fix lerping issue on carriage contraptions
 - Added recipe for flywheel bearing
+
+# 1.21.1-2.1.10-beta
+
+- Properly linked pipe config to dyeing action so it can actually be disabled.
+- Changed all toLowerCase() calls to toLowerCase(Locale.ROOT) to avoid issues with Turkish locale.
+- Cleanup missing assets in log

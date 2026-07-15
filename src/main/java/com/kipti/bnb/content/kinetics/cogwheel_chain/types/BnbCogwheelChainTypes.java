@@ -19,7 +19,7 @@ public class BnbCogwheelChainTypes {
                     .breakEffectsBlock(() -> Blocks.CHAIN)
                     .build());
 
-    public static final DeferredHolder<CogwheelChainType, CogwheelChainType> BELT_CHAIN = REGISTRY
+    public static final DeferredHolder<CogwheelChainType, CogwheelChainType> BELT = REGISTRY
             .register("belt", () -> new CogwheelChainType.Builder()
                     .relatedItem(AllItems.BELT_CONNECTOR::get)
                     .renderType(CogwheelChainType.ChainRenderInfo.BELT)

@@ -9,8 +9,8 @@ import com.kipti.bnb.content.decoration.grating.GratingBlock;
 import com.kipti.bnb.content.decoration.grating.GratingPanelBlock;
 import com.kipti.bnb.content.decoration.grating.GratingPanelBlockItem;
 import com.kipti.bnb.content.decoration.grating.GratingPanelCTBehaviour;
-import com.kipti.bnb.content.decoration.strut.BnbStrutBlock;
 import com.kipti.bnb.content.decoration.strut.CableStrutBlock;
+import com.kipti.bnb.content.decoration.strut.GirderStrutBlock;
 import com.kipti.bnb.content.decoration.truss.*;
 import com.kipti.bnb.content.decoration.weathered_girder.WeatheredConnectedGirderModel;
 import com.kipti.bnb.content.decoration.weathered_girder.WeatheredGirderBlock;
@@ -41,6 +41,7 @@ import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
 
 import static com.kipti.bnb.CreateBitsnBobs.REGISTRATE;
+//import static com.kipti.bnb.content.decoration.strut.GirderStrutBlock.FLUSH_ANCHOR;
 import static com.simibubi.create.foundation.data.CreateRegistrate.connectedTextures;
 import static com.simibubi.create.foundation.data.ModelGen.customItemModel;
 import static com.simibubi.create.foundation.data.TagGen.pickaxeOnly;
@@ -77,7 +78,7 @@ public class BnbDecorativeBlocks {
                             .withPool(p.applyExplosionCondition(
                                     AllBlocks.SHAFT.get(), LootPool.lootPool()
                                             .setRolls(ConstantValue
-                                                              .exactly(1.0F))
+                                                    .exactly(1.0F))
                                             .add(LootItem.lootTableItem(
                                                     AllBlocks.SHAFT.get()))
                             ))
@@ -85,9 +86,9 @@ public class BnbDecorativeBlocks {
             .onRegister(CreateRegistrate.blockModel(() -> WeatheredConnectedGirderModel::new))
             .register();
 
-    public static final BlockEntry<BnbStrutBlock> WEATHERED_GIRDER_STRUT = REGISTRATE.block(
+    public static final BlockEntry<GirderStrutBlock> WEATHERED_GIRDER_STRUT = REGISTRATE.block(
                     "weathered_girder_strut",
-                    p -> new BnbStrutBlock(
+                    p -> new GirderStrutBlock(
                             p,
                             BnbStrutDefinitions.WEATHERED_MODEL
                     )
@@ -114,9 +115,9 @@ public class BnbDecorativeBlocks {
             .build()
             .register();
 
-    public static final BlockEntry<BnbStrutBlock> GIRDER_STRUT = REGISTRATE.block(
+    public static final BlockEntry<GirderStrutBlock> GIRDER_STRUT = REGISTRATE.block(
                     "girder_strut",
-                    p -> new BnbStrutBlock(
+                    p -> new GirderStrutBlock(
                             p,
                             BnbStrutDefinitions.NORMAL_MODEL
                     )
@@ -253,8 +254,8 @@ public class BnbDecorativeBlocks {
                                             Direction.Axis axis = state.getValue(BlockStateProperties.AXIS);
                                             return ConfiguredModel.builder()
                                                     .modelFile(p.models()
-                                                                       .getExistingFile(p.modLoc(
-                                                                               "block/industrial_truss/industrial_truss_pipe")))
+                                                            .getExistingFile(p.modLoc(
+                                                                    "block/industrial_truss/industrial_truss_pipe")))
                                                     .uvLock(false)
                                                     .rotationX(axis == Direction.Axis.Y ? 0 : 90)
                                                     .rotationY(axis == Direction.Axis.X ? 90 : 0)

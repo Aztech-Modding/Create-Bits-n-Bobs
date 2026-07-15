@@ -1,8 +1,0 @@
-{
-  "sources": [
-    {
-      "type": "single",
-      "resource": "bits_n_bobs:blocks/nixie_board/text_atlas"
-    }
-  ]
-}

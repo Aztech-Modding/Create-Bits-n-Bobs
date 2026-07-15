@@ -9,37 +9,32 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
-public class PonderflatGeneratorSettings {
+import java.util.Locale;
+
+public record PonderflatGeneratorSettings(int cellSize, Block blockLight, Block blockDark, CellStyle cellStyle) {
 
     public static final Codec<PonderflatGeneratorSettings> CODEC = RecordCodecBuilder.<PonderflatGeneratorSettings>create(
                     p_209800_ -> p_209800_.group(
                                     Codec.intRange(1, 16)
                                             .fieldOf("cell_size")
                                             .orElse(1)
-                                            .forGetter(PonderflatGeneratorSettings::getCellSize),
+                                            .forGetter(PonderflatGeneratorSettings::cellSize),
                                     BuiltInRegistries.BLOCK.byNameCodec()
                                             .fieldOf("block_light")
                                             .orElse(Blocks.SNOW_BLOCK)
-                                            .forGetter(PonderflatGeneratorSettings::getBlockLight),
+                                            .forGetter(PonderflatGeneratorSettings::blockLight),
                                     BuiltInRegistries.BLOCK.byNameCodec()
                                             .fieldOf("block_dark")
                                             .orElse(Blocks.WHITE_CONCRETE)
-                                            .forGetter(PonderflatGeneratorSettings::getBlockDark),
+                                            .forGetter(PonderflatGeneratorSettings::blockDark),
                                     StringRepresentable.fromEnum(CellStyle::values)
                                             .fieldOf("cell_style")
                                             .orElse(CellStyle.BORDERED)
-                                            .forGetter(PonderflatGeneratorSettings::getCellStyle)
+                                            .forGetter(PonderflatGeneratorSettings::cellStyle)
                             )
                             .apply(p_209800_, PonderflatGeneratorSettings::new)
             )
             .stable();
-
-    private final int cellSize;
-
-    private final Block blockLight;
-    private final Block blockDark;
-
-    private final CellStyle cellStyle;
 
     public enum CellStyle implements StringRepresentable {
         BORDERED,
@@ -48,70 +43,44 @@ public class PonderflatGeneratorSettings {
 
         @Override
         public @NotNull String getSerializedName() {
-            return this.name().toLowerCase();
+            return this.name().toLowerCase(Locale.ROOT);
         }
     }
 
-    public PonderflatGeneratorSettings(final int cellSize, final Block blockLight, final Block blockDark, final CellStyle cellStyle) {
-        this.cellSize = cellSize;
-        this.blockLight = blockLight;
-        this.blockDark = blockDark;
-        this.cellStyle = cellStyle;
-    }
-
     public PonderflatGeneratorSettings() {
-        this.cellSize = 1;
-        this.blockLight = Blocks.SNOW_BLOCK;
-        this.blockDark = Blocks.WHITE_CONCRETE;
-        this.cellStyle = CellStyle.BORDERED;
-    }
-
-    public Block getBlockLight() {
-        return blockLight;
-    }
-
-    public Block getBlockDark() {
-        return blockDark;
-    }
-
-    public int getCellSize() {
-        return cellSize;
-    }
-
-    public CellStyle getCellStyle() {
-        return cellStyle;
+        this(1, Blocks.SNOW_BLOCK, Blocks.WHITE_CONCRETE, CellStyle.BORDERED);
     }
 
     public BlockState getBlockState(final int x, final int y, final int z) {
-        if (cellSize == 1)
-            return getBlockStateSimple(x, y, z);
+        if (this.cellSize == 1)
+            return this.getBlockStateSimple(x, y, z);
         else
-            return switch (cellStyle) {
-                case RINGS -> getRingStyleCell(x, y, z);
-                case BORDERED -> getBorderedStyleCell(x, y, z);
-                default -> getBlockStateSimple(x, y, z);
+            return switch (this.cellStyle) {
+                case RINGS -> this.getRingStyleCell(x, y, z);
+                case BORDERED -> this.getBorderedStyleCell(x, y, z);
+                default -> this.getBlockStateSimple(x, y, z);
             };
     }
 
     private BlockState getRingStyleCell(final int x, final int y, final int z) {
-        final boolean odd = (Math.floorDiv(x, cellSize) + y + Math.floorDiv(z, cellSize)) % 2 == 0;
+        final boolean odd = (Math.floorDiv(x, this.cellSize) + y + Math.floorDiv(z, this.cellSize)) % 2 == 0;
 
-        final double xToCellCenter = Math.abs(((cellSize - 1) / 2.0) - periodMod(x, cellSize));
-        final double zToCellCenter = Math.abs(((cellSize - 1) / 2.0) - periodMod(z, cellSize));
+        final double xToCellCenter = Math.abs(((this.cellSize - 1) / 2.0) - this.periodMod(x, this.cellSize));
+        final double zToCellCenter = Math.abs(((this.cellSize - 1) / 2.0) - this.periodMod(z, this.cellSize));
 
         final int factor = (int) Math.max(xToCellCenter, zToCellCenter);
-        return (factor % 2 == 0) ^ odd ? blockLight.defaultBlockState() : blockDark.defaultBlockState();
+        return (factor % 2 == 0) ^ odd ? this.blockLight.defaultBlockState() : this.blockDark.defaultBlockState();
     }
 
     private BlockState getBorderedStyleCell(final int x, final int y, final int z) {
-        final boolean odd = (Math.floorDiv(x, cellSize) + y + Math.floorDiv(z, cellSize)) % 2 == 0;
+        final boolean odd = (Math.floorDiv(x, this.cellSize) + y + Math.floorDiv(z, this.cellSize)) % 2 == 0;
 
-        final double radius = (cellSize - 1) / 2.0;
-        final double xToCellCenter = Math.abs(radius - periodMod(x, cellSize));
-        final double zToCellCenter = Math.abs(radius - periodMod(z, cellSize));
+        final double radius = (this.cellSize - 1) / 2.0;
+        final double xToCellCenter = Math.abs(radius - this.periodMod(x, this.cellSize));
+        final double zToCellCenter = Math.abs(radius - this.periodMod(z, this.cellSize));
 
         final boolean border = Math.max(xToCellCenter, zToCellCenter) >= radius - (radius <= 5 ? 0.5 : 1);
-        return border ^ odd ? blockLight.defaultBlockState() : blockDark.defaultBlockState();
+        return border ^ odd ? this.blockLight.defaultBlockState() : this.blockDark.defaultBlockState();
     }
 
     private double periodMod(final int i, final int period) {
@@ -119,7 +88,7 @@ public class PonderflatGeneratorSettings {
     }
 
     private BlockState getBlockStateSimple(final int x, final int y, final int z) {
-        return ((Math.floorDiv(x, cellSize) + y + Math.floorDiv(z, cellSize)) % 2 == 0) ? blockLight.defaultBlockState() : blockDark.defaultBlockState();
+        return ((Math.floorDiv(x, this.cellSize) + y + Math.floorDiv(z, this.cellSize)) % 2 == 0) ? this.blockLight.defaultBlockState() : this.blockDark.defaultBlockState();
     }
 }
 

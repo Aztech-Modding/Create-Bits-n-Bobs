@@ -18,6 +18,7 @@ import net.neoforged.neoforge.common.util.Lazy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -156,13 +157,13 @@ public enum BnbFeatureFlag {
             final List<Supplier<Block>> blocks = new ArrayList<>();
             for (final BnbPaletteStoneTypes type : values) {
                 blocks.addAll(type.getVariants()
-                                      .registeredBlocks.stream()
-                                      .map(e -> (Supplier<Block>) e::get)
-                                      .toList());
+                        .registeredBlocks.stream()
+                        .map(e -> (Supplier<Block>) e::get)
+                        .toList());
                 blocks.addAll(type.getVariants()
-                                      .registeredPartials.stream()
-                                      .map(e -> (Supplier<Block>) e::get)
-                                      .toList());
+                        .registeredPartials.stream()
+                        .map(e -> (Supplier<Block>) e::get)
+                        .toList());
             }
             return blocks;
         });
@@ -181,8 +182,8 @@ public enum BnbFeatureFlag {
             final List<Supplier<Block>> blocks = new ArrayList<>();
             blocks.add(baseBlock::get);
             blocks.addAll(Arrays.stream(dyedBlockList.toArray())
-                                  .map(dyedEntry -> (Supplier<Block>) dyedEntry::get)
-                                  .toList());
+                    .map(dyedEntry -> (Supplier<Block>) dyedEntry::get)
+                    .toList());
             return blocks.stream().toList();
         });
     }
@@ -388,7 +389,7 @@ public enum BnbFeatureFlag {
     }
 
     public BnbFeatureEnabledCondition getDataCondition() {
-        return new BnbFeatureEnabledCondition(this.name().toLowerCase());
+        return new BnbFeatureEnabledCondition(this.name().toLowerCase(Locale.ROOT));
     }
 
 }

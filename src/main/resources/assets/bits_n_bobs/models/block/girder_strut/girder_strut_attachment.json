@@ -7,9 +7,9 @@
 	},
 	"elements": [
 		{
-			"from": [3, -5, 3],
-			"to": [13, 1, 13],
-			"rotation": {"angle": 0, "axis": "y", "origin": [8, -1.5, 8]},
+			"from": [2.95, -5.05, 2.95],
+			"to": [13.05, 1.05, 13.05],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, -0.5, 8]},
 			"faces": {
 				"north": {"uv": [13, 8, 16, 13], "rotation": 270, "texture": "#0"},
 				"east": {"uv": [13, 8, 16, 13], "rotation": 270, "texture": "#0"},
@@ -24,9 +24,8 @@
 		{
 			"name": "Brace",
 			"origin": [0, 0, 0],
+			"scope": 0,
 			"color": 0,
-			"stepParentName": "",
-			"backdrop": false,
 			"children": [0]
 		}
 	]

@@ -16,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -55,24 +56,24 @@ public class EncasedBlockList<T extends Block> implements Iterable<BlockEntry<T>
         }
 
         public String getResourceName() {
-            return resourceName;
+            return this.resourceName;
         }
 
 
         public String asId(final String blockId) {
-            return name().toLowerCase() + "_" + blockId;
+            return this.name().toLowerCase(Locale.ROOT) + "_" + blockId;
         }
 
         public Supplier<Block> getMaterial() {
-            return () -> (Block) material.get();
+            return () -> (Block) this.material.get();
         }
 
         public ResourceLocation getSurfaceTexture() {
-            return surfaceTexture;
+            return this.surfaceTexture;
         }
 
         public ResourceLocation getGearboxTexture() {
-            return gearboxTexture;
+            return this.gearboxTexture;
         }
 
         public <B extends Block, P> NonNullUnaryOperator<BlockBuilder<B, P>> withCT(final BiConsumer<BlockBuilder<B, P>, CTSpriteShiftEntry> transformer) {
@@ -91,17 +92,17 @@ public class EncasedBlockList<T extends Block> implements Iterable<BlockEntry<T>
 
     public EncasedBlockList(final Function<CasingMaterial, BlockEntry<? extends T>> filler) {
         for (final CasingMaterial casing : CasingMaterial.values()) {
-            values[casing.ordinal()] = filler.apply(casing);
+            this.values[casing.ordinal()] = filler.apply(casing);
         }
     }
 
     @SuppressWarnings("unchecked")
     public BlockEntry<T> get(final CasingMaterial material) {
-        return (BlockEntry<T>) values[material.ordinal()];
+        return (BlockEntry<T>) this.values[material.ordinal()];
     }
 
     public boolean contains(final Block block) {
-        for (final BlockEntry<?> entry : values) {
+        for (final BlockEntry<?> entry : this.values) {
             if (entry.is(block)) {
                 return true;
             }
@@ -110,7 +111,7 @@ public class EncasedBlockList<T extends Block> implements Iterable<BlockEntry<T>
     }
 
     public boolean isIn(final BlockState state) {
-        for (final BlockEntry<?> entry : values) {
+        for (final BlockEntry<?> entry : this.values) {
             if (state.is(entry)) {
                 return true;
             }
@@ -120,7 +121,7 @@ public class EncasedBlockList<T extends Block> implements Iterable<BlockEntry<T>
 
     @SuppressWarnings("unchecked")
     public BlockEntry<T>[] toArray() {
-        return (BlockEntry<T>[]) Arrays.copyOf(values, values.length);
+        return (BlockEntry<T>[]) Arrays.copyOf(this.values, this.values.length);
     }
 
     @Override
@@ -130,15 +131,15 @@ public class EncasedBlockList<T extends Block> implements Iterable<BlockEntry<T>
 
             @Override
             public boolean hasNext() {
-                return index < values.length;
+                return this.index < EncasedBlockList.this.values.length;
             }
 
             @SuppressWarnings("unchecked")
             @Override
             public BlockEntry<T> next() {
-                if (!hasNext())
+                if (!this.hasNext())
                     throw new NoSuchElementException();
-                return (BlockEntry<T>) values[index++];
+                return (BlockEntry<T>) EncasedBlockList.this.values[this.index++];
             }
         };
     }

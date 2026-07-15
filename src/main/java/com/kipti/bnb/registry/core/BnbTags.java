@@ -24,18 +24,18 @@ public class BnbTags {
         public final TagKey<Item> tag;
 
         BnbItemTags() {
-            final ResourceLocation id = ResourceLocation.fromNamespaceAndPath(CreateBitsnBobs.MOD_ID, Lang.asId(name()));
-            tag = ItemTags.create(id);
+            final ResourceLocation id = ResourceLocation.fromNamespaceAndPath(CreateBitsnBobs.MOD_ID, Lang.asId(this.name()));
+            this.tag = ItemTags.create(id);
         }
 
         @SuppressWarnings("deprecation")
         public boolean matches(final Item item) {
             return item.builtInRegistryHolder()
-                    .is(tag);
+                    .is(this.tag);
         }
 
         public boolean matches(final ItemStack stack) {
-            return stack.is(tag);
+            return stack.is(this.tag);
         }
 
         private static void register() {
@@ -57,18 +57,18 @@ public class BnbTags {
         public final TagKey<Block> tag;
 
         BnbBlockTags() {
-            final ResourceLocation id = ResourceLocation.fromNamespaceAndPath(CreateBitsnBobs.MOD_ID, Lang.asId(name()));
-            tag = BlockTags.create(id);
+            final ResourceLocation id = ResourceLocation.fromNamespaceAndPath(CreateBitsnBobs.MOD_ID, Lang.asId(this.name()));
+            this.tag = BlockTags.create(id);
         }
 
         @SuppressWarnings("deprecation")
         public boolean matches(final Block item) {
             return item.builtInRegistryHolder()
-                    .is(tag);
+                    .is(this.tag);
         }
 
         public boolean matches(final BlockState stack) {
-            return stack.is(tag);
+            return stack.is(this.tag);
         }
 
         private static void register() {
