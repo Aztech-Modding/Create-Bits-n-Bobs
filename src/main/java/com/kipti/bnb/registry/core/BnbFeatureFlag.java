@@ -345,7 +345,7 @@ public enum BnbFeatureFlag {
         final BnbFeatureFlag flag;
 
         try {
-            flag = BnbFeatureFlag.valueOf(featureFlagKey.toUpperCase());
+            flag = BnbFeatureFlag.valueOf(featureFlagKey.toUpperCase(Locale.ROOT));
         } catch (final IllegalArgumentException e) {
             return false;
         }

@@ -65,7 +65,7 @@ public class BnbCommands {
 
     private static GayDye.AnimationType parseAnimationType(final CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         try {
-            return GayDye.AnimationType.valueOf(StringArgumentType.getString(context, "animation").toUpperCase());
+            return GayDye.AnimationType.valueOf(StringArgumentType.getString(context, "animation").toUpperCase(Locale.ROOT));
         } catch (final IllegalArgumentException e) {
             throw CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownArgument().create();
         }
@@ -73,7 +73,7 @@ public class BnbCommands {
 
     private static GayDye.PrideType parsePrideType(final CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         try {
-            return GayDye.PrideType.valueOf(StringArgumentType.getString(context, "pride").toUpperCase());
+            return GayDye.PrideType.valueOf(StringArgumentType.getString(context, "pride").toUpperCase(Locale.ROOT));
         } catch (final IllegalArgumentException e) {
             throw CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownArgument().create();
         }
