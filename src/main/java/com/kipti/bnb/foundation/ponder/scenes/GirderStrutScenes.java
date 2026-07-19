@@ -14,7 +14,6 @@ import net.minecraft.world.level.block.Blocks;
  * Ponder scenes demonstrating Girder Strut placement mechanics.
  * Registered for all 3 strut variants (industrial, weathered, cable) with variant-specific schematics.
  */
-//ignore-complexity: Ponders are animations not logic
 public class GirderStrutScenes {
 
     public static void girderStrut(final SceneBuilder builder,

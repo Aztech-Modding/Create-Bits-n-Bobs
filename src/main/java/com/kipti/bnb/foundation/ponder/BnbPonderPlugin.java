@@ -1,5 +1,7 @@
 package com.kipti.bnb.foundation.ponder;
 
+import com.cake.azimuth.lang.IncludeLangDefaults;
+import com.cake.azimuth.lang.LangDefault;
 import com.kipti.bnb.CreateBitsnBobs;
 import net.createmod.ponder.api.registration.PonderPlugin;
 import net.createmod.ponder.api.registration.PonderSceneRegistrationHelper;
@@ -8,6 +10,11 @@ import net.createmod.ponder.api.registration.SharedTextRegistrationHelper;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
+@IncludeLangDefaults(
+        @LangDefault(
+                key = "bits_n_bobs.ponder.foreign_label", value = "Bits n Bobs"
+        )
+)
 public class BnbPonderPlugin implements PonderPlugin {
 
     @Override

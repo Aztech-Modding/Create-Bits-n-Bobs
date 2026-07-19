@@ -46,11 +46,15 @@ public class BnbTags {
 
     public enum BnbBlockTags {
 
+        //TODO: if sable installed, use that
         LIGHT,
         HEAVY,
         SUPER_HEAVY,
 
         COGWHEEL_CHAIN_NO_SMALL_OFFSET,
+
+        NIXIE_BOARDS,
+        NIXIE_TUBES,
 
         CHAIRS,
 

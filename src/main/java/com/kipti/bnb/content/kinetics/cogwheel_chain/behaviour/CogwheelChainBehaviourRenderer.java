@@ -120,12 +120,11 @@ public class CogwheelChainBehaviourRenderer extends BlockEntityBehaviourRenderer
         final boolean far = !inShipyardLod && !(Minecraft.getInstance().level == be.getLevel() && !Minecraft.getInstance()
                 .getBlockEntityRenderDispatcher().camera.getPosition()
                 .closerThan(worldCenter, MIP_DISTANCE));
-        final boolean close = inShipyardLod || (Minecraft.getInstance().level == be.getLevel() && Minecraft.getInstance()
-                .getBlockEntityRenderDispatcher().camera.getPosition()
-                .closerThan(worldCenter, MIP_DISTANCE * 0.5));
-
-//        final boolean far = false;
-//        final boolean close = true;
+        final boolean close = inShipyardLod ||
+                Minecraft.getInstance().level != be.getLevel() ||
+                Minecraft.getInstance()
+                        .getBlockEntityRenderDispatcher().camera.getPosition()
+                        .closerThan(worldCenter, MIP_DISTANCE * 0.5);
 
         if (close)
             renderChainSlowerButWithoutGaps(

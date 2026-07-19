@@ -21,6 +21,7 @@
   "bits_n_bobs.ponder.dyed_tank.text_4": "Pipes and Tanks of the same color will connect as usual",
   "bits_n_bobs.ponder.dyed_tank.text_5": "However, Pipes of different colors will not automatically connect",
   "bits_n_bobs.ponder.dyed_tank.text_6": "Pipes without dye will automatically connect to all other tanks or pipes",
+  "bits_n_bobs.ponder.foreign_label": "Bits n Bobs",
   "bits_n_bobs.ponder.girder_strut.header": "Placing Girder Struts",
   "bits_n_bobs.ponder.girder_strut.text_1": "Struts can be used to span a gap between two blocks",
   "bits_n_bobs.ponder.girder_strut.text_2": "Struts can be placed at different angles",

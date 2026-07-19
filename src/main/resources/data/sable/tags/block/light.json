@@ -1,0 +1,23 @@
+{
+  "replace": false,
+  "values": [
+    "#bits_n_bobs:chairs",
+    "#bits_n_bobs:nixie_tubes",
+    "#bits_n_bobs:nixie_boards",
+    "bits_n_bobs:industrial_truss",
+    "bits_n_bobs:industrial_grating",
+    "bits_n_bobs:headlamp",
+    "bits_n_bobs:lightbulb",
+    "bits_n_bobs:throttle_lever",
+    "bits_n_bobs:small_flanged_cogwheel",
+    "bits_n_bobs:large_flanged_cogwheel",
+    "bits_n_bobs:andesite_encased_flanged_cogwheel",
+    "bits_n_bobs:brass_encased_flanged_cogwheel",
+    "bits_n_bobs:industrial_iron_encased_flanged_cogwheel",
+    "bits_n_bobs:weathered_iron_encased_flanged_cogwheel",
+    "bits_n_bobs:andesite_encased_large_flanged_cogwheel",
+    "bits_n_bobs:brass_encased_large_flanged_cogwheel",
+    "bits_n_bobs:industrial_iron_encased_large_flanged_cogwheel",
+    "bits_n_bobs:weathered_iron_encased_large_flanged_cogwheel"
+  ]
+}

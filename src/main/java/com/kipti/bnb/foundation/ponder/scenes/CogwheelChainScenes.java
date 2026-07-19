@@ -16,7 +16,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 
-//ignore-complexity: Ponders are animations not logic
 public class CogwheelChainScenes {
 
     public static void flatCogwheelChain(final SceneBuilder builder, final SceneBuildingUtil util) {
@@ -116,7 +115,7 @@ public class CogwheelChainScenes {
     public static void changingAxisCogwheelChain(final SceneBuilder builder, final SceneBuildingUtil util) {
         final CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("chain_cog_changing_axis", "Changing axes on cogwheel chains");
-        scene.configureBasePlate(0, 0, 6);
+        scene.configureBasePlate(0, 0, 8);
         scene.world().showSection(util.select().layer(0), Direction.UP);
 
         //Hide the chain from the controller so it doesn't interfere with the demonstration

@@ -17,7 +17,6 @@ import net.createmod.catnip.config.ui.BaseConfigScreen;
 import net.createmod.catnip.render.SuperByteBufferCache;
 import net.createmod.ponder.foundation.PonderIndex;
 import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.network.chat.Component;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -51,8 +50,7 @@ public class CreateBitsnBobsClient {
     private static void clientInit() {
         PonderIndex.addPlugin(new BnbPonderPlugin());
         PonderForeignLabelRegistry.register(
-                CreateBitsnBobs.MOD_ID,
-                Component.translatable("bits_n_bobs.ponder.foreign_label")
+                CreateBitsnBobs.MOD_ID, "bits n bobs"
         );
 
         BnbPartialModels.register();

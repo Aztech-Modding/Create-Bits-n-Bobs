@@ -1,3 +1,5 @@
+import org.gradle.util.VersionNumber
+
 plugins {
     id 'java-library'
     id 'maven-publish'
@@ -72,6 +74,8 @@ neoForge {
                     '--all',
                     '--output', file('src/generated/resources/').getAbsolutePath(),
                     '--existing', file('src/main/resources/').getAbsolutePath()
+
+            systemProperty 'net.minecraft.data.Main.parallel', 'false'
         }
     }
     mods {
@@ -182,7 +186,7 @@ String getRelevantChangelog(String targetVersion) {
                 continue
             }
             if (entryMinecraftVersion == targetMinecraftVersion &&
-                    org.gradle.util.VersionNumber.parse(entryModVersion) > org.gradle.util.VersionNumber.parse(targetModVersion)) {
+                    VersionNumber.parse(entryModVersion) > VersionNumber.parse(targetModVersion)) {
                 newerVersionsExist = true
             }
         } else if (capturing && line.trim()) {

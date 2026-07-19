@@ -87,7 +87,19 @@ public abstract class BaseDyeableBehaviour extends SuperBlockEntityBehaviour {
     public void write(final CompoundTag nbt, final HolderLookup.Provider registries, final boolean clientPacket) {
         super.write(nbt, registries, clientPacket);
         this.writeDyeColor(nbt);
-        this.writeAdditionalDyeData(nbt, registries, clientPacket);
+        this.writeAdditionalDyeData(nbt, registries);
+    }
+
+    @Override
+    public void writeSafe(final CompoundTag nbt, final HolderLookup.Provider registries) {
+        super.writeSafe(nbt, registries);
+        this.writeDyeColor(nbt);
+        this.writeAdditionalDyeData(nbt, registries);
+    }
+
+    @Override
+    public boolean isSafeNBT() {
+        return true;
     }
 
     protected void writeDyeColor(final CompoundTag nbt) {
@@ -98,8 +110,7 @@ public abstract class BaseDyeableBehaviour extends SuperBlockEntityBehaviour {
 
     protected void writeAdditionalDyeData(
             final CompoundTag nbt,
-            final HolderLookup.Provider registries,
-            final boolean clientPacket
+            final HolderLookup.Provider registries
     ) {
     }
 

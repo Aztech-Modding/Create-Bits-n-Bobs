@@ -260,3 +260,13 @@
 
 - Improved feature flag group behaviour
 - Improved chain config behaviour
+
+# 1.21.1-2.1.12-beta
+
+- Fixed ponder foreign label issue
+- Fixed bad ponder baseplate size
+- Fixed being unable to watch all new ponders in chain
+- Fixed chain interaction being possible through blocks on aeronautics contraptions
+- Fixed dyed pipes and other fluid components not saving to schematics or being printed
+- Fixed chain ponder baseplate size
+- Added sable tags

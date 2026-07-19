@@ -10,6 +10,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.foundation.utility.RaycastHelper;
+import dev.ryanhcode.sable.companion.SableCompanion;
 import net.createmod.catnip.outliner.Outliner;
 import net.createmod.catnip.render.DefaultSuperRenderTypeBuffer;
 import net.createmod.catnip.render.SuperRenderTypeBuffer;
@@ -90,7 +91,7 @@ public class CogwheelChainInteractionHandler {
         final double range = player.getAttributeValue(Attributes.BLOCK_INTERACTION_RANGE) + 1;
         final Vec3 target = RaycastHelper.getTraceTarget(player, range, origin);
         final double vanillaDistSq = mc.hitResult != null
-                ? mc.hitResult.getLocation().distanceToSqr(origin)
+                ? SableCompanion.INSTANCE.distanceSquaredWithSubLevels(mc.level, mc.hitResult.getLocation(), origin)
                 : Double.MAX_VALUE;
 
         final CogwheelChainWorld chainWorld = CogwheelChainWorld.get(mc.level);

@@ -33,7 +33,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 
-//ignore-complexity: Ponders are animations not logic
 public class NixieDisplayScenes {
 
     private static final ItemStack CLIPBOARD_WITH_CONTENT = makeFilledClipboard();

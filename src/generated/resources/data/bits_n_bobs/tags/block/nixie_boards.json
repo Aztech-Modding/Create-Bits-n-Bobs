@@ -1,0 +1,21 @@
+{
+  "values": [
+    "bits_n_bobs:nixie_board",
+    "bits_n_bobs:white_nixie_board",
+    "bits_n_bobs:orange_nixie_board",
+    "bits_n_bobs:magenta_nixie_board",
+    "bits_n_bobs:light_blue_nixie_board",
+    "bits_n_bobs:yellow_nixie_board",
+    "bits_n_bobs:lime_nixie_board",
+    "bits_n_bobs:pink_nixie_board",
+    "bits_n_bobs:gray_nixie_board",
+    "bits_n_bobs:light_gray_nixie_board",
+    "bits_n_bobs:cyan_nixie_board",
+    "bits_n_bobs:purple_nixie_board",
+    "bits_n_bobs:blue_nixie_board",
+    "bits_n_bobs:brown_nixie_board",
+    "bits_n_bobs:green_nixie_board",
+    "bits_n_bobs:red_nixie_board",
+    "bits_n_bobs:black_nixie_board"
+  ]
+}

@@ -2,11 +2,7 @@ package com.kipti.bnb.foundation.ponder;
 
 import com.cake.azimuth.ponder.new_tooltip.NewPonderTooltipManager;
 import com.kipti.bnb.CreateBitsnBobs;
-import com.kipti.bnb.foundation.ponder.scenes.CogwheelChainScenes;
-import com.kipti.bnb.foundation.ponder.scenes.DyedPipeScenes;
-import com.kipti.bnb.foundation.ponder.scenes.DyedTankScenes;
-import com.kipti.bnb.foundation.ponder.scenes.GirderStrutScenes;
-import com.kipti.bnb.foundation.ponder.scenes.NixieDisplayScenes;
+import com.kipti.bnb.foundation.ponder.scenes.*;
 import com.kipti.bnb.registry.content.blocks.BnbKineticBlocks;
 import com.kipti.bnb.registry.content.blocks.BnbTrinketBlocks;
 import com.kipti.bnb.registry.content.blocks.deco.BnbDecorativeBlocks;
@@ -50,8 +46,8 @@ public class BnbPonderScenes {
                 AllBlocks.COGWHEEL.get().asItem(),
                 AllBlocks.LARGE_COGWHEEL.get().asItem()
         ).addScenes(
-                ResourceLocation.fromNamespaceAndPath(CreateBitsnBobs.MOD_ID, "axis_change"),
-                ResourceLocation.fromNamespaceAndPath(CreateBitsnBobs.MOD_ID, "flat")
+                ResourceLocation.fromNamespaceAndPath(CreateBitsnBobs.MOD_ID, "chain_cog_changing_axis"),
+                ResourceLocation.fromNamespaceAndPath(CreateBitsnBobs.MOD_ID, "chain_cog_flat")
         );
 
         HELPER.forComponents(AllBlocks.FLUID_PIPE, AllBlocks.ENCASED_FLUID_PIPE, AllBlocks.GLASS_FLUID_PIPE)

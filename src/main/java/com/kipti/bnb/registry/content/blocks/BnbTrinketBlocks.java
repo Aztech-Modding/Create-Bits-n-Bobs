@@ -83,6 +83,7 @@ public class BnbTrinketBlocks {
                             null
                     )
             )
+            .tag(BnbTags.BnbBlockTags.NIXIE_BOARDS.tag)
             .transform(nixieBoard())
             .item()
             .model((c, p) -> p.withExistingParent(
@@ -95,6 +96,7 @@ public class BnbTrinketBlocks {
         String colourName = colour.getSerializedName();
         return REGISTRATE.block(colourName + "_nixie_board", p -> new NixieBoardBlockNixie(p, colour))
                 .transform(nixieBoard())
+                .tag(BnbTags.BnbBlockTags.NIXIE_BOARDS.tag)
                 .register();
     });
     public static final BlockEntry<LargeNixieTubeBlockNixie> LARGE_NIXIE_TUBE = REGISTRATE.block(
@@ -104,6 +106,7 @@ public class BnbTrinketBlocks {
                             null
                     )
             )
+            .tag(BnbTags.BnbBlockTags.NIXIE_TUBES.tag)
             .transform(largeNixieTube())
             .item()
             .model((c, p) -> p.withExistingParent(
@@ -116,6 +119,7 @@ public class BnbTrinketBlocks {
         String colourName = colour.getSerializedName();
         return REGISTRATE.block(colourName + "_large_nixie_tube", p -> new LargeNixieTubeBlockNixie(p, colour))
                 .transform(largeNixieTube())
+                .tag(BnbTags.BnbBlockTags.NIXIE_TUBES.tag)
                 .register();
     });
     public static final BlockEntry<LightbulbBlock> LIGHTBULB = REGISTRATE.block("lightbulb", LightbulbBlock::new)
@@ -260,8 +264,8 @@ public class BnbTrinketBlocks {
                 .tag(BnbTags.BnbBlockTags.CHAIRS.tag)
                 .item()
                 .model((c, p) ->
-                               p.withExistingParent("item/" + colourName + "_chair", p.modLoc("block/chair/item"))
-                                       .texture("2", p.modLoc("block/chair/chair_" + colourName)))
+                        p.withExistingParent("item/" + colourName + "_chair", p.modLoc("block/chair/item"))
+                                .texture("2", p.modLoc("block/chair/chair_" + colourName)))
                 .tag(BnbTags.BnbItemTags.CHAIRS.tag)
                 .build()
                 .register();

@@ -161,8 +161,7 @@ public class DyeableTankBehaviour extends BaseDyeableBehaviour {
     @Override
     protected void writeAdditionalDyeData(
             final CompoundTag nbt,
-            final HolderLookup.Provider registries,
-            final boolean clientPacket
+            final HolderLookup.Provider registries
     ) {
         if (this.gayDye != null) {
             final CompoundTag gay = new CompoundTag();

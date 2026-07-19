@@ -1,0 +1,21 @@
+{
+  "values": [
+    "bits_n_bobs:large_nixie_tube",
+    "bits_n_bobs:white_large_nixie_tube",
+    "bits_n_bobs:orange_large_nixie_tube",
+    "bits_n_bobs:magenta_large_nixie_tube",
+    "bits_n_bobs:light_blue_large_nixie_tube",
+    "bits_n_bobs:yellow_large_nixie_tube",
+    "bits_n_bobs:lime_large_nixie_tube",
+    "bits_n_bobs:pink_large_nixie_tube",
+    "bits_n_bobs:gray_large_nixie_tube",
+    "bits_n_bobs:light_gray_large_nixie_tube",
+    "bits_n_bobs:cyan_large_nixie_tube",
+    "bits_n_bobs:purple_large_nixie_tube",
+    "bits_n_bobs:blue_large_nixie_tube",
+    "bits_n_bobs:brown_large_nixie_tube",
+    "bits_n_bobs:green_large_nixie_tube",
+    "bits_n_bobs:red_large_nixie_tube",
+    "bits_n_bobs:black_large_nixie_tube"
+  ]
+}
