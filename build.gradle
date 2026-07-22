@@ -11,6 +11,7 @@ plugins {
 def isSnapshotVersioning = project.hasProperty('snapshot_versioning') && project.property('snapshot_versioning').toString().toBoolean()
 version = isSnapshotVersioning ? "${mod_version}-SNAPSHOT" : mod_version
 group = mod_group_id
+
 base {
     archivesName = mod_id
 }
@@ -28,6 +29,16 @@ repositories {
     maven {
         name = 'azmod-maven'
         url = "https://maven.azmod.net/releases"
+    }
+    repositories {
+        maven {
+            name "azmod-maven"
+            url "https://maven.azmod.net/${findProperty('azmodRepository') ?: 'releases'}"
+            credentials {
+                username = findProperty('azmodMavenUser') ?: System.getenv('AZMOD_MAVEN_USER')
+                password = findProperty('azmodMavenToken') ?: System.getenv('AZMOD_MAVEN_PASSWORD')
+            }
+        }
     }
 
     maven {
@@ -52,6 +63,26 @@ repositories {
         filter {
             includeGroup("dev.ryanhcode.sable")
             includeGroup("dev.ryanhcode.sable-companion")
+        }
+    }
+}
+// Example configuration to allow publishing using the maven-publish plugin
+publishing {
+    publications {
+        register('mavenJava', MavenPublication) {
+            from components.java
+
+            artifactId=mod_id
+        }
+    }
+    repositories {
+        maven {
+            name "azmod-maven"
+            url "https://maven.azmod.net/${findProperty('azmodRepository') ?: 'releases'}"
+            credentials {
+                username = findProperty('azmodMavenUser') ?: System.getenv('AZMOD_MAVEN_USER')
+                password = findProperty('azmodMavenToken') ?: System.getenv('AZMOD_MAVEN_PASSWORD')
+            }
         }
     }
 }

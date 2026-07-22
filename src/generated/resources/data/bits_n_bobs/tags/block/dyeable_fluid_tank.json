@@ -1,0 +1,9 @@
+{
+  "values": [
+    "create:fluid_tank",
+    {
+      "id": "create_connected:fluid_vessel",
+      "required": false
+    }
+  ]
+}

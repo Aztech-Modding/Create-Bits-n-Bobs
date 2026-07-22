@@ -9,6 +9,7 @@ import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BehaviourType;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionResult;
@@ -17,8 +18,10 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.function.Consumer;
 
@@ -128,7 +131,7 @@ public class DyeableTankBehaviour extends BaseDyeableBehaviour {
             return;
         }
         this.getLevel()
-                .updateNeighborsAt(this.getPos(), this.getBlockState().getBlock());
+            .updateNeighborsAt(this.getPos(), this.getBlockState().getBlock());
     }
 
     private void forEachTankPart(final Consumer<DyeableTankBehaviour> action) {
@@ -145,10 +148,12 @@ public class DyeableTankBehaviour extends BaseDyeableBehaviour {
 
         final Level level = this.getLevel();
         final BlockPos controllerPos = controllerBE.getBlockPos();
+        final Direction.Axis axis = getAxis();
         for (int x = 0; x < controllerBE.getWidth(); x++) {
             for (int y = 0; y < controllerBE.getHeight(); y++) {
                 for (int z = 0; z < controllerBE.getWidth(); z++) {
-                    final BlockPos pos = controllerPos.offset(x, y, z);
+                    final BlockPos pos = axis == Direction.Axis.Y ? controllerPos.offset(x, y, z) :
+                        controllerPos.offset(axis == Direction.Axis.X ? y : x, z, axis == Direction.Axis.Z ? y : x);
                     final DyeableTankBehaviour behaviour = BlockEntityBehaviour.get(level, pos, TYPE);
                     if (behaviour != null) {
                         action.accept(behaviour);
@@ -158,10 +163,16 @@ public class DyeableTankBehaviour extends BaseDyeableBehaviour {
         }
     }
 
+    private Direction.@NonNull Axis getAxis() {
+        return !this.getBlockState().hasProperty(BlockStateProperties.HORIZONTAL_AXIS) ?
+            Direction.Axis.Y :
+            this.getBlockState().getValue(BlockStateProperties.HORIZONTAL_AXIS);
+    }
+
     @Override
     protected void writeAdditionalDyeData(
-            final CompoundTag nbt,
-            final HolderLookup.Provider registries
+        final CompoundTag nbt,
+        final HolderLookup.Provider registries
     ) {
         if (this.gayDye != null) {
             final CompoundTag gay = new CompoundTag();
@@ -172,9 +183,9 @@ public class DyeableTankBehaviour extends BaseDyeableBehaviour {
 
     @Override
     protected boolean readAdditionalDyeData(
-            final CompoundTag nbt,
-            final HolderLookup.Provider registries,
-            final boolean clientPacket
+        final CompoundTag nbt,
+        final HolderLookup.Provider registries,
+        final boolean clientPacket
     ) {
         final GayDye previousGayDye = this.gayDye;
         if (nbt.contains("Gay")) {

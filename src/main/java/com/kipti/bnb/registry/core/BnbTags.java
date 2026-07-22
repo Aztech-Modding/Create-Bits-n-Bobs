@@ -32,7 +32,7 @@ public class BnbTags {
         @SuppressWarnings("deprecation")
         public boolean matches(final Item item) {
             return item.builtInRegistryHolder()
-                    .is(this.tag);
+                .is(this.tag);
         }
 
         public boolean matches(final ItemStack stack) {
@@ -59,7 +59,10 @@ public class BnbTags {
         CHAIRS,
 
         EXTRA_COGWHEEL_CHAIN_CANDIDATES,
-        DEDICATED_COGWHEEL_CHAIN_COMPONENT;
+        DEDICATED_COGWHEEL_CHAIN_COMPONENT,
+
+        //For checking blocks that may be dyeable in both BnB OR BnD
+        DYEABLE_FLUID_TANK;
 
         public final TagKey<Block> tag;
 
@@ -71,7 +74,7 @@ public class BnbTags {
         @SuppressWarnings("deprecation")
         public boolean matches(final Block item) {
             return item.builtInRegistryHolder()
-                    .is(this.tag);
+                .is(this.tag);
         }
 
         public boolean matches(final BlockState stack) {
@@ -86,27 +89,31 @@ public class BnbTags {
     public static void registerDataGenerators() {
         CreateBitsnBobs.REGISTRATE.addDataGenerator(ProviderType.BLOCK_TAGS, prov -> {
             prov.addTag(BnbTags.BnbBlockTags.SUPER_HEAVY.tag)
-                    .addTag(Tags.Blocks.STORAGE_BLOCKS)
-                    .add(AllBlocks.INDUSTRIAL_IRON_BLOCK.getKey());
+                .addTag(Tags.Blocks.STORAGE_BLOCKS)
+                .add(AllBlocks.INDUSTRIAL_IRON_BLOCK.getKey());
 
             prov.addTag(BnbBlockTags.HEAVY.tag)
-                    .addTag(Tags.Blocks.STONES);
+                .addTag(Tags.Blocks.STONES);
 
             prov.addTag(BnbBlockTags.LIGHT.tag)
-                    .addOptionalTag(AllTags.AllBlockTags.BRITTLE.tag)
-                    .addOptionalTag(AllTags.AllBlockTags.WRENCH_PICKUP.tag)
-                    .addTag(BlockTags.LOGS_THAT_BURN)
-                    .addTag(BlockTags.PLANKS)
-                    .addTag(BlockTags.WOODEN_BUTTONS)
-                    .addTag(BlockTags.WOODEN_DOORS)
-                    .addTag(BlockTags.WOODEN_FENCES)
-                    .addTag(BlockTags.WOODEN_SLABS)
-                    .addTag(BlockTags.WOODEN_STAIRS)
-                    .remove(AllBlocks.INDUSTRIAL_IRON_BLOCK.getKey());
+                .addOptionalTag(AllTags.AllBlockTags.BRITTLE.tag)
+                .addOptionalTag(AllTags.AllBlockTags.WRENCH_PICKUP.tag)
+                .addTag(BlockTags.LOGS_THAT_BURN)
+                .addTag(BlockTags.PLANKS)
+                .addTag(BlockTags.WOODEN_BUTTONS)
+                .addTag(BlockTags.WOODEN_DOORS)
+                .addTag(BlockTags.WOODEN_FENCES)
+                .addTag(BlockTags.WOODEN_SLABS)
+                .addTag(BlockTags.WOODEN_STAIRS)
+                .remove(AllBlocks.INDUSTRIAL_IRON_BLOCK.getKey());
 
             prov.addTag(BnbBlockTags.DEDICATED_COGWHEEL_CHAIN_COMPONENT.tag)
-                    .add(BnbKineticBlocks.LARGE_FLANGED_COGWHEEL.getKey())
-                    .add(BnbKineticBlocks.SMALL_FLANGED_COGWHEEL.getKey());
+                .add(BnbKineticBlocks.LARGE_FLANGED_COGWHEEL.getKey())
+                .add(BnbKineticBlocks.SMALL_FLANGED_COGWHEEL.getKey());
+
+            prov.addTag(BnbBlockTags.DYEABLE_FLUID_TANK.tag)
+                .add(AllBlocks.FLUID_TANK.getKey())
+                .addOptional(ResourceLocation.fromNamespaceAndPath("create_connected", "fluid_vessel"));
         });
     }
 
@@ -114,5 +121,6 @@ public class BnbTags {
         BnbItemTags.register();
         BnbBlockTags.register();
     }
+
 }
 
