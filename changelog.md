@@ -270,3 +270,7 @@
 - Fixed dyed pipes and other fluid components not saving to schematics or being printed
 - Fixed chain ponder baseplate size
 - Added sable tags
+
+# 1.21.1-2.1.13-beta
+
+- Misc changes to dyeable behaviours to enable compatability

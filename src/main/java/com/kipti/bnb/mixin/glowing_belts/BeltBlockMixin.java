@@ -1,6 +1,6 @@
 package com.kipti.bnb.mixin.glowing_belts;
 
-import com.kipti.bnb.registry.compat.BnbCreateBlockEdits;
+import com.kipti.bnb.registry.azimuth.BnbCreateBlockEdits;
 import com.simibubi.create.content.kinetics.base.HorizontalKineticBlock;
 import com.simibubi.create.content.kinetics.belt.BeltBlock;
 import com.simibubi.create.content.kinetics.belt.BeltBlockEntity;
@@ -45,8 +45,8 @@ public class BeltBlockMixin extends HorizontalKineticBlock implements IBE<BeltBl
     private void bits_n_bobs$constructorWithDefaultGlowing(final BlockBehaviour.Properties properties,
                                                            final CallbackInfo ci) {
         this.registerDefaultState(
-                this.defaultBlockState()
-                        .setValue(BnbCreateBlockEdits.GLOWING, false)
+            this.defaultBlockState()
+                .setValue(BnbCreateBlockEdits.GLOWING, false)
         );
     }
 
@@ -70,18 +70,18 @@ public class BeltBlockMixin extends HorizontalKineticBlock implements IBE<BeltBl
 
         if (!stateIsGlowing)
             this.withBlockEntityDo(
-                    level, pos, be -> {
-                        for (final BlockPos blockPos : BeltBlock.getBeltChain(level, be.getController())) {
-                            final BeltBlockEntity belt = BeltHelper.getSegmentBE(level, blockPos);
-                            if (belt == null)
-                                continue;
-                            level.setBlock(
-                                    blockPos,
-                                    level.getBlockState(blockPos).setValue(BnbCreateBlockEdits.GLOWING, true),
-                                    Block.UPDATE_ALL | Block.UPDATE_MOVE_BY_PISTON
-                            );
-                        }
+                level, pos, be -> {
+                    for (final BlockPos blockPos : BeltBlock.getBeltChain(level, be.getController())) {
+                        final BeltBlockEntity belt = BeltHelper.getSegmentBE(level, blockPos);
+                        if (belt == null)
+                            continue;
+                        level.setBlock(
+                            blockPos,
+                            level.getBlockState(blockPos).setValue(BnbCreateBlockEdits.GLOWING, true),
+                            Block.UPDATE_ALL | Block.UPDATE_MOVE_BY_PISTON
+                        );
                     }
+                }
             );
         cir.setReturnValue(ItemInteractionResult.SUCCESS);
     }

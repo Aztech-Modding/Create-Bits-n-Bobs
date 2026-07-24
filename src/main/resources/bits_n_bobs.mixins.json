@@ -27,7 +27,6 @@
     "dyeable.pipes.GlassFluidPipeBlockTransitionMixin",
     "dyeable.simple.FluidValveRendererMixin",
     "dyeable.simple.PipeAttachmentModelMixin",
-    "dyeable.simple.PumpRendererMixin",
     "encasable_piston_poles.ContraptionColliderMixin",
     "encasable_piston_poles.MechanicalPistonBlockMixin",
     "encasable_piston_poles.PistonContraptionMixin",
