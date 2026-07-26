@@ -18,6 +18,7 @@
     "ServerGamePacketListenerImplAccessor",
     "chair.ContraptionMixin",
     "dyeable.fluid_tank.ConnectivityHandlerMixin",
+    "dyeable.fluid_tank.FluidTankBlockEntityMixin",
     "dyeable.fluid_tank.FluidTankItemMixin",
     "dyeable.fluid_tank.FluidTankRendererMixin",
     "dyeable.pipes.AxisPipeBlockTransitionMixin",
