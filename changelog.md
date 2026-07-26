@@ -273,4 +273,4 @@
 
 # 1.21.1-2.1.13-beta
 
-- Misc changes to dyeable behaviours to enable compatability
+- Misc changes and improvements to dyeable behaviours to enable Bits 'n' Dyes

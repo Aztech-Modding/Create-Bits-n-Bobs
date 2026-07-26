@@ -4,6 +4,8 @@ import com.cake.azimuth.behaviour.SuperBlockEntityBehaviour;
 import com.kipti.bnb.registry.content.BnbAdvancements;
 import com.kipti.bnb.registry.core.BnbFeatureFlag;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
+import dev.engine_room.flywheel.lib.visualization.VisualizationHelper;
+import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -109,8 +111,8 @@ public abstract class BaseDyeableBehaviour extends SuperBlockEntityBehaviour {
     }
 
     protected void writeAdditionalDyeData(
-            final CompoundTag nbt,
-            final HolderLookup.Provider registries
+        final CompoundTag nbt,
+        final HolderLookup.Provider registries
     ) {
     }
 
@@ -126,18 +128,22 @@ public abstract class BaseDyeableBehaviour extends SuperBlockEntityBehaviour {
 
     protected boolean readDyeColor(final CompoundTag nbt) {
         final DyeColor previousColor = this.color;
-        if (nbt.contains("DyeColor")) {
-            this.color = DyeColor.byId(nbt.getInt("DyeColor"));
-        } else {
-            this.color = null;
-        }
+        this.color = getDyeColorFromTag(nbt);
         return previousColor != this.color;
     }
 
+    public static @Nullable DyeColor getDyeColorFromTag(final CompoundTag nbt) {
+        if (nbt.contains("DyeColor")) {
+            return DyeColor.byId(nbt.getInt("DyeColor"));
+        } else {
+            return null;
+        }
+    }
+
     protected boolean readAdditionalDyeData(
-            final CompoundTag nbt,
-            final HolderLookup.Provider registries,
-            final boolean clientPacket
+        final CompoundTag nbt,
+        final HolderLookup.Provider registries,
+        final boolean clientPacket
     ) {
         return false;
     }
@@ -148,6 +154,7 @@ public abstract class BaseDyeableBehaviour extends SuperBlockEntityBehaviour {
             final Level level = this.getLevel();
             final BlockPos pos = this.getPos();
             level.sendBlockUpdated(pos, this.getBlockState(), this.getBlockState(), 16);
+            CatnipServices.PLATFORM.executeOnClientOnly(() -> () -> VisualizationHelper.queueUpdate(this.getBlockEntity()));
         }
     }
 

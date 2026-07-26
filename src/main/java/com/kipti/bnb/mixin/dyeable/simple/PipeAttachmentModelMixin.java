@@ -27,33 +27,33 @@ public class PipeAttachmentModelMixin {
 
     @Inject(method = "gatherModelData", at = @At("TAIL"))
     private void bnb$gatherSimpleDyeColor(
-            final ModelData.Builder builder,
-            final BlockAndTintGetter world,
-            final BlockPos pos,
-            final BlockState state,
-            final ModelData blockEntityData,
-            final CallbackInfoReturnable<ModelData.Builder> cir
+        final ModelData.Builder builder,
+        final BlockAndTintGetter world,
+        final BlockPos pos,
+        final BlockState state,
+        final ModelData blockEntityData,
+        final CallbackInfoReturnable<ModelData.Builder> cir
     ) {
         SimpleDyeableModelHelper.putDyeColor(builder, world, pos);
     }
 
     @Inject(method = "getQuads", at = @At("RETURN"), cancellable = true)
     private void bnb$applySimpleDyeSpriteShift(
-            final BlockState state,
-            final Direction side,
-            final RandomSource rand,
-            final ModelData data,
-            final RenderType renderType,
-            final CallbackInfoReturnable<List<BakedQuad>> cir
+        final BlockState state,
+        final Direction side,
+        final RandomSource rand,
+        final ModelData data,
+        final RenderType renderType,
+        final CallbackInfoReturnable<List<BakedQuad>> cir
     ) {
         final DyeColor color = SimpleDyeableModelHelper.getDyeColor(data);
         if (color == null) {
             return;
         }
         cir.setReturnValue(SimpleDyeableModelHelper.shiftSprites(
-                cir.getReturnValue(),
-                color,
-                bnb$getShiftEntries(state, color)
+            cir.getReturnValue(),
+            color,
+            bnb$getShiftEntries(state, color)
         ));
     }
 
@@ -63,22 +63,23 @@ public class PipeAttachmentModelMixin {
             return new SpriteShiftEntry[0];
         }
         if (AllBlocks.MECHANICAL_PUMP.has(state)) {
-            return new SpriteShiftEntry[]{
-                    BnbSpriteShifts.DYED_PUMP.get(color)
+            return new SpriteShiftEntry[] {
+                BnbSpriteShifts.DYED_PUMP.get(color)
             };
         }
         if (AllBlocks.SMART_FLUID_PIPE.has(state)) {
-            return new SpriteShiftEntry[]{
-                    BnbSpriteShifts.DYED_SMART_PIPE_1.get(color),
-                    BnbSpriteShifts.DYED_SMART_PIPE_2.get(color),
-                    BnbSpriteShifts.DYED_PIPES.get(color)
+            return new SpriteShiftEntry[] {
+                BnbSpriteShifts.DYED_SMART_PIPE_1.get(color),
+                BnbSpriteShifts.DYED_SMART_PIPE_2.get(color),
+                BnbSpriteShifts.DYED_PIPES.get(color)
             };
         }
         if (AllBlocks.FLUID_VALVE.has(state)) {
-            return new SpriteShiftEntry[]{
-                    BnbSpriteShifts.DYED_VALVE_CLOSED.get(color),
-                    BnbSpriteShifts.DYED_VALVE_OPEN.get(color),
-                    BnbSpriteShifts.DYED_FLUID_VALVE.get(color)
+            return new SpriteShiftEntry[] {
+                BnbSpriteShifts.DYED_VALVE_CLOSED.get(color),
+                BnbSpriteShifts.DYED_VALVE_OPEN.get(color),
+                BnbSpriteShifts.DYED_FLUID_VALVE.get(color),
+                BnbSpriteShifts.DYED_PIPES.get(color)
             };
         }
         return new SpriteShiftEntry[0];

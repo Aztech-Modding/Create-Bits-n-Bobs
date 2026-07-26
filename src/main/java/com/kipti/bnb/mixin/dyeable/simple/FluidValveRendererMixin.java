@@ -1,5 +1,6 @@
 package com.kipti.bnb.mixin.dyeable.simple;
 
+import com.kipti.bnb.content.decoration.dyeable.simple.SimpleDyeableBehaviour;
 import com.kipti.bnb.content.decoration.dyeable.simple.SimpleDyeablePartialHelper;
 import com.kipti.bnb.registry.client.BnbSpriteShifts;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
@@ -18,27 +19,27 @@ import org.spongepowered.asm.mixin.injection.At;
 public class FluidValveRendererMixin {
 
     @WrapOperation(
-            method = "renderSafe(Lcom/simibubi/create/content/fluids/pipes/valve/FluidValveBlockEntity;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;II)V",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/createmod/catnip/render/CachedBuffers;partial(Ldev/engine_room/flywheel/lib/model/baked/PartialModel;Lnet/minecraft/world/level/block/state/BlockState;)Lnet/createmod/catnip/render/SuperByteBuffer;"
-            )
+        method = "renderSafe(Lcom/simibubi/create/content/fluids/pipes/valve/FluidValveBlockEntity;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;II)V",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/createmod/catnip/render/CachedBuffers;partial(Ldev/engine_room/flywheel/lib/model/baked/PartialModel;Lnet/minecraft/world/level/block/state/BlockState;)Lnet/createmod/catnip/render/SuperByteBuffer;"
+        )
     )
     private SuperByteBuffer bnb$applyFluidValvePointerDye(
-            final PartialModel partial,
-            final BlockState referenceState,
-            final Operation<SuperByteBuffer> original,
-            final FluidValveBlockEntity be,
-            final float partialTicks,
-            final PoseStack ms,
-            final MultiBufferSource buffer,
-            final int light,
-            final int overlay
+        final PartialModel partial,
+        final BlockState referenceState,
+        final Operation<SuperByteBuffer> original,
+        final FluidValveBlockEntity be,
+        final float partialTicks,
+        final PoseStack ms,
+        final MultiBufferSource buffer,
+        final int light,
+        final int overlay
     ) {
         return SimpleDyeablePartialHelper.apply(
-                original.call(partial, referenceState),
-                SimpleDyeablePartialHelper.getColor(be),
-                BnbSpriteShifts.DYED_FLUID_VALVE
+            original.call(partial, referenceState),
+            SimpleDyeableBehaviour.getDyeColor(be),
+            BnbSpriteShifts.DYED_FLUID_VALVE
         );
     }
 

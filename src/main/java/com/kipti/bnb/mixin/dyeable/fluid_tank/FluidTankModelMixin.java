@@ -36,17 +36,17 @@ public class FluidTankModelMixin {
 
     @Inject(method = "gatherModelData", at = @At("TAIL"))
     private void bnb$gatherDyeColor(
-            final ModelData.Builder builder,
-            final BlockAndTintGetter world,
-            final BlockPos pos,
-            final BlockState state,
-            final ModelData blockEntityData,
-            final CallbackInfoReturnable<ModelData.Builder> cir
+        final ModelData.Builder builder,
+        final BlockAndTintGetter world,
+        final BlockPos pos,
+        final BlockState state,
+        final ModelData blockEntityData,
+        final CallbackInfoReturnable<ModelData.Builder> cir
     ) {
         final DyeableTankBehaviour behaviour = BlockEntityBehaviour.get(
-                world,
-                pos,
-                DyeableTankBehaviour.TYPE
+            world,
+            pos,
+            DyeableTankBehaviour.TYPE
         );
         DyeColor color = null;
         if (behaviour != null) {
@@ -62,12 +62,12 @@ public class FluidTankModelMixin {
 
     @Inject(method = "getQuads", at = @At("RETURN"), cancellable = true)
     private void bnb$applyDyeSpriteShift(
-            final BlockState state,
-            final Direction side,
-            final RandomSource rand,
-            final ModelData data,
-            final RenderType renderType,
-            final CallbackInfoReturnable<List<BakedQuad>> cir
+        final BlockState state,
+        final Direction side,
+        final RandomSource rand,
+        final ModelData data,
+        final RenderType renderType,
+        final CallbackInfoReturnable<List<BakedQuad>> cir
     ) {
         if (!data.has(BNB_TANK_DYE_COLOR)) return;
         final DyeColor color = data.get(BNB_TANK_DYE_COLOR);
@@ -97,4 +97,5 @@ public class FluidTankModelMixin {
 
         return null;
     }
+
 }
