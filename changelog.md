@@ -275,3 +275,11 @@
 
 - Misc changes and improvements to dyeable behaviours to enable Bits 'n' Dyes
 - Fix fluid tanks not saving dye colour to schematics
+
+# 1.21.1-2.1.14-beta
+
+- Dedicated server related fixes
+
+# 1.21.1-2.1.15-beta
+
+- Add config options for max cogwheel chain size and node count

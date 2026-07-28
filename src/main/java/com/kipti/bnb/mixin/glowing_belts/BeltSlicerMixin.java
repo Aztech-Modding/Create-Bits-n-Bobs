@@ -1,6 +1,6 @@
 package com.kipti.bnb.mixin.glowing_belts;
 
-import com.kipti.bnb.registry.azimuth.BnbCreateBlockEdits;
+import com.kipti.bnb.foundation.BnbBlockStateProperties;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -33,7 +33,7 @@ public class BeltSlicerMixin {
                                                       final BeltSlicer.Feedback feedBack,
                                                       final CallbackInfoReturnable<ItemInteractionResult> cir,
                                                       @Share("isGlowing") final LocalBooleanRef isGlowing) {
-        isGlowing.set(state.hasProperty(BnbCreateBlockEdits.GLOWING) && state.getValue(BnbCreateBlockEdits.GLOWING));
+        isGlowing.set(state.hasProperty(BnbBlockStateProperties.GLOWING) && state.getValue(BnbBlockStateProperties.GLOWING));
     }
 
 
@@ -48,7 +48,7 @@ public class BeltSlicerMixin {
                                                               final CallbackInfoReturnable<ItemInteractionResult> cir,
                                                               @Share("isGlowing") final LocalBooleanRef isGlowing,
                                                               @Local(name = "blockPos", ordinal = 3) final BlockPos blockPos) {
-        world.setBlock(blockPos, world.getBlockState(blockPos).setValue(BnbCreateBlockEdits.GLOWING, isGlowing.get()), Block.UPDATE_ALL | Block.UPDATE_MOVE_BY_PISTON);
+        world.setBlock(blockPos, world.getBlockState(blockPos).setValue(BnbBlockStateProperties.GLOWING, isGlowing.get()), Block.UPDATE_ALL | Block.UPDATE_MOVE_BY_PISTON);
     }
 
     @WrapOperation(method = "useConnector", at = @At(value = "INVOKE", ordinal = 1, target = "Lnet/minecraft/world/level/Level;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
@@ -58,7 +58,7 @@ public class BeltSlicerMixin {
                                                                     final int flags,
                                                                     final Operation<Boolean> original,
                                                                     @Share("isGlowing") final LocalBooleanRef isGlowing) {
-        return original.call(instance, pos, newState.setValue(BnbCreateBlockEdits.GLOWING, isGlowing.get()), flags);
+        return original.call(instance, pos, newState.setValue(BnbBlockStateProperties.GLOWING, isGlowing.get()), flags);
     }
 
 }

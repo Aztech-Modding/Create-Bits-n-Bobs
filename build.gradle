@@ -138,7 +138,7 @@ dependencies {
         exclude group: "me.fallenbreath"
     }
 
-    implementation("com.cake.autoload:autoload-neoforge-1.21.1:1.+")
+    //implementation("com.cake.autoload:autoload-neoforge-1.21.1:1.+")
 
     jarJar(api("dev.ryanhcode.sable-companion:sable-companion-common-${project.minecraft_version}:[${project.sable_companion_version},)")) {
         version {

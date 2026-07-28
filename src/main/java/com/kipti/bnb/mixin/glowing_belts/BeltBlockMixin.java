@@ -1,6 +1,6 @@
 package com.kipti.bnb.mixin.glowing_belts;
 
-import com.kipti.bnb.registry.azimuth.BnbCreateBlockEdits;
+import com.kipti.bnb.foundation.BnbBlockStateProperties;
 import com.simibubi.create.content.kinetics.base.HorizontalKineticBlock;
 import com.simibubi.create.content.kinetics.belt.BeltBlock;
 import com.simibubi.create.content.kinetics.belt.BeltBlockEntity;
@@ -38,7 +38,7 @@ public class BeltBlockMixin extends HorizontalKineticBlock implements IBE<BeltBl
     @Inject(method = "createBlockStateDefinition", at = @At("TAIL"))
     private void bits_n_bobs$createBlockStateDefinitionWithGlowingProperty(final StateDefinition.Builder<Block, BlockState> builder,
                                                                            final CallbackInfo ci) {
-        builder.add(BnbCreateBlockEdits.GLOWING);
+        builder.add(BnbBlockStateProperties.GLOWING);
     }
 
     @Inject(method = "<init>", at = @At("TAIL"))
@@ -46,7 +46,7 @@ public class BeltBlockMixin extends HorizontalKineticBlock implements IBE<BeltBl
                                                            final CallbackInfo ci) {
         this.registerDefaultState(
             this.defaultBlockState()
-                .setValue(BnbCreateBlockEdits.GLOWING, false)
+                .setValue(BnbBlockStateProperties.GLOWING, false)
         );
     }
 
@@ -60,13 +60,13 @@ public class BeltBlockMixin extends HorizontalKineticBlock implements IBE<BeltBl
                                                            final BlockHitResult hitResult,
                                                            final CallbackInfoReturnable<ItemInteractionResult> cir) {
         final ItemInteractionResult result = cir.getReturnValue();
-        if (result != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION && state.hasProperty(BnbCreateBlockEdits.GLOWING))
+        if (result != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION && state.hasProperty(BnbBlockStateProperties.GLOWING))
             return;
 
         final boolean isGlowSac = stack.getItem() instanceof GlowInkSacItem;
         if (!isGlowSac) return;
 
-        final boolean stateIsGlowing = state.getValue(BnbCreateBlockEdits.GLOWING);
+        final boolean stateIsGlowing = state.getValue(BnbBlockStateProperties.GLOWING);
 
         if (!stateIsGlowing)
             this.withBlockEntityDo(
@@ -77,7 +77,7 @@ public class BeltBlockMixin extends HorizontalKineticBlock implements IBE<BeltBl
                             continue;
                         level.setBlock(
                             blockPos,
-                            level.getBlockState(blockPos).setValue(BnbCreateBlockEdits.GLOWING, true),
+                            level.getBlockState(blockPos).setValue(BnbBlockStateProperties.GLOWING, true),
                             Block.UPDATE_ALL | Block.UPDATE_MOVE_BY_PISTON
                         );
                     }

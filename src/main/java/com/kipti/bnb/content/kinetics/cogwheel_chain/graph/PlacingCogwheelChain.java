@@ -25,18 +25,16 @@ import java.util.Objects;
 public class PlacingCogwheelChain {
 
     public static final Codec<PlacingCogwheelChain> CODEC = PlacingCogwheelNode.CODEC.listOf().xmap(
-            PlacingCogwheelChain::new,
-            chain -> chain.visitedNodes
+        PlacingCogwheelChain::new,
+        chain -> chain.visitedNodes
     );
 
-    public static final int MAX_NODES = 64;
-    public static final int MAX_CHAIN_BOUNDS = 32;
-    public static final double MAX_CHAIN_INTERACTION_DISTANCE_SQ = 3.0 * (MAX_CHAIN_BOUNDS + 10) * (MAX_CHAIN_BOUNDS + 10);
+    public static final int HARD_MAX_NODES_CAP = 256;
 
     public static final StreamCodec<RegistryFriendlyByteBuf, PlacingCogwheelChain> STREAM_CODEC = StreamCodec.composite(
-            PlacingCogwheelNode.STREAM_CODEC.apply(ByteBufCodecs.list(MAX_NODES)),
-            chain -> chain.visitedNodes,
-            PlacingCogwheelChain::new
+        PlacingCogwheelNode.STREAM_CODEC.apply(ByteBufCodecs.list(HARD_MAX_NODES_CAP)),
+        chain -> chain.visitedNodes,
+        PlacingCogwheelChain::new
     );
 
     private List<PlacingCogwheelNode> visitedNodes;
@@ -46,10 +44,10 @@ public class PlacingCogwheelChain {
                                 final boolean isLarge,
                                 final boolean hasSmallCogwheelOffset) {
         this.visitedNodes = new ArrayList<>(List.of(new PlacingCogwheelNode(
-                startPos,
-                startAxis,
-                isLarge,
-                hasSmallCogwheelOffset
+            startPos,
+            startAxis,
+            isLarge,
+            hasSmallCogwheelOffset
         )));
     }
 
@@ -108,8 +106,12 @@ public class PlacingCogwheelChain {
             }
         }
 
+        if (this.getSize() >= BnbConfigs.server().COGWHEEL_MAX_NODE_COUNT.get() && !newPos.equals(this.getFirstNode().pos())) {
+            throw new ChainInteractionFailedException("out_of_node_count");
+        }
+
         final PlacingCogwheelNode newNode = new PlacingCogwheelNode(
-                newPos, candidate.axis(), candidate.isLarge(), candidate.hasSmallCogwheelOffset()
+            newPos, candidate.axis(), candidate.isLarge(), candidate.hasSmallCogwheelOffset()
         );
 
         if (this.exceedsMaxBounds(newNode)) {
@@ -117,7 +119,7 @@ public class PlacingCogwheelChain {
         }
 
         final @Nullable PlacingCogwheelNode previous = this.getSize() >= 2
-                ? this.visitedNodes.get(this.visitedNodes.size() - 2) : null;
+            ? this.visitedNodes.get(this.visitedNodes.size() - 2) : null;
 
         validateConnection(lastNode, newNode, previous, type);
 
@@ -126,8 +128,8 @@ public class PlacingCogwheelChain {
     }
 
     /**
-     * Validates the geometric and pathfinding connection between two cogwheel nodes.
-     * Throws {@link ChainInteractionFailedException} if the connection is invalid.
+     * Validates the geometric and pathfinding connection between two cogwheel nodes. Throws
+     * {@link ChainInteractionFailedException} if the connection is invalid.
      *
      * @param from      the node to connect from
      * @param to        the node to connect to
@@ -147,9 +149,9 @@ public class PlacingCogwheelChain {
         final boolean isValidFlat = isFlat && isSameAxis && !isAdjacent;
         final boolean isAxisChangePermitted = chainType.permitsAxisChanges();
         final boolean isValidAxisChange = isAxisChangePermitted && isValidLargeCogAxisConnection(
-                from, to.pos(), axis, to.isLarge()
+            from, to.pos(), axis, to.isLarge()
         );
-        
+
         final boolean isValidCandidate = isValidFlat || isValidAxisChange;
 
         if (!isValidCandidate) {
@@ -177,8 +179,8 @@ public class PlacingCogwheelChain {
             boolean hasPathBack = false;
             for (final Integer side : backwardsConnections) {
                 hasPathBack = hasPathBack ||
-                        CogwheelChainPathfinder.isValidPathStep(previous, 1, from, side) ||
-                        CogwheelChainPathfinder.isValidPathStep(previous, -1, from, side);
+                    CogwheelChainPathfinder.isValidPathStep(previous, 1, from, side) ||
+                    CogwheelChainPathfinder.isValidPathStep(previous, -1, from, side);
             }
             if (!hasPathBack) {
                 throw new ChainInteractionFailedException("no_path_to_cogwheel");
@@ -272,7 +274,11 @@ public class PlacingCogwheelChain {
         final List<PlacingCogwheelNode> nodesWithCandidate = new ArrayList<>(this.visitedNodes);
         nodesWithCandidate.add(candidate);
         final int newMaxBounds = this.getMaxBoundsOfNodes(nodesWithCandidate);
-        return newMaxBounds > MAX_CHAIN_BOUNDS;
+        return newMaxBounds > BnbConfigs.server().COGWHEEL_MAX_BOUNDS.get();
+    }
+
+    public static float getCogwheelMaxInteractionDistanceSq() {
+        return 3.0f * (BnbConfigs.server().COGWHEEL_MAX_BOUNDS.get() + 10) * (BnbConfigs.server().COGWHEEL_MAX_BOUNDS.get() + 10);
     }
 
     private int getMaxBoundsOfNodes(final List<PlacingCogwheelNode> nodes) {
@@ -282,14 +288,14 @@ public class PlacingCogwheelChain {
         for (final PlacingCogwheelNode node : nodes) {
             final BlockPos pos = node.pos();
             min = new Vec3i(
-                    Math.min(min.getX(), pos.getX()),
-                    Math.min(min.getY(), pos.getY()),
-                    Math.min(min.getZ(), pos.getZ())
+                Math.min(min.getX(), pos.getX()),
+                Math.min(min.getY(), pos.getY()),
+                Math.min(min.getZ(), pos.getZ())
             );
             max = new Vec3i(
-                    Math.max(max.getX(), pos.getX()),
-                    Math.max(max.getY(), pos.getY()),
-                    Math.max(max.getZ(), pos.getZ())
+                Math.max(max.getX(), pos.getX()),
+                Math.max(max.getY(), pos.getY()),
+                Math.max(max.getZ(), pos.getZ())
             );
         }
 
@@ -314,10 +320,10 @@ public class PlacingCogwheelChain {
         for (final PlacingCogwheelNode node : this.visitedNodes) {
             final BlockPos localPos = node.pos().subtract(origin);
             localNodes.add(new PlacingCogwheelNode(
-                    localPos,
-                    node.rotationAxis(),
-                    node.isLarge(),
-                    node.hasSmallCogwheelOffset()
+                localPos,
+                node.rotationAxis(),
+                node.isLarge(),
+                node.hasSmallCogwheelOffset()
             ));
         }
         return new PlacingCogwheelChain(localNodes);

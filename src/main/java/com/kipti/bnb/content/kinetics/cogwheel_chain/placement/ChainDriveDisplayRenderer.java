@@ -1,6 +1,5 @@
 package com.kipti.bnb.content.kinetics.cogwheel_chain.placement;
 
-import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.PlacingCogwheelChain;
 import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -21,7 +20,6 @@ public class ChainDriveDisplayRenderer {
 
     public static final int VALID_COLOUR = 0x95CD41;
     public static final int INVALID_COLOUR = 0xFF5D5D;
-    public static final int MAX_PLACEMENT_RANGE = PlacingCogwheelChain.MAX_CHAIN_BOUNDS;
 
     private static final float PARTICLE_DENSITY = 0.1f;
     private static final float CONNECTION_LINE_WIDTH = 2f / 16f;
@@ -50,8 +48,8 @@ public class ChainDriveDisplayRenderer {
             }
             final Vec3 lerped = from.add(dir.scale(t));
             level.addParticle(
-                    new DustParticleOptions(new Vector3f(r, g, b), 1), true,
-                    lerped.x, lerped.y, lerped.z, 0, 0, 0
+                new DustParticleOptions(new Vector3f(r, g, b), 1), true,
+                lerped.x, lerped.y, lerped.z, 0, 0, 0
             );
         }
     }
@@ -61,15 +59,15 @@ public class ChainDriveDisplayRenderer {
                                           final String keyPrefix) {
         final AtomicInteger counter = new AtomicInteger(0);
         placementState.getShape(level, pos).forAllEdges((fx, fy, fz, tx, ty, tz) ->
-                                                                Outliner.getInstance().showLine(
-                                                                                keyPrefix + "_" + counter.getAndIncrement(),
-                                                                                new Vec3(fx, fy, fz).add(Vec3.atLowerCornerOf(
-                                                                                        pos)),
-                                                                                new Vec3(tx, ty, tz).add(Vec3.atLowerCornerOf(
-                                                                                        pos))
-                                                                        )
-                                                                        .colored(colour)
-                                                                        .lineWidth(OUTLINE_LINE_WIDTH));
+            Outliner.getInstance().showLine(
+                    keyPrefix + "_" + counter.getAndIncrement(),
+                    new Vec3(fx, fy, fz).add(Vec3.atLowerCornerOf(
+                        pos)),
+                    new Vec3(tx, ty, tz).add(Vec3.atLowerCornerOf(
+                        pos))
+                )
+                .colored(colour)
+                .lineWidth(OUTLINE_LINE_WIDTH));
     }
 
     public static void renderBlockOutline(final ClientLevel level, final BlockPos pos,
@@ -94,4 +92,5 @@ public class ChainDriveDisplayRenderer {
 //                .lineWidth(CONNECTION_LINE_WIDTH);
         renderParticlesBetween(Minecraft.getInstance().level, from, to, colour);
     }
+
 }
