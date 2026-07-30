@@ -25,3 +25,11 @@ if (strutYourStuffBuild.exists()) {
         }
     }
 }
+def strutYourStuffActualNameBuild = file('../StrutYourStuff')
+if (strutYourStuffActualNameBuild.exists()) {
+    includeBuild('../StrutYourStuff') {
+        dependencySubstitution {
+            substitute module('com.cake.struts:struts') using project(':')
+        }
+    }
+}
