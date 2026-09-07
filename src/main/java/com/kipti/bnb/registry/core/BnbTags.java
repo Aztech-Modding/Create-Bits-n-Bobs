@@ -133,6 +133,9 @@ public class BnbTags {
                     .add(BnbKineticBlocks.LARGE_FLANGED_COGWHEEL.getKey())
                     .add(BnbKineticBlocks.SMALL_FLANGED_COGWHEEL.getKey());
 
+            prov.addTag(BnbBlockTags.FORBIDDEN_COGWHEEL_CHAIN_COMPONENT.tag)
+                    .addOptional(ResourceLocation.fromNamespaceAndPath("gnkinetics", "chainable_cogwheel"));
+
             prov.addTag(BnbBlockTags.DYEABLE_FLUID_TANK.tag)
                     .add(AllBlocks.FLUID_TANK.getKey())
                     .addOptional(ResourceLocation.fromNamespaceAndPath("create_connected", "fluid_vessel"));

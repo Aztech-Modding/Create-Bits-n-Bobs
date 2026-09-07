@@ -14,8 +14,9 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 @IncludeLangDefaults(
         value = {
-                @LangDefault(key = "message.bits_n_bobs.cogwheel_chain.chain_addition_aborted.invalid_cogwheel_type.cogwheel_chain_type.bits_n_bobs.belt", value = "Belt cogwheel drives must be placed on a flanged cogwheel"),
-                @LangDefault(key = "message.bits_n_bobs.cogwheel_chain.chain_addition_aborted.invalid_cogwheel_type.cogwheel_chain_type.bits_n_bobs.rope", value = "Rope cogwheel drives must be placed on a flanged cogwheel")
+                @LangDefault(key = "message.bits_n_bobs.cogwheel_chain.chain_addition_aborted.invalid_cogwheel_type.cogwheel_chain_type.bits_n_bobs.chain", value = "Chain cogwheel drives cannot be placed on this cogwheel!"),
+                @LangDefault(key = "message.bits_n_bobs.cogwheel_chain.chain_addition_aborted.invalid_cogwheel_type.cogwheel_chain_type.bits_n_bobs.belt", value = "Belt cogwheel drives must be placed on a flanged cogwheel!"),
+                @LangDefault(key = "message.bits_n_bobs.cogwheel_chain.chain_addition_aborted.invalid_cogwheel_type.cogwheel_chain_type.bits_n_bobs.rope", value = "Rope cogwheel drives must be placed on a flanged cogwheel!")
         }
 )
 public class BnbCogwheelChainTypes {

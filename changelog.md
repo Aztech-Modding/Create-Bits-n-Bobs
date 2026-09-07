@@ -354,3 +354,10 @@
 # 1.21.1-2.3.1
 
 - Fixed item suppression causing creative tabs to not link to item groups
+
+# 1.21.1-2.3.2
+
+- (#167) Fixed chain drive behaviour overriding gears n kinetics behaviour
+- Added missing chain failed addition lang for using a chain on other types of cogwheel
+- Restored a deprecated old signature of `CogwheelChainRenderGeometryBuilder#renderChainSlowerButWithoutGaps` to avoid
+  crash with bits n tracks

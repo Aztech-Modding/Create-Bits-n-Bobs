@@ -22,6 +22,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.ApiStatus;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -171,6 +172,92 @@ public class CogwheelChainBehaviourRenderer extends BlockEntityBehaviourRenderer
         ms.popPose();
     }
 
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "3.0.0+")
+    private static void renderChainSlowerButWithoutGaps(final PoseStack ms,
+                                                        final MultiBufferSource buffer,
+                                                        final float offset,
+                                                        final float textureSquish,
+                                                        final Vec3 preFrom,
+                                                        final Vec3 from,
+                                                        final Vec3 to,
+                                                        final Vec3 postTo,
+                                                        final Vec3 fromCogwheelAxis,
+                                                        final Vec3 toCogwheelAxis,
+                                                        final int lightAtSource,
+                                                        final int lightAtDest,
+                                                        final CogwheelChainType type,
+                                                        final boolean flipInsideOutside) {
+        final CogwheelChainType.ChainRenderInfo chainRenderInfo = type.getRenderType();
+
+        // Calculate corners in world space for the segment ends
+        List<Vec3> destinationPoints = CogwheelChainRenderGeometryBuilder.getEndPointsForChainJoint(
+                from,
+                to,
+                postTo,
+                chainRenderInfo,
+                toCogwheelAxis,
+                new Matrix3f()
+        );
+        final List<Vec3> sourcePoints = CogwheelChainRenderGeometryBuilder.getEndPointsForChainJoint(
+                preFrom,
+                from,
+                to,
+                chainRenderInfo,
+                fromCogwheelAxis,
+                new Matrix3f()
+        );
+
+        //This is my shame, i couldnt find a deterministic way to order the points consistently between joints so here we are,
+        //Matching it in a post process step
+        destinationPoints = CogwheelChainRenderGeometryBuilder.getPointsInClosestOrder(destinationPoints, sourcePoints);
+        final float length = (float) from.distanceTo(to);
+        final float minV = offset * textureSquish;
+        final float maxV = length * textureSquish + minV;
+
+        ms.pushPose();
+
+        final VertexConsumer vc = buffer.getBuffer(RenderTypes.chain(type.getRenderTexture()));
+        final Matrix4f poseMatrix = ms.last().pose();
+        final PoseStack.Pose pose = ms.last();
+
+        // Per-vertex light interpolation data: project vertex position onto the from→to
+        // direction to blend between lightAtSource and lightAtDest. This eliminates abrupt
+        // brightness jumps at segment boundaries (previously only lightAtSource was used).
+        final Vec3 segDir = to.subtract(from);
+        final double segLenSq = segDir.lengthSqr();
+
+        // Emit all faces via shared geometry builder, adapting vertex output to VertexConsumer
+        final ChainQuadBuilder.VertexEmitter emitter = (x, y, z, u, v, nx, ny, nz) -> {
+            final float rx = x - (float) from.x;
+            final float ry = y - (float) from.y;
+            final float rz = z - (float) from.z;
+            final float t = segLenSq > 1e-8
+                    ? Mth.clamp((float) (new Vec3(x, y, z).subtract(from).dot(segDir) / segLenSq), 0f, 1f)
+                    : 0f;
+            final int vertexLight = lerpPackedLight(lightAtSource, lightAtDest, t);
+            vc.addVertex(poseMatrix, rx, ry, rz)
+                    .setColor(1.0f, 1.0f, 1.0f, 1.0f)
+                    .setUv(u, v)
+                    .setOverlay(OverlayTexture.NO_OVERLAY)
+                    .setLight(vertexLight)
+                    .setNormal(pose, 0.0F, 1.0F, 0.0F);
+        };
+
+        ChainQuadBuilder.buildSegmentFaces(
+                destinationPoints,
+                sourcePoints,
+                chainRenderInfo,
+                minV,
+                maxV,
+                flipInsideOutside,
+                emitter,
+                true
+        );
+
+        ms.popPose();
+    }
+
     private static void renderChainSlowerButWithoutGaps(final PoseStack ms,
                                                         final MultiBufferSource buffer,
                                                         final float offset,
@@ -189,7 +276,7 @@ public class CogwheelChainBehaviourRenderer extends BlockEntityBehaviourRenderer
         final CogwheelChainType.ChainRenderInfo chainRenderInfo = type.getRenderType();
 
         // Calculate corners in world space for the segment ends
-        final List<Vec3> destinationPoints = CogwheelChainRenderGeometryBuilder.getEndPointsForChainJoint(
+        List<Vec3> destinationPoints = CogwheelChainRenderGeometryBuilder.getEndPointsForChainJoint(
                 from,
                 to,
                 postTo,
@@ -222,8 +309,7 @@ public class CogwheelChainBehaviourRenderer extends BlockEntityBehaviourRenderer
 
         //This is my shame, i couldnt find a deterministic way to order the points consistently between joints so here we are,
         //Matching it in a post process step
-//        destinationPoints = CogwheelChainRenderGeometryBuilder.getPointsInClosestOrder(destinationPoints, sourcePoints);
-
+        destinationPoints = CogwheelChainRenderGeometryBuilder.getPointsInClosestOrder(destinationPoints, sourcePoints);
         final float length = (float) from.distanceTo(to);
         final float minV = offset * textureSquish;
         final float maxV = length * textureSquish + minV;
