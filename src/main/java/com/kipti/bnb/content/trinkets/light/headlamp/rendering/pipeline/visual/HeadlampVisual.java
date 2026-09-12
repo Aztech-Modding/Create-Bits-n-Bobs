@@ -50,7 +50,7 @@ public class HeadlampVisual extends AbstractBlockEntityVisual<HeadlampBlockEntit
             return;
         }
 
-        final int onOffBits = (int) (currentState & 0xF);
+        final int onOffBits = (int) (currentState & HeadlampConstants.RENDER_STATE_ON_OFF_MASK);
         final HeadlampBlockEntity.HeadlampPlacement[] allPlacements = HeadlampBlockEntity.HeadlampPlacement.values();
 
         for (int i = 0; i < HeadlampConstants.PLACEMENT_COUNT; i++) {

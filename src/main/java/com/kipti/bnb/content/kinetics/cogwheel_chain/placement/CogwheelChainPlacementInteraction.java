@@ -107,7 +107,7 @@ public class CogwheelChainPlacementInteraction {
             return false;
         }
 
-        if (player.isShiftKeyDown() || (currentChainType != null && currentChainType != heldChainType)) {
+        if (player.isShiftKeyDown() && currentBuildingChain != null || (currentChainType != null && currentChainType != heldChainType)) {
             if (currentBuildingChain != null) {
                 clearPlacingChain();
             }

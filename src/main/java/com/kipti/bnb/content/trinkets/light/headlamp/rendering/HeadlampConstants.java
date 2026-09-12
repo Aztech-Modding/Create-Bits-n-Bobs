@@ -25,14 +25,19 @@ public class HeadlampConstants {
     public static final int RENDER_STATE_ON_OFF_BITS = 4;
 
     /**
-     * Number of bits per headlamp slot in the packed render state.
+     * Bit mask for the on/off state of all headlamp slots in the packed render state.
      */
-    public static final int RENDER_STATE_SLOT_BITS = 5;
+    public static final int RENDER_STATE_ON_OFF_MASK = 0b1111;
 
     /**
-     * Bit mask for a single slot value (5 bits).
+     * Number of bits per headlamp slot in the packed render state.
      */
-    public static final long SLOT_VALUE_MASK = 0x1FL;
+    public static final int RENDER_STATE_SLOT_BITS = 6;
+
+    /**
+     * Bit mask for a single slot value (6 bits).
+     */
+    public static final long SLOT_VALUE_MASK = 0b111111;
 
     /**
      * Offset applied to {@link DyeColor#ordinal()} when encoding dye color in placement values.

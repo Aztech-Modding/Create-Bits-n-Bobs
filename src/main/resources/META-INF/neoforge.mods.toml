@@ -69,7 +69,7 @@ side="BOTH"
 [[dependencies.${mod_id}]]
 modId="tfmg"
 type="incompatible"
-reason="This mod is incompatible with TMFG that isnt 1.2.2c or version >1.2.2, you can download download 1.2.2c JAR from Bits 'n' Bobs page"
+reason="TFMG <= 1.2.2 is incompatible with Bits 'n' Bobs. If TFMG 1.2.3 is not released yet, use Create: TFMG Community Edition or TFMG 1.2.2c which is available on the Bits n Bobs mod page"
 ordering="AFTER"
 versionRange="(,1.2.2]"
 side="BOTH"

@@ -54,7 +54,7 @@ public class HeadlampBlockEntity extends SmartBlockEntity implements SpecialBloc
      *     <li>1 = undyed headlamp</li>
      *     <li>2–17 = dye color (ordinal + 2, matching {@link DyeColor} values)</li>
      * </ul>
-     * Values must not exceed 5 bits (max 31) for proper encoding in {@link HeadlampBlockEntity#getRenderStateAsLong()}, though only 0–17 are currently valid.
+     * Values must not exceed 6 bits (max 62) for proper encoding in {@link HeadlampBlockEntity#getRenderStateAsLong()}, though only 0–17 are currently valid.
      */
     private final byte[] activePlacements = new byte[HeadlampConstants.PLACEMENT_COUNT];
     private VoxelShape cachedShape;
@@ -320,20 +320,20 @@ public class HeadlampBlockEntity extends SmartBlockEntity implements SpecialBloc
      * <ul>
      *     <li>Bits 0–3 (4 bits): on/off state. If CC addressing is present, these are the CC address mask bits.
      *         Otherwise, all {@code 0b1111} if the light renderer should display "on", or {@code 0b0000} for "off".</li>
-     *     <li>Bits 4–48 (9 slots × 5 bits each): headlamp state per slot.
+     *     <li>Bits 4–48 (9 slots × 6 bits each): headlamp state per slot.
      *         0 = none, 1 = undyed, 2–17 = dye color (see {@link #activePlacements}).</li>
      * </ul>
      * <p>
-     * Total: 4 + 45 = 49 bits used out of the 64-bit long.
+     * Total: 4 + 54 = 58 bits used out of the 64-bit long.
      *
      * @return the packed render state as a long
      */
     public long getRenderStateAsLong() {
         final long onOffBits;
         if (addressing != null) {
-            onOffBits = addressing.getMask() & 0xFL;
+            onOffBits = addressing.getMask() & HeadlampConstants.RENDER_STATE_ON_OFF_MASK;
         } else {
-            onOffBits = LightBlock.shouldUseOnLightModel(getBlockState()) ? 0xFL : 0x0L;
+            onOffBits = LightBlock.shouldUseOnLightModel(getBlockState()) ? HeadlampConstants.RENDER_STATE_ON_OFF_MASK : 0;
         }
 
         long state = onOffBits;

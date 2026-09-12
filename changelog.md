@@ -361,3 +361,11 @@
 - Added missing chain failed addition lang for using a chain on other types of cogwheel
 - Restored a deprecated old signature of `CogwheelChainRenderGeometryBuilder#renderChainSlowerButWithoutGaps` to avoid
   crash with bits n tracks
+
+# 1.21.1-2.3.3
+
+- Stop controlling belt shift click
+
+# 1.21.1-2.3.4
+
+- Increased available bits for headlamp colours
