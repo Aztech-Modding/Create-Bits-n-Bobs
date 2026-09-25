@@ -1,7 +1,15 @@
+buildscript {
+    dependencies {
+        classpath 'org.semver4j:semver4j:6.0.0'
+    }
+}
+
+import org.semver4j.Semver
+
 plugins {
     id 'java-library'
     id 'idea'
-    id 'net.neoforged.moddev' version '2.0.140'
+    id 'net.neoforged.moddev' version '2.0.141'
     id 'me.modmuss50.mod-publish-plugin' version '2.1.1'
     id 'net.azmod.release' version '0.2.1'
 }
@@ -110,6 +118,10 @@ sourceSets.main.resources {
     srcDir 'src/generated/resources'
 }
 
+configurations {
+    runtimeClasspath.extendsFrom localRuntime
+}
+
 dependencies {
     implementation "net.neoforged:neoforge:${neo_version}"
     implementation("com.cake.azimuth:azimuth:${azimuth_version}")
@@ -156,7 +168,7 @@ dependencies {
     if (enable_cc_tweaked.toBoolean()) {
         compileOnly("cc.tweaked:cc-tweaked-$minecraft_version-core-api:$cc_tweaked_version")
         compileOnly("cc.tweaked:cc-tweaked-$minecraft_version-forge-api:$cc_tweaked_version")
-        runtimeOnly("cc.tweaked:cc-tweaked-$minecraft_version-forge:$cc_tweaked_version")
+        localRuntime("cc.tweaked:cc-tweaked-$minecraft_version-forge:$cc_tweaked_version")
     }
 
 }
