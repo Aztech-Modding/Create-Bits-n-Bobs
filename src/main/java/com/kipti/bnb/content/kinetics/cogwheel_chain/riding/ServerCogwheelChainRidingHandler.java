@@ -10,6 +10,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
 public class ServerCogwheelChainRidingHandler {
 
@@ -53,6 +54,8 @@ public class ServerCogwheelChainRidingHandler {
 	}
 
 	private static void sync() {
+		if (ServerLifecycleHooks.getCurrentServer() == null)
+			return;
 		CatnipServices.NETWORK.sendToAllClients(new CogwheelChainRidingBroadcastPacket(ridingPlayers.keySet()));
 	}
 }
