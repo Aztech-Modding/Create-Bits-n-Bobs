@@ -139,6 +139,9 @@ public record PartialEditCogwheelChainPacket(
         );
         if (placementState == null)
             return;
+        // Only blocks that can be part of a chain can be inserted
+        if (CogwheelChainCandidate.getForBlock(placementState) == null)
+            return;
 
         level.setBlock(this.newCogwheelPos, placementState, Block.UPDATE_ALL);
 
@@ -158,6 +161,8 @@ public record PartialEditCogwheelChainPacket(
             );
         } catch (final ChainInteractionFailedException e) {
             CreateBitsnBobs.LOGGER.warn("Client sent an invalid chain edit request: {}", e.getMessage());
+            // The block was already placed above, undo it, otherwise it stays in the world without consuming the held item
+            level.setBlock(this.newCogwheelPos, originalState, Block.UPDATE_ALL);
             return;
         }
         if (insertionPlan == null) {
@@ -175,6 +180,7 @@ public record PartialEditCogwheelChainPacket(
         try {
             chainGeometry = this.buildChainGeometry(rebuiltChain);
         } catch (final ChainInteractionFailedException e) {
+            level.setBlock(this.newCogwheelPos, originalState, Block.UPDATE_ALL);
             throw new RuntimeException("Failed to place into level after insertion plan was generated: " + e.getMessage(), e);
         }
         if (chainGeometry == null) {
